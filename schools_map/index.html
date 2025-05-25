@@ -1,0 +1,653 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accredited High Schools in New Zealand</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Roboto:wght@400&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #2a1e5e);
+            background-size: 200% 200%;
+            animation: gradientShift 15s ease infinite;
+            color: #e0e0e0;
+        }
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        h1, h2 {
+            font-family: 'Orbitron', sans-serif;
+            text-shadow: 0 0 5px #00d4ff, 0 0 10px #00d4ff;
+            text-align: center;
+        }
+        #map {
+            height: 500px;
+            width: 70%;
+            margin: 20px;
+            float: left;
+            transition: width 0.3s;
+            background: #1a1a2e;
+        }
+        #school-panel.hidden ~ #map {
+            width: calc(100% - 40px);
+        }
+        #school-panel {
+            width: 28%;
+            height: 500px;
+            position: fixed;
+            right: 0;
+            top: 100px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            overflow-y: auto;
+            transition: transform 0.3s;
+            padding: 10px;
+        }
+        #school-panel.hidden {
+            transform: translateX(100%);
+        }
+        #toggle-panel {
+            position: fixed;
+            right: 28%;
+            top: 100px;
+            padding: 10px;
+            background: #00d4ff;
+            border: none;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #00d4ff;
+            cursor: pointer;
+            transition: box-shadow 0.3s;
+        }
+        #toggle-panel:hover {
+            box-shadow: 0 0 20px #00d4ff;
+        }
+        #school-panel.hidden ~ #toggle-panel {
+            right: 10px;
+        }
+        #controls {
+            margin: 20px;
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+        #search, #region {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid #00d4ff;
+            color: #e0e0e0;
+            padding: 8px;
+            border-radius: 5px;
+            transition: box-shadow 0.3s;
+        }
+        #search:focus, #region:focus {
+            box-shadow: 0 0 10px #00d4ff;
+            outline: none;
+        }
+        #region option {
+            background: #1a1a2e;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: transparent;
+        }
+        th, td {
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 8px;
+            text-align: left;
+            color: #e0e0e0;
+        }
+        th {
+            background: rgba(0, 212, 255, 0.1);
+        }
+        .school-row:hover {
+            background: rgba(0, 212, 255, 0.2);
+            box-shadow: 0 0 10px #00d4ff;
+        }
+        .hidden-row {
+            display: none;
+        }
+        #map.loading::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 40px;
+            height: 40px;
+            border: 4px solid #00d4ff;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        @media (max-width: 768px) {
+            #map { width: calc(100% - 40px); float: none; }
+            #school-panel { width: 100%; top: 600px; }
+            #school-panel.hidden ~ #map { width: calc(100% - 40px); }
+            #toggle-panel { right: 10px; }
+            #controls { flex-direction: column; align-items: center; }
+        }
+    </style>
+</head>
+<body>
+    <h1>Accredited High Schools in New Zealand</h1>
+    <div id="controls">
+        <input type="text" id="search" placeholder="Search schools (e.g., Burnside)">
+        <select id="region">
+            <option value="all">All Regions</option>
+            <option value="North Island">North Island</option>
+            <option value="South Island">South Island</option>
+            <option value="Christchurch">Christchurch</option>
+            <option value="Auckland">Auckland</option>
+        </select>
+    </div>
+    <button id="toggle-panel">Toggle School List</button>
+    <div id="school-panel">
+        <h2 id="table-title">School List (Total: 72)</h2>
+        <table id="school-table">
+            <tr>
+                <th>No.</th>
+                <th>School Name</th>
+            </tr>
+            
+            <tr class="school-row" data-id="1" data-region="Auckland,North Island">
+                <td>1</td>
+                <td>The Auckland Seventh-Day Adventist High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="2" data-region="North Island">
+                <td>2</td>
+                <td>The Avonside Girls' High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="3" data-region="South Island">
+                <td>3</td>
+                <td>The Bayfield High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="4" data-region="South Island">
+                <td>4</td>
+                <td>The Buller High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="5" data-region="Christchurch,South Island">
+                <td>5</td>
+                <td>The Burnside High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="6" data-region="North Island">
+                <td>6</td>
+                <td>The Cambridge High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="7" data-region="North Island">
+                <td>7</td>
+                <td>The Christchurch Boys' High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="8" data-region="North Island">
+                <td>8</td>
+                <td>The Christchurch Girls' High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="9" data-region="Christchurch,South Island">
+                <td>9</td>
+                <td>The Darfield High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="10" data-region="North Island">
+                <td>10</td>
+                <td>The Dargaville High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="11" data-region="South Island">
+                <td>11</td>
+                <td>The Dunstan High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="12" data-region="North Island">
+                <td>12</td>
+                <td>The Feilding High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="13" data-region="North Island">
+                <td>13</td>
+                <td>The Fraser High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="14" data-region="North Island">
+                <td>14</td>
+                <td>The Freyberg High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="15" data-region="South Island">
+                <td>15</td>
+                <td>The Geraldine High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="16" data-region="North Island">
+                <td>16</td>
+                <td>The Gisborne Girls' High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="17" data-region="Auckland,North Island">
+                <td>17</td>
+                <td>The Green Bay High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="18" data-region="South Island">
+                <td>18</td>
+                <td>The Greymouth High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="19" data-region="North Island">
+                <td>19</td>
+                <td>The Hamilton Boys' High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="20" data-region="North Island">
+                <td>20</td>
+                <td>The Hamilton Girls' High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="21" data-region="North Island">
+                <td>21</td>
+                <td>The Hastings Girls’ High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="22" data-region="Auckland,North Island">
+                <td>22</td>
+                <td>The Henderson High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="23" data-region="Christchurch,South Island">
+                <td>23</td>
+                <td>The Hillmorton High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="24" data-region="Christchurch,South Island">
+                <td>24</td>
+                <td>The Hornby High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="25" data-region="North Island">
+                <td>25</td>
+                <td>The Hutt Valley High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="26" data-region="Auckland,North Island">
+                <td>26</td>
+                <td>The James Cook High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="27" data-region="South Island">
+                <td>27</td>
+                <td>The John Paul II High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="28" data-region="North Island">
+                <td>28</td>
+                <td>The Kamo High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="29" data-region="North Island">
+                <td>29</td>
+                <td>The Karamū High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="30" data-region="North Island">
+                <td>30</td>
+                <td>The Kelston Boys' High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="31" data-region="North Island">
+                <td>31</td>
+                <td>The Kerikeri High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="32" data-region="South Island">
+                <td>32</td>
+                <td>The Logan Park High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="33" data-region="Auckland,North Island">
+                <td>33</td>
+                <td>The Manurewa High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="34" data-region="Auckland,North Island">
+                <td>34</td>
+                <td>The Massey High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="35" data-region="South Island">
+                <td>35</td>
+                <td>The Motueka High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="36" data-region="South Island">
+                <td>36</td>
+                <td>The Mountainview High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="37" data-region="North Island">
+                <td>37</td>
+                <td>The Napier Girls' High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="38" data-region="North Island">
+                <td>38</td>
+                <td>The New Plymouth Boys' High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="39" data-region="Auckland,North Island">
+                <td>39</td>
+                <td>The Onehunga High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="40" data-region="North Island">
+                <td>40</td>
+                <td>The Otamatea High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="41" data-region="North Island">
+                <td>41</td>
+                <td>The Palmerston North Boys' High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="42" data-region="Auckland,North Island">
+                <td>42</td>
+                <td>The Papakura High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="43" data-region="Auckland,North Island">
+                <td>43</td>
+                <td>The Papatoetoe High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="44" data-region="Auckland,North Island">
+                <td>44</td>
+                <td>The Pukekohe High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="45" data-region="Christchurch,South Island">
+                <td>45</td>
+                <td>The Rangiora High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="46" data-region="Christchurch,South Island">
+                <td>46</td>
+                <td>The Riccarton High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="47" data-region="North Island">
+                <td>47</td>
+                <td>The Rotorua Boys' High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="48" data-region="North Island">
+                <td>48</td>
+                <td>The Rotorua Girls' High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="49" data-region="North Island">
+                <td>49</td>
+                <td>The Rototuna Junior High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="50" data-region="North Island">
+                <td>50</td>
+                <td>The Rototuna Senior High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="51" data-region="Christchurch,South Island">
+                <td>51</td>
+                <td>The Shirley Boys’ High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="52" data-region="South Island">
+                <td>52</td>
+                <td>The South Otago High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="53" data-region="North Island">
+                <td>53</td>
+                <td>The Southland Boys' High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="54" data-region="North Island">
+                <td>54</td>
+                <td>The Southland Girls' High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="55" data-region="North Island">
+                <td>55</td>
+                <td>The Tamatea High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="56" data-region="North Island">
+                <td>56</td>
+                <td>The Taumarunui High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="57" data-region="North Island">
+                <td>57</td>
+                <td>The Thames High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="58" data-region="North Island">
+                <td>58</td>
+                <td>The Timaru Girls' High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="59" data-region="South Island">
+                <td>59</td>
+                <td>The Tokomairiro High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="60" data-region="Auckland,North Island">
+                <td>60</td>
+                <td>The Waiheke High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="61" data-region="South Island">
+                <td>61</td>
+                <td>The Waimate High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="62" data-region="North Island">
+                <td>62</td>
+                <td>The Wainuiomata High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="63" data-region="North Island">
+                <td>63</td>
+                <td>The Waitaki Boys' High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="64" data-region="North Island">
+                <td>64</td>
+                <td>The Waitaki Girls' High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="65" data-region="South Island">
+                <td>65</td>
+                <td>The Wakatipu High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="66" data-region="North Island">
+                <td>66</td>
+                <td>The Western Heights High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="67" data-region="Auckland,North Island">
+                <td>67</td>
+                <td>The Westlake Boys High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="68" data-region="North Island">
+                <td>68</td>
+                <td>The Westlake Girls' High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="69" data-region="South Island">
+                <td>69</td>
+                <td>The Westland High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="70" data-region="North Island">
+                <td>70</td>
+                <td>The Whakatane High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="71" data-region="North Island">
+                <td>71</td>
+                <td>The Whangārei Boys' High School</td>
+            </tr>
+            
+            <tr class="school-row" data-id="72" data-region="North Island">
+                <td>72</td>
+                <td>The Whangārei Girls’ High School</td>
+            </tr>
+            
+        </table>
+    </div>
+    <div id="map" class="loading"></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // Initialize map
+        var map = L.map('map').setView([-41.2865, 174.7762], 5);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
+
+        // Remove loading class after map loads
+        map.whenReady(function() {
+            document.getElementById('map').classList.remove('loading');
+        });
+
+        // Region bounds
+        var northIslandBounds = [[-39.0, 173.0], [-34.0, 179.0]];
+        var southIslandBounds = [[-48.0, 165.0], [-40.5, 179.0]];
+        var christchurchBounds = [[-43.6, 172.5], [-43.4, 172.8]];
+        var aucklandBounds = [[-37.1, 174.6], [-36.7, 175.0]];
+
+        // Store markers
+        var markers = {};
+        var schools = [{"employerName": "The Auckland Seventh-Day Adventist High School", "latitude": -36.8796, "longitude": 174.8557, "region": ["Auckland", "North Island"], "serialNo": 1}, {"employerName": "The Avonside Girls\u0027 High School", "latitude": -41.2865, "longitude": 174.7762, "region": ["North Island"], "serialNo": 2}, {"employerName": "The Bayfield High School", "latitude": -45.8709, "longitude": 170.4997, "region": ["South Island"], "serialNo": 3}, {"employerName": "The Buller High School", "latitude": -41.7922, "longitude": 171.6023, "region": ["South Island"], "serialNo": 4}, {"employerName": "The Burnside High School", "latitude": -43.5065, "longitude": 172.5759, "region": ["Christchurch", "South Island"], "serialNo": 5}, {"employerName": "The Cambridge High School", "latitude": -37.8911, "longitude": 175.4672, "region": ["North Island"], "serialNo": 6}, {"employerName": "The Christchurch Boys\u0027 High School", "latitude": -41.2865, "longitude": 174.7762, "region": ["North Island"], "serialNo": 7}, {"employerName": "The Christchurch Girls\u0027 High School", "latitude": -41.2865, "longitude": 174.7762, "region": ["North Island"], "serialNo": 8}, {"employerName": "The Darfield High School", "latitude": -43.4897, "longitude": 172.1112, "region": ["Christchurch", "South Island"], "serialNo": 9}, {"employerName": "The Dargaville High School", "latitude": -35.9401, "longitude": 173.8684, "region": ["North Island"], "serialNo": 10}, {"employerName": "The Dunstan High School", "latitude": -45.0302, "longitude": 169.2801, "region": ["South Island"], "serialNo": 11}, {"employerName": "The Feilding High School", "latitude": -40.2251, "longitude": 175.5651, "region": ["North Island"], "serialNo": 12}, {"employerName": "The Fraser High School", "latitude": -37.7912, "longitude": 175.2793, "region": ["North Island"], "serialNo": 13}, {"employerName": "The Freyberg High School", "latitude": -40.3567, "longitude": 175.6098, "region": ["North Island"], "serialNo": 14}, {"employerName": "The Geraldine High School", "latitude": -44.0912, "longitude": 171.2901, "region": ["South Island"], "serialNo": 15}, {"employerName": "The Gisborne Girls\u0027 High School", "latitude": -41.2865, "longitude": 174.7762, "region": ["North Island"], "serialNo": 16}, {"employerName": "The Green Bay High School", "latitude": -36.9282, "longitude": 174.6768, "region": ["Auckland", "North Island"], "serialNo": 17}, {"employerName": "The Greymouth High School", "latitude": -42.4504, "longitude": 171.2107, "region": ["South Island"], "serialNo": 18}, {"employerName": "The Hamilton Boys\u0027 High School", "latitude": -41.2865, "longitude": 174.7762, "region": ["North Island"], "serialNo": 19}, {"employerName": "The Hamilton Girls\u0027 High School", "latitude": -41.2865, "longitude": 174.7762, "region": ["North Island"], "serialNo": 20}, {"employerName": "The Hastings Girls\u2019 High School", "latitude": -39.6412, "longitude": 176.8427, "region": ["North Island"], "serialNo": 21}, {"employerName": "The Henderson High School", "latitude": -36.8737, "longitude": 174.6266, "region": ["Auckland", "North Island"], "serialNo": 22}, {"employerName": "The Hillmorton High School", "latitude": -43.5512, "longitude": 172.5843, "region": ["Christchurch", "South Island"], "serialNo": 23}, {"employerName": "The Hornby High School", "latitude": -43.5401, "longitude": 172.5278, "region": ["Christchurch", "South Island"], "serialNo": 24}, {"employerName": "The Hutt Valley High School", "latitude": -41.21, "longitude": 174.91, "region": ["North Island"], "serialNo": 25}, {"employerName": "The James Cook High School", "latitude": -37.0522, "longitude": 174.9287, "region": ["Auckland", "North Island"], "serialNo": 26}, {"employerName": "The John Paul II High School", "latitude": -42.4509, "longitude": 171.2102, "region": ["South Island"], "serialNo": 27}, {"employerName": "The Kamo High School", "latitude": -35.6867, "longitude": 174.3012, "region": ["North Island"], "serialNo": 28}, {"employerName": "The Karam\u016b High School", "latitude": -39.6389, "longitude": 176.8675, "region": ["North Island"], "serialNo": 29}, {"employerName": "The Kelston Boys\u0027 High School", "latitude": -41.2865, "longitude": 174.7762, "region": ["North Island"], "serialNo": 30}, {"employerName": "The Kerikeri High School", "latitude": -35.2268, "longitude": 173.9474, "region": ["North Island"], "serialNo": 31}, {"employerName": "The Logan Park High School", "latitude": -45.8632, "longitude": 170.5103, "region": ["South Island"], "serialNo": 32}, {"employerName": "The Manurewa High School", "latitude": -37.0276, "longitude": 174.8939, "region": ["Auckland", "North Island"], "serialNo": 33}, {"employerName": "The Massey High School", "latitude": -36.8421, "longitude": 174.6117, "region": ["Auckland", "North Island"], "serialNo": 34}, {"employerName": "The Motueka High School", "latitude": -41.1124, "longitude": 173.0098, "region": ["South Island"], "serialNo": 35}, {"employerName": "The Mountainview High School", "latitude": -44.3992, "longitude": 171.2456, "region": ["South Island"], "serialNo": 36}, {"employerName": "The Napier Girls\u0027 High School", "latitude": -41.2865, "longitude": 174.7762, "region": ["North Island"], "serialNo": 37}, {"employerName": "The New Plymouth Boys\u0027 High School", "latitude": -41.2865, "longitude": 174.7762, "region": ["North Island"], "serialNo": 38}, {"employerName": "The Onehunga High School", "latitude": -36.9156, "longitude": 174.7838, "region": ["Auckland", "North Island"], "serialNo": 39}, {"employerName": "The Otamatea High School", "latitude": -36.1333, "longitude": 174.3167, "region": ["North Island"], "serialNo": 40}, {"employerName": "The Palmerston North Boys\u0027 High School", "latitude": -41.2865, "longitude": 174.7762, "region": ["North Island"], "serialNo": 41}, {"employerName": "The Papakura High School", "latitude": -37.0676, "longitude": 174.9439, "region": ["Auckland", "North Island"], "serialNo": 42}, {"employerName": "The Papatoetoe High School", "latitude": -36.9752, "longitude": 174.8647, "region": ["Auckland", "North Island"], "serialNo": 43}, {"employerName": "The Pukekohe High School", "latitude": -37.2011, "longitude": 174.9047, "region": ["Auckland", "North Island"], "serialNo": 44}, {"employerName": "The Rangiora High School", "latitude": -43.3043, "longitude": 172.5928, "region": ["Christchurch", "South Island"], "serialNo": 45}, {"employerName": "The Riccarton High School", "latitude": -43.5342, "longitude": 172.5739, "region": ["Christchurch", "South Island"], "serialNo": 46}, {"employerName": "The Rotorua Boys\u0027 High School", "latitude": -41.2865, "longitude": 174.7762, "region": ["North Island"], "serialNo": 47}, {"employerName": "The Rotorua Girls\u0027 High School", "latitude": -41.2865, "longitude": 174.7762, "region": ["North Island"], "serialNo": 48}, {"employerName": "The Rototuna Junior High School", "latitude": -37.7356, "longitude": 175.2756, "region": ["North Island"], "serialNo": 49}, {"employerName": "The Rototuna Senior High School", "latitude": -37.7356, "longitude": 175.2756, "region": ["North Island"], "serialNo": 50}, {"employerName": "The Shirley Boys\u2019 High School", "latitude": -43.5102, "longitude": 172.6597, "region": ["Christchurch", "South Island"], "serialNo": 51}, {"employerName": "The South Otago High School", "latitude": -46.2437, "longitude": 169.7556, "region": ["South Island"], "serialNo": 52}, {"employerName": "The Southland Boys\u0027 High School", "latitude": -41.2865, "longitude": 174.7762, "region": ["North Island"], "serialNo": 53}, {"employerName": "The Southland Girls\u0027 High School", "latitude": -41.2865, "longitude": 174.7762, "region": ["North Island"], "serialNo": 54}, {"employerName": "The Tamatea High School", "latitude": -39.5087, "longitude": 176.8701, "region": ["North Island"], "serialNo": 55}, {"employerName": "The Taumarunui High School", "latitude": -38.8833, "longitude": 175.2667, "region": ["North Island"], "serialNo": 56}, {"employerName": "The Thames High School", "latitude": -37.1386, "longitude": 175.5362, "region": ["North Island"], "serialNo": 57}, {"employerName": "The Timaru Girls\u0027 High School", "latitude": -41.2865, "longitude": 174.7762, "region": ["North Island"], "serialNo": 58}, {"employerName": "The Tokomairiro High School", "latitude": -46.1167, "longitude": 169.9833, "region": ["South Island"], "serialNo": 59}, {"employerName": "The Waiheke High School", "latitude": -36.8028, "longitude": 175.0756, "region": ["Auckland", "North Island"], "serialNo": 60}, {"employerName": "The Waimate High School", "latitude": -44.7351, "longitude": 171.0578, "region": ["South Island"], "serialNo": 61}, {"employerName": "The Wainuiomata High School", "latitude": -41.2623, "longitude": 174.9487, "region": ["North Island"], "serialNo": 62}, {"employerName": "The Waitaki Boys\u0027 High School", "latitude": -41.2865, "longitude": 174.7762, "region": ["North Island"], "serialNo": 63}, {"employerName": "The Waitaki Girls\u0027 High School", "latitude": -41.2865, "longitude": 174.7762, "region": ["North Island"], "serialNo": 64}, {"employerName": "The Wakatipu High School", "latitude": -45.0311, "longitude": 168.6626, "region": ["South Island"], "serialNo": 65}, {"employerName": "The Western Heights High School", "latitude": -38.1213, "longitude": 176.2248, "region": ["North Island"], "serialNo": 66}, {"employerName": "The Westlake Boys High School", "latitude": -36.7819, "longitude": 174.7497, "region": ["Auckland", "North Island"], "serialNo": 67}, {"employerName": "The Westlake Girls\u0027 High School", "latitude": -41.2865, "longitude": 174.7762, "region": ["North Island"], "serialNo": 68}, {"employerName": "The Westland High School", "latitude": -42.7147, "longitude": 170.9639, "region": ["South Island"], "serialNo": 69}, {"employerName": "The Whakatane High School", "latitude": -37.9575, "longitude": 176.9854, "region": ["North Island"], "serialNo": 70}, {"employerName": "The Whang\u0101rei Boys\u0027 High School", "latitude": -41.2865, "longitude": 174.7762, "region": ["North Island"], "serialNo": 71}, {"employerName": "The Whang\u0101rei Girls\u2019 High School", "latitude": -35.7251, "longitude": 174.3237, "region": ["North Island"], "serialNo": 72}];
+        schools.forEach(function(school) {
+            if (school.latitude && school.longitude) {
+                var marker = L.marker([school.latitude, school.longitude])
+                    .bindPopup('<b>' + school.employerName + '</b>|' + school.serialNo)
+                    .addTo(map);
+                markers[school.serialNo] = marker;
+                marker.on('click', function() {
+                    var row = document.querySelector(`tr[data-id="${school.serialNo}"]`);
+                    row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    row.style.backgroundColor = 'rgba(0, 212, 255, 0.2)';
+                    setTimeout(function() { row.style.backgroundColor = ''; }, 1000);
+                });
+            }
+        });
+
+        // Highlight marker on row click
+        document.querySelectorAll('.school-row').forEach(function(row) {
+            row.addEventListener('click', function() {
+                var id = row.getAttribute('data-id');
+                var marker = markers[id];
+                if (marker) {
+                    marker.openPopup();
+                    map.setView(marker.getLatLng(), 10);
+                }
+            });
+        });
+
+        // Update table title with visible count
+        function updateTableTitle() {
+            var visibleRows = document.querySelectorAll('.school-row:not(.hidden-row)');
+            var visibleCount = visibleRows.length;
+            console.log('Visible rows:', visibleCount);
+            document.getElementById('table-title').textContent = `School List (Total: ${visibleCount})`;
+        }
+
+        // Fuzzy search
+        document.getElementById('search').addEventListener('input', function(e) {
+            var query = e.target.value.toLowerCase();
+            document.querySelectorAll('.school-row').forEach(function(row) {
+                var name = row.cells[1].textContent.toLowerCase();
+                var region = row.getAttribute('data-region');
+                var regionFilter = document.getElementById('region').value;
+                var isVisible = (!query || name.includes(query)) && 
+                                (regionFilter === 'all' || region.split(',').includes(regionFilter));
+                console.log('Search - Row:', name, 'Region:', region, 'Filter:', regionFilter, 'Visible:', isVisible);
+                row.classList.toggle('hidden-row', !isVisible);
+            });
+            updateTableTitle();
+        });
+
+        // Region filter
+        document.getElementById('region').addEventListener('change', function(e) {
+            var region = e.target.value;
+            if (region === 'South Island') {
+                map.fitBounds(southIslandBounds);
+            } else if (region === 'North Island') {
+                map.fitBounds(northIslandBounds);
+            } else if (region === 'Christchurch') {
+                map.fitBounds(christchurchBounds);
+            } else if (region === 'Auckland') {
+                map.fitBounds(aucklandBounds);
+            } else {
+                map.setView([-41.2865, 174.7762], 5);
+            }
+            document.querySelectorAll('.school-row').forEach(function(row) {
+                var rowRegion = row.getAttribute('data-region');
+                var query = document.getElementById('search').value.toLowerCase();
+                var name = row.cells[1].textContent.toLowerCase();
+                var isVisible = (!query || name.includes(query)) && 
+                                (region === 'all' || rowRegion.split(',').includes(region));
+                console.log('Filter - Row:', name, 'Region:', rowRegion, 'Filter:', region, 'Visible:', isVisible);
+                row.classList.toggle('hidden-row', !isVisible);
+            });
+            Object.values(markers).forEach(function(marker) {
+                var match = marker._popup._content.match(/\|(\d+)/);
+                if (!match) {
+                    console.log('Invalid popup content:', marker._popup._content);
+                    return;
+                }
+                var serialNo = parseInt(match[1]);
+                var school = schools.find(s => s.serialNo === serialNo);
+                if (!school) {
+                    console.log('School not found for serialNo:', serialNo);
+                    return;
+                }
+                map.removeLayer(marker);
+                if (region === 'all' || school.region.includes(region)) {
+                    marker.addTo(map);
+                }
+            });
+            updateTableTitle();
+        });
+
+        // Toggle school panel
+        var panel = document.getElementById('school-panel');
+        var toggleButton = document.getElementById('toggle-panel');
+        toggleButton.addEventListener('click', function() {
+            panel.classList.toggle('hidden');
+            toggleButton.textContent = panel.classList.contains('hidden') ? 'Show School List' : 'Hide School List';
+            setTimeout(function() { map.invalidateSize(); }, 300);
+        });
+
+        // Initial title update
+        updateTableTitle();
+    </script>
+</body>
+</html>
