@@ -28,7 +28,6 @@
             text-align: center;
             margin: 10px 0;
         }
-        /* Desktop Mode (default for larger screens) */
         body.desktop-mode {
             display: block;
         }
@@ -90,7 +89,6 @@
             justify-content: center;
             z-index: 2;
         }
-        /* Mobile Mode (default for smaller screens) */
         body.mobile-mode {
             display: flex;
             flex-direction: column;
@@ -144,7 +142,6 @@
             justify-content: center;
             z-index: 2;
         }
-        /* Common styles for both modes */
         #mode-toggle {
             position: fixed;
             bottom: 20px;
@@ -219,7 +216,6 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
-        /* Mobile-specific adjustments for mobile mode */
         @media (max-width: 768px) {
             body.mobile-mode h1 {
                 font-size: 1.5rem;
@@ -305,366 +301,439 @@
             <tr>
                 <th>No.</th>
                 <th>School Name</th>
+                <th>Expiry Date</th>
             </tr>
             
             <tr class="school-row" data-id="1" data-region="Auckland,North Island">
                 <td>1</td>
                 <td>The Auckland Seventh-Day Adventist High School</td>
+                <td>2026-02-11</td>
             </tr>
             
             <tr class="school-row" data-id="2" data-region="Christchurch,South Island">
                 <td>2</td>
                 <td>The Avonside Girls' High School</td>
+                <td>2027-02-14</td>
             </tr>
             
             <tr class="school-row" data-id="3" data-region="South Island">
                 <td>3</td>
                 <td>The Bayfield High School</td>
+                <td>2027-05-16</td>
             </tr>
             
             <tr class="school-row" data-id="4" data-region="South Island">
                 <td>4</td>
                 <td>The Buller High School</td>
+                <td>2026-07-02</td>
             </tr>
             
             <tr class="school-row" data-id="5" data-region="Christchurch,South Island">
                 <td>5</td>
                 <td>The Burnside High School</td>
+                <td>2025-12-02</td>
             </tr>
             
             <tr class="school-row" data-id="6" data-region="North Island">
                 <td>6</td>
                 <td>The Cambridge High School</td>
+                <td>2026-07-19</td>
             </tr>
             
             <tr class="school-row" data-id="7" data-region="Christchurch,South Island">
                 <td>7</td>
                 <td>The Christchurch Boys' High School</td>
+                <td>2027-04-17</td>
             </tr>
             
             <tr class="school-row" data-id="8" data-region="Christchurch,South Island">
                 <td>8</td>
                 <td>The Christchurch Girls' High School</td>
+                <td>2025-12-06</td>
             </tr>
             
             <tr class="school-row" data-id="9" data-region="Christchurch,South Island">
                 <td>9</td>
                 <td>The Darfield High School</td>
+                <td>2027-02-06</td>
             </tr>
             
             <tr class="school-row" data-id="10" data-region="North Island">
                 <td>10</td>
                 <td>The Dargaville High School</td>
+                <td>2027-04-08</td>
             </tr>
             
             <tr class="school-row" data-id="11" data-region="South Island">
                 <td>11</td>
                 <td>The Dunstan High School</td>
+                <td>2026-12-19</td>
             </tr>
             
             <tr class="school-row" data-id="12" data-region="North Island">
                 <td>12</td>
                 <td>The Feilding High School</td>
+                <td>2026-11-08</td>
             </tr>
             
             <tr class="school-row" data-id="13" data-region="North Island">
                 <td>13</td>
                 <td>The Fraser High School</td>
+                <td>2025-07-04</td>
             </tr>
             
             <tr class="school-row" data-id="14" data-region="North Island">
                 <td>14</td>
                 <td>The Freyberg High School</td>
+                <td>2027-05-12</td>
             </tr>
             
             <tr class="school-row" data-id="15" data-region="South Island">
                 <td>15</td>
                 <td>The Geraldine High School</td>
+                <td>2026-11-13</td>
             </tr>
             
             <tr class="school-row" data-id="16" data-region="North Island">
                 <td>16</td>
                 <td>The Gisborne Girls' High School</td>
+                <td>2025-05-25</td>
             </tr>
             
             <tr class="school-row" data-id="17" data-region="Auckland,North Island">
                 <td>17</td>
                 <td>The Green Bay High School</td>
+                <td>2027-01-13</td>
             </tr>
             
             <tr class="school-row" data-id="18" data-region="South Island">
                 <td>18</td>
                 <td>The Greymouth High School</td>
+                <td>2026-08-27</td>
             </tr>
             
             <tr class="school-row" data-id="19" data-region="North Island">
                 <td>19</td>
                 <td>The Hamilton Boys' High School</td>
+                <td>2026-09-30</td>
             </tr>
             
             <tr class="school-row" data-id="20" data-region="North Island">
                 <td>20</td>
                 <td>The Hamilton Girls' High School</td>
+                <td>2027-01-31</td>
             </tr>
             
             <tr class="school-row" data-id="21" data-region="North Island">
                 <td>21</td>
                 <td>The Hastings Girls’ High School</td>
+                <td>2027-01-27</td>
             </tr>
             
             <tr class="school-row" data-id="22" data-region="Auckland,North Island">
                 <td>22</td>
                 <td>The Henderson High School</td>
+                <td>2027-04-01</td>
             </tr>
             
             <tr class="school-row" data-id="23" data-region="Christchurch,South Island">
                 <td>23</td>
                 <td>The Hillmorton High School</td>
+                <td>2026-10-31</td>
             </tr>
             
             <tr class="school-row" data-id="24" data-region="Christchurch,South Island">
                 <td>24</td>
                 <td>The Hornby High School</td>
+                <td>2025-06-23</td>
             </tr>
             
             <tr class="school-row" data-id="25" data-region="North Island">
                 <td>25</td>
                 <td>The Hutt Valley High School</td>
+                <td>2026-07-22</td>
             </tr>
             
             <tr class="school-row" data-id="26" data-region="Auckland,North Island">
                 <td>26</td>
                 <td>The James Cook High School</td>
+                <td>2026-11-13</td>
             </tr>
             
             <tr class="school-row" data-id="27" data-region="South Island">
                 <td>27</td>
                 <td>The John Paul II High School</td>
+                <td>2027-03-25</td>
             </tr>
             
             <tr class="school-row" data-id="28" data-region="North Island">
                 <td>28</td>
                 <td>The Kamo High School</td>
+                <td>2026-11-07</td>
             </tr>
             
             <tr class="school-row" data-id="29" data-region="North Island">
                 <td>29</td>
                 <td>The Karamū High School</td>
+                <td>2026-06-23</td>
             </tr>
             
             <tr class="school-row" data-id="30" data-region="Auckland,North Island">
                 <td>30</td>
                 <td>The Kelston Boys' High School</td>
+                <td>2026-09-03</td>
             </tr>
             
             <tr class="school-row" data-id="31" data-region="North Island">
                 <td>31</td>
                 <td>The Kerikeri High School</td>
+                <td>2026-05-05</td>
             </tr>
             
             <tr class="school-row" data-id="32" data-region="South Island">
                 <td>32</td>
                 <td>The Logan Park High School</td>
+                <td>2025-11-20</td>
             </tr>
             
             <tr class="school-row" data-id="33" data-region="Auckland,North Island">
                 <td>33</td>
                 <td>The Manurewa High School</td>
+                <td>2026-03-15</td>
             </tr>
             
             <tr class="school-row" data-id="34" data-region="Auckland,North Island">
                 <td>34</td>
                 <td>The Massey High School</td>
+                <td>2026-12-29</td>
             </tr>
             
             <tr class="school-row" data-id="35" data-region="South Island">
                 <td>35</td>
                 <td>The Motueka High School</td>
+                <td>2025-12-09</td>
             </tr>
             
             <tr class="school-row" data-id="36" data-region="South Island">
                 <td>36</td>
                 <td>The Mountainview High School</td>
+                <td>2026-11-06</td>
             </tr>
             
             <tr class="school-row" data-id="37" data-region="North Island">
                 <td>37</td>
                 <td>The Napier Girls' High School</td>
+                <td>2026-09-03</td>
             </tr>
             
             <tr class="school-row" data-id="38" data-region="North Island">
                 <td>38</td>
                 <td>The New Plymouth Boys' High School</td>
+                <td>2026-12-12</td>
             </tr>
             
             <tr class="school-row" data-id="39" data-region="Auckland,North Island">
                 <td>39</td>
                 <td>The Onehunga High School</td>
+                <td>2026-06-05</td>
             </tr>
             
             <tr class="school-row" data-id="40" data-region="North Island">
                 <td>40</td>
                 <td>The Otamatea High School</td>
+                <td>2026-08-20</td>
             </tr>
             
             <tr class="school-row" data-id="41" data-region="North Island">
                 <td>41</td>
                 <td>The Palmerston North Boys' High School</td>
+                <td>2027-03-17</td>
             </tr>
             
             <tr class="school-row" data-id="42" data-region="Auckland,North Island">
                 <td>42</td>
                 <td>The Papakura High School</td>
+                <td>2026-07-16</td>
             </tr>
             
             <tr class="school-row" data-id="43" data-region="Auckland,North Island">
                 <td>43</td>
                 <td>The Papatoetoe High School</td>
+                <td>2026-06-24</td>
             </tr>
             
             <tr class="school-row" data-id="44" data-region="Auckland,North Island">
                 <td>44</td>
                 <td>The Pukekohe High School</td>
+                <td>2026-09-11</td>
             </tr>
             
             <tr class="school-row" data-id="45" data-region="Christchurch,South Island">
                 <td>45</td>
                 <td>The Rangiora High School</td>
+                <td>2025-07-02</td>
             </tr>
             
             <tr class="school-row" data-id="46" data-region="Christchurch,South Island">
                 <td>46</td>
                 <td>The Riccarton High School</td>
+                <td>2025-05-30</td>
             </tr>
             
             <tr class="school-row" data-id="47" data-region="North Island">
                 <td>47</td>
                 <td>The Rotorua Boys' High School</td>
+                <td>2026-12-06</td>
             </tr>
             
             <tr class="school-row" data-id="48" data-region="North Island">
                 <td>48</td>
                 <td>The Rotorua Girls' High School</td>
+                <td>2026-05-20</td>
             </tr>
             
             <tr class="school-row" data-id="49" data-region="North Island">
                 <td>49</td>
                 <td>The Rototuna Junior High School</td>
+                <td>2026-08-26</td>
             </tr>
             
             <tr class="school-row" data-id="50" data-region="North Island">
                 <td>50</td>
                 <td>The Rototuna Senior High School</td>
+                <td>2026-09-16</td>
             </tr>
             
             <tr class="school-row" data-id="51" data-region="Christchurch,South Island">
                 <td>51</td>
                 <td>The Shirley Boys’ High School</td>
+                <td>2026-02-10</td>
             </tr>
             
             <tr class="school-row" data-id="52" data-region="South Island">
                 <td>52</td>
                 <td>The South Otago High School</td>
+                <td>2027-03-21</td>
             </tr>
             
             <tr class="school-row" data-id="53" data-region="South Island">
                 <td>53</td>
                 <td>The Southland Boys' High School</td>
+                <td>2026-11-18</td>
             </tr>
             
             <tr class="school-row" data-id="54" data-region="South Island">
                 <td>54</td>
                 <td>The Southland Girls' High School</td>
+                <td>2025-09-16</td>
             </tr>
             
             <tr class="school-row" data-id="55" data-region="North Island">
                 <td>55</td>
                 <td>The Tamatea High School</td>
+                <td>2026-01-27</td>
             </tr>
             
             <tr class="school-row" data-id="56" data-region="North Island">
                 <td>56</td>
                 <td>The Taumarunui High School</td>
+                <td>2026-09-16</td>
             </tr>
             
             <tr class="school-row" data-id="57" data-region="North Island">
                 <td>57</td>
                 <td>The Thames High School</td>
+                <td>2027-01-14</td>
             </tr>
             
             <tr class="school-row" data-id="58" data-region="South Island">
                 <td>58</td>
                 <td>The Timaru Girls' High School</td>
+                <td>2026-12-17</td>
             </tr>
             
             <tr class="school-row" data-id="59" data-region="South Island">
                 <td>59</td>
                 <td>The Tokomairiro High School</td>
+                <td>2027-02-14</td>
             </tr>
             
             <tr class="school-row" data-id="60" data-region="Auckland,North Island">
                 <td>60</td>
                 <td>The Waiheke High School</td>
+                <td>2027-02-14</td>
             </tr>
             
             <tr class="school-row" data-id="61" data-region="South Island">
                 <td>61</td>
                 <td>The Waimate High School</td>
+                <td>2026-11-28</td>
             </tr>
             
             <tr class="school-row" data-id="62" data-region="North Island">
                 <td>62</td>
                 <td>The Wainuiomata High School</td>
+                <td>2026-05-07</td>
             </tr>
             
             <tr class="school-row" data-id="63" data-region="South Island">
                 <td>63</td>
                 <td>The Waitaki Boys' High School</td>
+                <td>2026-12-18</td>
             </tr>
             
             <tr class="school-row" data-id="64" data-region="South Island">
                 <td>64</td>
                 <td>The Waitaki Girls' High School</td>
+                <td>2025-12-03</td>
             </tr>
             
             <tr class="school-row" data-id="65" data-region="South Island">
                 <td>65</td>
                 <td>The Wakatipu High School</td>
+                <td>2027-05-02</td>
             </tr>
             
             <tr class="school-row" data-id="66" data-region="North Island">
                 <td>66</td>
                 <td>The Western Heights High School</td>
+                <td>2027-02-05</td>
             </tr>
             
             <tr class="school-row" data-id="67" data-region="Auckland,North Island">
                 <td>67</td>
                 <td>The Westlake Boys High School</td>
+                <td>2026-07-04</td>
             </tr>
             
             <tr class="school-row" data-id="68" data-region="Auckland,North Island">
                 <td>68</td>
                 <td>The Westlake Girls' High School</td>
+                <td>2026-08-05</td>
             </tr>
             
             <tr class="school-row" data-id="69" data-region="South Island">
                 <td>69</td>
                 <td>The Westland High School</td>
+                <td>2026-11-13</td>
             </tr>
             
             <tr class="school-row" data-id="70" data-region="North Island">
                 <td>70</td>
                 <td>The Whakatane High School</td>
+                <td>2026-11-17</td>
             </tr>
             
             <tr class="school-row" data-id="71" data-region="North Island">
                 <td>71</td>
                 <td>The Whangārei Boys' High School</td>
+                <td>2026-07-24</td>
             </tr>
             
             <tr class="school-row" data-id="72" data-region="North Island">
                 <td>72</td>
                 <td>The Whangārei Girls’ High School</td>
+                <td>2026-11-06</td>
             </tr>
             
         </table>
@@ -691,7 +760,7 @@
 
         // Store markers
         var markers = {};
-        var schools = [{"employerName": "The Auckland Seventh-Day Adventist High School", "latitude": -36.8796, "longitude": 174.8557, "region": ["Auckland", "North Island"], "serialNo": 1}, {"employerName": "The Avonside Girls\u0027 High School", "latitude": -43.5209, "longitude": 172.6607, "region": ["Christchurch", "South Island"], "serialNo": 2}, {"employerName": "The Bayfield High School", "latitude": -45.8709, "longitude": 170.4997, "region": ["South Island"], "serialNo": 3}, {"employerName": "The Buller High School", "latitude": -41.7922, "longitude": 171.6023, "region": ["South Island"], "serialNo": 4}, {"employerName": "The Burnside High School", "latitude": -43.5065, "longitude": 172.5759, "region": ["Christchurch", "South Island"], "serialNo": 5}, {"employerName": "The Cambridge High School", "latitude": -37.8911, "longitude": 175.4672, "region": ["North Island"], "serialNo": 6}, {"employerName": "The Christchurch Boys\u0027 High School", "latitude": -43.5247, "longitude": 172.6084, "region": ["Christchurch", "South Island"], "serialNo": 7}, {"employerName": "The Christchurch Girls\u0027 High School", "latitude": -43.5249, "longitude": 172.6173, "region": ["Christchurch", "South Island"], "serialNo": 8}, {"employerName": "The Darfield High School", "latitude": -43.4897, "longitude": 172.1112, "region": ["Christchurch", "South Island"], "serialNo": 9}, {"employerName": "The Dargaville High School", "latitude": -35.9401, "longitude": 173.8684, "region": ["North Island"], "serialNo": 10}, {"employerName": "The Dunstan High School", "latitude": -45.0302, "longitude": 169.2801, "region": ["South Island"], "serialNo": 11}, {"employerName": "The Feilding High School", "latitude": -40.2251, "longitude": 175.5651, "region": ["North Island"], "serialNo": 12}, {"employerName": "The Fraser High School", "latitude": -37.7912, "longitude": 175.2793, "region": ["North Island"], "serialNo": 13}, {"employerName": "The Freyberg High School", "latitude": -40.3567, "longitude": 175.6098, "region": ["North Island"], "serialNo": 14}, {"employerName": "The Geraldine High School", "latitude": -44.0912, "longitude": 171.2901, "region": ["South Island"], "serialNo": 15}, {"employerName": "The Gisborne Girls\u0027 High School", "latitude": -38.6633, "longitude": 178.0251, "region": ["North Island"], "serialNo": 16}, {"employerName": "The Green Bay High School", "latitude": -36.9282, "longitude": 174.6768, "region": ["Auckland", "North Island"], "serialNo": 17}, {"employerName": "The Greymouth High School", "latitude": -42.4504, "longitude": 171.2107, "region": ["South Island"], "serialNo": 18}, {"employerName": "The Hamilton Boys\u0027 High School", "latitude": -37.7842, "longitude": 175.2901, "region": ["North Island"], "serialNo": 19}, {"employerName": "The Hamilton Girls\u0027 High School", "latitude": -37.7898, "longitude": 175.2805, "region": ["North Island"], "serialNo": 20}, {"employerName": "The Hastings Girls\u2019 High School", "latitude": -39.6412, "longitude": 176.8427, "region": ["North Island"], "serialNo": 21}, {"employerName": "The Henderson High School", "latitude": -36.8737, "longitude": 174.6266, "region": ["Auckland", "North Island"], "serialNo": 22}, {"employerName": "The Hillmorton High School", "latitude": -43.5512, "longitude": 172.5843, "region": ["Christchurch", "South Island"], "serialNo": 23}, {"employerName": "The Hornby High School", "latitude": -43.5401, "longitude": 172.5278, "region": ["Christchurch", "South Island"], "serialNo": 24}, {"employerName": "The Hutt Valley High School", "latitude": -41.21, "longitude": 174.91, "region": ["North Island"], "serialNo": 25}, {"employerName": "The James Cook High School", "latitude": -37.0522, "longitude": 174.9287, "region": ["Auckland", "North Island"], "serialNo": 26}, {"employerName": "The John Paul II High School", "latitude": -42.4509, "longitude": 171.2102, "region": ["South Island"], "serialNo": 27}, {"employerName": "The Kamo High School", "latitude": -35.6867, "longitude": 174.3012, "region": ["North Island"], "serialNo": 28}, {"employerName": "The Karam\u016b High School", "latitude": -39.6389, "longitude": 176.8675, "region": ["North Island"], "serialNo": 29}, {"employerName": "The Kelston Boys\u0027 High School", "latitude": -36.9048, "longitude": 174.6657, "region": ["Auckland", "North Island"], "serialNo": 30}, {"employerName": "The Kerikeri High School", "latitude": -35.2268, "longitude": 173.9474, "region": ["North Island"], "serialNo": 31}, {"employerName": "The Logan Park High School", "latitude": -45.8632, "longitude": 170.5103, "region": ["South Island"], "serialNo": 32}, {"employerName": "The Manurewa High School", "latitude": -37.0276, "longitude": 174.8939, "region": ["Auckland", "North Island"], "serialNo": 33}, {"employerName": "The Massey High School", "latitude": -36.8421, "longitude": 174.6117, "region": ["Auckland", "North Island"], "serialNo": 34}, {"employerName": "The Motueka High School", "latitude": -41.1124, "longitude": 173.0098, "region": ["South Island"], "serialNo": 35}, {"employerName": "The Mountainview High School", "latitude": -44.3992, "longitude": 171.2456, "region": ["South Island"], "serialNo": 36}, {"employerName": "The Napier Girls\u0027 High School", "latitude": -39.4876, "longitude": 176.9123, "region": ["North Island"], "serialNo": 37}, {"employerName": "The New Plymouth Boys\u0027 High School", "latitude": -39.0582, "longitude": 174.0802, "region": ["North Island"], "serialNo": 38}, {"employerName": "The Onehunga High School", "latitude": -36.9156, "longitude": 174.7838, "region": ["Auckland", "North Island"], "serialNo": 39}, {"employerName": "The Otamatea High School", "latitude": -36.1333, "longitude": 174.3167, "region": ["North Island"], "serialNo": 40}, {"employerName": "The Palmerston North Boys\u0027 High School", "latitude": -40.3496, "longitude": 175.6071, "region": ["North Island"], "serialNo": 41}, {"employerName": "The Papakura High School", "latitude": -37.0676, "longitude": 174.9439, "region": ["Auckland", "North Island"], "serialNo": 42}, {"employerName": "The Papatoetoe High School", "latitude": -36.9752, "longitude": 174.8647, "region": ["Auckland", "North Island"], "serialNo": 43}, {"employerName": "The Pukekohe High School", "latitude": -37.2011, "longitude": 174.9047, "region": ["Auckland", "North Island"], "serialNo": 44}, {"employerName": "The Rangiora High School", "latitude": -43.3043, "longitude": 172.5928, "region": ["Christchurch", "South Island"], "serialNo": 45}, {"employerName": "The Riccarton High School", "latitude": -43.5342, "longitude": 172.5739, "region": ["Christchurch", "South Island"], "serialNo": 46}, {"employerName": "The Rotorua Boys\u0027 High School", "latitude": -38.1368, "longitude": 176.2512, "region": ["North Island"], "serialNo": 47}, {"employerName": "The Rotorua Girls\u0027 High School", "latitude": -38.1412, "longitude": 176.2457, "region": ["North Island"], "serialNo": 48}, {"employerName": "The Rototuna Junior High School", "latitude": -37.7356, "longitude": 175.2756, "region": ["North Island"], "serialNo": 49}, {"employerName": "The Rototuna Senior High School", "latitude": -37.7356, "longitude": 175.2756, "region": ["North Island"], "serialNo": 50}, {"employerName": "The Shirley Boys\u2019 High School", "latitude": -43.5102, "longitude": 172.6597, "region": ["Christchurch", "South Island"], "serialNo": 51}, {"employerName": "The South Otago High School", "latitude": -46.2437, "longitude": 169.7556, "region": ["South Island"], "serialNo": 52}, {"employerName": "The Southland Boys\u0027 High School", "latitude": -46.4132, "longitude": 168.3536, "region": ["South Island"], "serialNo": 53}, {"employerName": "The Southland Girls\u0027 High School", "latitude": -46.4097, "longitude": 168.3531, "region": ["South Island"], "serialNo": 54}, {"employerName": "The Tamatea High School", "latitude": -39.5087, "longitude": 176.8701, "region": ["North Island"], "serialNo": 55}, {"employerName": "The Taumarunui High School", "latitude": -38.8833, "longitude": 175.2667, "region": ["North Island"], "serialNo": 56}, {"employerName": "The Thames High School", "latitude": -37.1386, "longitude": 175.5362, "region": ["North Island"], "serialNo": 57}, {"employerName": "The Timaru Girls\u0027 High School", "latitude": -44.3972, "longitude": 171.2451, "region": ["South Island"], "serialNo": 58}, {"employerName": "The Tokomairiro High School", "latitude": -46.1167, "longitude": 169.9833, "region": ["South Island"], "serialNo": 59}, {"employerName": "The Waiheke High School", "latitude": -36.8028, "longitude": 175.0756, "region": ["Auckland", "North Island"], "serialNo": 60}, {"employerName": "The Waimate High School", "latitude": -44.7351, "longitude": 171.0578, "region": ["South Island"], "serialNo": 61}, {"employerName": "The Wainuiomata High School", "latitude": -41.2623, "longitude": 174.9487, "region": ["North Island"], "serialNo": 62}, {"employerName": "The Waitaki Boys\u0027 High School", "latitude": -45.0875, "longitude": 170.9701, "region": ["South Island"], "serialNo": 63}, {"employerName": "The Waitaki Girls\u0027 High School", "latitude": -45.0878, "longitude": 170.9703, "region": ["South Island"], "serialNo": 64}, {"employerName": "The Wakatipu High School", "latitude": -45.0311, "longitude": 168.6626, "region": ["South Island"], "serialNo": 65}, {"employerName": "The Western Heights High School", "latitude": -38.1213, "longitude": 176.2248, "region": ["North Island"], "serialNo": 66}, {"employerName": "The Westlake Boys High School", "latitude": -36.7819, "longitude": 174.7497, "region": ["Auckland", "North Island"], "serialNo": 67}, {"employerName": "The Westlake Girls\u0027 High School", "latitude": -36.7812, "longitude": 174.7501, "region": ["Auckland", "North Island"], "serialNo": 68}, {"employerName": "The Westland High School", "latitude": -42.7147, "longitude": 170.9639, "region": ["South Island"], "serialNo": 69}, {"employerName": "The Whakatane High School", "latitude": -37.9575, "longitude": 176.9854, "region": ["North Island"], "serialNo": 70}, {"employerName": "The Whang\u0101rei Boys\u0027 High School", "latitude": -35.7245, "longitude": 174.3145, "region": ["North Island"], "serialNo": 71}, {"employerName": "The Whang\u0101rei Girls\u2019 High School", "latitude": -35.7251, "longitude": 174.3237, "region": ["North Island"], "serialNo": 72}];
+        var schools = [{"Employer Name": "The Auckland Seventh-Day Adventist High School Board", "Expiry Date": "2026-02-11", "ID": 1, "Trading Name": "Auckland Seventh-Day Adventist High School", "employerName": "The Auckland Seventh-Day Adventist High School", "latitude": -36.8796, "longitude": 174.8557, "region": ["Auckland", "North Island"], "serialNo": 1}, {"Employer Name": "The Avonside Girls\u0027 High School Board", "Expiry Date": "2027-02-14", "ID": 2, "Trading Name": "Avonside Girls\u0027 High School", "employerName": "The Avonside Girls\u0027 High School", "latitude": -43.5209, "longitude": 172.6607, "region": ["Christchurch", "South Island"], "serialNo": 2}, {"Employer Name": "The Bayfield High School Board", "Expiry Date": "2027-05-16", "ID": 3, "Trading Name": "Bayfield High School", "employerName": "The Bayfield High School", "latitude": -45.8709, "longitude": 170.4997, "region": ["South Island"], "serialNo": 3}, {"Employer Name": "The Buller High School Board", "Expiry Date": "2026-07-02", "ID": 4, "Trading Name": "Buller High School", "employerName": "The Buller High School", "latitude": -41.7922, "longitude": 171.6023, "region": ["South Island"], "serialNo": 4}, {"Employer Name": "The Burnside High School Board", "Expiry Date": "2025-12-02", "ID": 5, "Trading Name": "Burnside High School", "employerName": "The Burnside High School", "latitude": -43.5065, "longitude": 172.5759, "region": ["Christchurch", "South Island"], "serialNo": 5}, {"Employer Name": "The Cambridge High School Board", "Expiry Date": "2026-07-19", "ID": 6, "Trading Name": "Cambridge High School", "employerName": "The Cambridge High School", "latitude": -37.8911, "longitude": 175.4672, "region": ["North Island"], "serialNo": 6}, {"Employer Name": "The Christchurch Boys\u0027 High School Board", "Expiry Date": "2027-04-17", "ID": 7, "Trading Name": "Christchurch Boys\u0027 High School", "employerName": "The Christchurch Boys\u0027 High School", "latitude": -43.5247, "longitude": 172.6084, "region": ["Christchurch", "South Island"], "serialNo": 7}, {"Employer Name": "The Christchurch Girls\u0027 High School -Te Kura o Hine Waiora Board", "Expiry Date": "2025-12-06", "ID": 8, "Trading Name": "Christchurch Girls\u0027 High School -Te Kura o Hine Waiora", "employerName": "The Christchurch Girls\u0027 High School", "latitude": -43.5249, "longitude": 172.6173, "region": ["Christchurch", "South Island"], "serialNo": 8}, {"Employer Name": "The Darfield High School Board", "Expiry Date": "2027-02-06", "ID": 9, "Trading Name": "Darfield High School", "employerName": "The Darfield High School", "latitude": -43.4897, "longitude": 172.1112, "region": ["Christchurch", "South Island"], "serialNo": 9}, {"Employer Name": "The Dargaville High School Board", "Expiry Date": "2027-04-08", "ID": 10, "Trading Name": "Dargaville High School", "employerName": "The Dargaville High School", "latitude": -35.9401, "longitude": 173.8684, "region": ["North Island"], "serialNo": 10}, {"Employer Name": "The Dunstan High School Board", "Expiry Date": "2026-12-19", "ID": 1, "Trading Name": "Dunstan High School", "employerName": "The Dunstan High School", "latitude": -45.0302, "longitude": 169.2801, "region": ["South Island"], "serialNo": 11}, {"Employer Name": "The Feilding High School Board", "Expiry Date": "2026-11-08", "ID": 2, "Trading Name": "Feilding High School", "employerName": "The Feilding High School", "latitude": -40.2251, "longitude": 175.5651, "region": ["North Island"], "serialNo": 12}, {"Employer Name": "The Fraser High School Board", "Expiry Date": "2025-07-04", "ID": 3, "Trading Name": "Fraser High School", "employerName": "The Fraser High School", "latitude": -37.7912, "longitude": 175.2793, "region": ["North Island"], "serialNo": 13}, {"Employer Name": "The Freyberg High School Board", "Expiry Date": "2027-05-12", "ID": 4, "Trading Name": "Freyberg High School", "employerName": "The Freyberg High School", "latitude": -40.3567, "longitude": 175.6098, "region": ["North Island"], "serialNo": 14}, {"Employer Name": "The Geraldine High School Board", "Expiry Date": "2026-11-13", "ID": 5, "Trading Name": "Geraldine High School", "employerName": "The Geraldine High School", "latitude": -44.0912, "longitude": 171.2901, "region": ["South Island"], "serialNo": 15}, {"Employer Name": "The Gisborne Girls\u0027 High School Board of Trustees", "Expiry Date": "2025-05-25", "ID": 6, "Trading Name": null, "employerName": "The Gisborne Girls\u0027 High School", "latitude": -38.6633, "longitude": 178.0251, "region": ["North Island"], "serialNo": 16}, {"Employer Name": "The Green Bay High School Board", "Expiry Date": "2027-01-13", "ID": 7, "Trading Name": "Green Bay High School", "employerName": "The Green Bay High School", "latitude": -36.9282, "longitude": 174.6768, "region": ["Auckland", "North Island"], "serialNo": 17}, {"Employer Name": "The Greymouth High School Board", "Expiry Date": "2026-08-27", "ID": 8, "Trading Name": "Greymouth High School", "employerName": "The Greymouth High School", "latitude": -42.4504, "longitude": 171.2107, "region": ["South Island"], "serialNo": 18}, {"Employer Name": "The Hamilton Boys\u0027 High School Board", "Expiry Date": "2026-09-30", "ID": 9, "Trading Name": "Hamilton Boys\u0027 High School", "employerName": "The Hamilton Boys\u0027 High School", "latitude": -37.7842, "longitude": 175.2901, "region": ["North Island"], "serialNo": 19}, {"Employer Name": "The Hamilton Girls\u0027 High School Board", "Expiry Date": "2027-01-31", "ID": 10, "Trading Name": "Hamilton Girls\u0027 High School", "employerName": "The Hamilton Girls\u0027 High School", "latitude": -37.7898, "longitude": 175.2805, "region": ["North Island"], "serialNo": 20}, {"Employer Name": "The Hastings Girls\u2019 High School \u2013 Ng\u0101 Rau Huia o \u0100kina Board", "Expiry Date": "2027-01-27", "ID": 1, "Trading Name": "Hastings Girls\u0027 High School", "employerName": "The Hastings Girls\u2019 High School", "latitude": -39.6412, "longitude": 176.8427, "region": ["North Island"], "serialNo": 21}, {"Employer Name": "The Henderson High School Board", "Expiry Date": "2027-04-01", "ID": 2, "Trading Name": "Henderson High School", "employerName": "The Henderson High School", "latitude": -36.8737, "longitude": 174.6266, "region": ["Auckland", "North Island"], "serialNo": 22}, {"Employer Name": "The Hillmorton High School Board", "Expiry Date": "2026-10-31", "ID": 3, "Trading Name": "Hillmorton High School", "employerName": "The Hillmorton High School", "latitude": -43.5512, "longitude": 172.5843, "region": ["Christchurch", "South Island"], "serialNo": 23}, {"Employer Name": "The Hornby High School Board", "Expiry Date": "2025-06-23", "ID": 4, "Trading Name": null, "employerName": "The Hornby High School", "latitude": -43.5401, "longitude": 172.5278, "region": ["Christchurch", "South Island"], "serialNo": 24}, {"Employer Name": "The Hutt Valley High School Board", "Expiry Date": "2026-07-22", "ID": 5, "Trading Name": "Hutt Valley High School", "employerName": "The Hutt Valley High School", "latitude": -41.21, "longitude": 174.91, "region": ["North Island"], "serialNo": 25}, {"Employer Name": "The James Cook High School Board", "Expiry Date": "2026-11-13", "ID": 6, "Trading Name": "James Cook High School", "employerName": "The James Cook High School", "latitude": -37.0522, "longitude": 174.9287, "region": ["Auckland", "North Island"], "serialNo": 26}, {"Employer Name": "The John Paul II High School Board", "Expiry Date": "2027-03-25", "ID": 7, "Trading Name": "John Paul II High School", "employerName": "The John Paul II High School", "latitude": -42.4509, "longitude": 171.2102, "region": ["South Island"], "serialNo": 27}, {"Employer Name": "The Kamo High School Board", "Expiry Date": "2026-11-07", "ID": 8, "Trading Name": "Kamo High School", "employerName": "The Kamo High School", "latitude": -35.6867, "longitude": 174.3012, "region": ["North Island"], "serialNo": 28}, {"Employer Name": "The Karam\u016b High School Board", "Expiry Date": "2026-06-23", "ID": 9, "Trading Name": "Karam\u016b High School", "employerName": "The Karam\u016b High School", "latitude": -39.6389, "longitude": 176.8675, "region": ["North Island"], "serialNo": 29}, {"Employer Name": "The Kelston Boys\u0027 High School Board", "Expiry Date": "2026-09-03", "ID": 10, "Trading Name": "Kelston Boys\u0027 High School", "employerName": "The Kelston Boys\u0027 High School", "latitude": -36.9048, "longitude": 174.6657, "region": ["Auckland", "North Island"], "serialNo": 30}, {"Employer Name": "The Kerikeri High School Board", "Expiry Date": "2026-05-05", "ID": 1, "Trading Name": "Kerikeri High School", "employerName": "The Kerikeri High School", "latitude": -35.2268, "longitude": 173.9474, "region": ["North Island"], "serialNo": 31}, {"Employer Name": "The Logan Park High School Board", "Expiry Date": "2025-11-20", "ID": 2, "Trading Name": "Logan Park High School", "employerName": "The Logan Park High School", "latitude": -45.8632, "longitude": 170.5103, "region": ["South Island"], "serialNo": 32}, {"Employer Name": "The Manurewa High School Board", "Expiry Date": "2026-03-15", "ID": 3, "Trading Name": "Manurewa High School", "employerName": "The Manurewa High School", "latitude": -37.0276, "longitude": 174.8939, "region": ["Auckland", "North Island"], "serialNo": 33}, {"Employer Name": "The Massey High School Board", "Expiry Date": "2026-12-29", "ID": 4, "Trading Name": "Massey High School", "employerName": "The Massey High School", "latitude": -36.8421, "longitude": 174.6117, "region": ["Auckland", "North Island"], "serialNo": 34}, {"Employer Name": "The Motueka High School Board", "Expiry Date": "2025-12-09", "ID": 5, "Trading Name": "Motueka High School", "employerName": "The Motueka High School", "latitude": -41.1124, "longitude": 173.0098, "region": ["South Island"], "serialNo": 35}, {"Employer Name": "The Mountainview High School Board", "Expiry Date": "2026-11-06", "ID": 6, "Trading Name": "Mountainview High School", "employerName": "The Mountainview High School", "latitude": -44.3992, "longitude": 171.2456, "region": ["South Island"], "serialNo": 36}, {"Employer Name": "The Napier Girls\u0027 High School Board", "Expiry Date": "2026-09-03", "ID": 7, "Trading Name": "Napier Girls\u0027 High School", "employerName": "The Napier Girls\u0027 High School", "latitude": -39.4876, "longitude": 176.9123, "region": ["North Island"], "serialNo": 37}, {"Employer Name": "The New Plymouth Boys\u0027 High School Board", "Expiry Date": "2026-12-12", "ID": 8, "Trading Name": "New Plymouth Boys\u0027 High School", "employerName": "The New Plymouth Boys\u0027 High School", "latitude": -39.0582, "longitude": 174.0802, "region": ["North Island"], "serialNo": 38}, {"Employer Name": "The Onehunga High School Board", "Expiry Date": "2026-06-05", "ID": 9, "Trading Name": "Onehunga High School", "employerName": "The Onehunga High School", "latitude": -36.9156, "longitude": 174.7838, "region": ["Auckland", "North Island"], "serialNo": 39}, {"Employer Name": "The Otamatea High School Board", "Expiry Date": "2026-08-20", "ID": 10, "Trading Name": "Otamatea High School", "employerName": "The Otamatea High School", "latitude": -36.1333, "longitude": 174.3167, "region": ["North Island"], "serialNo": 40}, {"Employer Name": "The Palmerston North Boys\u0027 High School Board", "Expiry Date": "2027-03-17", "ID": 1, "Trading Name": "Palmerston North Boys\u0027 High School", "employerName": "The Palmerston North Boys\u0027 High School", "latitude": -40.3496, "longitude": 175.6071, "region": ["North Island"], "serialNo": 41}, {"Employer Name": "The Papakura High School Board", "Expiry Date": "2026-07-16", "ID": 2, "Trading Name": "Papakura High School", "employerName": "The Papakura High School", "latitude": -37.0676, "longitude": 174.9439, "region": ["Auckland", "North Island"], "serialNo": 42}, {"Employer Name": "The Papatoetoe High School Board", "Expiry Date": "2026-06-24", "ID": 3, "Trading Name": "Papatoetoe High School", "employerName": "The Papatoetoe High School", "latitude": -36.9752, "longitude": 174.8647, "region": ["Auckland", "North Island"], "serialNo": 43}, {"Employer Name": "The Pukekohe High School Board", "Expiry Date": "2026-09-11", "ID": 4, "Trading Name": "Pukekohe High School", "employerName": "The Pukekohe High School", "latitude": -37.2011, "longitude": 174.9047, "region": ["Auckland", "North Island"], "serialNo": 44}, {"Employer Name": "The Rangiora High School Board", "Expiry Date": "2025-07-02", "ID": 5, "Trading Name": "Rangiora High School", "employerName": "The Rangiora High School", "latitude": -43.3043, "longitude": 172.5928, "region": ["Christchurch", "South Island"], "serialNo": 45}, {"Employer Name": "The Riccarton High School Board", "Expiry Date": "2025-05-30", "ID": 6, "Trading Name": "Riccarton High School", "employerName": "The Riccarton High School", "latitude": -43.5342, "longitude": 172.5739, "region": ["Christchurch", "South Island"], "serialNo": 46}, {"Employer Name": "The Rotorua Boys\u0027 High School Board", "Expiry Date": "2026-12-06", "ID": 7, "Trading Name": "Rotorua Boys\u0027 High School", "employerName": "The Rotorua Boys\u0027 High School", "latitude": -38.1368, "longitude": 176.2512, "region": ["North Island"], "serialNo": 47}, {"Employer Name": "The Rotorua Girls\u0027 High School Board", "Expiry Date": "2026-05-20", "ID": 8, "Trading Name": "Rotorua Girls\u0027 High School", "employerName": "The Rotorua Girls\u0027 High School", "latitude": -38.1412, "longitude": 176.2457, "region": ["North Island"], "serialNo": 48}, {"Employer Name": "The Rototuna Junior High School Board", "Expiry Date": "2026-08-26", "ID": 9, "Trading Name": "Rototuna Junior High School", "employerName": "The Rototuna Junior High School", "latitude": -37.7356, "longitude": 175.2756, "region": ["North Island"], "serialNo": 49}, {"Employer Name": "The Rototuna Senior High School Board", "Expiry Date": "2026-09-16", "ID": 10, "Trading Name": "Rototuna Senior High School", "employerName": "The Rototuna Senior High School", "latitude": -37.7356, "longitude": 175.2756, "region": ["North Island"], "serialNo": 50}, {"Employer Name": "The Shirley Boys\u2019 High School - Ng\u0101 Tama o \u014cruapaeroa Board", "Expiry Date": "2026-02-10", "ID": 1, "Trading Name": "Shirley Boys\u2019 High School - Ng\u0101 Tama o \u014cruapaeroa", "employerName": "The Shirley Boys\u2019 High School", "latitude": -43.5102, "longitude": 172.6597, "region": ["Christchurch", "South Island"], "serialNo": 51}, {"Employer Name": "The South Otago High School Board", "Expiry Date": "2027-03-21", "ID": 2, "Trading Name": "South Otago High School", "employerName": "The South Otago High School", "latitude": -46.2437, "longitude": 169.7556, "region": ["South Island"], "serialNo": 52}, {"Employer Name": "The Southland Boys\u0027 High School Board", "Expiry Date": "2026-11-18", "ID": 3, "Trading Name": "Southland Boys\u0027 High School", "employerName": "The Southland Boys\u0027 High School", "latitude": -46.4132, "longitude": 168.3536, "region": ["South Island"], "serialNo": 53}, {"Employer Name": "The Southland Girls\u0027 High School Board", "Expiry Date": "2025-09-16", "ID": 4, "Trading Name": "Southland Girls\u0027 High School", "employerName": "The Southland Girls\u0027 High School", "latitude": -46.4097, "longitude": 168.3531, "region": ["South Island"], "serialNo": 54}, {"Employer Name": "The Tamatea High School Board", "Expiry Date": "2026-01-27", "ID": 5, "Trading Name": "Tamatea High School", "employerName": "The Tamatea High School", "latitude": -39.5087, "longitude": 176.8701, "region": ["North Island"], "serialNo": 55}, {"Employer Name": "The Taumarunui High School Board", "Expiry Date": "2026-09-16", "ID": 6, "Trading Name": "Taumarunui High School", "employerName": "The Taumarunui High School", "latitude": -38.8833, "longitude": 175.2667, "region": ["North Island"], "serialNo": 56}, {"Employer Name": "The Thames High School Board", "Expiry Date": "2027-01-14", "ID": 7, "Trading Name": "Thames High School", "employerName": "The Thames High School", "latitude": -37.1386, "longitude": 175.5362, "region": ["North Island"], "serialNo": 57}, {"Employer Name": "The Timaru Girls\u0027 High School Board", "Expiry Date": "2026-12-17", "ID": 8, "Trading Name": "Timaru Girls\u0027 High School", "employerName": "The Timaru Girls\u0027 High School", "latitude": -44.3972, "longitude": 171.2451, "region": ["South Island"], "serialNo": 58}, {"Employer Name": "The Tokomairiro High School Board", "Expiry Date": "2027-02-14", "ID": 9, "Trading Name": "Tokomairiro High School", "employerName": "The Tokomairiro High School", "latitude": -46.1167, "longitude": 169.9833, "region": ["South Island"], "serialNo": 59}, {"Employer Name": "The Waiheke High School Board", "Expiry Date": "2027-02-14", "ID": 10, "Trading Name": "Waiheke High School", "employerName": "The Waiheke High School", "latitude": -36.8028, "longitude": 175.0756, "region": ["Auckland", "North Island"], "serialNo": 60}, {"Employer Name": "The Waimate High School Board", "Expiry Date": "2026-11-28", "ID": 1, "Trading Name": "Waimate High School", "employerName": "The Waimate High School", "latitude": -44.7351, "longitude": 171.0578, "region": ["South Island"], "serialNo": 61}, {"Employer Name": "The Wainuiomata High School Board", "Expiry Date": "2026-05-07", "ID": 2, "Trading Name": "Wainuiomata High School", "employerName": "The Wainuiomata High School", "latitude": -41.2623, "longitude": 174.9487, "region": ["North Island"], "serialNo": 62}, {"Employer Name": "The Waitaki Boys\u0027 High School Board", "Expiry Date": "2026-12-18", "ID": 3, "Trading Name": "Waitaki Boys\u0027 High School", "employerName": "The Waitaki Boys\u0027 High School", "latitude": -45.0875, "longitude": 170.9701, "region": ["South Island"], "serialNo": 63}, {"Employer Name": "The Waitaki Girls\u0027 High School Board", "Expiry Date": "2025-12-03", "ID": 4, "Trading Name": "Waitaki Girls\u0027 High School", "employerName": "The Waitaki Girls\u0027 High School", "latitude": -45.0878, "longitude": 170.9703, "region": ["South Island"], "serialNo": 64}, {"Employer Name": "The Wakatipu High School Board", "Expiry Date": "2027-05-02", "ID": 5, "Trading Name": "Wakatipu High School", "employerName": "The Wakatipu High School", "latitude": -45.0311, "longitude": 168.6626, "region": ["South Island"], "serialNo": 65}, {"Employer Name": "The Western Heights High School Board", "Expiry Date": "2027-02-05", "ID": 6, "Trading Name": "Western Heights High School", "employerName": "The Western Heights High School", "latitude": -38.1213, "longitude": 176.2248, "region": ["North Island"], "serialNo": 66}, {"Employer Name": "The Westlake Boys High School Board", "Expiry Date": "2026-07-04", "ID": 7, "Trading Name": "Westlake Boys High School", "employerName": "The Westlake Boys High School", "latitude": -36.7819, "longitude": 174.7497, "region": ["Auckland", "North Island"], "serialNo": 67}, {"Employer Name": "The Westlake Girls\u0027 High School Board", "Expiry Date": "2026-08-05", "ID": 8, "Trading Name": "Westlake Girls\u0027 High School", "employerName": "The Westlake Girls\u0027 High School", "latitude": -36.7812, "longitude": 174.7501, "region": ["Auckland", "North Island"], "serialNo": 68}, {"Employer Name": "The Westland High School Board", "Expiry Date": "2026-11-13", "ID": 9, "Trading Name": "Westland High School", "employerName": "The Westland High School", "latitude": -42.7147, "longitude": 170.9639, "region": ["South Island"], "serialNo": 69}, {"Employer Name": "The Whakatane High School Board", "Expiry Date": "2026-11-17", "ID": 10, "Trading Name": "Whakatane High School", "employerName": "The Whakatane High School", "latitude": -37.9575, "longitude": 176.9854, "region": ["North Island"], "serialNo": 70}, {"Employer Name": "The Whang\u0101rei Boys\u0027 High School Board", "Expiry Date": "2026-07-24", "ID": 1, "Trading Name": "Whang\u0101rei Boys\u0027 High School", "employerName": "The Whang\u0101rei Boys\u0027 High School", "latitude": -35.7245, "longitude": 174.3145, "region": ["North Island"], "serialNo": 71}, {"Employer Name": "The Whang\u0101rei Girls\u2019 High School Board", "Expiry Date": "2026-11-06", "ID": 2, "Trading Name": "Whang\u0101rei Girls\u2019 High School", "employerName": "The Whang\u0101rei Girls\u2019 High School", "latitude": -35.7251, "longitude": 174.3237, "region": ["North Island"], "serialNo": 72}];
         schools.forEach(function(school) {
             if (school.latitude && school.longitude) {
                 var marker = L.marker([school.latitude, school.longitude])
