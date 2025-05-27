@@ -1,255 +1,475 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YiFan Wang - CV</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'tech-blue': '#1E40AF',
-                        'tech-dark': '#1F2937',
-                        'tech-accent': '#60A5FA',
-                    },
-                },
-            },
-        };
-    </script>
-    <style>
-        body {
-            scroll-behavior: smooth;
-        }
-
-        .section-toggle {
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .section-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease;
-        }
-
-        .section-content.open {
-            max-height: 2000px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YiFan Wang - CV</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts for Modern Typography -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Inter:wght@300;400;500&display=swap">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'tech-blue': '#1E40AF',
+            'tech-dark': '#1F2937',
+            'tech-accent': '#60A5FA',
+            'gray-light': '#F3F4F6',
+            'blue-pale': '#DBEAFE',
+            'blue-medium': '#93C5FD',
+            'gray-medium': '#D1D5DB',
+            'blue-darker': '#BFDBFE',
+            'sky-light': '#E0F7FA',
+            'sky-medium': '#B3E5FC',
+            'sky-dark': '#4FC3F7',
+          },
+          fontFamily: {
+            'poppins': ['Poppins', 'sans-serif'],
+            'inter': ['Inter', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    body {
+      scroll-behavior: smooth;
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(to bottom, #E0F7FA, #B3E5FC, #4FC3F7);
+      overflow-x: hidden;
+    }
+    .cv-card-wrapper {
+      position: relative;
+      max-width: 1024px;
+      margin: 0 auto;
+    }
+    .cv-card {
+      position: relative;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 2.5rem;
+      margin: 2rem auto;
+    }
+    .cv-card::after {
+      content: '';
+      position: absolute;
+      bottom: -20px;
+      left: 0;
+      width: 100%;
+      height: 40px;
+      background: url('https://www.transparenttextures.com/patterns/wave.png') repeat-x;
+      background-size: 100px 40px;
+      animation: wave 10s linear infinite;
+      opacity: 0.5;
+    }
+    @keyframes wave {
+      0% { background-position: 0 0; }
+      100% { background-position: 100px 0; }
+    }
+    .cloud {
+      position: absolute;
+      width: 100px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.4);
+      border-radius: 50px;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+      animation: floatCloud 15s linear infinite;
+      opacity: 0;
+    }
+    .cloud::before, .cloud::after {
+      content: '';
+      position: absolute;
+      background: rgba(255, 255, 255, 0.4);
+      border-radius: 50%;
+    }
+    .cloud::before {
+      width: 60px;
+      height: 60px;
+      top: -30px;
+      left: 20px;
+    }
+    .cloud::after {
+      width: 40px;
+      height: 40px;
+      top: -20px;
+      left: 60px;
+    }
+    .cloud:nth-child(1) { top: 5%; left: -150px; animation-delay: 0s; width: 120px; height: 50px; opacity: 0.7; }
+    .cloud:nth-child(2) { top: 15%; left: -150px; animation-delay: 2s; width: 90px; height: 35px; opacity: 0.5; }
+    .cloud:nth-child(3) { top: 25%; left: -150px; animation-delay: 4s; width: 110px; height: 45px; opacity: 0.6; }
+    .cloud:nth-child(4) { top: 40%; left: -150px; animation-delay: 6s; width: 80px; height: 30px; opacity: 0.4; }
+    .cloud:nth-child(5) { top: 50%; left: -150px; animation-delay: 8s; width: 100px; height: 40px; opacity: 0.7; }
+    .cloud:nth-child(6) { top: 65%; left: -150px; animation-delay: 10s; width: 95px; height: 38px; opacity: 0.5; }
+    .cloud:nth-child(7) { top: 75%; left: -150px; animation-delay: 12s; width: 85px; height: 32px; opacity: 0.6; }
+    .cloud:nth-child(8) { top: 85%; left: -150px; animation-delay: 14s; width: 115px; height: 48px; opacity: 0.4; }
+    @keyframes floatCloud {
+      0% { left: -150px; opacity: 0; }
+      10% { opacity: 0.8; }
+      90% { opacity: 0.8; }
+      100% { left: 110%; opacity: 0; }
+    }
+    .seagull {
+      position: absolute;
+      width: 30px;
+      height: 20px;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%231E40AF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12s3-3 6-3 6 3 6 3-3 3-6 3-6-3-6-3z"/><path d="M15 12l6-3m0 6l-6-3"/></svg>') no-repeat center;
+      background-size: contain;
+      animation: flySeagull 20s linear infinite;
+    }
+    .seagull:nth-child(1) { top: 10%; left: -50px; animation-delay: 0s; }
+    .seagull:nth-child(2) { top: 30%; left: -50px; animation-delay: 7s; }
+    .seagull:nth-child(3) { top: 60%; left: -50px; animation-delay: 14s; }
+    @keyframes flySeagull {
+      0% { left: -50px; transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+      100% { left: 110%; transform: translateY(0); }
+    }
+    .section-toggle {
+      cursor: pointer;
+      transition: all 0.3s ease;
+      color: #1E40AF;
+      padding-bottom: 2px;
+    }
+    .section-toggle:hover {
+      color: #60A5FA;
+      transform: translateX(5px);
+    }
+    .section-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+    .section-content.open {
+      max-height: 2000px;
+    }
+    .toggle-all-btn {
+      background: linear-gradient(to right, #D1D5DB, #BFDBFE, #60A5FA);
+      transition: all 0.3s ease;
+      border: 1px solid #60A5FA;
+      box-shadow: 0 0 10px rgba(96, 165, 250, 0.3);
+    }
+    .toggle-all-btn:hover {
+      background: linear-gradient(to right, #60A5FA, #BFDBFE, #D1D5DB);
+      box-shadow: 0 0 15px rgba(96, 165, 250, 0.5);
+    }
+    a {
+      transition: color 0.3s ease;
+      color: #1E40AF;
+    }
+    a:hover {
+      color: #60A5FA;
+    }
+    .fade-in {
+      opacity: 0;
+      animation: fadeIn 1s ease-in forwards;
+    }
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+    @media (max-width: 640px) {
+      .cv-card {
+        padding: 1.5rem;
+        margin: 1rem;
+      }
+      .cv-card::after {
+        height: 30px;
+        background-size: 80px 30px;
+      }
+      .cloud {
+        width: 80px;
+        height: 30px;
+      }
+      .cloud::before {
+        width: 50px;
+        height: 50px;
+        top: -25px;
+        left: 15px;
+      }
+      .cloud::after {
+        width: 30px;
+        height: 30px;
+        top: -15px;
+        left: 45px;
+      }
+      .seagull {
+        width: 20px;
+        height: 15px;
+      }
+      h2 {
+        font-size: 2rem;
+      }
+      h3 {
+        font-size: 1.25rem;
+      }
+    }
+  </style>
 </head>
-<body class="bg-gray-100 dark:bg-tech-dark text-gray-900 dark:text-gray-100 transition-colors duration-300">
-<!-- Navigation -->
-<nav class="fixed top-0 w-full bg-white dark:bg-gray-800 shadow-lg z-50">
+<body class="bg-gradient-to-b from-sky-light to-sky-dark text-gray-900 transition-colors duration-300">
+  <!-- Navigation -->
+  <nav class="fixed top-0 w-full bg-white shadow-lg z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-        <h1 class="text-2xl font-bold text-tech-blue">YiFan Wang</h1>
-        <div class="space-x-4">
-            <a href="index.html#home" class="hover:text-tech-accent">Home</a>
-            <a href="#cv" class="hover:text-tech-accent">CV</a>
-            <a href="index.html#projects" class="hover:text-tech-accent">Projects</a>
-            <a href="index.html#contact" class="hover:text-tech-accent">Contact</a>
-            <button id="theme-toggle" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M10 2a8 8 0 100 16 8 8 0 000-16zm0 14a6 6 0 110-12 6 6 0 010 12z"/>
-                </svg>
-            </button>
+      <h1 class="text-2xl font-bold text-tech-blue font-poppins">YiFan Wang</h1>
+      <div class="flex items-center">
+        <div class="hidden md:flex space-x-4 font-inter">
+          <a href="index.html#home" class="hover:text-tech-accent text-tech-blue">Home</a>
+          <a href="#cv" class="hover:text-tech-accent text-tech-blue">CV</a>
+          <a href="index.html#projects" class="hover:text-tech-accent text-tech-blue">Projects</a>
+          <a href="index.html#contact" class="hover:text-tech-accent text-tech-blue">Contact</a>
         </div>
+        <button id="theme-toggle" class="p-2 rounded-full bg-gray-200 ml-4">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10 2a8 8 0 100 16 8 8 0 000-16zm0 14a6 6 0 110-12 6 6 0 010 12z" />
+          </svg>
+        </button>
+        <button id="menu-toggle" class="md:hidden p-2">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+      <!-- Mobile Menu -->
+      <div id="mobile-menu" class="hidden md:hidden absolute top-16 left-0 w-full bg-white shadow-lg">
+        <div class="flex flex-col space-y-4 p-4 font-inter">
+          <a href="index.html#home" class="hover:text-tech-accent text-tech-blue">Home</a>
+          <a href="#cv" class="hover:text-tech-accent text-tech-blue">CV</a>
+          <a href="index.html#projects" class="hover:text-tech-accent text-tech-blue">Projects</a>
+          <a href="index.html#contact" class="hover:text-tech-accent text-tech-blue">Contact</a>
+        </div>
+      </div>
     </div>
-</nav>
+  </nav>
 
-<!-- CV Section -->
-<section id="cv" class="py-16 px-4 sm:px-6 lg:px-8 bg-gray-100 dark:bg-tech-dark">
-    <div class="max-w-4xl mx-auto">
-        <h2 class="text-3xl font-bold text-center mb-8">Curriculum Vitae</h2>
+  <!-- CV Section -->
+  <section id="cv" class="py-16 px-4 sm:px-6 lg:px-8">
+    <div class="cv-card-wrapper">
+      <div class="max-w-4xl mx-auto cv-card fade-in">
+        <h2 class="text-4xl font-bold text-center mb-12 text-tech-blue font-poppins">Curriculum Vitae</h2>
+
+        <!-- Toggle All Button -->
+        <div class="text-center mb-8">
+          <button id="toggle-all" class="toggle-all-btn text-white py-2 px-6 rounded-lg font-inter text-sm uppercase tracking-wider">Toggle All Sections</button>
+        </div>
 
         <!-- Contact Information -->
         <div class="mb-8">
-            <h3 class="section-toggle text-xl font-semibold text-tech-blue hover:text-tech-accent">Contact
-                Information</h3>
-            <div class="section-content open">
-                <p>YiFan Wang</p>
-                <p>Email: <a href="mailto:wyf19125@gmail.com"
-                             class="text-tech-blue hover:underline">wyf19125@gmail.com</a></p>
-                <p>LinkedIn: <a href="https://www.linkedin.com/in/yifanwang3850" class="text-tech-blue hover:underline">yifanwang3850</a>
-                </p>
-            </div>
+          <h3 class="section-toggle text-xl font-semibold font-poppins">Contact Information</h3>
+          <div class="section-content open mt-4 font-inter">
+            <p>YiFan Wang</p>
+            <p>42 Hamill Road, Halswell 7608, Christchurch, New Zealand</p>
+            <p>Phone: +64 27 414 9956</p>
+            <p>Email: <a href="mailto:wyf19125@gmail.com" class="hover:underline">wyf19125@gmail.com</a></p>
+            <p>LinkedIn: <a href="https://www.linkedin.com/in/yifanwang3850" class="hover:underline">yifanwang3850</a></p>
+          </div>
         </div>
 
         <!-- Professional Summary -->
         <div class="mb-8">
-            <h3 class="section-toggle text-xl font-semibold text-tech-blue hover:text-tech-accent">Professional
-                Summary</h3>
-            <div class="section-content">
-                <p>Dynamic and dedicated aspiring Technology educator with a Master’s and Bachelor’s in Engineering from
-                    Shanghai University. Currently pursuing a Secondary School Teacher qualification at the University
-                    of Canterbury (graduating Nov 2025). Skilled in Python, MySQL, MongoDB, and data analysis, with a
-                    proven track record in software development and big data processing. Passionate about leveraging
-                    strong communication skills and problem-solving expertise to inspire and educate the next generation
-                    in Technology.</p>
-            </div>
+          <h3 class="section-toggle text-xl font-semibold font-poppins">Professional Summary</h3>
+          <div class="section-content mt-4 font-inter">
+            <p>Dynamic and dedicated aspiring Technology educator with a Master’s and Bachelor’s in Engineering from Shanghai University. Currently pursuing a Secondary School Teacher qualification at the University of Canterbury (graduating Nov 2025). Skilled in Python, MySQL, MongoDB, and data analysis, with a proven track record in software development and big data processing. Passionate about leveraging strong communication skills and problem-solving expertise to inspire and educate the next generation in Technology.</p>
+          </div>
         </div>
 
         <!-- Technical Skills -->
         <div class="mb-8">
-            <h3 class="section-toggle text-xl font-semibold text-tech-blue hover:text-tech-accent">Technical Skills</h3>
-            <div class="section-content">
-                <ul class="list-disc pl-5">
-                    <li>Programming: Python (data processing, automation), JavaScript (basic web development)</li>
-                    <li>Databases: MySQL, MongoDB (data storage and retrieval)</li>
-                    <li>Tools: Proficient in Microsoft Excel, Word, PowerPoint; familiar with Git and Jupyter Notebook
-                    </li>
-                    <li>Data Analysis: Machine learning for text data extraction and knowledge discovery</li>
-                </ul>
-            </div>
+          <h3 class="section-toggle text-xl font-semibold font-poppins">Technical Skills</h3>
+          <div class="section-content mt-4 font-inter">
+            <ul class="list-disc pl-5">
+              <li>Programming: Python (data processing, automation), JavaScript (basic web development)</li>
+              <li>Databases: MySQL, MongoDB (data storage and retrieval)</li>
+              <li>Tools: Proficient in Microsoft Excel, Word, PowerPoint; familiar with Git and Jupyter Notebook</li>
+              <li>Data Analysis: Machine learning for text data extraction and knowledge discovery</li>
+            </ul>
+          </div>
         </div>
 
         <!-- Personal Skills -->
         <div class="mb-8">
-            <h3 class="section-toggle text-xl font-semibold text-tech-blue hover:text-tech-accent">Personal Skills</h3>
-            <div class="section-content">
-                <ul class="list-disc pl-5">
-                    <li>Effective communicator with a polite, patient, and approachable demeanor</li>
-                    <li>Skilled in diagnosing and resolving technical issues via phone, email, or in-person</li>
-                    <li>Proficient in creating user-friendly technical documentation and guides</li>
-                    <li>Strong problem-solving and logical thinking, with a focus on escalation when needed</li>
-                </ul>
-            </div>
+          <h3 class="section-toggle text-xl font-semibold font-poppins">Personal Skills</h3>
+          <div class="section-content mt-4 font-inter">
+            <ul class="list-disc pl-5">
+              <li>Effective communicator with a polite, patient, and approachable demeanor</li>
+              <li>Skilled in diagnosing and resolving technical issues via phone, email, or in-person</li>
+              <li>Proficient in creating user-friendly technical documentation and guides</li>
+              <li>Strong problem-solving and logical thinking, with a focus on escalation when needed</li>
+            </ul>
+          </div>
         </div>
 
         <!-- Work History -->
         <div class="mb-8">
-            <h3 class="section-toggle text-xl font-semibold text-tech-blue hover:text-tech-accent">Work History</h3>
-            <div class="section-content">
+          <h3 class="section-toggle text-xl font-semibold font-poppins">Work History</h3>
+          <div class="section-content mt-4 font-inter">
+            <h4 class="font-semibold">Student Teacher, Burnside High School, Canterbury, NZ</h4>
+            <p class="text-sm text-gray-600">March 2025 – May 2025</p>
+            <ul class="list-disc pl-5">
+              <li>Teach Y9 Electronics: Nightlight house & Soldering</li>
+              <li>Teach Y10 Electronics: Arduino & Bluetooth Speaker</li>
+              <li>Teach Y11 Digital Technology Electronics: Arduino & Robot movement</li>
+              <li>Teach Y12 Digital Technology Programming: Website project-Basic Form, CRUD</li>
+              <li>Teach Y13 Digital Technology Programming: Website project-WTForm, SQLAlchemy</li>
+            </ul>
 
-                <h4 class="font-semibold mt-4">Student Teacher, Burnside High School, Canterbury, NZ</h4>
-                <p class="text-sm text-gray-600 dark:text-gray-400">March 2025 – May 2025</p>
-                <ul class="list-disc pl-5">
-                    <li>Teach Y9 Electronics: Nightlight house & Soldering</li>
-                    <li>Teach Y10 Electronics: Arduino & Bluetooth Speaker</li>
-                    <li>Teach Y11 Digital Technology Electronics: Arduino & Robot movement</li>
-                    <li>Teach Y12 Digital Technology Programming: Website project-Basic Form, CRUD</li>
-                    <li>Teach Y13 Digital Technology Programming: Website project-WTForm, SQLAlchemy</li>
-                </ul>
-                <h4 class="font-semibold mt-4">Grocery Assistant, New World Lincoln, Canterbury, NZ</h4>
-                <p class="text-sm text-gray-600 dark:text-gray-400">May 2024 – March 2025</p>
-                <ul class="list-disc pl-5">
-                    <li>Full time grocery assistant</li>
-                    <li>Online delivery driver</li>
-                </ul>
-                <h4 class="font-semibold">Waiter, The Phenix Chinese Restaurant, Canterbury, NZ</h4>
-                <p class="text-sm text-gray-600 dark:text-gray-400">Mar 2024 – March 2025</p>
-                <ul class="list-disc pl-5">
-                    <li>Provided excellent customer service, ensuring a welcoming dining experience</li>
-                    <li>Managed table setups and food delivery with efficiency and attention to detail</li>
-                </ul>
-                <h4 class="font-semibold mt-4">Software Development Engineer, FESCO Adecco Co., Ltd, Nanjing, China</h4>
-                <p class="text-sm text-gray-600 dark:text-gray-400">Nov 2022 – Mar 2023</p>
-                <ul class="list-disc pl-5">
-                    <li>Developed Python utilities independently to support team projects</li>
-                    <li>Contributed to collaborative software development tasks, enhancing system functionality</li>
-                </ul>
+            <h4 class="font-semibold mt-4">Grocery Assistant, New World Lincoln, Canterbury, NZ</h4>
+            <p class="text-sm text-gray-600">May 2024 – March 2025</p>
+            <ul class="list-disc pl-5">
+              <li>Full time grocery assistant</li>
+              <li>Online delivery driver</li>
+            </ul>
 
-                <h4 class="font-semibold mt-4">Big Data Engineer, Shanghai Institute of Nutrition and Health, Shanghai,
-                    China</h4>
-                <p class="text-sm text-gray-600 dark:text-gray-400">Jul 2020 – Jul 2022</p>
-                <ul class="list-disc pl-5">
-                    <li>Processed and analyzed medical text data using machine learning techniques</li>
-                    <li>Designed efficient data storage solutions for quick retrieval in MongoDB and MySQL</li>
-                    <li>Extracted actionable insights from large datasets, supporting research objectives</li>
-                </ul>
-            </div>
+            <h4 class="font-semibold mt-4">Waiter, The Phenix Chinese Restaurant, Canterbury, NZ</h4>
+            <p class="text-sm text-gray-600">Mar 2024 – March 2025</p>
+            <ul class="list-disc pl-5">
+              <li>Provided excellent customer service, ensuring a welcoming dining experience</li>
+              <li>Managed table setups and food delivery with efficiency and attention to detail</li>
+            </ul>
+
+            <h4 class="font-semibold mt-4">Software Development Engineer, FESCO Adecco Co., Ltd, Nanjing, China</h4>
+            <p class="text-sm text-gray-600">Nov 2022 – Mar 2023</p>
+            <ul class="list-disc pl-5">
+              <li>Developed Python utilities independently to support team projects</li>
+              <li>Contributed to collaborative software development tasks, enhancing system functionality</li>
+            </ul>
+
+            <h4 class="font-semibold mt-4">Big Data Engineer, Shanghai Institute of Nutrition and Health, Shanghai, China</h4>
+            <p class="text-sm text-gray-600">Jul 2020 – Jul 2022</p>
+            <ul class="list-disc pl-5">
+              <li>Processed and analyzed medical text data using machine learning techniques</li>
+              <li>Designed efficient data storage solutions for quick retrieval in MongoDB and MySQL</li>
+              <li>Extracted actionable insights from large datasets, supporting research objectives</li>
+            </ul>
+          </div>
         </div>
 
         <!-- Education -->
         <div class="mb-8">
-            <h3 class="section-toggle text-xl font-semibold text-tech-blue hover:text-tech-accent">Education</h3>
-            <div class="section-content">
-                <h4 class="font-semibold">Graduate Diploma in Teaching (Secondary), University of Canterbury, NZ</h4>
-                <p class="text-sm text-gray-600 dark:text-gray-400">Jan-Nov 2025</p>
+          <h3 class="section-toggle text-xl font-semibold font-poppins">Education</h3>
+          <div class="section-content mt-4 font-inter">
+            <h4 class="font-semibold">Graduate Diploma in Teaching (Secondary), University of Canterbury, NZ</h4>
+            <p class="text-sm text-gray-600">Jan-Nov 2025</p>
 
-                <h4 class="font-semibold mt-4">Master of Engineering, Communication and Information System, Shanghai
-                    University, China</h4>
-                <p class="text-sm text-gray-600 dark:text-gray-400">2017 – 2020</p>
+            <h4 class="font-semibold mt-4">Master of Engineering, Communication and Information System, Shanghai University, China</h4>
+            <p class="text-sm text-gray-600">2017 – 2020</p>
 
-                <h4 class="font-semibold mt-4">Bachelor of Engineering, Electronic Information Engineering, Shanghai
-                    University, China</h4>
-                <p class="text-sm text-gray-600 dark:text-gray-400">2013 – 2017</p>
-            </div>
+            <h4 class="font-semibold mt-4">Bachelor of Engineering, Electronic Information Engineering, Shanghai University, China</h4>
+            <p class="text-sm text-gray-600">2013 – 2017</p>
+          </div>
         </div>
 
         <!-- Volunteer Experience -->
         <div class="mb-8">
-            <h3 class="section-toggle text-xl font-semibold text-tech-blue hover:text-tech-accent">Volunteer
-                Experience</h3>
-            <div class="section-content">
-                <ul class="list-disc pl-5">
-                    <li>Shanghai Metro Guide Volunteer: Assisted commuters with navigation and information</li>
-                    <li>Visitor for the Elderly: Provided companionship at nursing homes</li>
-                    <li>Green Saturday, Recycling Day Volunteer: Promoted sustainable practices</li>
-                    <li>Open Christchurch 2024 Volunteer: Supported event logistics and visitor engagement</li>
-                </ul>
-            </div>
+          <h3 class="section-toggle text-xl font-semibold font-poppins">Volunteer Experience</h3>
+          <div class="section-content mt-4 font-inter">
+            <ul class="list-disc pl-5">
+              <li>Shanghai Metro Guide Volunteer: Assisted commuters with navigation and information</li>
+              <li>Visitor for the Elderly: Provided companionship at nursing homes</li>
+              <li>Green Saturday, Recycling Day Volunteer: Promoted sustainable practices</li>
+              <li>Open Christchurch 2024 Volunteer: Supported event logistics and visitor engagement</li>
+            </ul>
+          </div>
         </div>
 
         <!-- Achievements -->
         <div class="mb-8">
-            <h3 class="section-toggle text-xl font-semibold text-tech-blue hover:text-tech-accent">Achievements</h3>
-            <div class="section-content">
-                <ul class="list-disc pl-5">
-                    <li>President’s Scholarship, Shanghai University (Undergraduate)</li>
-                    <li>First Prize, “Beikejian” Cup National Mobile Internet Innovation and Entrepreneurship
-                        Competition
-                    </li>
-                    <li>Academic and First-Class Scholarships, Shanghai University</li>
-                    <li>Excellent Student Award, Shanghai University</li>
-                    <li>Second Prize, 14th China Postgraduate Mathematical Contest in Modelling</li>
-                    <li>Published SCI Region I paper as joint first author in Genomics, Proteomics & Bioinformatics</li>
-                    <li>Staff member of the month in Lincoln New World</li>
-                </ul>
-            </div>
+          <h3 class="section-toggle text-xl font-semibold font-poppins">Achievements</h3>
+          <div class="section-content mt-4 font-inter">
+            <ul class="list-disc pl-5">
+              <li>President’s Scholarship, Shanghai University (Undergraduate)</li>
+              <li>First Prize, “Beikejian” Cup National Mobile Internet Innovation and Entrepreneurship Competition</li>
+              <li>Academic and First-Class Scholarships, Shanghai University</li>
+              <li>Excellent Student Award, Shanghai University</li>
+              <li>Second Prize, 14th China Postgraduate Mathematical Contest in Modelling</li>
+              <li>Published SCI Region I paper as joint first author in Genomics, Proteomics & Bioinformatics</li>
+              <li>Staff member of the month in Lincoln New World</li>
+            </ul>
+          </div>
         </div>
 
         <!-- Interests -->
         <div class="mb-8">
-            <h3 class="section-toggle text-xl font-semibold text-tech-blue hover:text-tech-accent">Interests</h3>
-            <div class="section-content">
-                <ul class="list-disc pl-5">
-                    <li>Swimming, home workout, data analysis, independent research, and cooking</li>
-                </ul>
-            </div>
+          <h3 class="section-toggle text-xl font-semibold font-poppins">Interests</h3>
+          <div class="section-content mt-4 font-inter">
+            <ul class="list-disc pl-5">
+              <li>Swimming, home workout, data analysis, independent research, and cooking</li>
+            </ul>
+          </div>
         </div>
+      </div>
+      <!-- Clouds -->
+      <div class="cloud"></div>
+      <div class="cloud"></div>
+      <div class="cloud"></div>
+      <div class="cloud"></div>
+      <div class="cloud"></div>
+      <div class="cloud"></div>
+      <div class="cloud"></div>
+      <div class="cloud"></div>
+      <!-- Seagulls -->
+      <div class="seagull"></div>
+      <div class="seagull"></div>
+      <div class="seagull"></div>
     </div>
-    </div>
-</section>
+  </section>
 
-<!-- Footer -->
-<footer class="py-4 bg-white dark:bg-gray-800 text-center">
+  <!-- Footer -->
+  <footer class="py-4 bg-white text-center font-inter">
     <p>© 2025 YiFan Wang. All rights reserved.</p>
-    <a href="/legacy" class="text-tech-blue hover:underline">Visit Legacy Site</a>
-</footer>
+    <a href="/legacy" class="text-tech-blue hover:text-tech-accent">Visit Legacy Site</a>
+  </footer>
 
-<!-- JavaScript for Interactivity -->
-<script>
-    // Dark Mode Toggle
+  <!-- JavaScript for Interactivity -->
+  <script>
+    // Dark Mode Toggle (disabled since the homepage doesn't use dark mode)
     const themeToggle = document.getElementById('theme-toggle');
     themeToggle.addEventListener('click', () => {
-        document.body.classList.toggle('dark');
-        localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+      // No dark mode toggle needed for this design
     });
 
-    // Load Theme from Local Storage
-    if (localStorage.getItem('theme') === 'dark') {
-        document.body.classList.add('dark');
-    }
-
-    // Section Toggle
+    // Individual Section Toggle
     document.querySelectorAll('.section-toggle').forEach(toggle => {
-        toggle.addEventListener('click', () => {
-            const content = toggle.nextElementSibling;
-            content.classList.toggle('open');
-        });
+      toggle.addEventListener('click', () => {
+        const content = toggle.nextElementSibling;
+        content.classList.toggle('open');
+      });
     });
-</script>
+
+    // Toggle All Sections
+    const toggleAllBtn = document.getElementById('toggle-all');
+    let allOpen = false;
+    toggleAllBtn.addEventListener('click', () => {
+      allOpen = !allOpen;
+      document.querySelectorAll('.section-content').forEach(content => {
+        if (allOpen) {
+          content.classList.add('open');
+        } else {
+          content.classList.remove('open');
+        }
+      });
+      toggleAllBtn.textContent = allOpen ? 'Collapse All Sections' : 'Expand All Sections';
+    });
+
+    // Mobile Menu Toggle
+    const menuToggle = document.getElementById('menu-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    menuToggle.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+
+    // Fade-in Animation on Scroll
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('fade-in');
+        }
+      });
+    });
+    document.querySelectorAll('.fade-in').forEach(element => {
+      observer.observe(element);
+    });
+  </script>
 </body>
 </html>
