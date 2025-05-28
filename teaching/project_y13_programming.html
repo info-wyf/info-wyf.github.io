@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Y10 Bluetooth Speaker Project</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../styles.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'tech-blue': '#1E40AF',
+                        'tech-dark': '#1F2937',
+                        'tech-accent': '#60A5FA',
+                        'gray-light': '#F3F4F6',
+                        'blue-pale': '#DBEAFE',
+                        'blue-medium': '#93C5FD',
+                        'gray-medium': '#D1D5DB',
+                        'blue-darker': '#BFDBFE',
+                        'sky-light': '#E0F7FA',
+                        'sky-medium': '#B3E5FC',
+                        'sky-dark': '#4FC3F7',
+                    },
+                    fontFamily: {
+                        'poppins': ['Poppins', 'sans-serif'],
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                },
+            },
+        };
+    </script>
+</head>
+<body>
+<div class="floating-element"></div>
+<div class="floating-element"></div>
+<div class="floating-element"></div>
+
+<header>
+    <h1>Y10 Bluetooth Speaker Project</h1>
+    <nav>
+        <ul>
+            <li><a href="../cv.html#work-history" class="hover:text-tech-accent text-tech-blue">Back to CV</a></li>
+            <li><a href="../index.html" class="hover:text-tech-accent text-tech-blue">Home</a></li>
+            <li><a href="../index.html#projects" class="hover:text-tech-accent text-tech-blue">Projects</a></li>
+            <li><a href="../index.html#contact" class="hover:text-tech-accent text-tech-blue">Contact</a></li>
+        </ul>
+    </nav>
+</header>
+<main>
+    <section>
+        <div class="text-content">
+            <h2>Project Overview</h2>
+            <p>In this project, students build a Bluetooth speaker to develop skills in electronics and teamwork. They
+                learn
+                to assemble a circuit using a pre-made PCB, connecting components like a Bluetooth audio module,
+                speakers,
+                and a volume potentiometer. The focus is on practical skills like soldering, wire stripping, and circuit
+                assembly, alongside understanding how Bluetooth audio technology works.</p>
+
+            <h2>Learning Objectives</h2>
+            <ul>
+                <li>Understand Bluetooth audio technology and its applications</li>
+                <li>Develop soldering and circuit assembly skills</li>
+                <li>Enhance teamwork and problem-solving abilities</li>
+            </ul>
+        </div>
+        <div class="carousel">
+            <div class="carousel-inner">
+                <!-- Add more images here, e.g., <img src="image2.png" alt="Image 2"> -->
+                <img src="images/.png" alt="Bluetooth_Speaker">
+                <img src="images/.png" alt="BT_diagram">
+                <img src="images/.png" alt="potentiometer">
+                <img src="images/.png" alt="tin_wire">
+                <img src="images/.png" alt="troubleshooting">
+            </div>
+            <button class="prev">❮</button>
+            <button class="next">❯</button>
+        </div>
+    </section>
+</main>
+<footer>
+    <p>© 2025 YiFan Wang. All rights reserved.</p>
+</footer>
+
+<script>
+    const carousel = document.querySelector('.carousel');
+    const carouselInner = document.querySelector('.carousel-inner');
+    const prevBtn = document.querySelector('.prev');
+    const nextBtn = document.querySelector('.next');
+    const images = document.querySelectorAll('.carousel-inner img');
+    let index = 0;
+    const totalImages = images.length;
+    let autoPlayInterval;
+
+    function showImage(i) {
+        if (i >= totalImages) {
+            index = 0;
+        } else if (i < 0) {
+            index = totalImages - 1;
+        } else {
+            index = i;
+        }
+        const offset = -index * 100 + '%';
+        carouselInner.style.transform = `translateX(${offset})`;
+    }
+
+    function startAutoPlay() {
+        autoPlayInterval = setInterval(() => {
+            showImage(index + 1);
+        }, 3000);
+    }
+
+    function stopAutoPlay() {
+        clearInterval(autoPlayInterval);
+    }
+
+    prevBtn.addEventListener('click', () => {
+        stopAutoPlay();
+        showImage(index - 1);
+        startAutoPlay();
+    });
+
+    nextBtn.addEventListener('click', () => {
+        stopAutoPlay();
+        showImage(index + 1);
+        startAutoPlay();
+    });
+
+    // Auto-play
+    startAutoPlay();
+
+    // Swipe functionality
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    carousel.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+        stopAutoPlay();
+    });
+
+    carousel.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+        startAutoPlay();
+    });
+
+    function handleSwipe() {
+        const threshold = 50; // pixels
+        if (touchEndX < touchStartX - threshold) {
+            showImage(index + 1);
+        } else if (touchEndX > touchStartX + threshold) {
+            showImage(index - 1);
+        }
+    }
+</script>
+</body>
+</html>
