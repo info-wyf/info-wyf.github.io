@@ -1,19 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>YiFan Wang - Technology Educator</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Favicons  -->
-  <link rel="shortcut icon" href="images/favicon.ico">
-  <!-- Google Fonts for Modern Typography -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Inter:wght@300;400;500&display=swap">
-  <!-- Swiper CSS -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-  <!-- Font Awesome for GitHub Icon -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
-  <script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YiFan Wang - Technology Educator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Favicons  -->
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <!-- Google Fonts for Modern Typography -->
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Inter:wght@300;400;500&display=swap">
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+    <!-- Font Awesome for GitHub Icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"/>
+    <script>
         tailwind.config = {
             theme: {
                 extend: {
@@ -38,413 +39,656 @@
             },
         };
     </script>
-  <style>
-    body {
-      scroll-behavior: smooth;
-      font-family: 'Inter', sans-serif;
-      background: linear-gradient(to bottom, #E0F7FA, #B3E5FC, #4FC3F7);
-      overflow-x: hidden;
-    }
-    .section-wrapper {
-      position: relative;
-      max-width: 1024px;
-      margin: 0 auto;
-    }
-    .section-content {
-      position: relative;
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(10px);
-      border-radius: 12px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      padding: 2rem;
-      margin: 2rem auto;
-    }
-    .section-content::after {
-      content: '';
-      position: absolute;
-      bottom: -20px;
-      left: 0;
-      width: 100%;
-      height: 40px;
-      background: url('https://www.transparenttextures.com/patterns/wave.png') repeat-x;
-      background-size: 100px 40px;
-      animation: wave 10s linear infinite;
-      opacity: 0.5;
-    }
-    @keyframes wave {
-      0% { background-position: 0 0; }
-      100% { background-position: 100px 0; }
-    }
-    .cloud {
-      position: absolute;
-      width: 100px;
-      height: 40px;
-      background: rgba(255, 255, 255, 0.4);
-      border-radius: 50px;
-      box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
-      animation: floatCloud 15s linear infinite;
-      opacity: 0;
-    }
-    .cloud::before, .cloud::after {
-      content: '';
-      position: absolute;
-      background: rgba(255, 255, 255, 0.4);
-      border-radius: 50%;
-    }
-    .cloud::before {
-      width: 60px;
-      height: 60px;
-      top: -30px;
-      left: 20px;
-    }
-    .cloud::after {
-      width: 40px;
-      height: 40px;
-      top: -20px;
-      left: 60px;
-    }
-    .cloud:nth-child(1) { top: 5%; left: -150px; animation-delay: 0s; width: 120px; height: 50px; opacity: 0.7; }
-    .cloud:nth-child(2) { top: 15%; left: -150px; animation-delay: 2s; width: 90px; height: 35px; opacity: 0.5; }
-    .cloud:nth-child(3) { top: 25%; left: -150px; animation-delay: 4s; width: 110px; height: 45px; opacity: 0.6; }
-    .cloud:nth-child(4) { top: 40%; left: -150px; animation-delay: 6s; width: 80px; height: 30px; opacity: 0.4; }
-    .cloud:nth-child(5) { top: 50%; left: -150px; animation-delay: 8s; width: 100px; height: 40px; opacity: 0.7; }
-    .cloud:nth-child(6) { top: 65%; left: -150px; animation-delay: 10s; width: 95px; height: 38px; opacity: 0.5; }
-    .cloud:nth-child(7) { top: 75%; left: -150px; animation-delay: 12s; width: 85px; height: 32px; opacity: 0.6; }
-    .cloud:nth-child(8) { top: 85%; left: -150px; animation-delay: 14s; width: 115px; height: 48px; opacity: 0.4; }
-    @keyframes floatCloud {
-      0% { left: -150px; opacity: 0; }
-      10% { opacity: 0.8; }
-      90% { opacity: 0.8; }
-      100% { left: 110%; opacity: 0; }
-    }
-    .seagull {
-      position: absolute;
-      width: 30px;
-      height: 20px;
-      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%231E40AF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12s3-3 6-3 6 3 6 3-3 3-6 3-6-3-6-3z"/><path d="M15 12l6-3m0 6l-6-3"/></svg>') no-repeat center;
-      background-size: contain;
-      animation: flySeagull 20s linear infinite;
-    }
-    .seagull:nth-child(1) { top: 10%; left: -50px; animation-delay: 0s; }
-    .seagull:nth-child(2) { top: 30%; left: -50px; animation-delay: 7s; }
-    .seagull:nth-child(3) { top: 60%; left: -50px; animation-delay: 14s; }
-    @keyframes flySeagull {
-      0% { left: -50px; transform: translateY(0); }
-      50% { transform: translateY(-20px); }
-      100% { left: 110%; transform: translateY(0); }
-    }
-    .fade-in {
-      opacity: 0;
-      animation: fadeIn 1s ease-in forwards;
-    }
-    @keyframes fadeIn {
-      to { opacity: 1; }
-    }
-    .personal-photo {
-      border: 2px solid #1E40AF;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
-    .swiper-slide {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    .project-card {
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .project-card:hover {
-      transform: scale(1.02);
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-    }
-    .social-icon {
-      color: #1E40AF;
-      margin-right: 0.5rem;
-    }
-    .social-icon:hover {
-      color: #60A5FA;
-    }
-    @media (max-width: 640px) {
-      .section-content {
-        padding: 1.5rem;
-        margin: 1rem;
-      }
-      .section-content::after {
-        height: 30px;
-        background-size: 80px 30px;
-      }
-      .cloud {
-        width: 80px;
-        height: 30px;
-      }
-      .cloud::before {
-        width: 50px;
-        height: 50px;
-        top: -25px;
-        left: 15px;
-      }
-      .cloud::after {
-        width: 30px;
-        height: 30px;
-        top: -15px;
-        left: 45px;
-      }
-      .seagull {
-        width: 20px;
-        height: 15px;
-      }
-      h2 {
-        font-size: 2rem;
-      }
-      h3 {
-        font-size: 1.25rem;
-      }
-    }
-  </style>
+    <style>
+        body {
+            scroll-behavior: smooth;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(to bottom, #E0F7FA, #B3E5FC, #4FC3F7);
+            overflow-x: hidden;
+        }
+
+        .section-wrapper {
+            position: relative;
+            max-width: 1024px;
+            margin: 0 auto;
+        }
+
+        .section-content {
+            position: relative;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 2rem;
+            margin: 2rem auto;
+        }
+
+        .section-content::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 0;
+            width: 100%;
+            height: 40px;
+            background: url('https://www.transparenttextures.com/patterns/wave.png') repeat-x;
+            background-size: 100px 40px;
+            animation: wave 10s linear infinite;
+            opacity: 0.5;
+        }
+
+        @keyframes wave {
+            0% {
+                background-position: 0 0;
+            }
+            100% {
+                background-position: 100px 0;
+            }
+        }
+
+        .cloud {
+            position: absolute;
+            width: 100px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 50px;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+            animation: floatCloud 15s linear infinite;
+            opacity: 0;
+        }
+
+        .cloud::before, .cloud::after {
+            content: '';
+            position: absolute;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 50%;
+        }
+
+        .cloud::before {
+            width: 60px;
+            height: 60px;
+            top: -30px;
+            left: 20px;
+        }
+
+        .cloud::after {
+            width: 40px;
+            height: 40px;
+            top: -20px;
+            left: 60px;
+        }
+
+        .cloud:nth-child(1) {
+            top: 5%;
+            left: -150px;
+            animation-delay: 0s;
+            width: 120px;
+            height: 50px;
+            opacity: 0.7;
+        }
+
+        .cloud:nth-child(2) {
+            top: 15%;
+            left: -150px;
+            animation-delay: 2s;
+            width: 90px;
+            height: 35px;
+            opacity: 0.5;
+        }
+
+        .cloud:nth-child(3) {
+            top: 25%;
+            left: -150px;
+            animation-delay: 4s;
+            width: 110px;
+            height: 45px;
+            opacity: 0.6;
+        }
+
+        .cloud:nth-child(4) {
+            top: 40%;
+            left: -150px;
+            animation-delay: 6s;
+            width: 80px;
+            height: 30px;
+            opacity: 0.4;
+        }
+
+        .cloud:nth-child(5) {
+            top: 50%;
+            left: -150px;
+            animation-delay: 8s;
+            width: 100px;
+            height: 40px;
+            opacity: 0.7;
+        }
+
+        .cloud:nth-child(6) {
+            top: 65%;
+            left: -150px;
+            animation-delay: 10s;
+            width: 95px;
+            height: 38px;
+            opacity: 0.5;
+        }
+
+        .cloud:nth-child(7) {
+            top: 75%;
+            left: -150px;
+            animation-delay: 12s;
+            width: 85px;
+            height: 32px;
+            opacity: 0.6;
+        }
+
+        .cloud:nth-child(8) {
+            top: 85%;
+            left: -150px;
+            animation-delay: 14s;
+            width: 115px;
+            height: 48px;
+            opacity: 0.4;
+        }
+
+        @keyframes floatCloud {
+            0% {
+                left: -150px;
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.8;
+            }
+            90% {
+                opacity: 0.8;
+            }
+            100% {
+                left: 110%;
+                opacity: 0;
+            }
+        }
+
+        .seagull {
+            position: absolute;
+            width: 30px;
+            height: 20px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%231E40AF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12s3-3 6-3 6 3 6 3-3 3-6 3-6-3-6-3z"/><path d="M15 12l6-3m0 6l-6-3"/></svg>') no-repeat center;
+            background-size: contain;
+            animation: flySeagull 20s linear infinite;
+        }
+
+        .seagull:nth-child(1) {
+            top: 10%;
+            left: -50px;
+            animation-delay: 0s;
+        }
+
+        .seagull:nth-child(2) {
+            top: 30%;
+            left: -50px;
+            animation-delay: 7s;
+        }
+
+        .seagull:nth-child(3) {
+            top: 60%;
+            left: -50px;
+            animation-delay: 14s;
+        }
+
+        @keyframes flySeagull {
+            0% {
+                left: -50px;
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+            100% {
+                left: 110%;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            opacity: 0;
+            animation: fadeIn 1s ease-in forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        .personal-photo {
+            border: 2px solid #1E40AF;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .swiper-slide {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .project-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .project-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .social-icon {
+            color: #1E40AF;
+            margin-right: 0.5rem;
+        }
+
+        .social-icon:hover {
+            color: #60A5FA;
+        }
+
+        @media (max-width: 640px) {
+            .section-content {
+                padding: 1.5rem;
+                margin: 1rem;
+            }
+
+            .section-content::after {
+                height: 30px;
+                background-size: 80px 30px;
+            }
+
+            .cloud {
+                width: 80px;
+                height: 30px;
+            }
+
+            .cloud::before {
+                width: 50px;
+                height: 50px;
+                top: -25px;
+                left: 15px;
+            }
+
+            .cloud::after {
+                width: 30px;
+                height: 30px;
+                top: -15px;
+                left: 45px;
+            }
+
+            .seagull {
+                width: 20px;
+                height: 15px;
+            }
+
+            h2 {
+                font-size: 2rem;
+            }
+
+            h3 {
+                font-size: 1.25rem;
+            }
+        }
+    </style>
 </head>
 <body class="bg-gradient-to-b from-sky-light to-sky-dark text-gray-900 transition-colors duration-300">
-  <!-- Navigation -->
-  <nav class="fixed top-0 w-full bg-white shadow-lg z-50">
+<!-- Navigation -->
+<nav class="fixed top-0 w-full bg-white shadow-lg z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-      <a href="#home">
-        <img src="images/logo.png" alt="YiFan Wang Logo" class="h-10 w-auto">
-      </a>
-      <div class="flex items-center">
-        <div class="hidden md:flex space-x-4">
-          <a href="#home" class="hover:text-tech-accent text-tech-blue">Home</a>
-          <a href="cv.html" class="hover:text-tech-accent text-tech-blue">CV</a>
-          <a href="#projects" class="hover:text-tech-accent text-tech-blue">Projects</a>
-          <a href="#contact" class="hover:text-tech-accent text-tech-blue">Contact</a>
-        </div>
-        <button id="theme-toggle" class="p-2 rounded-full bg-gray-200 ml-4">
-          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M10 2a8 8 0 100 16 8 8 0 000-16zm0 14a6 6 0 110-12 6 6 0 010 12z" />
-          </svg>
-        </button>
-        <button id="menu-toggle" class="md:hidden p-2">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-        </button>
-      </div>
-      <!-- Mobile Menu -->
-      <div id="mobile-menu" class="hidden md:hidden absolute top-16 left-0 w-full bg-white shadow-lg">
-        <div class="flex flex-col space-y-4 p-4">
-          <a href="#home" class="hover:text-tech-accent text-tech-blue">Home</a>
-          <a href="cv.html" class="hover:text-tech-accent text-tech-blue">CV</a>
-          <a href="#projects" class="hover:text-tech-accent text-tech-blue">Projects</a>
-          <a href="#contact" class="hover:text-tech-accent text-tech-blue">Contact</a>
-        </div>
-      </div>
-    </div>
-  </nav>
-
-  <!-- Home Section -->
-  <section id="home" class="min-h-screen flex items-center justify-center">
-    <div class="section-wrapper">
-      <div class="section-content fade-in">
-        <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center p-6 md:p-8 rounded-lg">
-          <!-- Left: Introduction -->
-          <div class="text-center md:text-left md:w-1/2">
-            <h2 class="text-4xl md:text-5xl font-bold mb-4 fade-in font-poppins text-tech-blue">YiFan Wang</h2>
-            <p class="text-lg md:text-xl max-w-md mx-auto md:mx-0 fade-in font-inter">Aspiring Technology Educator | Engineer | Innovator</p>
-            <blockquote class="mt-4 md:mt-6 text-base md:text-lg italic text-gray-600 fade-in font-inter">
-              "Technology is best when it brings people together." — Matt Mullenweg
-            </blockquote>
-            <a href="#projects" class="mt-6 md:mt-8 inline-block bg-tech-blue text-white py-2 md:py-3 px-4 md:px-6 rounded-lg hover:bg-tech-accent transition fade-in font-inter">Discover My Projects</a>
-          </div>
-          <!-- Right: Photo Placeholder -->
-          <div class="mt-6 md:mt-0 md:w-1/2 flex justify-center" onclick="window.location.href='cv.html'" style="cursor: pointer;">
-            <img src="images/YifanWang.jpg" alt="YiFan Wang Personal Photo" class="w-48 h-48 md:w-64 md:h-64 object-cover rounded-lg personal-photo fade-in">
-          </div>
-        </div>
-      </div>
-      <!-- Clouds -->
-      <div class="cloud"></div>
-      <div class="cloud"></div>
-      <div class="cloud"></div>
-      <div class="cloud"></div>
-      <div class="cloud"></div>
-      <div class="cloud"></div>
-      <div class="cloud"></div>
-      <div class="cloud"></div>
-      <!-- Seagulls -->
-      <div class="seagull"></div>
-      <div class="seagull"></div>
-      <div class="seagull"></div>
-    </div>
-  </section>
-
-  <!-- Projects Section -->
-  <section id="projects" class="py-16 px-4 sm:px-6 lg:px-8">
-    <div class="section-wrapper">
-      <div class="section-content fade-in">
-        <h2 class="text-3xl font-bold text-center mb-8 font-poppins text-tech-blue">My Projects</h2>
-        <p class="text-center mb-12 font-inter">Explore my innovative projects blending technology and education.</p>
-        <!-- Swiper Slider -->
-        <div class="swiper mySwiper">
-          <div class="swiper-wrapper">
-            <!-- School Map -->
-            <div class="swiper-slide" onclick="window.location.href='schools_map/index.html'" style="cursor: pointer;">
-              <div class="project-card bg-gray-100 rounded-lg overflow-hidden shadow-lg w-full max-w-md mx-auto">
-                <a href="schools_map/index.html">
-                  <img src="https://images.unsplash.com/photo-1516546453174-5e1098a4b4af?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="School Map" class="w-full h-48 object-cover">
-                </a>
-                <div class="p-6">
-                  <h3 class="text-xl font-semibold text-tech-blue font-poppins">NZ Accredited School Map</h3>
-                  <p class="mt-2 font-inter">Designed to assist international students navigating New Zealand's immigration policies, this web-based interactive map visualizes accredited employer schools for Green List secondary teachers seeking work visa sponsorship. Data was sourced from Immigration New Zealand's official website, collected via API on May 26, 2025, at 11:00 AM, and processed through customized cleaning. The map highlights accredited employer schools in popular regions like Christchurch and Auckland, with filtering options for South and North Islands. It supports fuzzy search to verify if specific schools are accredited employers and extends functionality to include kindergartens and primary schools, providing a comprehensive tool for educational and immigration planning.</p>
-                  <a href="schools_map/index.html" class="mt-4 inline-block text-tech-accent hover:underline font-inter">View Map</a>
-                </div>
-              </div>
+        <a href="#home">
+            <img src="images/logo.png" alt="YiFan Wang Logo" class="h-10 w-auto">
+        </a>
+        <div class="flex items-center">
+            <div class="hidden md:flex space-x-4">
+                <a href="#home" class="hover:text-tech-accent text-tech-blue">Home</a>
+                <a href="cv.html" class="hover:text-tech-accent text-tech-blue">CV</a>
+                <a href="#projects" class="hover:text-tech-accent text-tech-blue">Projects</a>
+                <a href="#contact" class="hover:text-tech-accent text-tech-blue">Contact</a>
             </div>
-            <!-- Y10 Bluetooth Project -->
-            <div class="swiper-slide" onclick="window.location.href='teaching/project_y10_bluetooth.html'" style="cursor: pointer;">
-              <div class="project-card bg-gray-100 rounded-lg overflow-hidden shadow-lg w-full max-w-md mx-auto">
-                <a href="#">
-                  <img src="https://images.unsplash.com/photo-1529359744902-86b2ab9edaea?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Future Project" class="w-full h-48 object-cover">
-                </a>
-                <div class="p-6">
-                  <h3 class="text-xl font-semibold text-tech-blue font-poppins">Bluetooth Speaker</h3>
-                  <p class="mt-2 font-inter">Year 10 Electronics project <br>
-                    In this project, students build a Bluetooth speaker to develop skills in electronics. <br>
-                They learn to assemble a circuit in veroboard, connecting components like a Bluetooth module, <br>
-                amplifier speakers, 78L05 (Voltage Regulator), Speakers, and a volume potentiometer. <br>
-                The focus is on practical skills like soldering, wire stripping, and circuit
-                assembly, alongside understanding how Bluetooth audio technology works.</p>
-                  <a href="#" class="mt-4 inline-block text-tech-accent hover:underline font-inter">Let's Explore</a>
-                </div>
-              </div>
-            </div>
-            <!-- Smart Clothes Rack -->
-            <div class="swiper-slide" onclick="window.location.href='memory/index.html'" style="cursor: pointer;">
-              <div class="project-card bg-gray-100 rounded-lg overflow-hidden shadow-lg w-full max-w-md mx-auto">
-                <a href="memory/index.html">
-                  <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Smart Clothes Rack" class="w-full h-48 object-cover">
-                </a>
-                <div class="p-6">
-                  <h3 class="text-xl font-semibold text-tech-blue font-poppins">Smart Clothes Rack</h3>
-                  <p class="mt-2 font-inter">Developed in 2015 during my third year at Shanghai University, this IoT project features a retractable clothes rack controlled via a microcontroller. Integrated with temperature and humidity sensors, it collects environmental data and transmits it to a mobile phone over Bluetooth. The microcontroller also drives a motor to extend or retract the rack. With predefined humidity thresholds, the rack automatically retracts when high humidity is detected, protecting clothes from rain. This project demonstrates practical automation for everyday convenience.</p>
-                  <a href="memory/index.html" class="mt-4 inline-block text-tech-accent hover:underline font-inter">Learn More</a>
-                </div>
-              </div>
-            </div>
-            <!-- Placeholder for Future Project -->
-            <!--<div class="swiper-slide" onclick="window.location.href='#'" style="cursor: pointer;">-->
-              <!--<div class="project-card bg-gray-100 rounded-lg overflow-hidden shadow-lg w-full max-w-md mx-auto">-->
-                <!--<a href="#">-->
-                  <!--<img src="https://images.unsplash.com/photo-1516321310762-479437144403?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Future Project" class="w-full h-48 object-cover">-->
-                <!--</a>-->
-                <!--<div class="p-6">-->
-                  <!--<h3 class="text-xl font-semibold text-tech-blue font-poppins">Coming Soon</h3>-->
-                  <!--<p class="mt-2 font-inter">Stay tuned for my next project! I'm working on innovative solutions to blend technology and education.</p>-->
-                  <!--<a href="#" class="mt-4 inline-block text-tech-accent hover:underline font-inter">Learn More</a>-->
-                <!--</div>-->
-              <!--</div>-->
-            <!--</div>-->
-          </div>
-          <!-- Swiper Navigation -->
-          <div class="swiper-button-next"></div>
-          <div class="swiper-button-prev"></div>
-          <div class="swiper-pagination"></div>
+            <button id="theme-toggle" class="p-2 rounded-full bg-gray-200 ml-4">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 2a8 8 0 100 16 8 8 0 000-16zm0 14a6 6 0 110-12 6 6 0 010 12z"/>
+                </svg>
+            </button>
+            <button id="menu-toggle" class="md:hidden p-2">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+            </button>
         </div>
-      </div>
-      <!-- Clouds -->
-      <div class="cloud"></div>
-      <div class="cloud"></div>
-      <div class="cloud"></div>
-      <div class="cloud"></div>
-      <div class="cloud"></div>
-      <div class="cloud"></div>
-      <div class="cloud"></div>
-      <div class="cloud"></div>
-      <!-- Seagulls -->
-      <div class="seagull"></div>
-      <div class="seagull"></div>
-      <div class="seagull"></div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden absolute top-16 left-0 w-full bg-white shadow-lg">
+            <div class="flex flex-col space-y-4 p-4">
+                <a href="#home" class="hover:text-tech-accent text-tech-blue">Home</a>
+                <a href="cv.html" class="hover:text-tech-accent text-tech-blue">CV</a>
+                <a href="#projects" class="hover:text-tech-accent text-tech-blue">Projects</a>
+                <a href="#contact" class="hover:text-tech-accent text-tech-blue">Contact</a>
+            </div>
+        </div>
     </div>
-  </section>
+</nav>
 
-  <!-- Contact Section -->
-  <section id="contact" class="py-16 px-4 sm:px-6 lg:px-8">
+<!-- Home Section -->
+<section id="home" class="min-h-screen flex items-center justify-center">
     <div class="section-wrapper">
-      <div class="section-content fade-in">
-        <h2 class="text-3xl font-bold text-center mb-8 font-poppins text-tech-blue" onclick="window.location.href='cv.html'">Get in Touch</h2>
-        <p class="text-center font-inter">Reach out via email at <a href="mailto:wyf19125@gmail.com" class="text-tech-blue hover:underline">wyf19125@gmail.com</a>, connect on <a href="https://www.linkedin.com/in/yifanwang3850" class="text-tech-blue hover:underline">LinkedIn</a>, or explore my projects on <a href="https://github.com/info-wyf" class="text-tech-blue hover:underline"><i class="fab fa-github social-icon"></i>GitHub</a>.</p>
-      </div>
-      <!-- Clouds -->
-      <div class="cloud"></div>
-      <div class="cloud"></div>
-      <div class="cloud"></div>
-      <div class="cloud"></div>
-      <div class="cloud"></div>
-      <div class="cloud"></div>
-      <div class="cloud"></div>
-      <div class="cloud"></div>
-      <!-- Seagulls -->
-      <div class="seagull"></div>
-      <div class="seagull"></div>
-      <div class="seagull"></div>
+        <div class="section-content fade-in">
+            <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center p-6 md:p-8 rounded-lg">
+                <!-- Left: Introduction -->
+                <div class="text-center md:text-left md:w-1/2">
+                    <h2 class="text-4xl md:text-5xl font-bold mb-4 fade-in font-poppins text-tech-blue">YiFan Wang</h2>
+                    <p class="text-lg md:text-xl max-w-md mx-auto md:mx-0 fade-in font-inter">Aspiring Technology
+                        Educator | Engineer | Innovator</p>
+                    <blockquote class="mt-4 md:mt-6 text-base md:text-lg italic text-gray-600 fade-in font-inter">
+                        "Technology is best when it brings people together." — Matt Mullenweg
+                    </blockquote>
+                    <a href="#projects"
+                       class="mt-6 md:mt-8 inline-block bg-tech-blue text-white py-2 md:py-3 px-4 md:px-6 rounded-lg hover:bg-tech-accent transition fade-in font-inter">Discover
+                        My Projects</a>
+                </div>
+                <!-- Right: Photo Placeholder -->
+                <div class="mt-6 md:mt-0 md:w-1/2 flex justify-center" onclick="window.location.href='cv.html'"
+                     style="cursor: pointer;">
+                    <img src="images/YifanWang.jpg" alt="YiFan Wang Personal Photo"
+                         class="w-48 h-48 md:w-64 md:h-64 object-cover rounded-lg personal-photo fade-in">
+                </div>
+            </div>
+        </div>
+        <!-- Clouds -->
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <!-- Seagulls -->
+        <div class="seagull"></div>
+        <div class="seagull"></div>
+        <div class="seagull"></div>
     </div>
-  </section>
+</section>
 
-  <!-- Footer -->
-  <footer class="py-4 bg-white text-center font-inter">
+<!-- Projects Section -->
+<section id="projects" class="py-16 px-4 sm:px-6 lg:px-8">
+    <div class="section-wrapper">
+        <div class="section-content fade-in">
+            <h2 class="text-3xl font-bold text-center mb-8 font-poppins text-tech-blue">My Projects</h2>
+            <p class="text-center mb-12 font-inter">Explore my innovative projects blending technology and
+                education.</p>
+            <!-- Swiper Slider -->
+            <div class="swiper mySwiper">
+                <div class="swiper-wrapper">
+                    <!-- School Map -->
+                    <div class="swiper-slide" onclick="window.location.href='schools_map/index.html'"
+                         style="cursor: pointer;">
+                        <div class="project-card bg-gray-100 rounded-lg overflow-hidden shadow-lg w-full max-w-md mx-auto">
+                            <a href="schools_map/index.html">
+                                <img src="https://images.unsplash.com/photo-1516546453174-5e1098a4b4af?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                                     alt="School Map" class="w-full h-48 object-cover">
+                            </a>
+                            <div class="p-6">
+                                <h3 class="text-xl font-semibold text-tech-blue font-poppins">NZ Accredited School
+                                    Map</h3>
+                                <p class="mt-2 font-inter">Designed to assist international students navigating New
+                                    Zealand's immigration policies, this web-based interactive map visualizes accredited
+                                    employer schools for Green List secondary teachers seeking work visa sponsorship.
+                                    Data was sourced from Immigration New Zealand's official website, collected via API
+                                    on May 26, 2025, at 11:00 AM, and processed through customized cleaning. The map
+                                    highlights accredited employer schools in popular regions like Christchurch and
+                                    Auckland, with filtering options for South and North Islands. It supports fuzzy
+                                    search to verify if specific schools are accredited employers and extends
+                                    functionality to include kindergartens and primary schools, providing a
+                                    comprehensive tool for educational and immigration planning.</p>
+                                <a href="schools_map/index.html"
+                                   class="mt-4 inline-block text-tech-accent hover:underline font-inter">View Map</a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Y9 Nightlight House & Soldering Project -->
+                    <div class="swiper-slide" onclick="window.location.href='teaching/project_y9_electronics.html'"
+                         style="cursor: pointer;">
+                        <div class="project-card bg-gray-100 rounded-lg overflow-hidden shadow-lg w-full max-w-md mx-auto">
+                            <a href="#">
+                                <img src="https://images.unsplash.com/photo-1570155308259-f4480a5c3696?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                                     alt="Future Project" class="w-full h-48 object-cover">
+                            </a>
+                            <div class="p-6">
+                                <h3 class="text-xl font-semibold text-tech-blue font-poppins">Nightlight House</h3>
+                                <p class="mt-2 font-inter">Year 9 Electronics Project <br>
+                                    In this project, students construct a nightlight house using electronic components
+                                    and a pre-printed
+                                    card template. <br>
+                                    They develop practical skills in soldering, circuit assembly, and troubleshooting
+                                    while learning key
+                                    electronics concepts such as voltage dividers, <br>
+                                    resistors, LDRs (light-dependent resistors), transistors, and LEDs. The project
+                                    involves laying copper
+                                    tape, soldering components, measuring resistances and voltages, <br>
+                                    and assembling a functional circuit. Students also decorate their nightlight houses,
+                                    adding personal
+                                    touches to enhance creativity and pride in their work. <br>
+                                    The project spans 5-6 weeks (5 periods per fortnight) at Burnside High School,
+                                    offering ample
+                                    opportunities to explore electronics through hands-on learning. <br>
+                                    <a href="#" class="mt-4 inline-block text-tech-accent hover:underline font-inter">Have
+                                        a look~
+                                    </a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Y10 Bluetooth Project -->
+                    <div class="swiper-slide" onclick="window.location.href='teaching/project_y10_bluetooth.html'"
+                         style="cursor: pointer;">
+                        <div class="project-card bg-gray-100 rounded-lg overflow-hidden shadow-lg w-full max-w-md mx-auto">
+                            <a href="#">
+                                <img src="https://images.unsplash.com/photo-1529359744902-86b2ab9edaea?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                                     alt="Future Project" class="w-full h-48 object-cover">
+                            </a>
+                            <div class="p-6">
+                                <h3 class="text-xl font-semibold text-tech-blue font-poppins">Bluetooth Speaker</h3>
+                                <p class="mt-2 font-inter">Year 10 Electronics project <br>
+                                    In this project, students build a Bluetooth speaker to develop skills in
+                                    electronics. <br>
+                                    They learn to assemble a circuit in veroboard, connecting components like a
+                                    Bluetooth module, <br>
+                                    amplifier speakers, 78L05 (Voltage Regulator), Speakers, and a volume potentiometer.
+                                    <br>
+                                    The project emphasizes practical techniques like soldering, wire stripping, and
+                                    circuit assembly, <br>
+                                    while deepening understanding of Bluetooth audio technology. Over approximately 10
+                                    contact hours, <br>
+                                    students work collaboratively to troubleshoot issues, test their speakers, and
+                                    complete a project that
+                                    integrates technical skills with creative problem-solving</p>
+                                <a href="#" class="mt-4 inline-block text-tech-accent hover:underline font-inter">Let's
+                                    Explore</a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Y11 Digital Technology Electronics: Arduino & Robot movement -->
+                    <div class="swiper-slide" onclick="window.location.href='teaching/project_y11_digital.html'"
+                         style="cursor: pointer;">
+                        <div class="project-card bg-gray-100 rounded-lg overflow-hidden shadow-lg w-full max-w-md mx-auto">
+                            <a href="#">
+                                <img src="https://images.unsplash.com/photo-1589254065909-b7086229d08c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                                     alt="Future Project" class="w-full h-48 object-cover">
+                            </a>
+                            <div class="p-6">
+                                <h3 class="text-xl font-semibold text-tech-blue font-poppins">Arduino & Robot
+                                    movement</h3>
+                                <p class="mt-2 font-inter">Year 11 Digital Technology Electronics project <br>
+                                    In this project, students design and build a simple robot that can move using basic
+                                    electronic
+                                    components and programming.<br>
+                                    The focus is on developing hands-on skills in electronics, including assembling
+                                    circuits, wiring motors,
+                                    <br>
+                                    and using sensors for navigation. Students explore robot movement through tasks like
+                                    line-following,
+                                    obstacle avoidance, <br>
+                                    or controlled motion, applying concepts such as voltage, current, and motor control.
+                                    <br>
+                                    The project encourages creativity and problem-solving as students customize their
+                                    robots' functionality
+                                    and appearance. <br>
+                                    Aligned with New Zealand's Digital Technologies Curriculum, it provides practical
+                                    experience in a fun,
+                                    engaging way, <br>
+                                    typically spanning several weeks of classroom activities. <br></p>
+                                <a href="#" class="mt-4 inline-block text-tech-accent hover:underline font-inter">Let's
+                                    Explore</a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Smart Clothes Rack -->
+                    <div class="swiper-slide" onclick="window.location.href='memory/index.html'"
+                         style="cursor: pointer;">
+                        <div class="project-card bg-gray-100 rounded-lg overflow-hidden shadow-lg w-full max-w-md mx-auto">
+                            <a href="memory/index.html">
+                                <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                                     alt="Smart Clothes Rack" class="w-full h-48 object-cover">
+                            </a>
+                            <div class="p-6">
+                                <h3 class="text-xl font-semibold text-tech-blue font-poppins">Smart Clothes Rack</h3>
+                                <p class="mt-2 font-inter">Developed in 2015 during my third year at Shanghai
+                                    University, this IoT project features a retractable clothes rack controlled via a
+                                    microcontroller. Integrated with temperature and humidity sensors, it collects
+                                    environmental data and transmits it to a mobile phone over Bluetooth. The
+                                    microcontroller also drives a motor to extend or retract the rack. With predefined
+                                    humidity thresholds, the rack automatically retracts when high humidity is detected,
+                                    protecting clothes from rain. This project demonstrates practical automation for
+                                    everyday convenience.</p>
+                                <a href="memory/index.html"
+                                   class="mt-4 inline-block text-tech-accent hover:underline font-inter">Learn More</a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Placeholder for Future Project -->
+                    <!--<div class="swiper-slide" onclick="window.location.href='#'" style="cursor: pointer;">-->
+                    <!--<div class="project-card bg-gray-100 rounded-lg overflow-hidden shadow-lg w-full max-w-md mx-auto">-->
+                    <!--<a href="#">-->
+                    <!--<img src="https://images.unsplash.com/photo-1516321310762-479437144403?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Future Project" class="w-full h-48 object-cover">-->
+                    <!--</a>-->
+                    <!--<div class="p-6">-->
+                    <!--<h3 class="text-xl font-semibold text-tech-blue font-poppins">Coming Soon</h3>-->
+                    <!--<p class="mt-2 font-inter">Stay tuned for my next project! I'm working on innovative solutions to blend technology and education.</p>-->
+                    <!--<a href="#" class="mt-4 inline-block text-tech-accent hover:underline font-inter">Learn More</a>-->
+                    <!--</div>-->
+                    <!--</div>-->
+                    <!--</div>-->
+                </div>
+                <!-- Swiper Navigation -->
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+                <div class="swiper-pagination"></div>
+            </div>
+        </div>
+        <!-- Clouds -->
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <!-- Seagulls -->
+        <div class="seagull"></div>
+        <div class="seagull"></div>
+        <div class="seagull"></div>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section id="contact" class="py-16 px-4 sm:px-6 lg:px-8">
+    <div class="section-wrapper">
+        <div class="section-content fade-in">
+            <h2 class="text-3xl font-bold text-center mb-8 font-poppins text-tech-blue"
+                onclick="window.location.href='cv.html'">Get in Touch</h2>
+            <p class="text-center font-inter">Reach out via email at <a href="mailto:wyf19125@gmail.com"
+                                                                        class="text-tech-blue hover:underline">wyf19125@gmail.com</a>,
+                connect on <a href="https://www.linkedin.com/in/yifanwang3850" class="text-tech-blue hover:underline">LinkedIn</a>,
+                or explore my projects on <a href="https://github.com/info-wyf"
+                                             class="text-tech-blue hover:underline"><i
+                        class="fab fa-github social-icon"></i>GitHub</a>.</p>
+        </div>
+        <!-- Clouds -->
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <!-- Seagulls -->
+        <div class="seagull"></div>
+        <div class="seagull"></div>
+        <div class="seagull"></div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="py-4 bg-white text-center font-inter">
     <p>© 2025 YiFan Wang. All rights reserved.</p>
-  </footer>
+</footer>
 
-  <!-- Swiper JS -->
-  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-  <script>
+<!-- Swiper JS -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
     // Initialize Swiper
     const swiper = new Swiper('.mySwiper', {
-      slidesPerView: 1,
-      spaceBetween: 20,
-      loop: true,
-      simulateTouch: true,
-      touchRatio: 1,
-      grabCursor: true,
-      pagination: {
-        el: '.swiper-pagination',
-        clickable: true,
-      },
-      navigation: {
-        nextEl: '.swiper-button-next',
-        prevEl: '.swiper-button-prev',
-      },
-      breakpoints: {
-        640: {
-          slidesPerView: 1,
-          spaceBetween: 20,
+        slidesPerView: 1,
+        spaceBetween: 20,
+        loop: true,
+        simulateTouch: true,
+        touchRatio: 1,
+        grabCursor: true,
+        pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
         },
-        768: {
-          slidesPerView: 2,
-          spaceBetween: 30,
+        navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
         },
-        1024: {
-          slidesPerView: 2,
-          spaceBetween: 40,
+        breakpoints: {
+            640: {
+                slidesPerView: 1,
+                spaceBetween: 20,
+            },
+            768: {
+                slidesPerView: 2,
+                spaceBetween: 30,
+            },
+            1024: {
+                slidesPerView: 2,
+                spaceBetween: 40,
+            },
         },
-      },
     });
 
     // Fade-in Animation on Scroll
     const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('fade-in');
-        }
-      });
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('fade-in');
+            }
+        });
     });
     document.querySelectorAll('.fade-in').forEach(element => {
-      observer.observe(element);
+        observer.observe(element);
     });
 
     // Mobile Menu Toggle
     const menuToggle = document.getElementById('menu-toggle');
     const mobileMenu = document.getElementById('mobile-menu');
     menuToggle.addEventListener('click', () => {
-      mobileMenu.classList.toggle('hidden');
+        mobileMenu.classList.toggle('hidden');
     });
-  </script>
+</script>
 </body>
 </html>
