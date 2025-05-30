@@ -596,21 +596,9 @@
     <p>© 2025 YiFan Wang. All rights reserved.</p>
 </footer>
 
+<script src="scripts.js"></script>
 <!-- JavaScript for Interactivity -->
 <script>
-    // Dark Mode Toggle (disabled since the homepage doesn't use dark mode)
-    const themeToggle = document.getElementById('theme-toggle');
-    themeToggle.addEventListener('click', () => {
-        // No dark mode toggle needed for this design
-    });
-
-    // Individual Section Toggle
-    document.querySelectorAll('.section-toggle').forEach(toggle => {
-        toggle.addEventListener('click', () => {
-            const content = toggle.nextElementSibling;
-            content.classList.toggle('open');
-        });
-    });
 
     // Toggle All Sections
     const toggleAllBtn = document.getElementById('toggle-all');
@@ -627,26 +615,9 @@
         toggleAllBtn.textContent = allOpen ? 'Collapse All Sections' : 'Expand All Sections';
     });
 
-    // Mobile Menu Toggle
-    const menuToggle = document.getElementById('menu-toggle');
-    const mobileMenu = document.getElementById('mobile-menu');
-    menuToggle.addEventListener('click', () => {
-        mobileMenu.classList.toggle('hidden');
-    });
-
-    // Fade-in Animation on Scroll
-    const observer = new IntersectionObserver(entries => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('fade-in');
-            }
-        });
-    });
     document.querySelectorAll('.fade-in').forEach(element => {
         observer.observe(element);
     });
-</script>
-<script>
     const workHistory = document.getElementById('work-history');
     if (workHistory) {
         document.querySelectorAll('.section-content').forEach(content => {
