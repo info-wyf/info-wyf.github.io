@@ -3,8 +3,14 @@
   <component name="ChangeListManager">
     <list default="true" id="95199512-40b6-4e97-a249-5e1793cd5cd3" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts.js" beforeDir="false" afterPath="$PROJECT_DIR$/scripts.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/styles.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/teaching/project_y10_bluetooth.html" beforeDir="false" afterPath="$PROJECT_DIR$/teaching/project_y10_bluetooth.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/teaching/project_y11_digital.html" beforeDir="false" afterPath="$PROJECT_DIR$/teaching/project_y11_digital.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/teaching/project_y12_programming.html" beforeDir="false" afterPath="$PROJECT_DIR$/teaching/project_y12_programming.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/teaching/project_y13_programming.html" beforeDir="false" afterPath="$PROJECT_DIR$/teaching/project_y13_programming.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/teaching/project_y9_electronics.html" beforeDir="false" afterPath="$PROJECT_DIR$/teaching/project_y9_electronics.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/teaching/teachers_feedback.html" beforeDir="false" afterPath="$PROJECT_DIR$/teaching/teachers_feedback.html" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -18,8 +24,8 @@
       <file leaf-file-name="index.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="36">
-              <caret line="124" column="21" selection-start-line="124" selection-start-column="13" selection-end-line="124" selection-end-column="21" />
+            <state relative-caret-position="635">
+              <caret line="78" column="14" lean-forward="true" selection-start-line="52" selection-start-column="8" selection-end-line="78" selection-end-column="14" />
               <folding>
                 <element signature="n#style#0;n#div#1;n#div#0;n#div#0;n#div#0;n#section#0;n#body#0;n#html#0;n#!!top" expanded="true" />
                 <element signature="n#div#0;n#div#0;n#div#0;n#div#0;n#div#0;n#section#1;n#body#0;n#html#0;n#!!top" />
@@ -35,68 +41,29 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="project_y10_bluetooth.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/teaching/project_y10_bluetooth.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="297">
-              <caret line="97" column="84" selection-start-line="97" selection-start-column="84" selection-end-line="97" selection-end-column="84" />
-              <folding>
-                <element signature="n#div#3;n#body#0;n#html#0;n#!!top" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="project_y9_electronics.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/teaching/project_y9_electronics.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="345">
-              <caret line="23" column="46" selection-start-line="23" selection-start-column="46" selection-end-line="23" selection-end-column="46" />
-              <folding>
-                <element signature="n#div#3;n#body#0;n#html#0;n#!!top" />
-                <element signature="n#script#0;n#body#0;n#html#0;n#!!top" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="teachers_feedback.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/teaching/teachers_feedback.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="167">
-              <caret line="106" column="34" lean-forward="true" selection-start-line="106" selection-start-column="34" selection-end-line="106" selection-end-column="34" />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="styles.css" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/styles.css">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="388">
-              <caret line="209" column="30" lean-forward="true" selection-start-line="209" selection-start-column="30" selection-end-line="209" selection-end-column="30" />
+            <state relative-caret-position="382">
+              <caret line="109" column="18" lean-forward="true" selection-start-line="109" selection-start-column="18" selection-end-line="109" selection-end-column="18" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="style_index.css" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/style_index.css">
+      <file leaf-file-name="cv.html" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/cv.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="349">
-              <caret line="25" column="21" selection-start-line="25" selection-start-column="21" selection-end-line="25" selection-end-column="21" />
-              <folding>
-                <element signature="e#1142#1321#0" />
-                <element signature="e#1338#1654#0" />
-                <element signature="e#3721#4056#0" />
-              </folding>
+            <state relative-caret-position="366">
+              <caret line="622" column="20" lean-forward="true" selection-start-line="622" selection-start-column="20" selection-end-line="622" selection-end-column="20" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="scripts.js" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/scripts.js">
+      <file leaf-file-name="project_y10_bluetooth.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/teaching/project_y10_bluetooth.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1422">
-              <caret line="125" column="3" selection-start-line="125" selection-start-column="3" selection-end-line="125" selection-end-column="3" />
+            <state relative-caret-position="448">
+              <caret line="77" column="43" lean-forward="true" selection-start-line="77" selection-start-column="43" selection-end-line="78" selection-end-column="51" />
             </state>
           </provider>
         </entry>
@@ -104,21 +71,11 @@
       <file leaf-file-name="project_y12_programming.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/teaching/project_y12_programming.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="463">
-              <caret line="92" column="121" selection-start-line="92" selection-start-column="121" selection-end-line="92" selection-end-column="121" />
+            <state relative-caret-position="313">
+              <caret line="64" column="24" selection-start-line="64" selection-start-column="24" selection-end-line="64" selection-end-column="24" />
               <folding>
                 <element signature="n#div#3;n#body#0;n#html#0;n#!!top" />
-                <element signature="n#script#0;n#body#0;n#html#0;n#!!top" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="project_y11_digital.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/teaching/project_y11_digital.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="338">
-              <caret line="101" column="75" selection-start-line="101" selection-start-column="75" selection-end-line="101" selection-end-column="75" />
             </state>
           </provider>
         </entry>
@@ -126,8 +83,35 @@
       <file leaf-file-name="project_y13_programming.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/teaching/project_y13_programming.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="166">
-              <caret line="71" column="33" selection-start-line="71" selection-start-column="33" selection-end-line="71" selection-end-column="33" />
+            <state relative-caret-position="225">
+              <caret line="15" selection-start-line="15" selection-end-line="29" selection-end-column="9" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="project_y11_digital.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/teaching/project_y11_digital.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="180">
+              <caret line="12" column="36" lean-forward="true" selection-start-line="12" selection-start-column="36" selection-end-line="12" selection-end-column="36" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="teachers_feedback.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/teaching/teachers_feedback.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="208">
+              <caret line="94" column="14" lean-forward="true" selection-start-line="94" selection-start-column="14" selection-end-line="94" selection-end-column="14" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="scripts.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/scripts.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="598">
+              <caret line="259" column="28" selection-start-line="259" selection-start-column="28" selection-end-line="259" selection-end-column="28" />
             </state>
           </provider>
         </entry>
@@ -144,9 +128,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>get in touc</find>
-      <find>tech-accent</find>
-      <find>tech-blue</find>
       <find>section</find>
       <find>tailwind</find>
       <find>&lt;a href=&quot;</find>
@@ -166,7 +147,6 @@
       <find>swiper-wrapper</find>
       <find>imageModal</find>
       <find>Educator</find>
-      <find>menu-toggle</find>
       <find>mobileMenu.classList.toggle</find>
       <find>toggle</find>
       <find>mobile-menu</find>
@@ -174,6 +154,10 @@
       <find>menu-toggle&quot;</find>
       <find>modalImage</find>
       <find>.menu-toggle</find>
+      <find>menu-toggle</find>
+      <find>header</find>
+      <find>nav</find>
+      <find>carousel</find>
     </findStrings>
     <replaceStrings>
       <replace>&lt;h2 class=&quot;section-toggle text-xl font-semibold font-poppins&quot;&gt;</replace>
@@ -192,16 +176,16 @@
         <option value="$PROJECT_DIR$/teaching/a.html" />
         <option value="$PROJECT_DIR$/style.css" />
         <option value="$PROJECT_DIR$/cv.html" />
+        <option value="$PROJECT_DIR$/style_index.css" />
+        <option value="$PROJECT_DIR$/index.html" />
         <option value="$PROJECT_DIR$/styles.css" />
-        <option value="$PROJECT_DIR$/teaching/project_y11_digital.html" />
+        <option value="$PROJECT_DIR$/scripts.js" />
         <option value="$PROJECT_DIR$/teaching/project_y10_bluetooth.html" />
         <option value="$PROJECT_DIR$/teaching/project_y9_electronics.html" />
+        <option value="$PROJECT_DIR$/teaching/project_y11_digital.html" />
         <option value="$PROJECT_DIR$/teaching/project_y12_programming.html" />
         <option value="$PROJECT_DIR$/teaching/project_y13_programming.html" />
         <option value="$PROJECT_DIR$/teaching/teachers_feedback.html" />
-        <option value="$PROJECT_DIR$/style_index.css" />
-        <option value="$PROJECT_DIR$/index.html" />
-        <option value="$PROJECT_DIR$/scripts.js" />
       </list>
     </option>
   </component>
@@ -327,13 +311,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/styles.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1515">
-          <caret line="101" column="21" selection-start-line="101" selection-start-column="21" selection-end-line="101" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/teaching/teachers_feedback.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="495">
@@ -578,70 +555,29 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/cv.html">
+    <entry file="file://$PROJECT_DIR$/style_index.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="478">
-          <caret line="597" selection-start-line="655" selection-end-line="655" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/teaching/project_y11_digital.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="338">
-          <caret line="101" column="75" selection-start-line="101" selection-start-column="75" selection-end-line="101" selection-end-column="75" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/teaching/project_y10_bluetooth.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="297">
-          <caret line="97" column="84" selection-start-line="97" selection-start-column="84" selection-end-line="97" selection-end-column="84" />
+        <state relative-caret-position="349">
+          <caret line="25" column="21" selection-start-line="25" selection-start-column="21" selection-end-line="25" selection-end-column="21" />
           <folding>
-            <element signature="n#div#3;n#body#0;n#html#0;n#!!top" />
+            <element signature="e#1142#1321#0" />
+            <element signature="e#1338#1654#0" />
+            <element signature="e#3721#4056#0" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/teaching/project_y12_programming.html">
+    <entry file="file://$PROJECT_DIR$/scripts_index.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="463">
-          <caret line="92" column="121" selection-start-line="92" selection-start-column="121" selection-end-line="92" selection-end-column="121" />
-          <folding>
-            <element signature="n#div#3;n#body#0;n#html#0;n#!!top" />
-            <element signature="n#script#0;n#body#0;n#html#0;n#!!top" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/teaching/project_y13_programming.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="166">
-          <caret line="71" column="33" selection-start-line="71" selection-start-column="33" selection-end-line="71" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/teaching/project_y9_electronics.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="345">
-          <caret line="23" column="46" selection-start-line="23" selection-start-column="46" selection-end-line="23" selection-end-column="46" />
-          <folding>
-            <element signature="n#div#3;n#body#0;n#html#0;n#!!top" />
-            <element signature="n#script#0;n#body#0;n#html#0;n#!!top" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/teaching/teachers_feedback.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="167">
-          <caret line="106" column="34" lean-forward="true" selection-start-line="106" selection-start-column="34" selection-end-line="106" selection-end-column="34" />
+        <state relative-caret-position="410">
+          <caret line="39" column="25" lean-forward="true" selection-start-line="39" selection-start-column="25" selection-end-line="39" selection-end-column="25" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="36">
-          <caret line="124" column="21" selection-start-line="124" selection-start-column="13" selection-end-line="124" selection-end-column="21" />
+        <state relative-caret-position="635">
+          <caret line="78" column="14" lean-forward="true" selection-start-line="52" selection-start-column="8" selection-end-line="78" selection-end-column="14" />
           <folding>
             <element signature="n#style#0;n#div#1;n#div#0;n#div#0;n#div#0;n#section#0;n#body#0;n#html#0;n#!!top" expanded="true" />
             <element signature="n#div#0;n#div#0;n#div#0;n#div#0;n#div#0;n#section#1;n#body#0;n#html#0;n#!!top" />
@@ -658,27 +594,67 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/styles.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="388">
-          <caret line="209" column="30" lean-forward="true" selection-start-line="209" selection-start-column="30" selection-end-line="209" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/style_index.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="349">
-          <caret line="25" column="21" selection-start-line="25" selection-start-column="21" selection-end-line="25" selection-end-column="21" />
-          <folding>
-            <element signature="e#1142#1321#0" />
-            <element signature="e#1338#1654#0" />
-            <element signature="e#3721#4056#0" />
-          </folding>
+        <state relative-caret-position="382">
+          <caret line="109" column="18" lean-forward="true" selection-start-line="109" selection-start-column="18" selection-end-line="109" selection-end-column="18" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/scripts.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1422">
-          <caret line="125" column="3" selection-start-line="125" selection-start-column="3" selection-end-line="125" selection-end-column="3" />
+        <state relative-caret-position="598">
+          <caret line="259" column="28" selection-start-line="259" selection-start-column="28" selection-end-line="259" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/teaching/project_y9_electronics.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="13" selection-start-line="13" selection-end-line="27" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/teaching/project_y10_bluetooth.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="448">
+          <caret line="77" column="43" lean-forward="true" selection-start-line="77" selection-start-column="43" selection-end-line="78" selection-end-column="51" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/teaching/project_y12_programming.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="313">
+          <caret line="64" column="24" selection-start-line="64" selection-start-column="24" selection-end-line="64" selection-end-column="24" />
+          <folding>
+            <element signature="n#div#3;n#body#0;n#html#0;n#!!top" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/teaching/project_y11_digital.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="12" column="36" lean-forward="true" selection-start-line="12" selection-start-column="36" selection-end-line="12" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/teaching/project_y13_programming.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="15" selection-start-line="15" selection-end-line="29" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/teaching/teachers_feedback.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="208">
+          <caret line="94" column="14" lean-forward="true" selection-start-line="94" selection-start-column="14" selection-end-line="94" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cv.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="366">
+          <caret line="622" column="20" lean-forward="true" selection-start-line="622" selection-start-column="20" selection-end-line="622" selection-end-column="20" />
         </state>
       </provider>
     </entry>

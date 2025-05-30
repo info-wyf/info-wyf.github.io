@@ -6,41 +6,20 @@
     <title>Y12 Website flask Project</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="../styles.css">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'tech-blue': '#1E40AF',
-                        'tech-dark': '#1F2937',
-                        'tech-accent': '#60A5FA',
-                        'gray-light': '#F3F4F6',
-                        'blue-pale': '#DBEAFE',
-                        'blue-medium': '#93C5FD',
-                        'gray-medium': '#D1D5DB',
-                        'blue-darker': '#BFDBFE',
-                        'sky-light': '#E0F7FA',
-                        'sky-medium': '#B3E5FC',
-                        'sky-dark': '#4FC3F7',
-                    },
-                    fontFamily: {
-                        'poppins': ['Poppins', 'sans-serif'],
-                        'inter': ['Inter', 'sans-serif'],
-                    },
-                },
-            },
-        };
-    </script>
+
 </head>
 <body>
 <div class="floating-element"></div>
 <div class="floating-element"></div>
 <div class="floating-element"></div>
-
 <header>
-    <h1 class="text-2xl font-bold text-tech-blue font-poppins">Y12 Website flask Project</h1>
+    <h1 class="text-2xl font-bold text-tech-blue font-poppins" onclick="window.location.href='../cv.html#work-history'">
+        Y12 Website flask Project
+    </h1>
+
+    <button id="menu-toggle" class="menu-toggle" aria-label="Toggle mobile menu">☰</button>
     <nav>
-        <ul>
+        <ul id="mobile-menu">
             <li><a href="../cv.html#work-history" class="hover:text-tech-accent text-tech-blue">Back to CV</a></li>
             <li><a href="../index.html" class="hover:text-tech-accent text-tech-blue">Home</a></li>
             <li><a href="../index.html#projects" class="hover:text-tech-accent text-tech-blue">Projects</a></li>
@@ -97,6 +76,7 @@
             </div>
             <button class="prev">❮</button>
             <button class="next">❯</button>
+            <div class="carousel-pagination"></div>
         </div>
     </section>
 </main>
@@ -109,92 +89,9 @@
     <button class="modal-close" onclick="closeModal()">×</button>
     <img src="" id="modalImage" alt="Full-screen Image">
 </div>
-<script>
-    const carousel = document.querySelector('.carousel');
-    const carouselInner = document.querySelector('.carousel-inner');
-    const prevBtn = document.querySelector('.prev');
-    const nextBtn = document.querySelector('.next');
-    const images = document.querySelectorAll('.carousel-inner img');
-    let index = 0;
-    const totalImages = images.length;
-    let autoPlayInterval;
 
-    function showImage(i) {
-        if (i >= totalImages) {
-            index = 0;
-        } else if (i < 0) {
-            index = totalImages - 1;
-        } else {
-            index = i;
-        }
-        const offset = -index * 100 + '%';
-        carouselInner.style.transform = `translateX(${offset})`;
-    }
+<script src="../scripts.js">
 
-    function startAutoPlay() {
-        autoPlayInterval = setInterval(() => {
-            showImage(index + 1);
-        }, 3000);
-    }
-
-    function stopAutoPlay() {
-        clearInterval(autoPlayInterval);
-    }
-
-    prevBtn.addEventListener('click', () => {
-        stopAutoPlay();
-        showImage(index - 1);
-        startAutoPlay();
-    });
-
-    nextBtn.addEventListener('click', () => {
-        stopAutoPlay();
-        showImage(index + 1);
-        startAutoPlay();
-    });
-
-    // Auto-play
-    startAutoPlay();
-
-    // Swipe functionality
-    let touchStartX = 0;
-    let touchEndX = 0;
-
-    carousel.addEventListener('touchstart', (e) => {
-        touchStartX = e.changedTouches[0].screenX;
-        stopAutoPlay();
-    });
-
-    carousel.addEventListener('touchend', (e) => {
-        touchEndX = e.changedTouches[0].screenX;
-        handleSwipe();
-        startAutoPlay();
-    });
-
-    function handleSwipe() {
-        const threshold = 50; // pixels
-        if (touchEndX < touchStartX - threshold) {
-            showImage(index + 1);
-        } else if (touchEndX > touchStartX + threshold) {
-            showImage(index - 1);
-        }
-    }
-
-    // Modal functions
-    function openModal(src) {
-        const modal = document.getElementById('imageModal');
-        const modalImage = document.getElementById('modalImage');
-        modalImage.src = src;
-        console.log(modalImage)
-        modal.style.display = 'flex';
-        stopAutoPlay(); // Pause autoplay when modal is open
-    }
-
-    function closeModal() {
-        const modal = document.getElementById('imageModal');
-        modal.style.display = 'none';
-        startAutoPlay(); // Resume autoplay when modal is closed
-    }
 </script>
 </body>
 </html>
