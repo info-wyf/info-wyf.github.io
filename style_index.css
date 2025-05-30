@@ -1,0 +1,363 @@
+
+body {
+    scroll-behavior: smooth;
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(to bottom, #E0F7FA, #B3E5FC, #4FC3F7);
+    overflow-x: hidden;
+}
+
+.section-wrapper {
+    position: relative;
+    max-width: 1024px;
+    margin: 0 auto;
+}
+
+.section-content {
+    position: relative;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 2rem;
+    margin: 2rem auto;
+}
+
+.section-content::after {
+    content: '';
+    position: absolute;
+    bottom: -20px;
+    left: 0;
+    width: 100%;
+    height: 40px;
+    background: url('https://www.transparenttextures.com/patterns/wave.png') repeat-x;
+    background-size: 100px 40px;
+    animation: wave 10s linear infinite;
+    opacity: 0.5;
+}
+
+@keyframes wave {
+    0% {
+        background-position: 0 0;
+    }
+    100% {
+        background-position: 100px 0;
+    }
+}
+
+.cloud {
+    position: absolute;
+    width: 100px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 50px;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+    animation: floatCloud 15s linear infinite;
+    opacity: 0;
+}
+
+.cloud::before, .cloud::after {
+    content: '';
+    position: absolute;
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 50%;
+}
+
+.cloud::before {
+    width: 60px;
+    height: 60px;
+    top: -30px;
+    left: 20px;
+}
+
+.cloud::after {
+    width: 40px;
+    height: 40px;
+    top: -20px;
+    left: 60px;
+}
+
+.cloud:nth-child(1) {
+    top: 5%;
+    left: -150px;
+    animation-delay: 0s;
+    width: 120px;
+    height: 50px;
+    opacity: 0.7;
+}
+
+.cloud:nth-child(2) {
+    top: 15%;
+    left: -150px;
+    animation-delay: 2s;
+    width: 90px;
+    height: 35px;
+    opacity: 0.5;
+}
+
+.cloud:nth-child(3) {
+    top: 25%;
+    left: -150px;
+    animation-delay: 4s;
+    width: 110px;
+    height: 45px;
+    opacity: 0.6;
+}
+
+.cloud:nth-child(4) {
+    top: 40%;
+    left: -150px;
+    animation-delay: 6s;
+    width: 80px;
+    height: 30px;
+    opacity: 0.4;
+}
+
+.cloud:nth-child(5) {
+    top: 50%;
+    left: -150px;
+    animation-delay: 8s;
+    width: 100px;
+    height: 40px;
+    opacity: 0.7;
+}
+
+.cloud:nth-child(6) {
+    top: 65%;
+    left: -150px;
+    animation-delay: 10s;
+    width: 95px;
+    height: 38px;
+    opacity: 0.5;
+}
+
+.cloud:nth-child(7) {
+    top: 75%;
+    left: -150px;
+    animation-delay: 12s;
+    width: 85px;
+    height: 32px;
+    opacity: 0.6;
+}
+
+.cloud:nth-child(8) {
+    top: 85%;
+    left: -150px;
+    animation-delay: 14s;
+    width: 115px;
+    height: 48px;
+    opacity: 0.4;
+}
+
+@keyframes floatCloud {
+    0% {
+        left: -150px;
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.8;
+    }
+    90% {
+        opacity: 0.8;
+    }
+    100% {
+        left: 110%;
+        opacity: 0;
+    }
+}
+
+.seagull {
+    position: absolute;
+    width: 30px;
+    height: 20px;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%231E40AF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12s3-3 6-3 6 3 6 3-3 3-6 3-6-3-6-3z"/><path d="M15 12l6-3m0 6l-6-3"/></svg>') no-repeat center;
+    background-size: contain;
+    animation: flySeagull 20s linear infinite;
+}
+
+.seagull:nth-child(1) {
+    top: 10%;
+    left: -50px;
+    animation-delay: 0s;
+}
+
+.seagull:nth-child(2) {
+    top: 30%;
+    left: -50px;
+    animation-delay: 7s;
+}
+
+.seagull:nth-child(3) {
+    top: 60%;
+    left: -50px;
+    animation-delay: 14s;
+}
+
+@keyframes flySeagull {
+    0% {
+        left: -50px;
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+    100% {
+        left: 110%;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    opacity: 0;
+    animation: fadeIn 1s ease-in forwards;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+.personal-photo {
+    border: 2px solid #1E40AF;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.swiper-slide {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.project-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.project-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.social-icon {
+    color: #1E40AF;
+    margin-right: 0.5rem;
+}
+
+.social-icon:hover {
+    color: #60A5FA;
+}
+
+/* 菜单切换按钮样式 */
+.menu-toggle {
+    display: none;
+    font-size: 24px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #333;
+    padding: 10px;
+}
+
+/* 隐藏类 */
+.hidden {
+    display: none;
+}
+
+/* 导航样式 */
+nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+}
+
+nav ul li {
+    margin-right: 10px;
+}
+
+nav ul li a {
+    color: #333;
+    text-decoration: none;
+    padding: 10px 20px;
+    display: inline-block;
+}
+
+nav ul li a:hover {
+    background-color: #f0f0f0;
+    color: #60A5FA;
+}
+
+@media (max-width: 640px) {
+    .section-content {
+        padding: 1.5rem;
+        margin: 1rem;
+    }
+
+    .section-content::after {
+        height: 30px;
+        background-size: 80px 30px;
+    }
+
+    .cloud {
+        width: 80px;
+        height: 30px;
+    }
+
+    .cloud::before {
+        width: 50px;
+        height: 50px;
+        top: -25px;
+        left: 15px;
+    }
+
+    .cloud::after {
+        width: 30px;
+        height: 30px;
+        top: -15px;
+        left: 45px;
+    }
+
+    .seagull {
+        width: 20px;
+        height: 15px;
+    }
+
+    h2 {
+        font-size: 2rem;
+    }
+
+    h3 {
+        font-size: 1.25rem;
+    }
+
+    header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .menu-toggle {
+        display: block;
+    }
+
+    nav ul {
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+        background-color: white;
+        position: absolute;
+        top: 60px;
+        left: 0;
+        z-index: 999;
+        padding: 10px 0;
+    }
+
+    nav ul.hidden {
+        display: none;
+    }
+
+    nav ul li {
+        margin: 5px 0;
+        text-align: center;
+        width: 100%;
+    }
+}

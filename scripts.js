@@ -45,21 +45,52 @@ document.addEventListener('DOMContentLoaded', function() {
         console.warn('菜单切换按钮或菜单元素未找到，请检查 HTML 结构中的 ID "menu-toggle" 和 "mobile-menu"。');
     }
 
-    // 轮播图功能（用于 teachers_feedback.html）
+    // 轮播图功能（用于 index.html, teachers_feedback.html）
     const swiperElement = document.querySelector('.swiper');
     if (swiperElement) {
         const swiper = new Swiper('.swiper', {
+            slidesPerView: 1,
+            spaceBetween: 20,
+            speed: 1000,
+            loop: true,
+            simulateTouch: true,
+            touchRatio: 1,
+            grabCursor: true,
+            effect: 'coverflow', // 使用 coverflow 效果
+            coverflowEffect: {
+                rotate: 30, // 两侧幻灯片旋转角度
+                stretch: 50, // 两侧幻灯片拉伸
+                depth: 100, // 深度效果
+                modifier: 1, // 效果强度
+                slideShadows: true // 显示幻灯片阴影
+            },
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
             autoplay: {
                 delay: 3000,
                 disableOnInteraction: false,
+                pauseOnMouseEnter: true,
             },
-            loop: true,
-            navigation: {
-                nextEl: '.next',
-                prevEl: '.prev',
+            breakpoints: {
+                640: {
+                    slidesPerView: 1,
+                    spaceBetween: 20,
+                },
+                768: {
+                    slidesPerView: 2,
+                    spaceBetween: 30,
+                },
+                1024: {
+                    slidesPerView: 2,
+                    spaceBetween: 40,
+                },
             },
-            slidesPerView: 1,
-            spaceBetween: 0,
         });
 
         // 模态框功能
