@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YiFan Wang - Technology Educator</title>
+    <title>YiFan Wang - Technology Teacher</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Favicons  -->
     <link rel="shortcut icon" href="images/favicon.ico">
@@ -289,6 +289,46 @@
             color: #60A5FA;
         }
 
+        /* 菜单切换按钮样式 */
+        .menu-toggle {
+            display: none;
+            font-size: 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #333;
+            padding: 10px;
+        }
+
+        /* 隐藏类 */
+        .hidden {
+            display: none;
+        }
+
+        /* 导航样式 */
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+        }
+
+        nav ul li {
+            margin-right: 10px;
+        }
+
+        nav ul li a {
+            color: #333;
+            text-decoration: none;
+            padding: 10px 20px;
+            display: inline-block;
+        }
+
+        nav ul li a:hover {
+            background-color: #f0f0f0;
+            color: #60A5FA;
+        }
+
         @media (max-width: 640px) {
             .section-content {
                 padding: 1.5rem;
@@ -331,6 +371,57 @@
             h3 {
                 font-size: 1.25rem;
             }
+
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            nav ul {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+                background-color: white;
+                position: absolute;
+                top: 60px;
+                left: 0;
+                z-index: 999;
+                padding: 10px 0;
+            }
+
+            nav ul.hidden {
+                display: none;
+            }
+
+            nav ul li {
+                margin: 5px 0;
+                text-align: center;
+                width: 100%;
+            }
+
+            /*!* Show toggle button and adjust menu *!*/
+            /*.menu-toggle {*/
+            /*display: block;*/
+            /*}*/
+            /*nav ul {*/
+            /*display: none; !* Hidden by default on mobile *!*/
+            /*flex-direction: column;*/
+            /*align-items: flex-start;*/
+            /*width: 100%;*/
+            /*background-color: white;*/
+            /*position: absolute;*/
+            /*top: 60px;*/
+            /*left: 0;*/
+            /*z-index: 999;*/
+            /*padding: 10px 0;*/
+            /*}*/
+            /*nav ul.active {*/
+            /*display: flex; !* Shown when toggled *!*/
+            /*}*/
         }
     </style>
 </head>
@@ -380,7 +471,7 @@
                 <div class="text-center md:text-left md:w-1/2">
                     <h2 class="text-4xl md:text-5xl font-bold mb-4 fade-in font-poppins text-tech-blue">YiFan Wang</h2>
                     <p class="text-lg md:text-xl max-w-md mx-auto md:mx-0 fade-in font-inter">Aspiring Technology
-                        Educator | Engineer | Innovator</p>
+                        Teacher | Engineer | Innovator</p>
                     <blockquote class="mt-4 md:mt-6 text-base md:text-lg italic text-gray-600 fade-in font-inter">
                         "Technology is best when it brings people together." — Matt Mullenweg
                     </blockquote>
@@ -761,13 +852,54 @@
     document.querySelectorAll('.fade-in').forEach(element => {
         observer.observe(element);
     });
-
-    // Mobile Menu Toggle
+document.addEventListener('DOMContentLoaded', function() {
     const menuToggle = document.getElementById('menu-toggle');
     const mobileMenu = document.getElementById('mobile-menu');
-    menuToggle.addEventListener('click', () => {
-        mobileMenu.classList.toggle('hidden');
-    });
+
+    if (menuToggle && mobileMenu) {
+        // 切换菜单
+        menuToggle.addEventListener('click', function() {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // 点击空白区域隐藏菜单
+        document.addEventListener('click', function(event) {
+            const target = event.target;
+            const isClickInsideMenu = mobileMenu.contains(target);
+            const isClickInsideToggle = target.closest('#menu-toggle');
+            if (!isClickInsideMenu && !isClickInsideToggle && !mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.add('hidden');
+            }
+        });
+
+        // 按 Escape 键关闭菜单
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && !mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.add('hidden');
+            }
+        });
+
+        // 添加滑动隐藏菜单的功能
+        let touchStartY = 0;
+        let touchEndY = 0;
+
+        document.addEventListener('touchstart', function(event) {
+            touchStartY = event.touches[0].clientY;
+        });
+
+        document.addEventListener('touchmove', function(event) {
+            touchEndY = event.touches[0].clientY;
+            const deltaY = touchEndY - touchStartY;
+
+            // 检测向下滑动（deltaY > 0），且滑动距离足够大（例如 50 像素）
+            if (deltaY > 50 && !mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.add('hidden');
+            }
+        });
+    } else {
+        console.warn('菜单切换按钮或菜单元素未找到，请检查 HTML 结构中的 ID "menu-toggle" 和 "mobile-menu"。');
+    }
+});
 </script>
 </body>
 </html>

@@ -94,12 +94,12 @@
             </ul>
         </div>
         <div class="carousel">
-            <div class="carousel-inner" onclick="window.location.href='https://github.com/info-wyf/BHS-13DTP'">
+            <div class="carousel-inner" >
                 <!-- Add more images here, e.g., <img src="image2.png" alt="Image 2"> -->
-                <img src="images/13DTP_github.png" alt="13DTP_github">
-                <img src="images/12DTP_C.png" alt="12DTP_C">
-                <img src="images/12DTP_R.png" alt="12DTP_R">
-                <img src="images/12DTP_U.png" alt="12DTP_U">
+                <img src="images/13DTP_github.png" onclick="window.location.href='https://github.com/info-wyf/BHS-13DTP'" alt="13DTP_github">
+                <img src="images/12DTP_C.png" onclick="openModal(this.src)" alt="12DTP_C">
+                <img src="images/12DTP_R.png" onclick="openModal(this.src)" alt="12DTP_R">
+                <img src="images/12DTP_U.png" onclick="openModal(this.src)" alt="12DTP_U">
             </div>
             <button class="prev">❮</button>
             <button class="next">❯</button>
@@ -110,6 +110,11 @@
     <p>© 2025 YiFan Wang. All rights reserved.</p>
 </footer>
 
+<!-- Modal for full-screen image -->
+<div class="modal" id="imageModal" onclick="closeModal()">
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <img src="" id="modalImage" alt="Full-screen Image">
+</div>
 <script>
     const carousel = document.querySelector('.carousel');
     const carouselInner = document.querySelector('.carousel-inner');
@@ -179,6 +184,22 @@
         } else if (touchEndX > touchStartX + threshold) {
             showImage(index - 1);
         }
+    }
+
+    // Modal functions
+    function openModal(src) {
+        const modal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+        modalImage.src = src;
+        console.log(modalImage)
+        modal.style.display = 'flex';
+        stopAutoPlay(); // Pause autoplay when modal is open
+    }
+
+    function closeModal() {
+        const modal = document.getElementById('imageModal');
+        modal.style.display = 'none';
+        startAutoPlay(); // Resume autoplay when modal is closed
     }
 </script>
 </body>

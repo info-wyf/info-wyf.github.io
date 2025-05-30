@@ -54,7 +54,8 @@
         <div class="text-content">
             <h2 class="section-toggle text-xl font-semibold font-poppins">Project Overview</h2>
             <p>
-                <a class="hover:text-tech-accent text-tech-blue" href="https://sites.google.com/view/techquity-website/level-1/l1-electronics-robot-project/develop-a-robot/robot-movement">
+                <a class="hover:text-tech-accent text-tech-blue"
+                   href="https://sites.google.com/view/techquity-website/level-1/l1-electronics-robot-project/develop-a-robot/robot-movement">
                     Y11 Digital Technology Electronics: - Arduino & Robot movement</a><br><br>
                 In this project, students design and build a simple robot that can move using basic electronic
                 components and programming.<br>
@@ -93,12 +94,12 @@
         <div class="carousel">
             <div class="carousel-inner">
                 <!-- Add more images here, e.g., <img src="image2.png" alt="Image 2"> -->
-                <img src="images/1_tinkercad_simulation.png" alt="1_tinkercad_simulation">
-                <img src="images/2_tinkercad_code.png" alt="2_tinkercad_code">
-                <img src="images/3_arduino_ide_upload.png" alt="3_arduino_ide_upload">
-                <img src="images/4_connect_wire.png" alt="4_connect_wire">
-                <img src="images/5_crimping.png" alt="5_crimping">
-                <img src="images/6_test.png" alt="6_test">
+                <img src="images/1_tinkercad_simulation.png" onclick="openModal(this.src)" alt="1_tinkercad_simulation">
+                <img src="images/2_tinkercad_code.png" onclick="openModal(this.src)" alt="2_tinkercad_code">
+                <img src="images/3_arduino_ide_upload.png" onclick="openModal(this.src)" alt="3_arduino_ide_upload">
+                <img src="images/4_connect_wire.png" onclick="openModal(this.src)" alt="4_connect_wire">
+                <img src="images/5_crimping.png" onclick="openModal(this.src)" alt="5_crimping">
+                <img src="images/6_test.png" onclick="openModal(this.src)" alt="6_test">
             </div>
             <button class="prev">❮</button>
             <button class="next">❯</button>
@@ -109,6 +110,11 @@
     <p>© 2025 YiFan Wang. All rights reserved.</p>
 </footer>
 
+<!-- Modal for full-screen image -->
+<div class="modal" id="imageModal" onclick="closeModal()">
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <img src="" id="modalImage" alt="Full-screen Image">
+</div>
 <script>
     const carousel = document.querySelector('.carousel');
     const carouselInner = document.querySelector('.carousel-inner');
@@ -178,6 +184,22 @@
         } else if (touchEndX > touchStartX + threshold) {
             showImage(index - 1);
         }
+    }
+
+    // Modal functions
+    function openModal(src) {
+        const modal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+        modalImage.src = src;
+        console.log(modalImage)
+        modal.style.display = 'flex';
+        stopAutoPlay(); // Pause autoplay when modal is open
+    }
+
+    function closeModal() {
+        const modal = document.getElementById('imageModal');
+        modal.style.display = 'none';
+        startAutoPlay(); // Resume autoplay when modal is closed
     }
 </script>
 </body>

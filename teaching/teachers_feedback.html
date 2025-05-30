@@ -81,22 +81,15 @@
                 teacher, and will only get better with time and experience.</p>
             <h2 class="section-toggle text-xl font-semibold font-poppins">BHS-9ELT Period2 8 May 2025 ——CHRIS BOJE</h2>
             <p>Hi,
-                Mr. Wang took the class. I thought he was very competent. Nice relaxed style. Early classroom
-                management.
-                The class were engaged.</p>
-            <h2 class="section-toggle text-xl font-semibold font-poppins">BHS-9ELT Period2 8 May 2025 ——CHRIS BOJE</h2>
-            <p>Hi,
                 Mr. Wang took the class.
                 I thought he was very competent. Nice relaxed style. Early classroom management.
                 The class were engaged.</p>
-            <h2 class="section-toggle text-xl font-semibold font-poppins">BHS-Y12DTP Period1 22 May 2025 ——Julie
-                Kleinpaste</h2>
+            <h2 class="section-toggle text-xl font-semibold font-poppins">BHS-Y12DTP Period1 22 May 2025 ——Anonymous</h2>
             <p>Steve, a lovely enthusiastic class and Yifan is great.
                 I had a fab day with your classes.</p>
-            <h2 class="section-toggle text-xl font-semibold font-poppins">BHS-9ELT Period5 22 May 2025 ——Julie
-                Kleinpaste</h2>
+            <h2 class="section-toggle text-xl font-semibold font-poppins">BHS-9ELT Period5 22 May 2025 ——Anonymous</h2>
             <p>Hi Steve, the class were attentive when Yifan took the class explaining the assignment.^.^
-                They worked well with just a couple needing to be to keep on .</p>
+                They worked well with just a couple needing to be to keep on task.</p>
             <h2 class="section-toggle text-xl font-semibold font-poppins">BHS-Y12 Digital Technology Programming Student
                 ——Alex</h2>
             <p>Mr Wang is a dedicated teacher.
@@ -124,14 +117,14 @@
         <div class="carousel">
             <div class="carousel-inner">
                 <!-- Add more images here, e.g., <img src="image2.png" alt="Image 2"> -->
-                <img src="images/AT_TWW.png" alt="AT_TWW">
-                <img src="images/AT_DFS.png" alt="AT_DFS">
-                <img src="images/9ELT_Period2_8_May_2025.png" alt="9ELT_Period2_8_May_2025">
-                <img src="images/12DTP_Period1_22_May_2025.png" alt="12DTP_Period1_22_May_2025">
-                <img src="images/9ELT_Period5_22_May_2025.png" alt="9ELT_Period5_22_May_2025">
-                <img src="images/12DTP2025-1.png" alt="12DTP2025-1">
-                <img src="images/12DTP2025-2.png" alt="12DTP2025-2">
-                <img src="images/12DTP2025-3.png" alt="12DTP2025-3">
+                <img src="images/AT_TWW.png" onclick="openModal(this.src)" alt="AT_TWW">
+                <img src="images/AT_DFS.png" onclick="openModal(this.src)" alt="AT_DFS">
+                <img src="images/9ELT_Period2_8_May_2025.png" onclick="openModal(this.src)" alt="9ELT_Period2_8_May_2025">
+                <img src="images/12DTP_Period1_22_May_2025.png" onclick="openModal(this.src)" alt="12DTP_Period1_22_May_2025">
+                <img src="images/9ELT_Period5_22_May_2025.png" onclick="openModal(this.src)" alt="9ELT_Period5_22_May_2025">
+                <img src="images/12DTP2025-1.png" onclick="openModal(this.src)" alt="12DTP2025-1">
+                <img src="images/12DTP2025-2.png" onclick="openModal(this.src)" alt="12DTP2025-2">
+                <img src="images/12DTP2025-3.png" onclick="openModal(this.src)" alt="12DTP2025-3">
             </div>
             <button class="prev">❮</button>
             <button class="next">❯</button>
@@ -142,6 +135,11 @@
     <p>© 2025 YiFan Wang. All rights reserved.</p>
 </footer>
 
+<!-- Modal for full-screen image -->
+<div class="modal" id="imageModal" onclick="closeModal()">
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <img src="" id="modalImage" alt="Full-screen Image">
+</div>
 <script>
     const carousel = document.querySelector('.carousel');
     const carouselInner = document.querySelector('.carousel-inner');
@@ -211,6 +209,22 @@
         } else if (touchEndX > touchStartX + threshold) {
             showImage(index - 1);
         }
+    }
+
+    // Modal functions
+    function openModal(src) {
+        const modal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+        modalImage.src = src;
+        console.log(modalImage)
+        modal.style.display = 'flex';
+        stopAutoPlay(); // Pause autoplay when modal is open
+    }
+
+    function closeModal() {
+        const modal = document.getElementById('imageModal');
+        modal.style.display = 'none';
+        startAutoPlay(); // Resume autoplay when modal is closed
     }
 </script>
 </body>
