@@ -629,6 +629,14 @@
         toggleAllBtn.textContent = allOpen ? 'Collapse All Sections' : 'Expand All Sections';
     });
 
+    // Section Toggle
+    document.querySelectorAll('.section-toggle').forEach(toggle => {
+        toggle.addEventListener('click', () => {
+            const content = toggle.nextElementSibling;
+            content.classList.toggle('open');
+        });
+    });
+
     // Fade-in Animation on Scroll
     const observer = new IntersectionObserver(entries => {
         entries.forEach(entry => {
