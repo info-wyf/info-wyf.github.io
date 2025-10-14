@@ -228,6 +228,35 @@ body {
     justify-content: center;
     align-items: center;
 }
+/* 精细化修复：保持coverflow效果同时确保点击正常 */
+
+/* 让wrapper不干扰点击，但保持3D空间 */
+.swiper-wrapper {
+    pointer-events: none !important;
+    transform-style: preserve-3d !important;
+}
+
+/* 基础slide设置 */
+.swiper-slide {
+    pointer-events: auto !important;
+    cursor: pointer !important;
+    position: relative !important;
+    /* 关键：不要重置transform，让Swiper完全控制3D效果 */
+}
+
+/* 修复阴影覆盖问题 */
+.swiper-slide-shadow-left,
+.swiper-slide-shadow-right {
+    pointer-events: none !important;
+    /* 阴影不干扰点击，但保持视觉效果 */
+}
+
+/* 导航按钮 */
+.swiper-button-next,
+.swiper-button-prev {
+    pointer-events: auto !important;
+    z-index: 20 !important;
+}
 
 .project-card {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
