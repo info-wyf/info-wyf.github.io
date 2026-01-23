@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Y9 Nightlight House & Soldering Project</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<div class="floating-element"></div>
+<div class="floating-element"></div>
+<div class="floating-element"></div>
+<header>
+    <h1 class="text-2xl font-bold text-tech-blue font-poppins" onclick="window.location.href='../cv.html#work-history'">
+        Y9 Nightlight House & Soldering Project
+    </h1>
+
+    <button id="menu-toggle" class="menu-toggle" aria-label="Toggle mobile menu">☰</button>
+    <nav>
+        <ul id="mobile-menu">
+            <li><a href="../cv.html#work-history" class="hover:text-tech-accent text-tech-blue">Back to CV</a></li>
+            <li><a href="../index.html" class="hover:text-tech-accent text-tech-blue">Home</a></li>
+            <li><a href="../index.html#projects" class="hover:text-tech-accent text-tech-blue">Projects</a></li>
+            <li><a href="../index.html#contact" class="hover:text-tech-accent text-tech-blue">Contact</a></li>
+        </ul>
+    </nav>
+</header>
+<main>
+    <section>
+        <div class="text-content">
+            <h2 class="section-toggle text-xl font-semibold font-poppins">Project Overview</h2>
+            <p><a class="hover:text-tech-accent text-tech-blue"
+                  href="https://sites.google.com/burnside.school.nz/bhs-digital-technologies/junior/9elt">
+                Junior Electronics - Nightlight House Project</a><br><br>
+                In this project, students construct a nightlight house using electronic components and a pre-printed
+                card template. <br>
+                They develop practical skills in soldering, circuit assembly, and troubleshooting while learning key
+                electronics concepts such as voltage dividers, <br>
+                resistors, LDRs (light-dependent resistors), transistors, and LEDs. The project involves laying copper
+                tape, soldering components, measuring resistances and voltages, <br>
+                and assembling a functional circuit. Students also decorate their nightlight houses, adding personal
+                touches to enhance creativity and pride in their work. <br>
+                The project spans 5-6 weeks (5 periods per fortnight) at Burnside High School, offering ample
+                opportunities to explore electronics through hands-on learning. <br>
+            </p>
+
+            <h2 class="section-toggle text-xl font-semibold font-poppins">Learning Objectives</h2>
+            <ul>
+                <li>· Understand the function and application of electronic components, including resistors, LDRs,
+                    transistors, and LEDs.
+                </li>
+                <li>· Develop soldering skills and learn proper circuit assembly techniques, including handling copper
+                    tape and component placement.
+                </li>
+                <li>· Master the use of a multimeter to measure resistance and voltage, and apply these measurements to
+                    analyze circuit behavior.
+                </li>
+                <li>· Learn the principles of voltage dividers and calculate expected output voltages based on
+                    resistance
+                    values.
+                </li>
+                <li>· Enhance problem-solving and troubleshooting skills by identifying and fixing circuit faults.</li>
+                <li>· Foster creativity and attention to detail through decorating and personalizing the nightlight
+                    house.
+                </li>
+                <li>· Build confidence in electronics and take pride in completing a functional, aesthetically pleasing
+                    project.
+                </li>
+            </ul>
+        </div>
+        <div class="carousel">
+            <div class="carousel-inner">
+                <!-- Add more images here, e.g., <img src="image2.png" alt="Image 2"> -->
+                <img src="images/Y9project.png" onclick="openModal(this.src)" alt="Y9project">
+                <img src="images/nightlight_house_folded.png" onclick="openModal(this.src)"
+                     alt="nightlight_house_folded">
+                <img src="images/nightlight_house_paper.png" onclick="openModal(this.src)" alt="nightlight_house_paper">
+                <img src="images/project_board.png" onclick="openModal(this.src)" alt="project_board">
+                <img src="images/project_board_final.png" onclick="openModal(this.src)" alt="project_board_final">
+            </div>
+            <button class="prev">❮</button>
+            <button class="next">❯</button>
+            <div class="carousel-pagination"></div>
+    </section>
+</main>
+<footer>
+    <p>© 2025 YiFan Wang. All rights reserved.</p>
+</footer>
+
+<!-- Modal for full-screen image -->
+<div class="modal" id="imageModal" onclick="closeModal()">
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <img src="" id="modalImage" alt="Full-screen Image">
+</div>
+
+<script src="../scripts.js">
+
+</script>
+</body>
+</html>

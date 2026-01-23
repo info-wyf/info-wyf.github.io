@@ -7,7 +7,6 @@
     <list default="true" id="95199512-40b6-4e97-a249-5e1793cd5cd3" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cv.html" beforeDir="false" afterPath="$PROJECT_DIR$/cv.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/YifanWang.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/images/YifanWang.jpg" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -281,7 +280,10 @@
       <updated>1748136314893</updated>
       <workItem from="1755506685280" duration="1160000" />
       <workItem from="1755556350385" duration="751000" />
-      <workItem from="1757211398920" duration="1224000" />
+      <workItem from="1757211398920" duration="1570000" />
+      <workItem from="1757983993396" duration="4694000" />
+      <workItem from="1758154363176" duration="6413000" />
+      <workItem from="1760410377531" duration="9148000" />
     </task>
     <servers />
   </component>

@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teaching Feedback</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../styles.css">
+    <!-- Fancybox CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" />
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+
+        .fancybox__content {
+            width: 100% !important;
+            max-width: 100% !important;
+            height: auto !important;
+            max-height: 100vh !important;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-y;
+            overscroll-behavior: contain;
+        }
+
+        .fancybox__image {
+            width: 100% !important;
+            height: auto !important;
+            max-width: none !important;
+            max-height: none !important;
+            object-fit: contain;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        /* 防止 is-draggable 带来的样式影响（冗余保险） */
+        .fancybox__slide.is-draggable .fancybox__image,
+        .fancybox__slide.can-zoom_in .fancybox__image {
+            transform: none !important;
+            transition: none !important;
+        }
+    </style>
+</head>
+<body>
+<div class="floating-element"></div>
+<div class="floating-element"></div>
+<div class="floating-element"></div>
+<header>
+    <h1 class="text-2xl font-bold text-tech-blue font-poppins" onclick="window.location.href='../cv.html#work-history'">
+        Teaching feedback
+    </h1>
+
+    <button id="menu-toggle" class="menu-toggle" aria-label="Toggle mobile menu">☰</button>
+    <nav>
+        <ul id="mobile-menu">
+            <li><a href="../cv.html#work-history" class="hover:text-tech-accent text-tech-blue">Back to CV</a></li>
+            <li><a href="../index.html" class="hover:text-tech-accent text-tech-blue">Home</a></li>
+            <li><a href="../index.html#projects" class="hover:text-tech-accent text-tech-blue">Projects</a></li>
+            <li><a href="../index.html#contact" class="hover:text-tech-accent text-tech-blue">Contact</a></li>
+        </ul>
+    </nav>
+
+</header>
+<main>
+    <section>
+        <div class="text-content">
+            <h2 class="section-toggle text-xl font-semibold font-poppins">Burnside High School Associate teacher 29 May
+                2025 ——Will Thew</h2>
+            <p>Yifan completed his teaching placement at Burnside High School under the supervision of Associate Teacher
+                William Thew,
+                teaching Year 10 and 11 students in Electronics (Digital Technologies).
+                This placement provided opportunities for Yifan to apply pedagogical knowledge, build relationships with
+                students,
+                and demonstrate his growing professionalism. Yifan showed a strong willingness to engage with new
+                content and teaching strategies,
+                especially in a technically specialised subject area. He approached unfamiliar material with a proactive
+                and open mindset,
+                regularly seeking clarification and support to ensure he was well-prepared for teaching.
+                His commitment to developing both his content knowledge and pedagogical approaches was evident in his
+                planning,
+                lesson delivery, and reflective discussions.</p>
+            <h2 class="section-toggle text-xl font-semibold font-poppins">Burnside High School Associate teacher 28 May
+                2025 ——Steve Dunford</h2>
+            <p>Yifan has done a fantastic job of working with my students to understand their current knowledge and, in
+                the case of my seniors, their projects. He has worked constantly to create learning experiences that
+                dovetail nicely with what they are doing, and to push them to learn more about their subject, and also
+                the tools they use.<br>
+
+                He has worked equally well in both Electronics (junior) and Software Engineering (senior) - and was
+                constantly asking if he could take classes, and preparing engaging lessons and simple and fun formative
+                assessment material for each one.<br>
+
+                Yifan has been an absolute pleasure to have in my classroom, and I believe he will become a fine
+                teacher, and will only get better with time and experience.</p>
+            <h2 class="section-toggle text-xl font-semibold font-poppins">BHS-9ELT Period2 8 May 2025 ——Reliver</h2>
+            <p>Hi,
+                Mr. Wang took the class.
+                I thought he was very competent. Nice relaxed style. Early classroom management.
+                The class were engaged.</p>
+            <h2 class="section-toggle text-xl font-semibold font-poppins">BHS-Y12DTP Period1 22 May 2025
+                ——Reliver</h2>
+            <p>Steve, a lovely enthusiastic class and Yifan is great.
+                I had a fab day with your classes.</p>
+            <h2 class="section-toggle text-xl font-semibold font-poppins">BHS-9ELT Period5 22 May 2025 ——Reliver</h2>
+            <p>Hi Steve, the class were attentive when Yifan took the class explaining the assignment.^.^
+                They worked well with just a couple needing to be to keep on task.</p>
+            <h2 class="section-toggle text-xl font-semibold font-poppins">BHS-Y12 Digital Technology Programming Student
+                ——Alex</h2>
+            <p>Mr Wang is a dedicated teacher.
+                It is obvious he prepares well for every lesson and regularly checks on students individually to ensure
+                all his students are accounted for.
+                I have greatly enjoyed Mr Wang’s teaching and I wish him the best for his future.</p>
+            <h2 class="section-toggle text-xl font-semibold font-poppins">BHS-Y12 Digital Technology Programming Student
+                ——Emma</h2>
+            <p>I think that Mr Wang has a very good teaching style that is easy to follow.
+                It is obvious that he understands what he is teaching and that he cares about the topic.
+                I have enjoyed his teaching and hope he does well in the future.</p>
+            <h2 class="section-toggle text-xl font-semibold font-poppins">BHS-Y12 Digital Technology Programming Student
+                ——Andi</h2>
+            <p>Mr. Wang is a really enthusiastic teacher who taught me a lot.
+                His lessons were always well-prepared and detailed, which allowed us to learn niche topics and pick up
+                specific tips that we otherwise might have missed.
+                The systematic approach of his teaching also made learning incredibly effective, and always had perfect
+                flow and structure,
+                you could tell every detail was carefully planned, One small improvement could be giving students a bit
+                more time to work through problems independently before explaining the solution,
+                although it is absolutely understandable as we do have a tight schedule and a large class. Overall I
+                feel very lucky to be in the class and be a part of the learning.
+                Thank you very much Mr Wang and wish you all the best-</p>
+        </div>
+        <div class="carousel">
+            <div class="carousel-inner">
+                <!-- 多张图片，点击可弹出 Fancybox -->
+                <a href="images2/9digi_studentfeedback1.png" data-fancybox="gallery">
+                    <img src="images2/9digi_studentfeedback1.png" alt="9digi_studentfeedback1">
+                </a>
+                <a href="images2/chart_from_feedback1.png" data-fancybox="gallery">
+                    <img src="images2/chart_from_feedback1.png" alt="chart_from_feedback1">
+                </a>
+                <a href="images2/student_feedback2.png" data-fancybox="gallery">
+                    <img src="images2/student_feedback2.png" alt="student_feedback2">
+                </a>
+                <a href="images2/chart_from_feedback2.png" data-fancybox="gallery">
+                    <img src="images2/chart_from_feedback2.png" alt="chart_from_feedback2">
+                </a>
+                <a href="images2/stduent_interactive_poll.png" data-fancybox="gallery">
+                    <img src="images2/stduent_interactive_poll.png" alt="stduent_interactive_poll">
+                </a>
+            </div>
+            <button class="prev">❮</button>
+            <button class="next">❯</button>
+            <div class="carousel-pagination"></div>
+        </div>
+    </section>
+</main>
+<footer>
+    <p>© 2025 YiFan Wang. All rights reserved.</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script>
+<script>
+    // -------------------------
+    // 1) 拦截 DOMTokenList 方法（阻止添加特定 class）
+    // -------------------------
+    (function(){
+        const blocked = new Set(['is-draggable','can-zoom_in','is-zoomed','is-dragging','is-zoomable']);
+        const origAdd = DOMTokenList.prototype.add;
+        const origToggle = DOMTokenList.prototype.toggle;
+        const origReplace = DOMTokenList.prototype.replace;
+
+        DOMTokenList.prototype.add = function(...tokens){
+            const filtered = tokens.filter(t => !blocked.has(t));
+            if(filtered.length) return origAdd.apply(this, filtered);
+            return undefined;
+        };
+
+        DOMTokenList.prototype.toggle = function(token, force){
+            if(blocked.has(token)){
+                if(typeof force === 'boolean') return force;
+                return this.contains(token);
+            }
+            return origToggle.apply(this, arguments);
+        };
+
+        if(origReplace){
+            DOMTokenList.prototype.replace = function(oldToken,newToken){
+                if(blocked.has(newToken) || blocked.has(oldToken)){
+                    if(!blocked.has(oldToken)) return origReplace.call(this, oldToken, oldToken);
+                    return false;
+                }
+                return origReplace.apply(this, arguments);
+            };
+        }
+    })();
+
+    // -------------------------
+    // 2) MutationObserver 保险
+    // -------------------------
+    (function(){
+        const blockedList = ['is-draggable','can-zoom_in','is-zoomed','is-dragging','is-zoomable'];
+        const observer = new MutationObserver(mutations=>{
+            mutations.forEach(m=>{
+                if(m.type==='attributes' && m.attributeName==='class'){
+                    const el = m.target;
+                    if(el && el.classList) blockedList.forEach(c=>{ if(el.classList.contains(c)) el.classList.remove(c); });
+                }
+                if(m.type==='childList' && m.addedNodes.length){
+                    m.addedNodes.forEach(node=>{
+                        if(node.nodeType===1 && node.classList) blockedList.forEach(c=>{ if(node.classList.contains(c)) node.classList.remove(c); });
+                    });
+                }
+            });
+        });
+        observer.observe(document.documentElement||document.body,{
+            attributes:true,
+            attributeFilter:['class'],
+            subtree:true,
+            childList:true
+        });
+    })();
+
+    // -------------------------
+    // 3) 阻止双指/滚轮缩放和双击
+    // -------------------------
+    (function(){
+        function inFancyboxTarget(e){ return !!e.target.closest('.fancybox__content, .fancybox__slide, .fancybox'); }
+
+        window.addEventListener('click', e=>{
+            if(e.target.closest('.fancybox__button--close')||e.target.closest('.fancybox__toolbar')) return;
+            if(e.target.closest('.fancybox__content')||e.target.closest('.fancybox__slide')){
+                e.preventDefault();
+                e.stopImmediatePropagation();
+            }
+        }, {capture:true});
+
+        window.addEventListener('wheel', e=>{
+            if(inFancyboxTarget(e)){
+                if(e.ctrlKey||e.metaKey){ e.preventDefault(); e.stopImmediatePropagation(); return; }
+                e.stopPropagation();
+            }
+        }, {passive:false, capture:true});
+
+        window.addEventListener('touchstart', e=>{
+            if(inFancyboxTarget(e) && e.touches && e.touches.length>1){ e.preventDefault(); e.stopImmediatePropagation(); }
+        }, {passive:false, capture:true});
+
+        window.addEventListener('gesturestart', e=>{
+            if(inFancyboxTarget(e)){ e.preventDefault(); e.stopImmediatePropagation(); }
+        }, {passive:false, capture:true});
+
+        window.addEventListener('dblclick', e=>{
+            if(inFancyboxTarget(e)){ e.preventDefault(); e.stopImmediatePropagation(); }
+        }, {passive:false, capture:true});
+
+        window.addEventListener('pointerdown', e=>{
+            if(inFancyboxTarget(e)) e.stopImmediatePropagation();
+        }, {capture:true});
+
+        window.addEventListener('pointermove', e=>{
+            if(inFancyboxTarget(e)) e.stopImmediatePropagation();
+        }, {capture:true});
+    })();
+
+    // -------------------------
+    // 4) 初始化 Fancybox
+    // -------------------------
+    Fancybox.bind("[data-fancybox='gallery']", {
+        click:"close",
+        zoom:false,
+        wheel:false,
+        dragToClose:false,
+        Toolbar:{
+            display:["counter","slideshow","fullscreen","thumbs","close"]
+        },
+        Panzoom:{
+            touch:true,
+            pinch:false,
+            panOnlyZoomed:false
+        },
+        on:{
+            init:(fancybox)=>{
+                document.addEventListener("keydown",(e)=>{ if(e.key==="Escape") fancybox.close(); });
+            },
+            reveal:(fancybox,slide)=>{
+                const img=slide.$image;
+                if(img){
+                    img.style.width="100%";
+                    img.style.height="auto";
+                    img.style.maxWidth="100%";
+                    img.style.maxHeight="none";
+                }
+            }
+        }
+    });
+
+    // -------------------------
+    // 5) 覆盖 toggleZoom
+    // -------------------------
+    document.addEventListener('fancybox:ready', (e)=>{
+        try{
+            const fb = e.detail && e.detail.fancybox;
+            if(!fb) return;
+            fb.items.forEach(item=>{ if(item && item.Panzoom) item.Panzoom.toggleZoom = function(){}; });
+        } catch(err){ }
+    });
+
+    // -------------------------
+    // 6) 左右滑动手势切换（桌面拖拽+移动端手势）
+    // -------------------------
+    let startX=0, startY=0, threshold=50;
+    const handleStart = (e)=>{
+        if(!e.target.closest('.fancybox__content')) return;
+        if(e.touches){ startX=e.touches[0].clientX; startY=e.touches[0].clientY; }
+        else{ startX=e.clientX; startY=e.clientY; window.isMouseDown=true; }
+    };
+    const handleEnd = (e)=>{
+        if(!e.target.closest('.fancybox__content')) return;
+        let endX,endY;
+        if(e.changedTouches){ endX=e.changedTouches[0].clientX; endY=e.changedTouches[0].clientY; }
+        else{ if(!window.isMouseDown) return; endX=e.clientX; endY=e.clientY; window.isMouseDown=false; }
+
+        const deltaX=endX-startX, deltaY=endY-startY;
+        if(Math.abs(deltaX)>Math.abs(deltaY) && Math.abs(deltaX)>threshold){
+            const fancybox = Fancybox.getInstance();
+            if(!fancybox) return;
+            if(deltaX>0) fancybox.prev();
+            else fancybox.next();
+        }
+    };
+
+    document.addEventListener('touchstart', handleStart);
+    document.addEventListener('touchend', handleEnd);
+    document.addEventListener('mousedown', handleStart);
+    document.addEventListener('mouseup', handleEnd);
+</script>
+
+<script src="../scripts.js">
+
+</script>
+</body>
+</html>
