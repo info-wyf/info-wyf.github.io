@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Web App Architecture</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Noto+Sans+SC:wght@300;400;700&display=swap');
+
+  :root {
+    --bg: #0a0e1a;
+    --panel: #111827;
+    --frontend: #00d4ff;
+    --backend: #7c3aed;
+    --db: #10b981;
+    --request: #f59e0b;
+    --response: #ef4444;
+    --text: #e2e8f0;
+    --muted: #64748b;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px 14px 48px;
+    overflow-x: hidden;
+    font-family: 'Space Mono', monospace;
+  }
+
+  /* ── TOPBAR ── */
+  .topbar {
+    width: 100%;
+    max-width: 900px;
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 14px;
+  }
+
+  .lang-btn {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    background: var(--panel);
+    color: var(--frontend);
+    border: 1.5px solid var(--frontend);
+    border-radius: 20px;
+    padding: 7px 15px;
+    cursor: pointer;
+    display: flex; align-items: center; gap: 6px;
+    transition: background 0.2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .lang-btn:hover, .lang-btn:active { background: rgba(0,212,255,0.12); }
+  .lang-btn svg { width: 13px; height: 13px; flex-shrink: 0; }
+
+  /* ── HEADER ── */
+  .header { text-align: center; margin-bottom: 28px; }
+
+  h1 {
+    font-family: 'Space Mono', monospace;
+    font-size: clamp(1rem, 4.5vw, 1.45rem);
+    letter-spacing: 0.12em;
+    color: var(--frontend);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .subtitle {
+    font-size: clamp(0.6rem, 2.5vw, 0.78rem);
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  /* ══════════════════════════
+      ARCH  —  DESKTOP (row)
+  ══════════════════════════ */
+  .arch {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    width: 100%;
+    max-width: 900px;
+  }
+
+  .layer {
+    flex: 1;
+    border: 2px solid;
+    border-radius: 16px;
+    padding: clamp(14px,3vw,22px) clamp(12px,2vw,18px);
+    background: var(--panel);
+    display: flex; flex-direction: column;
+  }
+
+  .layer-label {
+    font-size: 0.58rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    opacity: 0.55;
+  }
+
+  .layer-name {
+    font-size: clamp(0.88rem,2.5vw,1.05rem);
+    font-weight: 700;
+    margin-bottom: 7px;
+  }
+
+  .layer-desc {
+    font-size: clamp(0.62rem,1.7vw,0.7rem);
+    color: var(--muted);
+    line-height: 1.65;
+    flex: 1;
+  }
+  body[data-lang="zh"] .layer-desc {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: clamp(0.68rem,1.9vw,0.74rem);
+  }
+
+  .layer-tech { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 5px; }
+
+  .tag {
+    font-size: 0.57rem;
+    padding: 3px 7px;
+    border-radius: 20px;
+    border: 1px solid;
+    letter-spacing: 0.04em;
+  }
+
+  .l-front { border-color:var(--frontend); animation:glowBlue 3s ease-in-out infinite; }
+  .l-front .layer-name { color:var(--frontend); }
+  .l-front .tag { color:var(--frontend); border-color:var(--frontend); background:rgba(0,212,255,0.08); }
+
+  .l-back { border-color:var(--backend); animation:glowPurple 3s ease-in-out infinite 0.5s; }
+  .l-back .layer-name { color:var(--backend); }
+  .l-back .tag { color:var(--backend); border-color:var(--backend); background:rgba(124,58,237,0.1); }
+
+  .l-db { border-color:var(--db); animation:glowGreen 3s ease-in-out infinite 1s; }
+  .l-db .layer-name { color:var(--db); }
+  .l-db .tag { color:var(--db); border-color:var(--db); background:rgba(16,185,129,0.08); }
+
+  @keyframes glowBlue   { 0%,100%{box-shadow:0 0 0 rgba(0,212,255,0)}   50%{box-shadow:0 0 18px rgba(0,212,255,0.28)} }
+  @keyframes glowPurple { 0%,100%{box-shadow:0 0 0 rgba(124,58,237,0)}  50%{box-shadow:0 0 18px rgba(124,58,237,0.32)} }
+  @keyframes glowGreen  { 0%,100%{box-shadow:0 0 0 rgba(16,185,129,0)}  50%{box-shadow:0 0 18px rgba(16,185,129,0.28)} }
+
+  .icon-svg { width:30px; height:30px; margin-bottom:10px; }
+
+  /* ══════════════════════════
+      HORIZONTAL ARROWS
+  ══════════════════════════ */
+  .h-arrow {
+    display:flex; flex-direction:column; align-items:center;
+    justify-content:center; gap:6px;
+    width:64px; flex-shrink:0; z-index:3;
+  }
+
+  .h-arrow-label {
+    font-size:0.5rem; letter-spacing:0.04em;
+    color:var(--muted); text-align:center; white-space:nowrap; line-height:1.5;
+  }
+
+  .h-track {
+    width:100%; height:20px;
+    position:relative; display:flex; align-items:center;
+  }
+
+  .h-line {
+    width:100%; height:2px;
+    position:relative; overflow:visible;
+  }
+
+  .req-h { background:linear-gradient(90deg,transparent,var(--request)); }
+  .res-h { background:linear-gradient(90deg,var(--response),transparent); }
+
+  .req-dot {
+    width:9px;height:9px;border-radius:50%;
+    background:var(--request);
+    position:absolute; top:50%; transform:translateY(-50%); left:-9px;
+    animation:slideR 1.8s ease-in-out infinite;
+    box-shadow:0 0 7px var(--request);
+  }
+  .res-dot {
+    width:9px;height:9px;border-radius:50%;
+    background:var(--response);
+    position:absolute; top:50%; transform:translateY(-50%); right:-9px;
+    animation:slideL 1.8s ease-in-out infinite;
+    box-shadow:0 0 7px var(--response);
+  }
+
+  .ah-r::after { content:''; position:absolute; right:-5px; top:50%; transform:translateY(-50%); border:4px solid transparent; border-left-color:var(--request); }
+  .ah-l::before{ content:''; position:absolute; left:-5px;  top:50%; transform:translateY(-50%); border:4px solid transparent; border-right-color:var(--response); }
+
+  @keyframes slideR { 0%{left:-9px;opacity:0}10%{opacity:1}90%{opacity:1}100%{left:calc(100% + 9px);opacity:0} }
+  @keyframes slideL { 0%{right:-9px;opacity:0}10%{opacity:1}90%{opacity:1}100%{right:calc(100% + 9px);opacity:0} }
+
+  .h-arrow:nth-of-type(2) .req-dot { animation-delay:0s; }
+  .h-arrow:nth-of-type(2) .res-dot { animation-delay:0.9s; }
+  .h-arrow:nth-of-type(4) .req-dot { animation-delay:0.35s; }
+  .h-arrow:nth-of-type(4) .res-dot { animation-delay:1.25s; }
+
+  /* ══════════════════════════
+      VERTICAL ARROWS (mobile)
+  ══════════════════════════ */
+  .v-arrow {
+    display:none;
+    flex-direction:row; align-items:center; justify-content:center; gap:10px;
+    padding:6px 0;
+  }
+
+  .v-arrow-label {
+    font-size:0.5rem; color:var(--muted);
+    text-align:center; line-height:1.5;
+  }
+
+  .v-cols { display:flex; gap:8px; }
+
+  .v-track {
+    position:relative; width:2px; height:44px; overflow:visible;
+  }
+
+  .vr-line { background:linear-gradient(180deg,transparent,var(--request)); }
+  .vs-line { background:linear-gradient(180deg,var(--response),transparent); }
+
+  .vr-dot {
+    width:9px;height:9px;border-radius:50%;
+    background:var(--request);
+    position:absolute; left:50%; transform:translateX(-50%); top:-9px;
+    animation:slideD 1.8s ease-in-out infinite;
+    box-shadow:0 0 7px var(--request);
+  }
+  .vs-dot {
+    width:9px;height:9px;border-radius:50%;
+    background:var(--response);
+    position:absolute; left:50%; transform:translateX(-50%); bottom:-9px;
+    animation:slideU 1.8s ease-in-out infinite;
+    box-shadow:0 0 7px var(--response);
+  }
+
+  .av-d::after  { content:''; position:absolute; left:50%; transform:translateX(-50%); bottom:-5px; border:4px solid transparent; border-top-color:var(--request); }
+  .av-u::before { content:''; position:absolute; left:50%; transform:translateX(-50%); top:-5px; border:4px solid transparent; border-bottom-color:var(--response); }
+
+  @keyframes slideD { 0%{top:-9px;opacity:0}10%{opacity:1}90%{opacity:1}100%{top:calc(100% + 9px);opacity:0} }
+  @keyframes slideU { 0%{bottom:-9px;opacity:0}10%{opacity:1}90%{opacity:1}100%{bottom:calc(100% + 9px);opacity:0} }
+
+  .v1 .vr-dot { animation-delay:0s; }
+  .v1 .vs-dot { animation-delay:0.9s; }
+  .v2 .vr-dot { animation-delay:0.35s; }
+  .v2 .vs-dot { animation-delay:1.25s; }
+
+  /* ══════════════════════════
+      LEGEND
+  ══════════════════════════ */
+  .legend {
+    margin-top:22px; display:flex; gap:20px; flex-wrap:wrap; justify-content:center;
+  }
+  .leg-item { display:flex; align-items:center; gap:6px; font-size:0.65rem; color:var(--muted); }
+  .leg-dot  { width:9px; height:9px; border-radius:50%; }
+
+  /* ══════════════════════════
+      STEPS
+  ══════════════════════════ */
+  .steps { margin-top:40px; width:100%; max-width:900px; }
+
+  .steps-title {
+    font-size:0.62rem; letter-spacing:0.12em; color:var(--muted);
+    text-transform:uppercase; margin-bottom:14px; text-align:center;
+  }
+
+  .step-list {
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(145px,1fr));
+    gap:10px;
+  }
+
+  .step {
+    background:var(--panel); border-radius:12px; padding:13px;
+    border-left:3px solid;
+    opacity:0; transform:translateY(14px);
+    animation:fadeUp 0.5s forwards;
+  }
+
+  .step:nth-child(1){border-color:var(--frontend);animation-delay:0.2s}
+  .step:nth-child(2){border-color:var(--request); animation-delay:0.42s}
+  .step:nth-child(3){border-color:var(--backend); animation-delay:0.64s}
+  .step:nth-child(4){border-color:var(--db);      animation-delay:0.86s}
+  .step:nth-child(5){border-color:var(--response);animation-delay:1.08s}
+  .step:nth-child(6){border-color:var(--frontend);animation-delay:1.3s}
+
+  @keyframes fadeUp { to{opacity:1;transform:translateY(0)} }
+
+  .step-num { font-size:0.58rem; color:var(--muted); margin-bottom:4px; }
+
+  .step-text {
+    font-size:clamp(0.62rem,1.8vw,0.7rem); line-height:1.6;
+  }
+  body[data-lang="zh"] .step-text {
+    font-family:'Noto Sans SC',sans-serif;
+    font-size:clamp(0.68rem,2vw,0.76rem);
+  }
+
+  code {
+    font-family:'Space Mono',monospace;
+    background:rgba(255,255,255,0.07);
+    padding:1px 4px; border-radius:4px; font-size:0.85em;
+  }
+
+  /* ══════════════════════════
+      MOBILE  ≤ 600px
+  ══════════════════════════ */
+  @media (max-width:600px) {
+    .arch { flex-direction:column; }
+    .h-arrow { display:none; }
+    .v-arrow { display:flex; }
+    .step-list { grid-template-columns:1fr 1fr; }
+  }
+</style>
+</head>
+<body data-lang="en">
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <button class="lang-btn" onclick="toggleLang()">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+      <circle cx="8" cy="8" r="6.5"/>
+      <path d="M8 1.5C8 1.5 5.5 4.5 5.5 8s2.5 6.5 2.5 6.5M8 1.5C8 1.5 10.5 4.5 10.5 8S8 14.5 8 14.5M1.5 8h13"/>
+    </svg>
+    <span id="langLabel">中文</span>
+  </button>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <h1 id="title">Web App Architecture</h1>
+  <p class="subtitle" id="subtitle">HTML / CSS / JS &nbsp;·&nbsp; Python &nbsp;·&nbsp; SQLite</p>
+</div>
+
+<!-- DIAGRAM -->
+<div class="arch">
+
+  <!-- FRONTEND -->
+  <div class="layer l-front">
+    <div class="layer-label" id="lb-front">Client Layer</div>
+    <svg class="icon-svg" viewBox="0 0 36 36" fill="none">
+      <rect x="2" y="4" width="32" height="22" rx="3" stroke="#00d4ff" stroke-width="2"/>
+      <path d="M12 30h12M18 26v4" stroke="#00d4ff" stroke-width="2" stroke-linecap="round"/>
+      <path d="M8 12l4 4-4 4" stroke="#00d4ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M15 20h8" stroke="#00d4ff" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    <div class="layer-name" id="name-front">Frontend</div>
+    <div class="layer-desc" id="desc-front">The interface users see and interact with in the browser. Renders data, handles events, and sends requests to the server.</div>
+    <div class="layer-tech">
+      <span class="tag">HTML</span><span class="tag">CSS</span><span class="tag">JavaScript</span>
+    </div>
+  </div>
+
+  <!-- H-ARROW 1 -->
+  <div class="h-arrow">
+    <div class="h-arrow-label" id="al1">HTTP<br>Req / Res</div>
+    <div class="h-track"><div class="h-line req-h ah-r"><div class="req-dot"></div></div></div>
+    <div class="h-track"><div class="h-line res-h ah-l"><div class="res-dot"></div></div></div>
+  </div>
+
+  <!-- V-ARROW 1 (mobile) -->
+  <div class="v-arrow v1">
+    <div class="v-arrow-label" id="al1m">HTTP<br>Req / Res</div>
+    <div class="v-cols">
+      <div class="v-track vr-line av-d"><div class="vr-dot"></div></div>
+      <div class="v-track vs-line av-u"><div class="vs-dot"></div></div>
+    </div>
+  </div>
+
+  <!-- BACKEND -->
+  <div class="layer l-back">
+    <div class="layer-label" id="lb-back">Server Layer</div>
+    <svg class="icon-svg" viewBox="0 0 36 36" fill="none">
+      <rect x="3" y="6" width="30" height="10" rx="3" stroke="#7c3aed" stroke-width="2"/>
+      <rect x="3" y="20" width="30" height="10" rx="3" stroke="#7c3aed" stroke-width="2"/>
+      <circle cx="28" cy="11" r="2" fill="#7c3aed"/>
+      <circle cx="28" cy="25" r="2" fill="#7c3aed"/>
+      <path d="M8 11h12M8 25h12" stroke="#7c3aed" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    <div class="layer-name" id="name-back">Backend</div>
+    <div class="layer-desc" id="desc-back">Receives requests, runs business logic, handles auth, queries the database, and returns results as JSON.</div>
+    <div class="layer-tech">
+      <span class="tag">Python</span><span class="tag">Flask / Django</span><span class="tag">REST API</span>
+    </div>
+  </div>
+
+  <!-- H-ARROW 2 -->
+  <div class="h-arrow">
+    <div class="h-arrow-label" id="al2">SQL<br>Query / Result</div>
+    <div class="h-track"><div class="h-line req-h ah-r"><div class="req-dot"></div></div></div>
+    <div class="h-track"><div class="h-line res-h ah-l"><div class="res-dot"></div></div></div>
+  </div>
+
+  <!-- V-ARROW 2 (mobile) -->
+  <div class="v-arrow v2">
+    <div class="v-arrow-label" id="al2m">SQL<br>Query / Result</div>
+    <div class="v-cols">
+      <div class="v-track vr-line av-d"><div class="vr-dot"></div></div>
+      <div class="v-track vs-line av-u"><div class="vs-dot"></div></div>
+    </div>
+  </div>
+
+  <!-- DATABASE -->
+  <div class="layer l-db">
+    <div class="layer-label" id="lb-db">Data Layer</div>
+    <svg class="icon-svg" viewBox="0 0 36 36" fill="none">
+      <ellipse cx="18" cy="9" rx="12" ry="4" stroke="#10b981" stroke-width="2"/>
+      <path d="M6 9v8c0 2.2 5.4 4 12 4s12-1.8 12-4V9" stroke="#10b981" stroke-width="2"/>
+      <path d="M6 17v8c0 2.2 5.4 4 12 4s12-1.8 12-4v-8" stroke="#10b981" stroke-width="2"/>
+    </svg>
+    <div class="layer-name" id="name-db">Database</div>
+    <div class="layer-desc" id="desc-db">Persists all application data — users, records, content. Lightweight file-based SQL storage, no extra server needed.</div>
+    <div class="layer-tech">
+      <span class="tag">SQLite</span><span class="tag">SQL</span><span class="tag">.db file</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- LEGEND -->
+<div class="legend">
+  <div class="leg-item"><div class="leg-dot" style="background:var(--request)"></div><span id="leg-req">Request flow</span></div>
+  <div class="leg-item"><div class="leg-dot" style="background:var(--response)"></div><span id="leg-res">Response flow</span></div>
+</div>
+
+<!-- STEPS -->
+<div class="steps">
+  <div class="steps-title" id="steps-title">── Request Lifecycle ──</div>
+  <div class="step-list">
+    <div class="step"><div class="step-num" id="sn1">01 · User Action</div><div class="step-text" id="st1">User clicks a button or submits a form. JS captures the event.</div></div>
+    <div class="step"><div class="step-num" id="sn2">02 · HTTP Request</div><div class="step-text" id="st2">JS calls <code>fetch()</code> and sends an HTTP request to the Python API.</div></div>
+    <div class="step"><div class="step-num" id="sn3">03 · Business Logic</div><div class="step-text" id="st3">Python (Flask/Django) receives the request, validates input, runs logic.</div></div>
+    <div class="step"><div class="step-num" id="sn4">04 · DB Query</div><div class="step-text" id="st4">Python runs SQL on the SQLite <code>.db</code> file to read or write data.</div></div>
+    <div class="step"><div class="step-num" id="sn5">05 · JSON Response</div><div class="step-text" id="st5">Python packages results as JSON and returns it over HTTP.</div></div>
+    <div class="step"><div class="step-num" id="sn6">06 · UI Update</div><div class="step-text" id="st6">JS parses the JSON and updates HTML/CSS — user sees fresh content.</div></div>
+  </div>
+</div>
+
+<script>
+const T = {
+  en: {
+    langLabel:"中文", title:"Web App Architecture",
+    subtitle:"HTML / CSS / JS &nbsp;·&nbsp; Python &nbsp;·&nbsp; SQLite",
+    "lb-front":"Client Layer","name-front":"Frontend",
+    "desc-front":"The interface users see and interact with in the browser. Renders data, handles events, and sends requests to the server.",
+    al1:"HTTP<br>Req / Res", al1m:"HTTP<br>Req / Res",
+    "lb-back":"Server Layer","name-back":"Backend",
+    "desc-back":"Receives requests, runs business logic, handles auth, queries the database, and returns results as JSON.",
+    al2:"SQL<br>Query / Result", al2m:"SQL<br>Query / Result",
+    "lb-db":"Data Layer","name-db":"Database",
+    "desc-db":"Persists all application data — users, records, content. Lightweight file-based SQL storage, no extra server needed.",
+    "leg-req":"Request flow","leg-res":"Response flow",
+    "steps-title":"── Request Lifecycle ──",
+    sn1:"01 · User Action",   st1:"User clicks a button or submits a form. JS captures the event.",
+    sn2:"02 · HTTP Request",  st2:"JS calls <code>fetch()</code> and sends an HTTP request to the Python API.",
+    sn3:"03 · Business Logic",st3:"Python (Flask/Django) receives the request, validates input, runs logic.",
+    sn4:"04 · DB Query",      st4:"Python runs SQL on the SQLite <code>.db</code> file to read or write data.",
+    sn5:"05 · JSON Response", st5:"Python packages results as JSON and returns it over HTTP.",
+    sn6:"06 · UI Update",     st6:"JS parses the JSON and updates HTML/CSS — user sees fresh content.",
+  },
+  zh: {
+    langLabel:"English", title:"Web 应用架构",
+    subtitle:"HTML / CSS / JS &nbsp;·&nbsp; Python &nbsp;·&nbsp; SQLite",
+    "lb-front":"客户端 · Client","name-front":"前端 Frontend",
+    "desc-front":"用户在浏览器中看到和操作的界面，负责展示数据、处理交互事件、向服务器发送请求。",
+    al1:"HTTP<br>请求 / 响应", al1m:"HTTP<br>请求 / 响应",
+    "lb-back":"服务端 · Server","name-back":"后端 Backend",
+    "desc-back":"接收前端请求，处理业务逻辑，鉴权验证，调用数据库，将结果以 JSON 格式返回。",
+    al2:"SQL<br>查询 / 结果", al2m:"SQL<br>查询 / 结果",
+    "lb-db":"数据层 · Database","name-db":"数据库 Database",
+    "desc-db":"持久化存储所有应用数据（用户、记录、内容）。轻量级文件型 SQL 存储，无需独立数据库服务器。",
+    "leg-req":"请求流","leg-res":"响应流",
+    "steps-title":"── 一次完整请求的生命周期 ──",
+    sn1:"01 · 用户操作",   st1:"用户点击按钮或提交表单，JS 捕获事件。",
+    sn2:"02 · HTTP 请求",  st2:"JS 通过 <code>fetch()</code> 向 Python 后端 API 发送 HTTP 请求。",
+    sn3:"03 · 业务逻辑",   st3:"Python（Flask/Django）接收请求，验证数据，执行业务逻辑。",
+    sn4:"04 · 数据库操作", st4:"Python 对 SQLite <code>.db</code> 文件执行 SQL，读写数据。",
+    sn5:"05 · JSON 响应",  st5:"Python 将结果封装成 JSON，通过 HTTP 返回给前端。",
+    sn6:"06 · 页面更新",   st6:"JS 解析 JSON，动态更新 HTML/CSS，用户看到最新内容。",
+  }
+};
+
+let lang = 'en';
+
+function toggleLang() {
+  lang = lang === 'en' ? 'zh' : 'en';
+  document.body.setAttribute('data-lang', lang);
+  const t = T[lang];
+  Object.keys(t).forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = t[id];
+  });
+}
+</script>
+</body>
+</html>
