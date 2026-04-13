@@ -9,6 +9,8 @@ document.addEventListener('DOMContentLoaded', function () {
         menuToggle.addEventListener('click', function (event) {
             mobileMenu.classList.toggle('hidden');
             nav.classList.toggle('active');
+            mobileMenu.classList.toggle('active');
+            menuToggle.setAttribute('aria-expanded', String(!mobileMenu.classList.contains('hidden')));
             event.stopPropagation();
         });
 
@@ -23,6 +25,8 @@ document.addEventListener('DOMContentLoaded', function () {
             if (isMobile && !isClickInsideMenu && !isClickInsideToggle && isMenuVisible) {
                 mobileMenu.classList.add('hidden');
                 nav.classList.remove('active');
+                mobileMenu.classList.remove('active');
+                menuToggle.setAttribute('aria-expanded', 'false');
             }
         });
 
@@ -34,6 +38,8 @@ document.addEventListener('DOMContentLoaded', function () {
             if (isMobile && event.key === 'Escape' && isMenuVisible) {
                 mobileMenu.classList.add('hidden');
                 nav.classList.remove('active');
+                mobileMenu.classList.remove('active');
+                menuToggle.setAttribute('aria-expanded', 'false');
             }
         });
 
@@ -54,7 +60,18 @@ document.addEventListener('DOMContentLoaded', function () {
             if (isMobile && deltaY > 50 && isMenuVisible) {
                 mobileMenu.classList.add('hidden');
                 nav.classList.remove('active');
+                mobileMenu.classList.remove('active');
+                menuToggle.setAttribute('aria-expanded', 'false');
             }
+        });
+
+        mobileMenu.querySelectorAll('a').forEach((link) => {
+            link.addEventListener('click', function () {
+                mobileMenu.classList.add('hidden');
+                nav.classList.remove('active');
+                mobileMenu.classList.remove('active');
+                menuToggle.setAttribute('aria-expanded', 'false');
+            });
         });
     } else {
         console.warn('菜单切换按钮或菜单元素未找到，请检查 HTML 结构中的 ID "menu-toggle" 和 "mobile-menu"。');
@@ -109,8 +126,9 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         // 模态框功能
+        const modal = document.getElementById('imageModal');
+
         function openModal(src) {
-            const modal = document.getElementById('imageModal');
             const modalImage = document.getElementById('modalImage');
             if (modal && modalImage) {
                 modalImage.src = src;
@@ -131,7 +149,7 @@ document.addEventListener('DOMContentLoaded', function () {
         window.closeModal = closeModal;
 
         document.addEventListener('keydown', function (event) {
-            if (event.key === 'Escape' && modal.style.display === 'flex') {
+            if (modal && event.key === 'Escape' && modal.style.display === 'flex') {
                 closeModal();
             }
         });
