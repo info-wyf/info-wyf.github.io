@@ -307,7 +307,7 @@ main {
 }
 
 .cv-heading {
-    font-size: clamp(2.2rem, 6vw, 3.7rem);
+    font-size: clamp(2.3rem, 6vw, 4rem);
 }
 
 .toggle-all-btn {
@@ -492,6 +492,32 @@ main {
 }
 
 @media (max-width: 768px) {
+    .site-nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        border-radius: 0;
+        border: none;
+        border-bottom: 1px solid rgba(20, 33, 61, 0.08);
+        box-shadow: 0 4px 16px rgba(20, 33, 61, 0.06);
+    }
+
+    .nav-inner {
+        padding: 0.9rem 1rem;
+    }
+
+    .brand-mark {
+        min-width: 0;
+    }
+
+    .brand-text {
+        font-size: 0.95rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
     .nav-links {
         display: none;
     }
@@ -501,17 +527,31 @@ main {
     }
 
     .mobile-panel {
-        display: block;
-        transform: translateY(-120%);
-        transition: transform 0.28s ease;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        display: none;
+        border-top: 1px solid rgba(20, 33, 61, 0.08);
+        background: rgba(244, 250, 253, 0.98);
+        backdrop-filter: blur(16px);
     }
 
     .mobile-panel.active {
-        transform: translateY(0);
+        display: block;
     }
 
     .mobile-panel.hidden {
-        display: block;
+        display: none;
+    }
+
+    .mobile-panel-inner {
+        padding: 0.1rem 1rem 0.85rem;
+    }
+
+    .mobile-link {
+        padding: 0.9rem 0.15rem;
+        color: var(--text);
     }
 
     .intro-panel,
@@ -527,6 +567,23 @@ main {
     .cv-heading-row {
         align-items: flex-start;
         flex-direction: column;
+    }
+
+    .intro-title {
+        font-size: clamp(2rem, 8vw, 2.7rem);
+    }
+
+    .section-toggle {
+        font-size: 1.2rem;
+        padding: 1rem 1rem;
+    }
+
+    .section-content {
+        padding: 0 1rem;
+    }
+
+    .section-content.open {
+        padding-bottom: 1rem;
     }
 }
 

@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', function () {
         // 切换菜单
         menuToggle.addEventListener('click', function (event) {
             mobileMenu.classList.toggle('hidden');
-            nav.classList.toggle('active');
             mobileMenu.classList.toggle('active');
             menuToggle.setAttribute('aria-expanded', String(!mobileMenu.classList.contains('hidden')));
             event.stopPropagation();
@@ -19,12 +18,11 @@ document.addEventListener('DOMContentLoaded', function () {
             const target = event.target;
             const isClickInsideMenu = mobileMenu.contains(target);
             const isClickInsideToggle = target.closest('#menu-toggle');
-            const isMobile = window.innerWidth <= 768; // 判断是否为手机模式
-            const isMenuVisible = nav.classList.contains('active'); // 使用 nav.active 判断菜单是否可见
+            const isMobile = window.innerWidth <= 768;
+            const isMenuVisible = !mobileMenu.classList.contains('hidden');
 
             if (isMobile && !isClickInsideMenu && !isClickInsideToggle && isMenuVisible) {
                 mobileMenu.classList.add('hidden');
-                nav.classList.remove('active');
                 mobileMenu.classList.remove('active');
                 menuToggle.setAttribute('aria-expanded', 'false');
             }
@@ -33,11 +31,10 @@ document.addEventListener('DOMContentLoaded', function () {
         // 按 Escape 键关闭菜单（仅在手机模式下生效）
         document.addEventListener('keydown', function (event) {
             const isMobile = window.innerWidth <= 768;
-            const isMenuVisible = nav.classList.contains('active');
+            const isMenuVisible = !mobileMenu.classList.contains('hidden');
 
             if (isMobile && event.key === 'Escape' && isMenuVisible) {
                 mobileMenu.classList.add('hidden');
-                nav.classList.remove('active');
                 mobileMenu.classList.remove('active');
                 menuToggle.setAttribute('aria-expanded', 'false');
             }
@@ -53,13 +50,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
         document.addEventListener('touchmove', function (event) {
             const isMobile = window.innerWidth <= 768;
-            const isMenuVisible = nav.classList.contains('active');
+            const isMenuVisible = !mobileMenu.classList.contains('hidden');
 
             touchEndY = event.touches[0].clientY;
             const deltaY = touchEndY - touchStartY;
             if (isMobile && deltaY > 50 && isMenuVisible) {
                 mobileMenu.classList.add('hidden');
-                nav.classList.remove('active');
                 mobileMenu.classList.remove('active');
                 menuToggle.setAttribute('aria-expanded', 'false');
             }
@@ -68,7 +64,6 @@ document.addEventListener('DOMContentLoaded', function () {
         mobileMenu.querySelectorAll('a').forEach((link) => {
             link.addEventListener('click', function () {
                 mobileMenu.classList.add('hidden');
-                nav.classList.remove('active');
                 mobileMenu.classList.remove('active');
                 menuToggle.setAttribute('aria-expanded', 'false');
             });
