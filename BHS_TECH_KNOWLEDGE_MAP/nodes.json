@@ -1,0 +1,2245 @@
+[
+  {
+    "id": "bhs",
+    "cat": "hub",
+    "r": 35,
+    "en": "BHS Digital Technologies",
+    "zh": "BHS 数字技术",
+    "desc_en": "Burnside High School Digital Technologies department. Y9–13 courses: programming, game design, electronics, product design, emerging tech.",
+    "desc_zh": "Burnside 高中数字技术学科，提供 9-13 年级课程：编程、游戏设计、电子技术、产品设计、新兴技术。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/home",
+    "links": [
+      "junior",
+      "year11",
+      "year12",
+      "year13",
+      "resources",
+      "clubs"
+    ]
+  },
+  {
+    "id": "junior",
+    "cat": "program",
+    "r": 26,
+    "en": "Junior (Y9–10)",
+    "zh": "初级课程 (Y9-10)",
+    "desc_en": "Y9–10 Digital Technologies: 9DGT, 9ELT, 10DGT, 10ELT covering programming, AI, image, electronics, CS, data.",
+    "desc_zh": "9-10 年级数字技术：9DGT、9ELT、10DGT、10ELT，涵盖编程、AI、图像、电子技术、CS、数据可视化。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/junior",
+    "links": [
+      "9dgt",
+      "9elt",
+      "10dgt",
+      "10elt"
+    ],
+    "parents": [
+      "bhs"
+    ]
+  },
+  {
+    "id": "year11",
+    "cat": "program",
+    "r": 26,
+    "en": "Year 11 — NCEA L1",
+    "zh": "11 年级 — NCEA L1",
+    "desc_en": "NCEA Level 1: 11DTE, 11DTG, 11DTT, 11DTP, 11PCE. Game design, graphic design, product design, software engineering, practical computing.",
+    "desc_zh": "NCEA L1：11DTE、11DTG、11DTT、11DTP、11PCE。游戏设计、平面设计、产品设计、软件工程、实用计算。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-11",
+    "links": [
+      "11dte",
+      "11dtg",
+      "11dtt",
+      "11dtp",
+      "11pce",
+      "l1ext"
+    ],
+    "parents": [
+      "bhs"
+    ]
+  },
+  {
+    "id": "year12",
+    "cat": "program",
+    "r": 26,
+    "en": "Year 12 — NCEA L2",
+    "zh": "12 年级 — NCEA L2",
+    "desc_en": "NCEA Level 2: 12DTE, 12DTG, 12DTM, 12DTP, 12PCE. Advanced electronics, game design, product design, Flask full-stack, CS external.",
+    "desc_zh": "NCEA L2：12DTE、12DTG、12DTM、12DTP、12PCE。高级电子技术、游戏设计、产品设计、Flask 全栈、CS 外部考试。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-12",
+    "links": [
+      "12dte",
+      "12dtg",
+      "12dtm",
+      "12dtp",
+      "12pce",
+      "l2ext"
+    ],
+    "parents": [
+      "bhs"
+    ]
+  },
+  {
+    "id": "year13",
+    "cat": "program",
+    "r": 26,
+    "en": "Year 13 — NCEA L3",
+    "zh": "13 年级 — NCEA L3",
+    "desc_en": "NCEA Level 3: 13DTE, 13DTG, 13DTM, 13DTP, 13PCE + Scholarship. Advanced projects, VR/AR, Godot, Flask-SQLAlchemy, AS91908.",
+    "desc_zh": "NCEA L3：13DTE、13DTG、13DTM、13DTP、13PCE + 奖学金。高级项目、VR/AR、Godot、Flask-SQLAlchemy、AS91908。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-13",
+    "links": [
+      "13dte",
+      "13dtg",
+      "13dtm",
+      "13dtp",
+      "13pce",
+      "l3ext"
+    ],
+    "parents": [
+      "bhs"
+    ]
+  },
+  {
+    "id": "9dgt",
+    "cat": "course",
+    "r": 20,
+    "parent": "junior",
+    "en": "9DGT — Digital Technologies",
+    "zh": "9DGT 数字技术",
+    "desc_en": "Y9 Digital Technologies. Core: digital outcomes created by people for society. Self-paced learning. 7 modules in order: Start of Course, Artificial Intelligence, Image Manipulation (GIMP), Data Visualisation, Computer Science, Programming with Scratch, Character Design / Digital Outcomes. PO2-PO5 aligned.",
+    "desc_zh": "9 年级数字技术。核心：数字成果由社会中人创造并服务于社会。自主学习模式。7 个模块依次：课程入门、人工智能、图像处理（GIMP）、数据可视化、计算机科学、Scratch 编程、角色设计/数字产物。对应 PO2-PO5。",
+"url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/junior/9dgt",
+  "url2": "./curriculum/Junior(Y9–10)/9dgt_adventure_map.html",
+  "links": [
+    "m9-soc",
+    "m9-ai",
+    "m9-image",
+    "m9-data",
+    "m9-cs",
+    "m9-scratch",
+    "m9-design"
+  ]
+},
+{
+  "id": "9elt",
+    "cat": "course",
+    "r": 20,
+    "parent": "junior",
+    "en": "9ELT — Electronics",
+    "zh": "9ELT 电子技术",
+    "desc_en": "Y9 Electronics intro. 4 modules in order: Course Information, Basic Electronics Concepts, Nightlight Project, Picaxe Microcontroller. Circuit building and testing.",
+    "desc_zh": "9 年级电子技术入门。4 个模块依次：课程信息、电子技术基础、小夜灯项目、Picaxe 微控制器。电路搭建与测试。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/junior/9elt",
+    "links": [
+      "m9elt-overview",
+      "m9elt-basic",
+      "m9elt-nightlight",
+      "m9elt-picaxe"
+    ]
+  },
+  {
+    "id": "10dgt",
+    "cat": "course",
+    "r": 20,
+    "parent": "junior",
+    "en": "10DGT — Digital Technologies",
+    "zh": "10DGT 数字技术",
+    "desc_en": "Y10 Digital Technologies — 11 modules: Start of Course, Image Creation, Website, CS, Python, 3D Modelling, Animation, DfM, AV, Game Dev, Student Project. Ends with Y10 Tech Fair.",
+    "desc_zh": "10 年级数字技术 — 11 个模块：课程入门、图像创建、网站、计算机科学、Python、3D建模、动画、制造设计、音视频、游戏开发、学生主导项目。年终 Tech Fair。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/junior/10dgt",
+    "links": [
+      "m10-soc",
+      "m10-image",
+      "m10-web",
+      "m10-cs",
+      "m10-python",
+      "m10-3d",
+      "m10-anim",
+      "m10-dfm",
+      "m10-av",
+      "m10-game",
+      "m10-project"
+    ]
+  },
+  {
+    "id": "10elt",
+    "cat": "course",
+    "r": 20,
+    "parent": "junior",
+    "en": "10ELT — Electronics",
+    "zh": "10ELT 电子技术",
+    "desc_en": "Y10 Electronics — 6 modules: Course Information, Basic Electronic Concepts and Skills, Embedded Programming, Fusion 360, Bluetooth Speaker Project, Computer Systems. Soldering, component skills, Fusion 360, embedded programming, Y10 Tech Fair.",
+    "desc_zh": "10 年级电子技术 — 6 个模块：课程信息、基础电子概念与技能、嵌入式编程、Fusion 360、蓝牙音箱项目、计算机系统。焊接、元件技能、Fusion 360、嵌入式编程，Y10 Tech Fair。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/junior/10elt",
+    "links": [
+      "m10elt-overview",
+      "m10elt-electronics",
+      "m10elt-embedded",
+      "m10elt-fusion",
+      "m10elt-speaker",
+      "m10elt-compsys"
+    ]
+  },
+  {
+    "id": "m9-soc",
+    "cat": "module",
+    "r": 14,
+    "parent": "9dgt",
+    "en": "Start of Course",
+    "zh": "课程入门",
+    "desc_en": "Y9 course orientation: login, file management (H: drive), typing practice (typing.com), computer hardware basics, exploring GIMP/Inkscape/Scratch. Google Classroom code: ksi4v3e6.",
+    "desc_zh": "9 年级课程定位：登录系统、文件管理（H盘）、打字练习（typing.com）、计算机硬件基础、探索 GIMP/Inkscape/Scratch。Google Classroom 代码：ksi4v3e6。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/junior/9dgt/y9-0-start-of-course",
+    "links": [
+      "scratch",
+      "inkscape"
+    ]
+  },
+  {
+    "id": "m9-image",
+    "cat": "module",
+    "r": 14,
+    "parent": "9dgt",
+    "en": "Image Manipulation",
+    "zh": "图像处理",
+    "desc_en": "Y9 using GIMP: layers, colour, composition, layer masks, background removal. Tasks: sheep tutorial, meme creation, personal creative project (gradients, neon text, double exposure, etc.). PO2-PO3.",
+    "desc_zh": "9 年级使用 GIMP：图层、色彩、构图、图层蒙版、抠图。任务：绵羊教程、表情包制作、个人创作（渐变、霓虹文字、双重曝光等）。PO2-PO3。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/junior/9dgt/y9-1-image-manipulation",
+    "links": [
+      "inkscape",
+      "ncea"
+    ]
+  },
+  {
+    "id": "m9-cs",
+    "cat": "module",
+    "r": 14,
+    "parent": "9dgt",
+    "en": "Computer Science",
+    "zh": "计算机科学",
+    "desc_en": "Y9 CS fundamentals: binary (bits), algorithms, computational thinking, debugging, data storage & transmission, error detection, search & sort algorithms. PO3-PO5.",
+    "desc_zh": "9 年级 CS 基础：二进制位、算法、计算思维、调试、数据存储与传输、错误检测、搜索与排序算法。PO3-PO5。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/junior/9dgt/y9-2-computer-science",
+    "links": [
+      "ai-concept"
+    ]
+  },
+  {
+    "id": "m9-scratch",
+    "cat": "module",
+    "r": 14,
+    "parent": "9dgt",
+    "en": "Programming with Scratch",
+    "zh": "Scratch 编程",
+    "desc_en": "Y9 Scratch programming: variables, loops, conditionals, input/output. Tasks: multiplication quiz, number guessing game, drawing with pen tool, debugging exercises. Big-O notation intro. PO3-PO5.",
+    "desc_zh": "9 年级 Scratch 编程：变量、循环、条件判断、输入/输出。任务：乘法测验、猜数字游戏、画笔绘图、调试练习。Big-O 复杂度入门。PO3-PO5。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/junior/9dgt/y9-3-programming",
+    "links": [
+      "scratch",
+      "ncea"
+    ]
+  },
+  {
+    "id": "m9-design",
+    "cat": "module",
+    "r": 14,
+    "parent": "9dgt",
+    "en": "Character Design / Digital Outcomes",
+    "zh": "角色设计/数字产物",
+    "desc_en": "Y9 design process: ideation sketching, vector graphics creation, personal project (stickers, GIF, keychain, 3D print, soft toy, mold, template). Social/ethical/HCI factors, IPO systems, file management, data privacy. PO2-PO3.",
+    "desc_zh": "9 年级设计流程：构思草图、矢量图形创建、个人项目（贴纸、GIF、钥匙扣、3D打印、软玩具、模具、模板）。社会/伦理/HCI 因素、IPO 系统、文件管理、数据隐私。PO2-PO3。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/junior/9dgt/y9-4-designing-and-developing-digital-outcomes",
+    "links": [
+      "inkscape",
+      "ncea"
+    ]
+  },
+  {
+    "id": "m9-ai",
+    "cat": "module",
+    "r": 14,
+    "parent": "9dgt",
+    "en": "Artificial Intelligence",
+    "zh": "人工智能",
+    "desc_en": "Y9 AI module: AI art generation, how AI works, prompt engineering, ethical use of AI. Māori proverb: 'Mā te huruhuru ka rere te manu' — adding feathers so the bird can fly. Creativity meets responsibility.",
+    "desc_zh": "9 年级 AI 模块：AI 艺术生成、AI 工作原理、提示工程、负责任地使用 AI。毛利谚语：'Mā te huruhuru ka rere te manu' — 给鸟添翼，方能飞翔。创造力与责任感并重。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/junior/9dgt/y9-5-artificial-intelligence",
+    "links": [
+      "ai-concept"
+    ]
+  },
+  {
+    "id": "m9-data",
+    "cat": "module",
+    "r": 14,
+    "parent": "9dgt",
+    "en": "Data Visualisation",
+    "zh": "数据可视化",
+    "desc_en": "Y9 data viz with Canva: collect data via survey, analyse in Google Sheets, create infographic with 3-5 questions. Design choices: chart type, scale, colour (accessibility), labels. Peer review. Stats NZ reference.",
+    "desc_zh": "9 年级用 Canva 做数据可视化：通过调查收集数据、在 Google Sheets 分析、用 Canva 创建 3-5 个问题的信息图。设计选择：图表类型、比例、颜色（无障碍）、标签。同伴评审。参考 Stats NZ。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/junior/9dgt/y9-6-data-visualisation",
+    "links": [
+      "ncea"
+    ]
+  },
+  {
+    "id": "m9elt-overview",
+    "cat": "module",
+    "r": 14,
+    "parent": "9elt",
+    "en": "Course Information",
+    "zh": "课程信息",
+    "desc_en": "Y9 Electronics course overview: expectations, tools, safety, course expectations, assessment overview.",
+    "desc_zh": "9 年级电子技术课程概览：期望、工具、安全规范、课程要求、评估概述。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/junior/9elt/9elt-course-overview",
+    "links": []
+  },
+  {
+    "id": "m9elt-basic",
+    "cat": "module",
+    "r": 14,
+    "parent": "9elt",
+    "en": "Basic Electronics Concepts",
+    "zh": "电子技术基础",
+    "desc_en": "Y9 basic electronic concepts: voltage, current, resistance, Ohm's law, circuit diagrams, series and parallel circuits.",
+    "desc_zh": "9 年级电子基本概念：电压、电流、电阻、欧姆定律、电路图、串联和并联电路。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/resources/skills/electronics/electronicconcepts/basic-electronic-concepts",
+    "links": []
+  },
+  {
+    "id": "m9elt-nightlight",
+    "cat": "module",
+    "r": 14,
+    "parent": "9elt",
+    "en": "Nightlight Project",
+    "zh": "小夜灯项目",
+    "desc_en": "Y9 hands-on nightlight project: circuit design, soldering, testing, and iteration using basic components.",
+    "desc_zh": "9 年级动手小夜灯项目：电路设计、焊接、测试和使用基本元件迭代。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/junior/9elt/nightlight",
+    "links": []
+  },
+  {
+    "id": "m9elt-picaxe",
+    "cat": "module",
+    "r": 14,
+    "parent": "9elt",
+    "en": "Picaxe Microcontroller",
+    "zh": "Picaxe 微控制器",
+    "desc_en": "Y9 Picaxe microcontroller: Introductory embedded programming, input/output, sensors, and basic automation.",
+    "desc_zh": "9 年级 Picaxe 微控制器：嵌入式编程入门，输入/输出，传感器和基本自动化。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/junior/9elt/picaxe",
+    "links": []
+  },
+  {
+    "id": "m10-soc",
+    "cat": "module",
+    "r": 14,
+    "parent": "10dgt",
+    "en": "Start of Course",
+    "zh": "课程入门",
+    "desc_en": "Y10 course orientation: expectations, tools, safety, environment considerations, and best practices in digital technologies.",
+    "desc_zh": "10 年级课程定位：期望、工具、安全、环境考量及数字技术最佳实践。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/junior/10dgt/y10-0-start-of-course",
+    "links": []
+  },
+  {
+    "id": "m10-image",
+    "cat": "module",
+    "r": 14,
+    "parent": "10dgt",
+    "en": "Image Creation",
+    "zh": "图像创建",
+    "desc_en": "Y10 digital image creation: composition, colour theory, layers, export formats, digital media production.",
+    "desc_zh": "10 年级数字图像创建：构图、色彩理论、图层、导出格式、数字媒体制作。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/junior/10dgt/y10-1-image-creation",
+    "links": [
+      "inkscape",
+      "blender"
+    ]
+  },
+  {
+    "id": "m10-web",
+    "cat": "module",
+    "r": 14,
+    "parent": "10dgt",
+    "en": "Website Design",
+    "zh": "网站设计",
+    "desc_en": "Y10 website design: HTML structure, CSS styling, responsive layout, accessibility, and web publishing basics.",
+    "desc_zh": "10 年级网站设计：HTML 结构、CSS 样式、响应式布局、无障碍访问和网页发布基础。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/junior/10dgt/y10-2-website-design",
+    "links": [
+      "htmlcss"
+    ]
+  },
+  {
+    "id": "m10-cs",
+    "cat": "module",
+    "r": 14,
+    "parent": "10dgt",
+    "en": "Computer Science",
+    "zh": "计算机科学",
+    "desc_en": "Y10 CS: binary, hex, logic gates, algorithms, computational thinking, Boolean logic, data representation.",
+    "desc_zh": "10 年级 CS：二进制、十六进制、逻辑门、算法、计算思维、布尔逻辑、数据表示。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/junior/10dgt/y10-3-computer-science",
+    "links": [
+      "ai-concept"
+    ]
+  },
+  {
+    "id": "m10-python",
+    "cat": "module",
+    "r": 14,
+    "parent": "10dgt",
+    "en": "Programming with Python",
+    "zh": "Python 编程",
+    "desc_en": "Y10 Python programming: variables, data types, conditionals, loops, functions, file I/O, simple algorithms. PO3–PO5.",
+    "desc_zh": "10 年级 Python 编程：变量、数据类型、条件判断、循环、函数、文件 I/O、简单算法。PO3-PO5。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/junior/10dgt/y10-4-python-programming",
+    "links": [
+      "python",
+      "ncea"
+    ]
+  },
+  {
+    "id": "m10-3d",
+    "cat": "module",
+    "r": 14,
+    "parent": "10dgt",
+    "en": "3D Modelling",
+    "zh": "3D 建模",
+    "desc_en": "Y10 3D modelling: Blender and Fusion 360 basics, meshes, materials, rendering, export for 3D printing.",
+    "desc_zh": "10 年级 3D 建模：Blender 和 Fusion 360 基础、网格、材质、渲染、3D 打印导出。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/junior/10dgt/y10-5-3d-modelling",
+    "links": [
+      "blender",
+      "fusion360",
+      "ncea"
+    ]
+  },
+  {
+    "id": "m10-anim",
+    "cat": "module",
+    "r": 14,
+    "parent": "10dgt",
+    "en": "Animation",
+    "zh": "动画制作",
+    "desc_en": "Y10 animation: keyframes, timing, motion principles, rigging basics, rendering animation sequences.",
+    "desc_zh": "10 年级动画：关键帧、时序、运动原理、绑定基础、动画序列渲染。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/junior/10dgt/y10-6-animation",
+    "links": [
+      "blender"
+    ]
+  },
+  {
+    "id": "m10-dfm",
+    "cat": "module",
+    "r": 14,
+    "parent": "10dgt",
+    "en": "Design for Manufacturing",
+    "zh": "制造设计",
+    "desc_en": "Y10 DfM: designing for laser cutting and 3D printing, tolerances, materials, iterative prototyping.",
+    "desc_zh": "10 年级制造设计：激光切割和 3D 打印设计公差、材料、迭代原型。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/junior/10dgt/y10-7-design-for-manufacturing",
+    "links": [
+      "fusion360",
+      "blender",
+      "ncea"
+    ]
+  },
+  {
+    "id": "m10-av",
+    "cat": "module",
+    "r": 14,
+    "parent": "10dgt",
+    "en": "Audio Visual",
+    "zh": "音视频制作",
+    "desc_en": "Y10 audio visual production: video editing, sound design, green screen, project planning and storytelling.",
+    "desc_zh": "10 年级音视频制作：视频剪辑、声音设计、绿幕抠像、项目规划和叙事。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/junior/10dgt/y10-8-audio-visual",
+    "links": []
+  },
+  {
+    "id": "m10-game",
+    "cat": "module",
+    "r": 14,
+    "parent": "10dgt",
+    "en": "Video Game Development",
+    "zh": "游戏开发",
+    "desc_en": "Y10 game development: game design principles, storytelling, level design, basic programming for games.",
+    "desc_zh": "10 年级游戏开发：游戏设计原理、叙事、关卡设计、游戏基础编程。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/junior/10dgt/y10-9-video-game-dev",
+    "links": [
+      "godot",
+      "python"
+    ]
+  },
+  {
+    "id": "m10-project",
+    "cat": "module",
+    "r": 14,
+    "parent": "10dgt",
+    "en": "Student Lead Project",
+    "zh": "学生主导项目",
+    "desc_en": "Y10 student-led project: self-directed research, design, development, testing, and presentation at the Y10 Tech Fair.",
+    "desc_zh": "10 年级学生主导项目：自主研究、设计、开发、测试，并在 Y10 Tech Fair 展示。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/junior/10dgt/y10-10-student-lead-project",
+    "links": [
+      "ncea"
+    ]
+  },
+  {
+    "id": "m10elt-overview",
+    "cat": "module",
+    "r": 14,
+    "parent": "10elt",
+    "en": "Course Information",
+    "zh": "课程信息",
+    "desc_en": "Y10 Electronics course overview: expectations, tools, safety, course expectations, Tech Fair.",
+    "desc_zh": "10 年级电子技术课程概览：期望、工具、安全规范、课程要求、Tech Fair。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/junior/10elt/10elt-course-overview",
+    "links": []
+  },
+  {
+    "id": "m10elt-electronics",
+    "cat": "module",
+    "r": 14,
+    "parent": "10elt",
+    "en": "Basic Electronic Concepts and Skills",
+    "zh": "基础电子概念与技能",
+    "desc_en": "Y10 soldering, component identification, circuit diagrams, multimeter use, safety. Foundation for all DTE courses.",
+    "desc_zh": "10 年级焊接、元件识别、电路图、万用表使用、安全规范。所有 DTE 课程的基础。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/resources/skills/electronics/electronicskills/soldering",
+    "links": []
+  },
+  {
+    "id": "m10elt-embedded",
+    "cat": "module",
+    "r": 14,
+    "parent": "10elt",
+    "en": "Embedded Programming",
+    "zh": "嵌入式编程",
+    "desc_en": "Y10 embedded programming: Arduino basics, digital inputs/outputs, sensors, basic automation and control.",
+    "desc_zh": "10 年级嵌入式编程：Arduino 基础、数字输入/输出、传感器、基本自动化和控制。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/junior/10elt/10elt-embedded-programming",
+    "links": [
+      "arduino",
+      "cplusplus"
+    ]
+  },
+  {
+    "id": "m10elt-fusion",
+    "cat": "module",
+    "r": 14,
+    "parent": "10elt",
+    "en": "Fusion 360",
+    "zh": "Fusion 360 3D 建模",
+    "desc_en": "Y10 Fusion 360: parametric 3D modelling, assemblies, render, export for laser cutting and 3D printing.",
+    "desc_zh": "10 年级 Fusion 360：参数化 3D 建模、装配、渲染、导出用于激光切割和 3D 打印。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/junior/10elt/10elt-fusion-360",
+    "links": [
+      "fusion360"
+    ]
+  },
+  {
+    "id": "m10elt-speaker",
+    "cat": "module",
+    "r": 14,
+    "parent": "10elt",
+    "en": "Bluetooth Speaker Project",
+    "zh": "蓝牙音箱项目",
+    "desc_en": "Y10 Class D audio amplifier project: PAM8610 board, soldering, enclosure design, acoustic considerations.",
+    "desc_zh": "10 年级 D 类音频放大器项目：PAM8610 板、焊接、外壳设计、声学考量。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/junior/10elt/10elt-audioampproject",
+    "links": [
+      "fusion360"
+    ]
+  },
+  {
+    "id": "m10elt-compsys",
+    "cat": "module",
+    "r": 14,
+    "parent": "10elt",
+    "en": "Computer Systems",
+    "zh": "计算机系统",
+    "desc_en": "Y10 computer systems: CPU, memory, storage, input/output, operating systems, how computers work.",
+    "desc_zh": "10 年级计算机系统：CPU、内存、存储、输入/输出、操作系统、计算机工作原理。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/junior/10elt/10elt-computer-systems",
+    "links": []
+  },
+  {
+    "id": "11dte",
+    "cat": "course",
+    "r": 20,
+    "parents": [
+      "year11",
+      "l1ext"
+    ],
+    "en": "11DTE — Electronics",
+    "zh": "11DTE 电子技术",
+    "desc_en": "NCEA L1 hands-on STEM: basic electronics & circuits, Arduino C programming, sensors & actuators, robot building, Fusion 360. 4 modules: Electronics, Embedded Programming, Robot Building, Fusion 360.",
+    "desc_zh": "NCEA L1 动手 STEM：电路基础、Arduino C 编程、传感器与执行器、机器人制作、Fusion 360。4 个模块：电子学、嵌入式编程、机器人制作、Fusion 360。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-11/11dte",
+    "links": [
+      "m11dte-circuit",
+      "m11dte-arduino",
+      "m11dte-robot",
+      "m11dte-fusion"
+    ]
+  },
+  {
+    "id": "11dtg",
+    "cat": "course",
+    "r": 20,
+    "parents": [
+      "year11",
+      "l1ext"
+    ],
+    "en": "11DTG — Game Design",
+    "zh": "11DTG 游戏设计",
+    "desc_en": "NCEA L1: Godot engine + Piskel pixel art. 4 modules in order: Learning Godot and Piskel, Video Game Design, Video Game Development, Game Programming.",
+    "desc_zh": "NCEA L1：Godot 引擎 + Piskel 像素艺术。4 个模块依次：学习 Godot 与 Piskel、视频游戏设计、视频游戏开发、游戏编程。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-11/11dtg",
+    "links": [
+      "m11dtg-godot",
+      "m11dtg-pixel",
+      "m11dtg-design",
+      "m11dtg-gamedev"
+    ]
+  },
+  {
+    "id": "11dtt",
+    "cat": "course",
+    "r": 20,
+    "parents": [
+      "year11",
+      "l1ext"
+    ],
+    "en": "11DTT — Product & Digital Design",
+    "zh": "11DTT 产品与数字设计",
+    "desc_en": "NCEA L1 project-based: Blender/Fusion360/Inkscape skills, 5 tracks (3D/Animation/AV/D4M/Print & Digital Media/Web), design process, HCI external (AS92006). AS92005+AS92006+AS92007.",
+    "desc_zh": "NCEA L1 项目式：Blender/Fusion360/Inkscape 技能，5 方向（3D/动画/音视频/制造设计/印刷数字媒体/Web），设计流程，HCI 外部考试 AS92006。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-11/11dtt",
+    "links": [
+      "m11dtt-3d",
+      "m11dtt-anim",
+      "m11dtt-av",
+      "m11dtt-dfm",
+      "m11dtt-print",
+      "m11dtt-web"
+    ]
+  },
+  {
+    "id": "11dtp",
+    "cat": "course",
+    "r": 20,
+    "parents": [
+      "year11",
+      "l1ext"
+    ],
+    "en": "11DTP — Software Engineering & CS",
+    "zh": "11DTP 软件工程",
+    "desc_en": "NCEA L1: Python + SQL + Web dev. 6 modules: Programming, NCEA-Auto, Databases, Web Learning, Web Project, HCI External. AS92004 (5cr) + US28776 L2 (4cr) + AS92005 (5cr) + AS92006 external (5cr). 19 credits total.",
+    "desc_zh": "NCEA L1：Python + SQL + Web 开发。6 个模块：编程、NCEA-Auto、数据库、Web 学习、Web 项目、HCI 外部考试。共 19 学分。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-11/11dtp",
+    "links": [
+      "m11dtp-prog",
+      "m11dtp-nceaauto",
+      "m11dtp-db",
+      "m11dtp-web-learn",
+      "m11dtp-web-proj",
+      "m11dtp-hci"
+    ]
+  },
+  {
+    "id": "11pce",
+    "cat": "course",
+    "r": 20,
+    "parents": [
+      "year11",
+      "l1ext"
+    ],
+    "en": "11PCE — Practical Computing",
+    "zh": "11PCE 实用计算",
+    "desc_en": "NCEA L1 practical computing skills pathway. Foundation digital skills for students wanting a less technical but hands-on approach.",
+    "desc_zh": "NCEA L1 实用计算技能路径，面向需要较轻技术但动手实践的学生。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-11/11pce",
+    "links": []
+  },
+  {
+    "id": "l1ext",
+    "cat": "external",
+    "r": 20,
+    "parents": [
+      "year11"
+    ],
+    "en": "Level 1 Externals",
+    "zh": "L1 外部考试",
+    "desc_en": "All Y11 students: HCI Exam (AS92006), Design external (AS92007), Digital submission in class. Both DCAT and NZQA Nov exam.",
+    "desc_zh": "所有 11 年级学生：HCI 考试 AS92006、设计外部考试 AS92007、课堂数字作品提交。DCAT 和 NZQA 11月考试。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-11/level-1-externals",
+    "links": [
+      "11dte",
+      "11dtg",
+      "11dtt",
+      "11dtp",
+      "11pce",
+      "ncea",
+      "hci"
+    ]
+  },
+  {
+    "id": "m11dte-circuit",
+    "cat": "module",
+    "r": 14,
+    "parent": "11dte",
+    "en": "Electronics",
+    "zh": "电子学",
+    "desc_en": "L1 electronics: circuit theory, breadboard building, component identification, multimeter testing, series/parallel circuits.",
+    "desc_zh": "L1 电子技术：电路理论、面包板搭建、元件识别、万用表测试、串联/并联电路。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-11/11dte/basic-electronics-and-circuits",
+    "links": []
+  },
+  {
+    "id": "m11dte-arduino",
+    "cat": "module",
+    "r": 14,
+    "parent": "11dte",
+    "en": "Embedded Programming",
+    "zh": "嵌入式编程",
+    "desc_en": "L1 embedded programming: Arduino/microcontroller, digital I/O, analog sensors, servos, LCD displays, serial communication, C programming basics.",
+    "desc_zh": "L1 嵌入式编程：Arduino/微控制器、数字 I/O、模拟传感器、舵机、LCD 显示屏、串口通信、C 编程基础。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-11/11dte/embedded-programming",
+    "links": [
+      "arduino",
+      "cplusplus"
+    ]
+  },
+  {
+    "id": "m11dte-robot",
+    "cat": "module",
+    "r": 14,
+    "parent": "11dte",
+    "en": "Robot Building",
+    "zh": "机器人制作",
+    "desc_en": "L1 robotics project: chassis design, motor control, sensors, autonomous behaviour programming, iterative testing.",
+    "desc_zh": "L1 机器人项目：底盘设计、电机控制、传感器、自主行为编程、迭代测试。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-11/11dte/develop-a-robot",
+    "links": [
+      "arduino",
+      "fusion360"
+    ]
+  },
+  {
+    "id": "m11dte-fusion",
+    "cat": "module",
+    "r": 14,
+    "parent": "11dte",
+    "en": "Fusion 360",
+    "zh": "Fusion 360",
+    "desc_en": "L1 Fusion 360: 3D parametric modelling, component design, simulation, rendering, preparing models for laser cutting and 3D printing.",
+    "desc_zh": "L1 Fusion 360：3D 参数化建模、零部件设计、仿真、渲染，为激光切割和 3D 打印准备模型。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-11/11dte",
+    "links": [
+      "fusion360"
+    ]
+  },
+  {
+    "id": "m11dtg-godot",
+    "cat": "module",
+    "r": 14,
+    "parent": "11dtg",
+    "en": "Learning Godot and Piskel",
+    "zh": "学习 Godot 和 Piskel",
+    "desc_en": "L1 Godot + Piskel: scene system, GDScript basics, 2D sprites, pixel art creation, animation frames, colour palettes.",
+    "desc_zh": "L1 Godot + Piskel：场景系统、GDScript 基础、2D 精灵、像素艺术创作、动画帧、色彩板。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-11/11dtg",
+    "links": [
+      "godot",
+      "piskel"
+    ]
+  },
+  {
+    "id": "m11dtg-pixel",
+    "cat": "module",
+    "r": 14,
+    "parent": "11dtg",
+    "en": "Video Game Design",
+    "zh": "视频游戏设计",
+    "desc_en": "L1 game design: gameplay mechanics, level design, storyline, character arcs, game design document, iterative prototyping.",
+    "desc_zh": "L1 游戏设计：游戏机制、关卡设计、故事线、角色弧线、游戏设计文档、迭代原型。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-11/11dtg",
+    "links": []
+  },
+  {
+    "id": "m11dtg-design",
+    "cat": "module",
+    "r": 14,
+    "parent": "11dtg",
+    "en": "Video Game Development",
+    "zh": "视频游戏开发",
+    "desc_en": "L1 game development: building levels, scripting gameplay, playtesting, debugging, refining game mechanics and user experience.",
+    "desc_zh": "L1 游戏开发：关卡搭建、游戏脚本编写、试玩测试、调试、完善游戏机制与用户体验。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-11/11dtg",
+    "links": [
+      "godot"
+    ]
+  },
+  {
+    "id": "m11dtg-gamedev",
+    "cat": "module",
+    "r": 14,
+    "parent": "11dtg",
+    "en": "Game Programming",
+    "zh": "游戏编程",
+    "desc_en": "L1 game programming: GDScript, sprite control, collision detection, AI enemies, sound effects, game state management, publishing to Itch.io.",
+    "desc_zh": "L1 游戏编程：GDScript、精灵控制、碰撞检测、AI 敌人、音效、游戏状态管理，发布到 Itch.io。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-11/11dtg",
+    "links": [
+      "godot",
+      "python"
+    ]
+  },
+  {
+    "id": "m11dtt-3d",
+    "cat": "module",
+    "r": 14,
+    "parent": "11dtt",
+    "en": "3D Design Track",
+    "zh": "3D 设计方向",
+    "desc_en": "L1 3D design: Blender/Fusion360, mesh modelling, UV mapping, texturing, rendering, 3D printing preparation.",
+    "desc_zh": "L1 3D 设计：Blender/Fusion360、网格建模、UV 映射、纹理、渲染、3D 打印准备。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-11/11dtt/l1-3d-modelling/l1-basic-3d-modelling-skills",
+    "links": [
+      "blender",
+      "fusion360"
+    ]
+  },
+  {
+    "id": "m11dtt-anim",
+    "cat": "module",
+    "r": 14,
+    "parent": "11dtt",
+    "en": "Animation Track",
+    "zh": "动画方向",
+    "desc_en": "L1 animation: keyframe animation, motion paths, character rigging basics, rendered output for digital outcomes.",
+    "desc_zh": "L1 动画：关键帧动画、运动路径、角色绑定基础、渲染输出用于数字成果。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-11/11dtt/l1-animation/l1-basic-animation-skills",
+    "links": [
+      "blender"
+    ]
+  },
+  {
+    "id": "m11dtt-av",
+    "cat": "module",
+    "r": 14,
+    "parent": "11dtt",
+    "en": "Audio Visual Track",
+    "zh": "音视频方向",
+    "desc_en": "L1 AV: video production, editing, sound design, green screen, project planning, storytelling for digital outcomes.",
+    "desc_zh": "L1 音视频：视频制作、剪辑、声音设计、绿幕抠像、项目规划、数字成果叙事。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-11/11dtt/l1-audio-visual/l1-basic-audio-visual-skills",
+    "links": []
+  },
+  {
+    "id": "m11dtt-dfm",
+    "cat": "module",
+    "r": 14,
+    "parent": "11dtt",
+    "en": "Design for Manufacturing",
+    "zh": "制造设计",
+    "desc_en": "L1 DfM: laser cutting, 3D printing, tolerances, material properties, enclosure design, iterative prototyping.",
+    "desc_zh": "L1 制造设计：激光切割、3D 打印、公差、材料特性、外壳设计、迭代原型。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-11/11dtt/l1-design-for-manufacture/l1-basic-d4m-skills",
+    "links": [
+      "fusion360",
+      "blender"
+    ]
+  },
+  {
+    "id": "m11dtt-print",
+    "cat": "module",
+    "r": 14,
+    "parent": "11dtt",
+    "en": "Print & Digital Media Track",
+    "zh": "印刷与数字媒体方向",
+    "desc_en": "L1 print & digital media: Inkscape vector graphics, layout design, colour modes (RGB/CMYK), print-ready file preparation, digital media outputs.",
+    "desc_zh": "L1 印刷与数字媒体：Inkscape 矢量图形、版式设计、色彩模式（RGB/CMYK）、印刷文件准备、数字媒体输出。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-11/11dtt/l1-print-digital-media/l1-basic-graphic-design-skills",
+    "links": [
+      "inkscape"
+    ]
+  },
+  {
+    "id": "m11dtt-web",
+    "cat": "module",
+    "r": 14,
+    "parent": "11dtt",
+    "en": "Web Design Track",
+    "zh": "网页设计方向",
+    "desc_en": "L1 web design: HTML/CSS, responsive layout, accessibility, visual hierarchy, digital outcome for AS92005.",
+    "desc_zh": "L1 网页设计：HTML/CSS、响应式布局、无障碍访问、视觉层次、AS92005 数字成果。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-11/11dtt/l1-website/l1-website-project-exploration",
+    "links": [
+      "htmlcss"
+    ]
+  },
+  {
+    "id": "m11dtp-prog",
+    "cat": "module",
+    "r": 14,
+    "parent": "11dtp",
+    "en": "Programming",
+    "zh": "编程",
+    "desc_en": "L1 Python programming: algorithms, functions, file I/O, testing, debugging. AS92004 (5cr).",
+    "desc_zh": "L1 Python 编程：算法、函数、文件 I/O、测试、调试。AS92004（5学分）。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-11/11dtp/11dtp-programming",
+    "links": [
+      "python"
+    ]
+  },
+  {
+    "id": "m11dtp-nceaauto",
+    "cat": "module",
+    "r": 14,
+    "parent": "11dtp",
+    "en": "NCEA-Auto",
+    "zh": "NCEA-Auto（自动评分路径）",
+    "desc_en": "NCEA L1 automated assessment pathway for AS92004 Programming. Optional alternate route for students meeting competency criteria.",
+    "desc_zh": "NCEA L1 AS92004 编程自动评分路径。达到能力标准的学生可选此替代考核路径。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-11/11dtp",
+    "links": [
+      "python"
+    ]
+  },
+  {
+    "id": "m11dtp-db",
+    "cat": "module",
+    "r": 14,
+    "parent": "11dtp",
+    "en": "Databases",
+    "zh": "数据库",
+    "desc_en": "L1 SQL databases: table design, CRUD operations, queries, joins, database-driven Python applications.",
+    "desc_zh": "L1 SQL 数据库：表设计、CRUD 操作、查询、联接、数据库驱动 Python 应用。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/resources/skills/programming/sql",
+    "links": [
+      "sql",
+      "python"
+    ]
+  },
+  {
+    "id": "m11dtp-web-learn",
+    "cat": "module",
+    "r": 14,
+    "parent": "11dtp",
+    "en": "Web Learning",
+    "zh": "网页学习",
+    "desc_en": "L1 HTML/CSS learning: HTML structure, CSS styling, responsive layout, accessibility. US28776 (4cr, L2).",
+    "desc_zh": "L1 HTML/CSS 学习：HTML 结构、CSS 样式、响应式布局、无障碍访问。US28776（4学分，L2）。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-11/11dtp/11dtp-htmlcss-learning",
+    "links": [
+      "htmlcss"
+    ]
+  },
+  {
+    "id": "m11dtp-web-proj",
+    "cat": "module",
+    "r": 14,
+    "parent": "11dtp",
+    "en": "Web Project",
+    "zh": "网页项目",
+    "desc_en": "L1 web development project: design, build, test a complete website. AS92005 (5cr).",
+    "desc_zh": "L1 网页开发项目：设计、构建、测试完整网站。AS92005（5学分）。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-11/11dtp/11dtp-website-outcome",
+    "links": [
+      "htmlcss",
+      "flask"
+    ]
+  },
+  {
+    "id": "m11dtp-hci",
+    "cat": "module",
+    "r": 14,
+    "parent": "11dtp",
+    "en": "HCI (Human-Computer Interaction)",
+    "zh": "人机交互",
+    "desc_en": "L1 HCI: Nielsen's 10 heuristics, usability principles, user testing, heuristic evaluation. AS92006 (5cr, external).",
+    "desc_zh": "L1 人机交互：Nielsen 10 启发式原则、可用性原则、用户测试、启发式评估。AS92006（5学分，外部考试）。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-11/level-1-externals/l1-92006-hci",
+    "links": [
+      "hci"
+    ]
+  },
+  {
+    "id": "12dte",
+    "cat": "course",
+    "r": 20,
+    "parents": [
+      "year12",
+      "l2ext"
+    ],
+    "en": "12DTE — Electronics",
+    "zh": "12DTE 电子技术",
+    "desc_en": "NCEA L2: electronics project-based course. Background Knowledge, Technical Skills, Project Skills, Key Competencies. AS91899 DCAT external. Single-page course structure.",
+    "desc_zh": "NCEA L2：以电子项目为基础的课程。背景知识、技术技能、项目技能、关键能力。AS91899 DCAT 外部考试。单一页面课程结构。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-12/12dte",
+    "links": [
+      "m12dte-pcb",
+      "m12dte-esp",
+      "m12dte-prod"
+    ]
+  },
+  {
+    "id": "12dtg",
+    "cat": "course",
+    "r": 20,
+    "parents": [
+      "year12",
+      "l2ext"
+    ],
+    "en": "12DTG — Game Design",
+    "zh": "12DTG 游戏设计",
+    "desc_en": "NCEA L2: Unity 3D + Godot + C# + Blender. 4 topics: Advanced Game Skills, Video Game Design, Game Development, Summary External. AS91899 (3cr DCAT external).",
+    "desc_zh": "NCEA L2：Unity 3D + Godot + C# + Blender。4 个主题：高级游戏技能、视频游戏设计、游戏开发、外部考试总结。AS91899（3学分 DCAT 外部考试）。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-12/12dtg",
+    "links": [
+      "m12dtg-unity",
+      "m12dtg-godot",
+      "m12dtg-3d",
+      "m12dtg-ext"
+    ]
+  },
+  {
+    "id": "12dtm",
+    "cat": "course",
+    "r": 20,
+    "parents": [
+      "year12",
+      "l2ext"
+    ],
+    "en": "12DTM — Product & Digital Design",
+    "zh": "12DTM 产品设计",
+    "desc_en": "NCEA L2: Blender/Fusion360 advanced skills, Adobe Express/Photoshop, laser cutting/CNC/3D printing. 5 tracks: 3D Modelling, Animation, Audio Visual, Design for Manufacturing, Print & Digital Media.",
+    "desc_zh": "NCEA L2：Blender/Fusion360 高级技能，Adobe Express/Photoshop，激光切割/CNC/3D 打印。5 个方向：3D 建模、动画、视听、制造设计、印刷与数字媒体。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-12/12dtm",
+    "links": [
+      "m12dtm-3dmod",
+      "m12dtm-anim",
+      "m12dtm-av",
+      "m12dtm-dfm",
+      "m12dtm-print"
+    ]
+  },
+  {
+    "id": "m12dtm-3dmod",
+    "cat": "module",
+    "r": 14,
+    "parent": "12dtm",
+    "en": "3D Modelling",
+    "zh": "3D 建模",
+    "desc_en": "L2 advanced 3D modelling skills using Blender and Fusion360. Model preparation, rendering, animation, and export for CAM.",
+    "desc_zh": "L2 Blender 和 Fusion360 高级 3D 建模技能。建模准备、渲染、动画和 CAM 输出。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-12/12dtm/l2-3d-modelling/l2-advanced-3d-modelling-skills",
+    "links": [
+      "blender",
+      "fusion360"
+    ]
+  },
+  {
+    "id": "m12dtm-anim",
+    "cat": "module",
+    "r": 14,
+    "parent": "12dtm",
+    "en": "Animation",
+    "zh": "动画",
+    "desc_en": "L2 advanced animation skills. Keyframe animation, rigging, motion graphics, and rendering techniques.",
+    "desc_zh": "L2 高级动画技能。关键帧动画、角色绑定绑定绑定绑定绑定绑定绑定绑定绑定绑定绑定绑定绑定绑定绑定绑定绑定绑定绑定绑定绑定绑定。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-12/12dtm/l2-animation/l2-advanced-animation-skills",
+    "links": [
+      "blender"
+    ]
+  },
+  {
+    "id": "m12dtm-av",
+    "cat": "module",
+    "r": 14,
+    "parent": "12dtm",
+    "en": "Audio Visual",
+    "zh": "视听",
+    "desc_en": "L2 advanced audio visual skills. Video editing, sound design, compositing, and presentation using digital tools.",
+    "desc_zh": "L2 高级视听技能。视频剪辑、音效设计、合成和数字工具演示。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-12/12dtm/l2-audio-visual/l2-advanced-audio-visual-skills",
+    "links": []
+  },
+  {
+    "id": "m12dtm-dfm",
+    "cat": "module",
+    "r": 14,
+    "parent": "12dtm",
+    "en": "Design for Manufacturing",
+    "zh": "制造设计",
+    "desc_en": "L2 design for manufacturing skills. Parametric modelling, tolerances, material selection, and preparation for laser cutting/CNC.",
+    "desc_zh": "L2 制造设计技能。参数化建模、公差配合、材料选择、激光切割/CNC 加工准备。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-12/12dtm/l2-design-for-manufacture/l2-advanced-d4m-skills",
+    "links": [
+      "fusion360"
+    ]
+  },
+  {
+    "id": "m12dtm-print",
+    "cat": "module",
+    "r": 14,
+    "parent": "12dtm",
+    "en": "Print & Digital Media",
+    "zh": "印刷与数字媒体",
+    "desc_en": "L2 advanced graphic design skills. Adobe Express, Photoshop, layout design, typography, and print production.",
+    "desc_zh": "L2 高级平面设计技能。Adobe Express、Photoshop、排版设计、字体排印和印刷制作。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-12/12dtm/l2-print-digital-media/l2-advanced-graphic-design-skills",
+    "links": []
+  },
+  {
+    "id": "12dtp",
+    "cat": "course",
+    "r": 20,
+    "parents": [
+      "year12",
+      "l2ext"
+    ],
+    "en": "12DTP — Software Engineering & CS",
+    "zh": "12DTP 软件工程",
+    "desc_en": "NCEA L2: HTML/CSS/SQL/Flask full-stack web development. 5 modules: HTML & CSS Refresher, Database Refresher, Flask Learning, Web Application Assessment, Computer Science External. AS91898 external (CS concept).",
+    "desc_zh": "NCEA L2：HTML/CSS/SQL/Flask 全栈 Web 开发。5 个模块：HTML & CSS 复习、数据库复习、Flask 学习、Web 应用评估、计算机科学外部考试。AS91898 外部考试。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-12/12dtp",
+    "links": [
+      "m12dtp-html",
+      "m12dtp-sql",
+      "m12dtp-flask",
+      "m12dtp-webapp",
+      "m12dtg-cs-ext"
+    ]
+  },
+  {
+    "id": "12pce",
+    "cat": "course",
+    "r": 20,
+    "parents": [
+      "year12",
+      "l2ext"
+    ],
+    "en": "12PCE — Practical Computing",
+    "zh": "12PCE 实用计算",
+    "desc_en": "NCEA L2 practical computing skills — advanced pathway for hands-on digital competency.",
+    "desc_zh": "NCEA L2 实用计算技能 — 高级动手数字能力路径。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-12/12pce",
+    "links": []
+  },
+  {
+    "id": "l2ext",
+    "cat": "external",
+    "r": 20,
+    "parents": [
+      "year12"
+    ],
+    "en": "Level 2 Externals",
+    "zh": "NCEA L2 外部考试",
+    "desc_en": "NCEA Level 2 Digital Technologies external assessments: AS91898 CS concept, AS91899 digital outcome summary, AS91358 tech modelling report.",
+    "desc_zh": "NCEA L2 数字技术外部考试：AS91898 CS 概念、AS91899 数字成果摘要、AS91358 技术建模报告。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-12/level-2-externals",
+    "links": [
+      "12dte",
+      "12dtg",
+      "12dtm",
+      "12dtp",
+      "12pce"
+    ]
+  },
+  {
+    "id": "m12dte-pcb",
+    "cat": "module",
+    "r": 14,
+    "parent": "12dte",
+    "en": "PCB Design & Manufacturing",
+    "zh": "PCB 设计制作",
+    "desc_en": "L2 PCB: schematic design, board layout, Roland Router milling, solder paste, SMD components, testing.",
+    "desc_zh": "L2 PCB：原理图设计、线路板布局、Roland Router 铣削、焊锡膏、SMD 元件、测试。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-12/12dte",
+    "links": [
+      "pcb",
+      "fusion360"
+    ]
+  },
+  {
+    "id": "m12dte-esp",
+    "cat": "module",
+    "r": 14,
+    "parent": "12dte",
+    "en": "ESP32 & Advanced Embedded",
+    "zh": "ESP32 高级嵌入式",
+    "desc_en": "L2 ESP32: WiFi/Bluetooth, I2C communication, MQTT, home automation, advanced sensor integration.",
+    "desc_zh": "L2 ESP32：WiFi/蓝牙、I2C 通信、MQTT、智能家居、高级传感器集成。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-12/12dte",
+    "links": [
+      "esp32",
+      "arduino"
+    ]
+  },
+  {
+    "id": "m12dte-prod",
+    "cat": "module",
+    "r": 14,
+    "parent": "12dte",
+    "en": "Advanced Product Design",
+    "zh": "高级产品设计",
+    "desc_en": "L2 product design: innovation process, enclosure design, ergonomic considerations, Fusion 360 advanced modelling.",
+    "desc_zh": "L2 产品设计：创新流程、外壳设计、人体工程学考量、Fusion 360 高级建模。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-12/12dte",
+    "links": [
+      "fusion360"
+    ]
+  },
+  {
+    "id": "m12dtg-unity",
+    "cat": "module",
+    "r": 14,
+    "parent": "12dtg",
+    "en": "Advanced Game Skills",
+    "zh": "高级游戏技能",
+    "desc_en": "L2 Unity: 3D scene building, C# scripting, physics, lighting, terrain, character controller, game build pipeline.",
+    "desc_zh": "L2 Unity：3D 场景构建、C# 脚本、物理，光照、地形、角色控制器、游戏构建流程。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-12/12dtg",
+    "links": [
+      "unity",
+      "csharp",
+      "blender"
+    ]
+  },
+  {
+    "id": "m12dtg-godot",
+    "cat": "module",
+    "r": 14,
+    "parent": "12dtg",
+    "en": "Video Game Design",
+    "zh": "视频游戏设计",
+    "desc_en": "L2 Godot advanced: 3D, GDScript, shaders, tilemaps, UI systems, export for multiple platforms.",
+    "desc_zh": "L2 Godot 高级：3D、GDScript、着色器、瓦片地图、UI 系统、多平台导出。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-12/12dtg",
+    "links": [
+      "godot"
+    ]
+  },
+  {
+    "id": "m12dtg-ext",
+    "cat": "module",
+    "r": 14,
+    "parent": "12dtg",
+    "en": "Summary External",
+    "zh": "总结外部考试",
+    "desc_en": "L2 External AS91899: Present a summary of developing a digital technologies outcome. Game development project summary and demonstration.",
+    "desc_zh": "L2 外部考试 AS91899：展示数字技术成果开发总结。游戏开发项目总结与演示。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-12/level-2-externals/l2-91899-present-a-summary-of-developing-a-dt-outcome",
+    "links": [
+      "godot"
+    ]
+  },
+  {
+    "id": "m12dtg-3d",
+    "cat": "module",
+    "r": 14,
+    "parent": "12dtg",
+    "en": "Game Development",
+    "zh": "游戏开发",
+    "desc_en": "L2 Blender for games: game-ready models, LOD, UV unwrapping, PBR textures, export to Unity/Godot.",
+    "desc_zh": "L2 Blender 游戏资产：游戏就绪模型、LOD、UV 展开、PBR 纹理、导出到 Unity/Godot。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-12/12dtg",
+    "links": [
+      "blender"
+    ]
+  },
+  {
+    "id": "m12dtp-flask",
+    "cat": "module",
+    "r": 14,
+    "parent": "12dtp",
+    "en": "L2 Flask Learning",
+    "zh": "L2 Flask 学习",
+    "desc_en": "L2 Flask web framework: routing, templates (Jinja2), forms, SQLite database integration, session management, CRUD operations.",
+    "desc_zh": "L2 Flask Web 框架：路由、模板（Jinja2）、表单、SQLite 数据库集成、会话管理、CRUD 操作。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-12/12dtp/12dtp-flask-learning",
+    "links": [
+      "htmlcss"
+    ]
+  },
+  {
+    "id": "m12dtg-cs-ext",
+    "cat": "module",
+    "r": 14,
+    "parent": "12dtp",
+    "en": "Computer Science External",
+    "zh": "计算机科学外部考试",
+    "desc_en": "L2 External AS91898: Demonstrate understanding of computer science concepts. DCAT exam, November. Covers algorithms, data representation, networks, computer architecture.",
+    "desc_zh": "L2 外部考试 AS91898：展示计算机科学概念理解。DCAT 考试，11月。涵盖算法、数据表示、网络、计算机架构。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-12/level-2-externals/l2-91898-computer-science",
+    "links": []
+  },
+  {
+    "id": "m12dtp-html",
+    "cat": "module",
+    "r": 14,
+    "parent": "12dtp",
+    "en": "L2 HTML & CSS Refresher",
+    "zh": "L2 HTML & CSS 复习",
+    "desc_en": "L2 HTML & CSS web fundamentals refresher. Responsive design, semantic HTML, CSS layout (Flexbox/Grid).",
+    "desc_zh": "L2 HTML & CSS 网页基础复习。响应式设计、语义化 HTML、CSS 布局（Flexbox/Grid）。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-12/12dtp/12dtp-web-refresher",
+    "links": [
+      "htmlcss"
+    ]
+  },
+  {
+    "id": "m12dtp-sql",
+    "cat": "module",
+    "r": 14,
+    "parent": "12dtp",
+    "en": "L2 Database Refresher",
+    "zh": "L2 数据库复习",
+    "desc_en": "L2 SQLite: relational schema design, foreign keys, complex queries, normalisation, connecting to Flask apps. AS91892 (4cr).",
+    "desc_zh": "L2 SQLite：关系模式设计、外键、复杂查询、规范化、连接 Flask 应用。AS91892（4学分）。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-12/12dtp/12dtp-sql-refresher",
+    "links": [
+      "sqlite",
+      "sql"
+    ]
+  },
+  {
+    "id": "m12dtp-webapp",
+    "cat": "module",
+    "r": 14,
+    "parent": "12dtp",
+    "en": "L2 Web Application Assessment",
+    "zh": "L2 Web 应用评估",
+    "desc_en": "L2 Flask: routing, templates (Jinja2), forms, session management, deploying to the web. AS91896 (6cr).",
+    "desc_zh": "L2 Flask：路由、模板（Jinja2）、表单、会话管理、Web 部署。AS91896（6学分）。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-12/12dtp/12dtp-flask-application",
+    "links": [
+      "flask",
+      "python",
+      "htmlcss"
+    ]
+  },
+  {
+    "id": "13dte",
+    "cat": "course",
+    "r": 20,
+    "parents": [
+      "year13",
+      "l3ext"
+    ],
+    "en": "13DTE — Electronics",
+    "zh": "13DTE 电子技术",
+    "desc_en": "NCEA L3: advanced electronics project course. Background Knowledge, Technical Skills, Project Skills, Key Competencies, The Projects, AS91909 DCAT external. Single-page course structure.",
+    "desc_zh": "NCEA L3：高级电子项目课程。背景知识、技术技能、项目技能、关键能力、项目、AS91909 DCAT 外部考试。单一页面课程结构。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-13/13dte",
+    "links": [
+      "m13dte-overview",
+      "m13dte-esp",
+      "m13dte-robot",
+      "m13dte-pcb",
+      "m13dte-reflect"
+    ]
+  },
+  {
+    "id": "13dtg",
+    "cat": "course",
+    "r": 20,
+    "parents": [
+      "year13",
+      "l3ext"
+    ],
+    "en": "13DTG — Game Design",
+    "zh": "13DTG 游戏设计",
+    "desc_en": "NCEA L3: Godot advanced game design. 4 modules in order: Learning More Godot, Design, Game Project, Reflective Report. AS91909 DCAT external.",
+    "desc_zh": "NCEA L3：Godot 高级游戏设计。4 个模块依次：更多 Godot 学习、设计、游戏项目、反思报告。AS91909 DCAT 外部考试。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-13/13dtg",
+    "links": [
+      "m13dtg-godot",
+      "m13dtg-design",
+      "m13dtg-game",
+      "m13dtg-reflect"
+    ]
+  },
+  {
+    "id": "13dtm",
+    "cat": "course",
+    "r": 20,
+    "parents": [
+      "year13",
+      "l3ext"
+    ],
+    "en": "13DTM — Product & Digital Design",
+    "zh": "13DTM 产品设计",
+    "desc_en": "NCEA L3: advanced Blender/Fusion360 + VR/AR, Sprint method, tech scholarship. 3 Skill Development modules + Project module. AS91909 external + alt report 91617.",
+    "desc_zh": "NCEA L3：高级 Blender/Fusion360 + VR/AR、Sprint 方法、科技奖学金。3 个技能开发模块 + 项目模块。AS91909 外部考试 + 替代报告 91617。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-13/13dtm",
+    "links": [
+      "m13dtm-3dmod",
+      "m13dtm-anim",
+      "m13dtm-av",
+      "m13dtm-dfm",
+      "m13dtm-print"
+    ]
+  },
+  {
+    "id": "m13dtm-3dmod",
+    "cat": "module",
+    "r": 14,
+    "parent": "13dtm",
+    "en": "3D Modelling",
+    "zh": "3D 建模",
+    "desc_en": "L3 complex 3D modelling: advanced Blender/Fusion360, subdivision surfaces, sculpting, PBR materials, photorealistic rendering, complex mechanical assemblies.",
+    "desc_zh": "L3 复杂 3D 建模：高级 Blender/Fusion360、细分曲面、雕刻、PBR 材质、逼真渲染、复杂机械装配。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-13/13dtm/l3-3d-modelling/l3-complex-3d-modelling-skills",
+    "links": []
+  },
+  {
+    "id": "m13dtm-anim",
+    "cat": "module",
+    "r": 14,
+    "parent": "13dtm",
+    "en": "Animation",
+    "zh": "动画",
+    "desc_en": "L3 complex animation: character rigging, inverse kinematics, physics simulations, motion capture, advanced timeline, compositing.",
+    "desc_zh": "L3 复杂动画：角色绑定、逆向运动学、物理模拟、动作捕捉、高级时间轴、合成。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-13/13dtm/l3-animation/l3-complex-animation-skills",
+    "links": []
+  },
+  {
+    "id": "m13dtm-av",
+    "cat": "module",
+    "r": 14,
+    "parent": "13dtm",
+    "en": "Audio Visual",
+    "zh": "音视频",
+    "desc_en": "L3 complex audio visual: multi-track editing, colour grading, motion graphics, sound design, video effects, compression and delivery.",
+    "desc_zh": "L3 复杂音视频：多轨编辑、调色、动态图形、音效设计、特效、压缩与输出。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-13/13dtm/l3-audio-visual/l3-complex-audio-visual-skills",
+    "links": []
+  },
+  {
+    "id": "m13dtm-dfm",
+    "cat": "module",
+    "r": 14,
+    "parent": "13dtm",
+    "en": "Design for Manufacturing",
+    "zh": "制造设计",
+    "desc_en": "L3 complex D4M: advanced laser cutting, CNC operation, 3D printing multi-material, design for assembly, manufacturing documentation.",
+    "desc_zh": "L3 复杂 D4M：高级激光切割、CNC 操作、多材料 3D 打印、装配设计、生产文档。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-13/13dtm/l3-design-for-manufacture/l3-complex-d4m-skills",
+    "links": []
+  },
+  {
+    "id": "m13dtm-print",
+    "cat": "module",
+    "r": 14,
+    "parent": "13dtm",
+    "en": "Print & Digital Media",
+    "zh": "印刷与数字媒体",
+    "desc_en": "L3 complex graphic design: advanced layout, typography, brand identity systems, print production, prepress, cross-media design.",
+    "desc_zh": "L3 复杂平面设计：高级排版、字体设计、品牌识别系统、印刷生产、印前处理、跨媒体设计。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-13/13dtm/l3-print-digital-media/l3-complex-graphic-design-skills",
+    "links": []
+  },
+  {
+    "id": "13dtp",
+    "cat": "course",
+    "r": 20,
+    "parents": [
+      "year13",
+      "l3ext"
+    ],
+    "en": "13DTP — Software Engineering & CS",
+    "zh": "13DTP 软件工程",
+    "desc_en": "NCEA L3 full-stack: Python Flask + SQLAlchemy + SQLite + HTML/CSS. 5 modules: HTML & CSS Refresher, Database Refresher, Flask Learning, Web Application Assessment, Computer Science External. AS91906+AS91902+AS91903+AS91907+AS91908 (23cr).",
+    "desc_zh": "NCEA L3 全栈：Python Flask + SQLAlchemy + SQLite + HTML/CSS。5 个模块：HTML & CSS 复习、数据库复习、Flask 学习、Web 应用评估、计算机科学外部考试。AS91906+AS91902+AS91903+AS91907+AS91908（23学分）。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-13/13dtp",
+    "links": [
+      "m13dtp-flask",
+      "m13dtp-db",
+      "m13dtp-flask-ref",
+      "m13dtp-webapp",
+      "m13dtp-cs"
+    ]
+  },
+  {
+    "id": "13pce",
+    "cat": "course",
+    "r": 20,
+    "parents": [
+      "year13",
+      "l3ext"
+    ],
+    "en": "13PCE — Practical Computing",
+    "zh": "13PCE 实用计算",
+    "desc_en": "NCEA L3 practical computing — advanced hands-on digital skills for real-world application.",
+    "desc_zh": "NCEA L3 实用计算 — 面向实际应用的高级动手数字技能。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-13/13pce",
+    "links": []
+  },
+  {
+    "id": "l3ext",
+    "cat": "external",
+    "r": 20,
+    "parents": [
+      "year13"
+    ],
+    "en": "Level 3 Externals",
+    "zh": "L3 外部考试",
+    "desc_en": "Y13 externals: AS91908 CS concept (DCAT, Nov), AS91909 reflective analysis (DCAT, T3 W9), Tech modelling/Critique written reports (before Study Leave). Tech/Digi Scholarship (93601/93602).",
+    "desc_zh": "Y13 外部考试：AS91908 CS 概念（DCAT，11月）、AS91909 反思分析（DCAT，第3学期第9周）、技术建模/成果评价书面报告（学习假前）。科技/数字奖学金 93601/93602。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-13/level-3-externals",
+    "links": [
+      "13dte",
+      "13dtg",
+      "13dtm",
+      "13dtp",
+      "13pce",
+      "ncea",
+      "hci",
+      "cs-concept",
+      "scholarship"
+    ]
+  },
+  {
+    "id": "m13dte-overview",
+    "cat": "module",
+    "r": 14,
+    "parent": "13dte",
+    "en": "Course Information",
+    "zh": "课程信息",
+    "desc_en": "L3 13DTE course overview: expectations, tools, background knowledge, project overview, assessment information.",
+    "desc_zh": "L3 13DTE 课程概览：期望、工具、背景知识、项目概述、评估信息。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-13/13dte",
+    "links": []
+  },
+  {
+    "id": "m13dte-esp",
+    "cat": "module",
+    "r": 14,
+    "parent": "13dte",
+    "en": "ESP32 Advanced & I2C",
+    "zh": "ESP32 高级与 I2C",
+    "desc_en": "L3 ESP32 I2C: multi-device communication, sensor networks, home automation systems, MQTT integration.",
+    "desc_zh": "L3 ESP32 I2C：多设备通信、传感器网络、智能家居系统、MQTT 集成。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-13/13dte",
+    "links": [
+      "esp32"
+    ]
+  },
+  {
+    "id": "m13dte-robot",
+    "cat": "module",
+    "r": 14,
+    "parent": "13dte",
+    "en": "Robotics & Mechatronics",
+    "zh": "机器人与机电一体化",
+    "desc_en": "L3 robotics: advanced mechanical design, precision control, autonomous navigation, integration of mechanical and electronic systems.",
+    "desc_zh": "L3 机器人技术：高级机械设计、精确控制、自主导航、机械与电子系统的集成。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-13/13dte",
+    "links": [
+      "esp32",
+      "fusion360"
+    ]
+  },
+  {
+    "id": "m13dte-pcb",
+    "cat": "module",
+    "r": 14,
+    "parent": "13dte",
+    "en": "Advanced PCB Design",
+    "zh": "高级 PCB 设计",
+    "desc_en": "L3 PCB: multi-layer boards, advanced routing, signal integrity, professional manufacturing processes.",
+    "desc_zh": "L3 PCB：多层板、高级布线、信号完整性，专业制造工艺。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-13/13dte",
+    "links": [
+      "pcb",
+      "fusion360"
+    ]
+  },
+  {
+    "id": "m13dte-reflect",
+    "cat": "module",
+    "r": 14,
+    "parent": "13dte",
+    "en": "Reflective Analysis",
+    "zh": "反思性分析",
+    "desc_en": "L3 AS91909 DCAT: reflective report on design decisions, technological developments, social/ethical implications, future improvements.",
+    "desc_zh": "L3 AS91909 DCAT：设计决策、技术发展、社会/伦理影响，未来改进的反思报告。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-13/level-3-externals/l3-91909-reflective-analysis-of-developing-a-dt-outcome",
+    "links": []
+  },
+  {
+    "id": "m13dtg-godot",
+    "cat": "module",
+    "r": 14,
+    "parent": "13dtg",
+    "en": "Learning More Godot",
+    "zh": "更多 Godot 学习",
+    "desc_en": "L3 Godot advanced: complex GDScript, 3D, shaders, tilemaps, UI systems, export for multiple platforms, Getting Started Guide content.",
+    "desc_zh": "L3 Godot 高级：复杂 GDScript、3D、着色器、瓦片地图、UI 系统、多平台导出，Getting Started Guide 内容。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-13/13dtg",
+    "links": [
+      "godot"
+    ]
+  },
+  {
+    "id": "m13dtg-design",
+    "cat": "module",
+    "r": 14,
+    "parent": "13dtg",
+    "en": "Design",
+    "zh": "设计",
+    "desc_en": "L3 game design: design process, design thinking, game mechanics, narrative design, iterative prototyping.",
+    "desc_zh": "L3 游戏设计：设计流程、设计思维、游戏机制、叙事设计、迭代原型。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-13/13dtg",
+    "links": []
+  },
+  {
+    "id": "m13dtg-game",
+    "cat": "module",
+    "r": 14,
+    "parent": "13dtg",
+    "en": "Game Project",
+    "zh": "游戏项目",
+    "desc_en": "L3 Godot advanced project: complex game mechanics, narrative design, polished gameplay, playtesting, publishing to Itch.io.",
+    "desc_zh": "L3 Godot 高级项目：复杂游戏机制、叙事设计、精致游戏玩法、测试发布到 Itch.io。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-13/13dtg/game-project",
+    "links": [
+      "godot"
+    ]
+  },
+  {
+    "id": "m13dtg-reflect",
+    "cat": "module",
+    "r": 14,
+    "parent": "13dtg",
+    "en": "Reflective Report",
+    "zh": "反思报告",
+    "desc_en": "L3 DCAT exam under exam conditions: reflective analysis of game development process, design decisions, social/ethical considerations.",
+    "desc_zh": "L3 考试条件下的 DCAT：游戏开发生成过程、设计决策、社会/伦理考量的反思分析。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-13/13dtg/reflective-report",
+    "links": []
+  },
+  {
+    "id": "m13dtp-flask",
+    "cat": "module",
+    "r": 14,
+    "parent": "13dtp",
+    "en": "L3 HTML & CSS Refresher",
+    "zh": "L3 HTML & CSS 复习",
+    "desc_en": "L3 HTML & CSS web fundamentals refresher. Responsive design, semantic HTML, CSS layout, modern CSS features.",
+    "desc_zh": "L3 HTML & CSS 网页基础复习。响应式设计、语义化 HTML、CSS 布局、现代 CSS 特性。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-13/13dtp/13dtp-web-refresher",
+    "links": [
+      "htmlcss"
+    ]
+  },
+  {
+    "id": "m13dtp-db",
+    "cat": "module",
+    "r": 14,
+    "parent": "13dtp",
+    "en": "L3 Database Refresher",
+    "zh": "L3 数据库复习",
+    "desc_en": "L3 SQL database refresher: advanced queries, joins, subqueries, database design patterns, ORM concepts.",
+    "desc_zh": "L3 SQL 数据库复习：高级查询、连接、子查询、数据库设计模式、ORM 概念。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-13/13dtp/13dtp-database-refresher",
+    "links": [
+      "sqlalchemy",
+      "sql",
+      "sqlite"
+    ]
+  },
+  {
+    "id": "m13dtp-flask-ref",
+    "cat": "module",
+    "r": 14,
+    "parent": "13dtp",
+    "en": "L3 Flask Learning",
+    "zh": "L3 Flask 学习",
+    "desc_en": "L3 Flask web framework refresher. Routing, templates (Jinja2), forms, sessions, authentication, REST APIs, Flask extensions.",
+    "desc_zh": "L3 Flask Web 框架复习。路由、模板（Jinja2）、表单、会话、认证、REST API、Flask 扩展。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-13/13dtp/13dtp-flask-refresher",
+    "links": []
+  },
+  {
+    "id": "m13dtp-webapp",
+    "cat": "module",
+    "r": 14,
+    "parent": "13dtp",
+    "en": "L3 Web Application Assessment",
+    "zh": "L3 Web 应用评估",
+    "desc_en": "L3 Flask full-stack web application project. Design, implement, test and deploy a complete dynamic web application.",
+    "desc_zh": "L3 Flask 全栈 Web 应用项目。设计、实现、测试和部署一个完整的动态 Web 应用。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-13/13dtp/13dtp-flask-project",
+    "links": [
+      "flask",
+      "sqlalchemy",
+      "python",
+      "htmlcss",
+      "github"
+    ]
+  },
+  {
+    "id": "m13dtp-cs",
+    "cat": "module",
+    "r": 14,
+    "parent": "13dtp",
+    "en": "L3 Computer Science External",
+    "zh": "L3 计算机科学外部考试",
+    "desc_en": "L3 External AS91908: Demonstrate understanding of advanced computer science concepts. DCAT exam. Covers algorithms, data structures, formal languages, computing fundamentals.",
+    "desc_zh": "L3 外部考试 AS91908：展示高级计算机科学概念理解。DCAT 考试。涵盖算法、数据结构、形式语言、计算基础。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-13/level-3-externals/l3-91908-computer-science",
+    "links": [
+      "cs-concept"
+    ]
+  },
+  {
+    "id": "resources",
+    "cat": "resource",
+    "r": 20,
+    "en": "Resources",
+    "zh": "教学资源",
+    "desc_en": "Central hub: tech skills, NCEA terminology, writing guides, design methodology, nature of technology, portfolios, monetisation.",
+    "desc_zh": "资源中心：技术技能、NCEA 术语、写作指南、设计方法论、技术本质、作品集、资产变现。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/resources",
+    "links": [
+      "design-thinking",
+      "selling-assets",
+      "skills-and-knowledge",
+      "methodologies",
+      "ncea-definitions",
+      "nature-of-technology",
+      "writing-guides",
+      "design-portfolios",
+      "copywrite-free-resources",
+      "project-ideas",
+      "reqspec"
+    ],
+    "parents": [
+      "bhs"
+    ]
+  },
+  {
+    "id": "skills-and-knowledge",
+    "cat": "resource",
+    "r": 20,
+    "en": "Tech Skills & Software",
+    "zh": "技术技能与软件",
+    "desc_en": "Guides for Godot, Fusion 360, Inkscape, Blender, Python, Scratch, HTML/CSS, SQL, Flask, Git.",
+    "desc_zh": "Godot、Fusion 360、Inkscape、Blender、Python、Scratch、HTML/CSS、SQL、Flask、Git 指南。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/resources/skills-and-knowledge",
+    "links": [
+      "godot",
+      "fusion360",
+      "inkscape",
+      "blender",
+      "python",
+      "scratch",
+      "htmlcss",
+      "sql",
+      "flask",
+      "github"
+    ],
+    "parent": "resources"
+  },
+  {
+    "id": "ncea-definitions",
+    "cat": "resource",
+    "r": 20,
+    "en": "NCEA Terminology & Standards",
+    "zh": "NCEA 术语与评估",
+    "desc_en": "NCEA assessment standards, achievement objectives, Progress Outcomes (PO2–PO5), and key terminology for Digital Technologies.",
+    "desc_zh": "数字技术 NCEA 评估标准、成就目标、进展成果（PO2-PO5）和关键术语。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/resources/ncea-definitions",
+    "links": [],
+    "parent": "resources"
+  },
+  {
+    "id": "hci",
+    "cat": "resource",
+    "r": 20,
+    "parent": "resources",
+    "en": "HCI & Usability",
+    "zh": "人机交互与可用性",
+    "desc_en": "Human-Computer Interaction: Nielsen's 10 heuristics, usability testing, user-centred design, accessibility.",
+    "desc_zh": "人机交互：Nielsen 10 启发式原则、可用性测试、以用户为中心的设计、无障碍访问。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/resources",
+    "links": [
+      "ncea"
+    ]
+  },
+  {
+    "id": "cs-concept",
+    "cat": "resource",
+    "r": 20,
+    "parent": "resources",
+    "en": "Computer Science Concepts",
+    "zh": "计算机科学概念",
+    "desc_en": "CS concepts for NCEA externals: binary, Boolean logic, algorithms, search/sort, complexity, propositional logic.",
+    "desc_zh": "NCEA 外部 CS 概念：二进制、布尔逻辑、算法、搜索/排序、复杂性、命题逻辑。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-11/level-1-externals",
+    "links": [
+      "ncea"
+    ]
+  },
+  {
+    "id": "design-thinking",
+    "cat": "resource",
+    "r": 20,
+    "en": "Design Methodology",
+    "zh": "设计方法论",
+    "desc_en": "Design thinking, iterative design processes, prototyping strategies.",
+    "desc_zh": "设计思维、迭代设计流程与原型策略。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/resources/design-thinking",
+    "links": [],
+    "parent": "resources"
+  },
+  {
+    "id": "nature-of-technology",
+    "cat": "resource",
+    "r": 20,
+    "en": "Nature of Technology",
+    "zh": "技术的本质",
+    "desc_en": "Philosophical understanding of technology's role in society.",
+    "desc_zh": "从哲学角度理解技术在社会中的角色。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/resources/nature-of-technology",
+    "links": [],
+    "parent": "resources"
+  },
+  {
+    "id": "design-portfolios",
+    "cat": "resource",
+    "r": 20,
+    "en": "Design Portfolio",
+    "zh": "设计作品集",
+    "desc_en": "Guide to building a digital design portfolio.",
+    "desc_zh": "数字设计作品集构建指南。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/resources/design-portfolios",
+    "links": [],
+    "parent": "resources"
+  },
+  {
+    "id": "clubs",
+    "cat": "club",
+    "r": 12,
+    "en": "Clubs & Activities",
+    "zh": "俱乐部与课外活动",
+    "desc_en": "Extracurricular activities: Vex Robotics, Evolocity, Programming Club, Technology & Science Club, Esports (League of Legends), Other Competitions.",
+    "desc_zh": "课外活动：Vex 机器人、Evolocity 电动赛车、编程俱乐部、科技俱乐部、电子竞技（英雄联盟）、其他竞赛。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/clubs",
+    "links": [
+      "robotics",
+      "evolocity",
+      "prog-club",
+      "tech-science",
+      "esports",
+      "competitions"
+    ],
+    "parents": [
+      "bhs"
+    ]
+  },
+  {
+    "id": "robotics",
+    "cat": "club",
+    "r": 12,
+    "en": "Vex Robotics Club",
+    "zh": "Vex 机器人俱乐部",
+    "desc_en": "Build and programme VEX robots for regional and national competitions. Learn mechanical design, sensors, motor control, and autonomous programming. Open to all year levels.",
+    "desc_zh": "搭建并编程 VEX 机器人参加地区和国家级竞赛。学习机械设计、传感器、电机控制和自主编程。面向所有年级。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/clubs/vex-robotics",
+    "links": [
+      "arduino",
+      "fusion360",
+      "esp32"
+    ],
+    "parent": "clubs"
+  },
+  {
+    "id": "evolocity",
+    "cat": "club",
+    "r": 12,
+    "en": "Evolocity",
+    "zh": "Evolocity 电动赛车",
+    "desc_en": "Design and build electric vehicles for the Evolocity competition. Focus on aerodynamics, battery management, and mechanical engineering. Team-based projects with real-world racing.",
+    "desc_zh": "为 Evolocity 竞赛设计和制造电动汽车。专注空气动力学、电池管理和机械工程。团队项目，真实赛车体验。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/clubs/evolocity",
+    "links": [
+      "fusion360",
+      "arduino"
+    ],
+    "parent": "clubs"
+  },
+  {
+    "id": "prog-club",
+    "cat": "club",
+    "r": 12,
+    "en": "Programming Club",
+    "zh": "编程俱乐部",
+    "desc_en": "Weekly coding sessions for all skill levels. Learn Python, JavaScript, game development, algorithms, and compete in programming contests like NCPC.",
+    "desc_zh": "每周编程活动，面向所有水平。学习 Python、JavaScript、游戏开发、算法，参加 NCPC 等编程竞赛。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/clubs/programming-club",
+    "links": [
+      "python",
+      "godot",
+      "scratch",
+      "csharp"
+    ],
+    "parent": "clubs"
+  },
+  {
+    "id": "tech-science",
+    "cat": "club",
+    "r": 12,
+    "en": "Technology & Science Club",
+    "zh": "科技俱乐部",
+    "desc_en": "Explore the intersection of technology and science through hands-on projects. Electronics, coding, robotics, and scientific experimentation. Perfect for curious minds.",
+    "desc_zh": "通过动手项目探索科技与科学的交叉领域。电子技术、编程、机器人、科学实验。适合好奇心强的学生。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/clubs/technology-and-science-club",
+    "links": [
+      "arduino",
+      "python",
+      "esp32",
+      "fusion360"
+    ],
+    "parent": "clubs"
+  },
+  {
+    "id": "esports",
+    "cat": "club",
+    "r": 12,
+    "en": "Esports — League of Legends",
+    "zh": "电子竞技 — 英雄联盟",
+    "desc_en": "Competitive League of Legends team representing BHS. Practice sessions, strategy development, and participation in NZESG high school esports league.",
+    "desc_zh": "代表 BHS 的英雄联盟竞技队。训练、策略制定，参加 NZESG 高中电子竞技联赛。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/clubs/league-of-legends",
+    "links": [],
+    "parent": "clubs"
+  },
+  {
+    "id": "competitions",
+    "cat": "club",
+    "r": 12,
+    "en": "Other Competitions",
+    "zh": "其他竞赛",
+    "desc_en": "Participate in various technology competitions: Young Scientist, Tech Tunnel, CAI competitions, and more. Showcase your projects and skills on regional and national stages.",
+    "desc_zh": "参加各类技术竞赛：青年科学家、Tech Tunnel、CAI 竞赛等。在地区和国家级舞台上展示你的项目和技能。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/clubs/other-competitions",
+    "links": [],
+    "parent": "clubs"
+  },
+  {
+    "id": "godot",
+    "cat": "tool",
+    "r": 12,
+    "en": "Godot Engine",
+    "zh": "Godot 游戏引擎",
+    "desc_en": "Open-source 2D/3D game engine. Used in 11DTG, 12DTG, 13DTG game design courses.",
+    "desc_zh": "开源 2D/3D 游戏引擎，用于 11DTG、12DTG、13DTG 游戏设计课程。",
+    "url": "https://godotengine.org",
+    "links": []
+  },
+  {
+    "id": "unity",
+    "cat": "tool",
+    "r": 12,
+    "en": "Unity 3D",
+    "zh": "Unity 3D 游戏引擎",
+    "desc_en": "3D game engine used in 12DTG advanced game design. C# scripting.",
+    "desc_zh": "3D 游戏引擎，用于 12DTG 高级游戏设计，C# 脚本。",
+    "url": "https://unity.com",
+    "links": []
+  },
+  {
+    "id": "blender",
+    "cat": "tool",
+    "r": 12,
+    "en": "Blender",
+    "zh": "Blender 3D 创作",
+    "desc_en": "Open-source 3D suite for modelling, animation, rendering. Used across 11DTT, 12DTM, 13DTM product design.",
+    "desc_zh": "开源 3D 创作套件，用于建模、动画与渲染。应用于 11DTT、12DTM、13DTM 产品设计。",
+    "url": "https://www.blender.org",
+    "links": []
+  },
+  {
+    "id": "fusion360",
+    "cat": "tool",
+    "r": 12,
+    "en": "Fusion 360",
+    "zh": "Fusion 360 CAD",
+    "desc_en": "Autodesk CAD/CAM for 3D modelling & engineering design. Used in all DTE/DTM electronics & product courses.",
+    "desc_zh": "Autodesk CAD/CAM 软件，用于 3D 建模与工程设计。应用于所有 DTE/DTM 电子技术和产品设计课程。",
+    "url": "https://www.autodesk.com/products/fusion-360",
+    "links": []
+  },
+  {
+    "id": "python",
+    "cat": "tool",
+    "r": 12,
+    "en": "Python",
+    "zh": "Python 编程语言",
+    "desc_en": "General-purpose language in 10DGT, 11DTP, 12DTP, 13DTP, Scholarship. Flask for web, SQLAlchemy for DB.",
+    "desc_zh": "通用编程语言，用于 10DGT、11DTP、12DTP、13DTP、奖学金课程。Flask Web 开发，SQLAlchemy 数据库。",
+    "url": "https://www.python.org",
+    "links": []
+  },
+  {
+    "id": "flask",
+    "cat": "tool",
+    "r": 12,
+    "en": "Flask",
+    "zh": "Flask Web 框架",
+    "desc_en": "Python micro web framework for building web applications. L2/L3 DTP courses.",
+    "desc_zh": "Python 微 Web 框架，用于构建 Web 应用。L2/L3 DTP 课程。",
+    "url": "https://flask.palletsprojects.com",
+    "links": []
+  },
+  {
+    "id": "sqlalchemy",
+    "cat": "tool",
+    "r": 12,
+    "en": "SQLAlchemy",
+    "zh": "SQLAlchemy ORM",
+    "desc_en": "Python ORM for database operations. Used in 13DTP advanced projects.",
+    "desc_zh": "Python ORM，用于数据库操作。用于 13DTP 高级项目。",
+    "url": "https://www.sqlalchemy.org",
+    "links": []
+  },
+  {
+    "id": "sqlite",
+    "cat": "tool",
+    "r": 12,
+    "en": "SQLite",
+    "zh": "SQLite 数据库",
+    "desc_en": "Lightweight SQL database used in 11DTP, 12DTP, 13DTP web application projects.",
+    "desc_zh": "轻量级 SQL 数据库，用于 11DTP、12DTP、13DTP Web 应用项目。",
+    "url": "https://sqlite.org",
+    "links": []
+  },
+  {
+    "id": "sql",
+    "cat": "tool",
+    "r": 12,
+    "en": "SQL",
+    "zh": "SQL 数据库查询",
+    "desc_en": "Structured Query Language for database design and operations. Core skill in all DTP courses.",
+    "desc_zh": "结构化查询语言，用于数据库设计与操作。所有 DTP 课程的核心技能。",
+    "url": "https://www.w3schools.com/sql/",
+    "links": []
+  },
+  {
+    "id": "htmlcss",
+    "cat": "tool",
+    "r": 12,
+    "en": "HTML & CSS",
+    "zh": "HTML 与 CSS",
+    "desc_en": "Web page structure and styling. Foundation for 11DTP, 12DTP, 13DTP web development.",
+    "desc_zh": "网页结构与样式。11DTP、12DTP、13DTP Web 开发基础。",
+    "url": "https://www.w3schools.com/html/",
+    "links": []
+  },
+  {
+    "id": "github",
+    "cat": "tool",
+    "r": 12,
+    "en": "Git & GitHub",
+    "zh": "Git 与 GitHub",
+    "desc_en": "Version control platform for 12DTP and 13DTP project development and collaboration.",
+    "desc_zh": "版本控制平台，用于 12DTP 和 13DTP 项目开发与协作。",
+    "url": "https://github.com",
+    "links": [
+      "python",
+      "flask"
+    ]
+  },
+  {
+    "id": "scratch",
+    "cat": "tool",
+    "r": 12,
+    "en": "Scratch",
+    "zh": "Scratch 可视化编程",
+    "desc_en": "Block-based visual programming for beginners. Y9 programming modules.",
+    "desc_zh": "面向初学者的可视化积木编程语言，用于 9 年级编程模块。",
+    "url": "https://scratch.mit.edu",
+    "links": []
+  },
+  {
+    "id": "arduino",
+    "cat": "tool",
+    "r": 12,
+    "en": "Arduino",
+    "zh": "Arduino 微控制器",
+    "desc_en": "Microcontroller platform used in 11DTE, 12DTE, 10ELT for embedded programming and robotics.",
+    "desc_zh": "微控制器平台，用于 11DTE、12DTE、10ELT 嵌入式编程和机器人制作。",
+    "url": "https://www.arduino.cc",
+    "links": []
+  },
+  {
+    "id": "esp32",
+    "cat": "tool",
+    "r": 12,
+    "en": "ESP32",
+    "zh": "ESP32 微控制器",
+    "desc_en": "Advanced WiFi/Bluetooth microcontroller. Y13 DTE projects: I2C, home automation, sensors.",
+    "desc_zh": "高级 WiFi/蓝牙微控制器。13DTE 项目：I2C 通信、智能家居、传感器。",
+    "url": "https://www.espressif.com/en/products/socs/esp32",
+    "links": []
+  },
+  {
+    "id": "piskel",
+    "cat": "tool",
+    "r": 12,
+    "en": "Piskel",
+    "zh": "Piskel 像素艺术",
+    "desc_en": "Pixel art editor for game design. Used in 11DTG to create game sprites and characters.",
+    "desc_zh": "像素艺术编辑器，用于游戏设计。在 11DTG 中创建游戏精灵和角色。",
+    "url": "https://www.piskelapp.com",
+    "links": []
+  },
+  {
+    "id": "csharp",
+    "cat": "tool",
+    "r": 12,
+    "en": "C#",
+    "zh": "C# 编程语言",
+    "desc_en": "Programming language for Unity 3D game development. Used in 12DTG.",
+    "desc_zh": "用于 Unity 3D 游戏开发的编程语言。用于 12DTG。",
+    "url": "https://docs.microsoft.com/en-us/dotnet/csharp/",
+    "links": []
+  },
+  {
+    "id": "cplusplus",
+    "cat": "tool",
+    "r": 12,
+    "en": "C++ (Arduino)",
+    "zh": "C++ (Arduino)",
+    "desc_en": "C++ for Arduino programming. Used in embedded systems courses.",
+    "desc_zh": "Arduino 编程语言。用于嵌入式系统课程。",
+    "url": "https://www.arduino.cc/reference/en/",
+    "links": []
+  },
+  {
+    "id": "inkscape",
+    "cat": "tool",
+    "r": 12,
+    "en": "Inkscape",
+    "zh": "Inkscape 矢量图",
+    "desc_en": "Open-source vector graphics editor. Used in 11DTT graphic design modules.",
+    "desc_zh": "开源矢量图形编辑器。用于 11DTT 平面设计模块。",
+    "url": "https://inkscape.org",
+    "links": []
+  },
+  {
+    "id": "pcb",
+    "cat": "tool",
+    "r": 12,
+    "en": "PCB Making",
+    "zh": "PCB 制作",
+    "desc_en": "Printed Circuit Board design and manufacturing using Roland Router. L2/L3 DTE courses.",
+    "desc_zh": "使用 Roland Router 设计和制作印刷电路板。L2/L3 DTE 课程。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-12/12dte",
+    "links": []
+  },
+  {
+    "id": "scholarship",
+    "cat": "concept",
+    "r": 12,
+    "en": "NCEA Scholarship",
+    "zh": "NCEA 奖学金",
+    "desc_en": "NCEA Scholarship: top-level achievement in Digital Technologies. Tech Scholarship (93601) and Digi Scholarship (93602) for Y13 students.",
+    "desc_zh": "NCEA 奖学金：数字技术最高水平成就。科技奖学金 93601 和数字奖学金 93602，面向 13 年级学生。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/scholarship/tech-scholarship",
+    "links": []
+  },
+  {
+    "id": "ai-concept",
+    "cat": "concept",
+    "r": 12,
+    "en": "Artificial Intelligence",
+    "zh": "人工智能",
+    "desc_en": "ML, neural networks, ethics, societal impact. Y9 AI module + Scholarship courses.",
+    "desc_zh": "机器学习、神经网络、伦理及社会影响。9 年级 AI 模块和奖学金课程。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/junior/9dgt/y9-5-artificial-intelligence",
+    "links": []
+  },
+  {
+    "id": "copywrite-free-resources",
+    "cat": "resource",
+    "r": 20,
+    "parent": "resources",
+    "en": "Creative Commons & Free Resources",
+    "zh": "创意共享与免费资源",
+    "desc_en": "Free resources and Creative Commons licensed materials for digital technology projects. Includes images, audio, code libraries, and design assets.",
+    "desc_zh": "数字技术项目免费资源和 Creative Commons 许可材料。包括图片、音频、代码库和设计素材。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/resources/copywrite-free-resources",
+    "links": []
+  },
+  {
+    "id": "selling-assets",
+    "cat": "resource",
+    "r": 20,
+    "parent": "resources",
+    "en": "Selling Assets",
+    "zh": "资产变现",
+    "desc_en": "Online platforms for selling digital assets and 3D models.",
+    "desc_zh": "在线出售数字资产和 3D 模型平台。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/resources/selling-assets",
+    "links": []
+  },
+  {
+    "id": "methodologies",
+    "cat": "resource",
+    "r": 20,
+    "parent": "resources",
+    "en": "Methodologies",
+    "zh": "方法论",
+    "desc_en": "Research conventions: usability heuristics, visual hierarchy, film genre conventions, system block diagrams, schematic conventions, naming schemes, data modelling.",
+    "desc_zh": "研究惯例：可用性启发法、视觉层次、电影类型惯例、系统框图、原理图规范、命名方案、数据建模。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/resources/methodologies",
+    "links": []
+  },
+  {
+    "id": "writing-guides",
+    "cat": "resource",
+    "r": 20,
+    "parent": "resources",
+    "en": "Writing Guides",
+    "zh": "写作指南",
+    "desc_en": "Document formatting, long document structure, paragraph linking, citation and bibliography management in Google Docs.",
+    "desc_zh": "文档格式设置、长文档结构、段落链接、Google Docs 引用与参考文献管理。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/resources/writing-guides",
+    "links": []
+  },
+  {
+    "id": "project-ideas",
+    "cat": "resource",
+    "r": 20,
+    "parent": "resources",
+    "en": "Project Ideas",
+    "zh": "项目创意",
+    "desc_en": "Student project ideas across four categories: Product Design, Digital Technology & Software & Databases, Electronics, and Other Interesting Projects.",
+    "desc_zh": "学生项目创意四大类：产品设计、数字技术与软件与数据库、电子学、其他有趣项目。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/resources/project-ideas",
+    "links": []
+  },
+  {
+    "id": "reqspec",
+    "cat": "resource",
+    "r": 20,
+    "parent": "resources",
+    "en": "ReqSpec",
+    "zh": "需求规范",
+    "desc_en": "Understanding the difference between Requirements and Specifications in digital technology projects.",
+    "desc_zh": "数字技术项目中需求与规格说明的区别与重要性。",
+    "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/resources/reqspec",
+    "links": []
+  }
+]
