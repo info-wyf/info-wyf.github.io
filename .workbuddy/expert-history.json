@@ -11,7 +11,18 @@
         "usedAt": 1776053904183,
         "industryId": "all"
       }
+    ],
+    "8c546ca00853466b853741e14d5e02ed": [
+      {
+        "expertId": "SoftwareArchitect",
+        "name": "架构通",
+        "profession": "软件架构师",
+        "avatarUrl": "https://acc-1258344699.cos.accelerate.myqcloud.com/workbuddy/experts/avatars/02-Engineering/SoftwareArchitect/SoftwareArchitect.png",
+        "promptUrl": "https://acc-1258344699.cos.accelerate.myqcloud.com/workbuddy/experts/experts/02-Engineering/SoftwareArchitect/SoftwareArchitect_zh.md",
+        "usedAt": 1776328039676,
+        "industryId": "all"
+      }
     ]
   },
-  "lastUpdated": 1776076222090
+  "lastUpdated": 1776332847034
 }
