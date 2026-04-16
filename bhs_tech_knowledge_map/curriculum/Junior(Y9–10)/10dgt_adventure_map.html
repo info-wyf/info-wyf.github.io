@@ -1,0 +1,3349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>10DGT Adventure Map — Burnside High School</title>
+<style>
+/* ═══════════════════════════════════════════
+   BASE RESET & THEME
+   ═══════════════════════════════════════════ */
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0D1117;--bg2:#161B22;--bg3:#21262D;
+  --border:#30363D;--border2:#484F58;
+  --text:#E6EDF3;--text2:#8B949E;--text3:#6E7681;
+  --green:#3FB950;--green-dim:#1A4D2E;--green-glow:#238636;
+  --purple:#A371F7;--purple-dim:#2D1B69;--purple-glow:#8957E5;
+  --amber:#D29922;--amber-dim:#3D2E00;--amber-glow:#9E6A03;
+  --red:#F85149;--blue:#58A6FF;--cyan:#39D2C0;
+  --module-done:#3FB950;--module-current:#A371F7;--module-locked:#6E7681;
+  --radius:12px;--radius-sm:8px;
+}
+html{font-size:16px}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+  background:var(--bg);color:var(--text);
+  min-height:100vh;overflow-x:hidden;
+  background-image:
+    radial-gradient(ellipse at 20% 0%, rgba(163,113,247,0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 100%, rgba(63,185,80,0.06) 0%, transparent 50%);
+}
+
+/* ═══════════════════════════════════════════
+   TOP NAV BAR
+   ═══════════════════════════════════════════ */
+.topbar{
+  position:sticky;top:0;z-index:100;
+  background:rgba(13,17,23,0.85);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  padding:12px 24px;display:flex;align-items:center;justify-content:space-between;
+}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.topbar-logo{font-size:22px}
+.topbar-title{font-size:15px;font-weight:600;color:var(--text)}
+.topbar-sub{font-size:12px;color:var(--text2)}
+.topbar-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+
+/* Dropdown menu */
+.dropdown{position:relative}
+.dropdown-btn{
+  padding:6px 14px;border-radius:var(--radius-sm);
+  font-size:12px;font-weight:500;cursor:pointer;
+  border:1px solid var(--border);background:var(--bg2);color:var(--text2);
+  transition:all .2s;display:flex;align-items:center;gap:6px;
+}
+.dropdown-btn:hover{border-color:var(--border2);background:var(--bg3)}
+.dropdown-menu{
+  position:absolute;top:calc(100% + 6px);right:0;
+  background:#1e2130;border:1px solid rgba(255,255,255,0.08);
+  border-radius:10px;box-shadow:0 8px 32px rgba(0,0,0,.5),0 2px 8px rgba(0,0,0,.3);
+  min-width:180px;z-index:100;padding:6px 0;
+  opacity:0;visibility:hidden;transform:translateY(-4px);
+  transition:all .15s ease;
+}
+.dropdown.open .dropdown-menu{opacity:1;visibility:visible;transform:translateY(0)}
+.dropdown-item{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 16px;font-size:13px;color:rgba(255,255,255,0.85);
+  cursor:pointer;transition:all .15s;border:none;background:none;width:100%;text-align:left;
+  letter-spacing:0.01em;
+}
+.dropdown-item:hover{background:rgba(255,255,255,0.06);color:#fff}
+.dropdown-item:active{background:rgba(255,255,255,0.1)}
+.btn{
+  padding:6px 14px;border-radius:var(--radius-sm);
+  font-size:12px;font-weight:500;cursor:pointer;
+  border:1px solid var(--border);background:var(--bg2);color:var(--text2);
+  transition:all .2s;display:flex;align-items:center;gap:6px;
+}
+.btn:hover{border-color:var(--border2);color:var(--text);background:var(--bg3)}
+.btn-purple{border-color:var(--purple);color:var(--purple);background:var(--purple-dim)}
+.btn-purple:hover{background:rgba(163,113,247,0.2)}
+
+.lang-switch{
+  display:flex;gap:0;border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;
+}
+.lang-btn{
+  padding:6px 10px;font-size:12px;font-weight:600;cursor:pointer;
+  border:none;background:var(--bg2);color:var(--text3);
+  transition:all .2s;line-height:1;
+}
+.lang-btn:not(:last-child){border-right:1px solid var(--border)}
+.lang-btn.active{background:var(--purple-dim);color:var(--purple)}
+.lang-btn:hover:not(.active){background:var(--bg3);color:var(--text2)}
+
+/* ═══════════════════════════════════════════
+   OVERVIEW STATS BAR
+   ═══════════════════════════════════════════ */
+.stats-bar{
+  display:flex;gap:12px;padding:16px 24px;flex-wrap:wrap;
+}
+.stat-card{
+  flex:1;min-width:120px;
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
+  padding:14px 16px;display:flex;align-items:center;gap:12px;
+}
+.stat-icon{font-size:24px;flex-shrink:0}
+.stat-info{display:flex;flex-direction:column}
+.stat-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em}
+.stat-value{font-size:18px;font-weight:700;margin-top:2px}
+.stat-value.green{color:var(--green)}
+.stat-value.purple{color:var(--purple)}
+.stat-value.amber{color:var(--amber)}
+
+/* ═══════════════════════════════════════════
+   PROGRESS OVERALL BAR
+   ═══════════════════════════════════════════ */
+.progress-section{padding:0 24px 16px}
+.progress-track{
+  height:6px;background:var(--bg3);border-radius:3px;overflow:hidden;position:relative;
+}
+.progress-fill{
+  height:100%;border-radius:3px;
+  background:linear-gradient(90deg, var(--green), var(--cyan));
+  transition:width .6s cubic-bezier(.22,1,.36,1);
+  position:relative;
+}
+.progress-fill::after{
+  content:'';position:absolute;right:0;top:50%;transform:translateY(-50%);
+  width:12px;height:12px;border-radius:50%;
+  background:var(--cyan);box-shadow:0 0 8px var(--cyan);
+}
+.progress-label{display:flex;justify-content:space-between;margin-top:6px}
+.progress-label span{font-size:11px;color:var(--text3)}
+
+/* ═══════════════════════════════════════════
+   BIG IDEA BANNER
+   ═══════════════════════════════════════════ */
+.big-idea-banner{
+  margin:0 24px 16px;padding:20px 24px;
+  background:linear-gradient(135deg, var(--purple-dim) 0%, rgba(89,55,175,0.15) 100%);
+  border:1px solid rgba(163,113,247,0.3);border-radius:var(--radius);
+  cursor:pointer;transition:all .3s;position:relative;overflow:hidden;
+}
+.big-idea-banner::before{
+  content:'';position:absolute;top:-50%;right:-20%;width:200px;height:200px;
+  background:radial-gradient(circle, rgba(163,113,247,0.15), transparent 70%);
+  pointer-events:none;
+}
+.big-idea-banner:hover{border-color:var(--purple);transform:translateY(-1px)}
+.bi-header{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.bi-tag{
+  font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;
+  padding:3px 10px;border-radius:20px;
+  background:rgba(163,113,247,0.2);color:var(--purple);
+}
+.bi-module-tag{font-size:10px;color:var(--text3)}
+.bi-quote{
+  font-size:16px;font-weight:500;color:var(--text);line-height:1.5;
+  margin-bottom:8px;padding-left:16px;border-left:3px solid var(--purple);
+}
+.bi-desc{font-size:13px;color:var(--text2);line-height:1.6}
+.bi-maori{font-size:12px;font-style:italic;color:var(--purple);margin-top:8px;opacity:.8}
+
+/* ═══════════════════════════════════════════
+   MODULE MAP (MAIN ADVENTURE MAP)
+   ═══════════════════════════════════════════ */
+.map-section{padding:0 24px 24px}
+.section-label{
+  font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;
+  color:var(--text3);margin-bottom:14px;
+}
+
+.module-map{
+  display:flex;gap:0;align-items:stretch;overflow-x:auto;
+  padding:20px 10px;scrollbar-width:thin;
+  scrollbar-color:var(--border) transparent;
+}
+.module-map::-webkit-scrollbar{height:6px}
+.module-map::-webkit-scrollbar-track{background:transparent}
+.module-map::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+.module-node{
+  flex:1;min-width:140px;display:flex;flex-direction:column;align-items:center;
+  cursor:pointer;position:relative;transition:all .3s;
+}
+.module-node:not(:last-child)::after{
+  content:'';position:absolute;top:44px;left:calc(50% + 36px);
+  width:calc(100% - 72px);height:3px;z-index:1;
+  border-radius:2px;transition:all .4s;
+}
+/* connector states */
+.module-node.m-done:not(:last-child)::after{background:var(--green)}
+.module-node.m-current:not(:last-child)::after{
+  background:repeating-linear-gradient(90deg, var(--purple) 0 6px, transparent 6px 12px);
+  animation:dash-flow 1s linear infinite;
+}
+.module-node.m-locked:not(:last-child)::after{
+  background:repeating-linear-gradient(90deg, var(--border) 0 4px, transparent 4px 8px);
+}
+@keyframes dash-flow{to{background-position:12px 0}}
+
+.node-circle{
+  width:72px;height:72px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:28px;position:relative;z-index:2;
+  transition:all .3s;border:3px solid transparent;
+}
+.m-done .node-circle{
+  background:var(--green-dim);border-color:var(--green);
+  box-shadow:0 0 20px rgba(63,185,80,0.2);
+}
+.m-current .node-circle{
+  background:var(--purple-dim);border-color:var(--purple);
+  box-shadow:0 0 24px rgba(163,113,247,0.3);
+  animation:pulse-current 2s ease-in-out infinite;
+}
+.m-locked .node-circle{
+  background:var(--bg2);border-color:var(--border);
+}
+@keyframes pulse-current{
+  0%,100%{box-shadow:0 0 24px rgba(163,113,247,0.3)}
+  50%{box-shadow:0 0 36px rgba(163,113,247,0.5)}
+}
+.node-check{
+  position:absolute;top:-4px;right:-4px;width:22px;height:22px;border-radius:50%;
+  background:var(--green);display:flex;align-items:center;justify-content:center;
+  font-size:12px;color:#fff;font-weight:700;z-index:3;
+  box-shadow:0 2px 6px rgba(0,0,0,.3);
+}
+.node-label{margin-top:8px;text-align:center}
+.node-num{font-size:10px;color:var(--text3);font-weight:500}
+.node-name{font-size:12px;font-weight:600;margin-top:2px;line-height:1.3}
+.m-done .node-name{color:var(--green)}
+.m-current .node-name{color:var(--purple)}
+.m-locked .node-name{color:var(--text3)}
+.node-status{
+  font-size:10px;margin-top:4px;padding:2px 10px;border-radius:20px;font-weight:500;
+}
+.m-done .node-status{background:var(--green-dim);color:var(--green)}
+.m-current .node-status{background:var(--purple-dim);color:var(--purple)}
+.m-locked .node-status{background:var(--bg2);color:var(--text3);border:1px solid var(--border)}
+
+.module-node:hover{transform:translateY(-4px)}
+.module-node.m-locked:hover{transform:translateY(-2px)}
+
+/* ═══════════════════════════════════════════
+   LESSON DETAIL PANEL (per module)
+   ═══════════════════════════════════════════ */
+.lesson-detail{
+  margin:0 24px 20px;
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
+  overflow:hidden;transition:all .3s;
+}
+.ld-header{
+  padding:16px 20px;display:flex;align-items:center;justify-content:space-between;
+  cursor:pointer;transition:background .2s;
+}
+.ld-header:hover{background:var(--bg3)}
+.ld-left{display:flex;align-items:center;gap:12px}
+.ld-emoji{font-size:24px}
+.ld-title{font-size:14px;font-weight:600;color:var(--text)}
+.ld-subtitle{font-size:12px;color:var(--text2);margin-top:2px}
+.ld-progress-bar{
+  width:120px;height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;
+}
+.ld-progress-fill{
+  height:100%;border-radius:2px;transition:width .4s;
+  background:linear-gradient(90deg, var(--green), var(--cyan));
+}
+.ld-badge{
+  font-size:10px;padding:3px 8px;border-radius:10px;font-weight:600;
+}
+.ld-body{padding:0 20px;max-height:0;overflow:hidden;transition:max-height .4s ease,padding .4s}
+.ld-body.open{max-height:4000px;padding:0 20px 20px}
+
+.lesson-steps{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+.lesson-step{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 14px;border-radius:var(--radius-sm);
+  background:var(--bg);border:1px solid var(--border);
+  cursor:pointer;transition:all .2s;position:relative;
+}
+.lesson-step:hover{border-color:var(--border2);background:var(--bg3)}
+.step-checkbox{
+  width:24px;height:24px;border-radius:6px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;cursor:pointer;transition:all .2s;
+  border:2px solid var(--border);
+}
+.step-checkbox.s-done{background:var(--green);border-color:var(--green);color:#fff}
+.step-checkbox.s-current{border-color:var(--purple);background:var(--purple-dim);color:var(--purple)}
+.step-checkbox.s-locked{border-color:var(--border);color:var(--text3)}
+.step-checkbox.s-todo{border-color:var(--border);color:var(--text3)}
+.step-info{flex:1;min-width:0}
+.step-title{font-size:13px;font-weight:500;color:var(--text);line-height:1.3}
+.step-desc{font-size:11px;color:var(--text2);margin-top:2px;line-height:1.4}
+.step-tag{
+  font-size:10px;padding:2px 8px;border-radius:10px;font-weight:500;flex-shrink:0;
+}
+.tag-done{background:var(--green-dim);color:var(--green)}
+.tag-current{background:var(--purple-dim);color:var(--purple)}
+.tag-locked{background:var(--bg2);color:var(--text3);border:1px solid var(--border)}
+.tag-todo{background:var(--bg2);color:var(--text3)}
+.tag-optional{background:rgba(139,148,158,0.12);color:var(--text3);border:1px dashed var(--border)}
+.lesson-step.is-optional{opacity:.65;border-left:2px dashed var(--border3) !important}
+.lesson-step.is-optional:hover{opacity:1}
+
+/* ═══════════════════════════════════════════
+   THREE COLUMNS INFO
+   ═══════════════════════════════════════════ */
+.info-grid{
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;
+  padding:0 24px 20px;
+}
+.info-card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
+  padding:16px;transition:all .2s;
+}
+.info-card:hover{border-color:var(--border2)}
+.ic-top-line{height:3px;border-radius:2px;margin:-16px -16px 14px;border-radius:var(--radius) var(--radius) 0 0}
+.ic-green .ic-top-line{background:var(--green)}
+.ic-purple .ic-top-line{background:var(--purple)}
+.ic-amber .ic-top-line{background:var(--amber)}
+.ic-label{
+  font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;
+  color:var(--text3);margin-bottom:6px;
+}
+.ic-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:10px;line-height:1.3}
+.ic-list{list-style:none}
+.ic-list li{
+  font-size:12px;color:var(--text2);padding:4px 0;
+  display:flex;gap:8px;align-items:flex-start;line-height:1.4;
+}
+.ic-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.ic-dot.green{background:var(--green)}
+.ic-dot.purple{background:var(--purple)}
+.ic-dot.amber{background:var(--amber)}
+
+/* ═══════════════════════════════════════════
+   TOOLS SECTION
+   ═══════════════════════════════════════════ */
+.tools-section{padding:0 24px 20px}
+.tools-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.tool-card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
+  padding:14px;cursor:pointer;transition:all .25s;
+}
+.tool-card:hover{border-color:var(--purple);transform:translateY(-2px);
+  box-shadow:0 4px 16px rgba(0,0,0,.3)}
+.t-icon{font-size:20px;margin-bottom:6px}
+.t-name{font-size:12px;font-weight:600;color:var(--text);margin-bottom:4px}
+.t-tip{font-size:11px;color:var(--text2);line-height:1.4}
+
+/* ═══════════════════════════════════════════
+   NZ CURRICULUM ALIGNED SECTION
+   ═══════════════════════════════════════════ */
+.curriculum-section{padding:0 24px 20px}
+.po-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.po-card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
+  padding:14px;position:relative;overflow:hidden;
+}
+.po-level{
+  font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px;
+  display:inline-block;margin-bottom:8px;
+}
+.po-level.l3{background:rgba(63,185,80,0.15);color:var(--green)}
+.po-level.l4{background:rgba(163,113,247,0.15);color:var(--purple)}
+.po-level.l5{background:rgba(210,153,34,0.15);color:var(--amber)}
+.po-items{list-style:none}
+.po-items li{
+  font-size:11px;color:var(--text2);padding:3px 0;line-height:1.4;
+  display:flex;gap:6px;align-items:flex-start;
+}
+.po-items li::before{content:'→';color:var(--text3);flex-shrink:0;font-size:10px}
+
+/* ═══════════════════════════════════════════
+   SUBMODULE GROUPS (within lesson detail)
+   ═══════════════════════════════════════════ */
+.submodule-group{
+  margin-bottom:12px;
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  overflow:hidden;
+  background:rgba(255,255,255,0.02);
+}
+.submodule-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 14px;cursor:pointer;
+  background:var(--bg3);
+  border-bottom:1px solid var(--border);
+  transition:background .2s;
+}
+.submodule-header:hover{background:rgba(255,255,255,0.06)}
+.submodule-header-left{
+  display:flex;align-items:center;gap:8px;
+}
+.submodule-emoji{font-size:16px}
+.submodule-name{font-size:13px;font-weight:600;color:var(--text)}
+.submodule-topic{font-size:10px;color:var(--text3);padding:1px 6px;border-radius:8px;background:var(--bg2)}
+.submodule-progress{
+  width:80px;height:4px;background:var(--bg);border-radius:2px;overflow:hidden;
+}
+.submodule-progress-fill{height:100%;border-radius:2px;transition:width .4s;background:linear-gradient(90deg,var(--green),var(--cyan))}
+.submodule-badge{
+  font-size:10px;padding:2px 8px;border-radius:10px;font-weight:500;
+  background:var(--bg2);color:var(--text3);
+}
+.submodule-lessons{padding:4px}
+.submodule-lessons.open{padding:4px}
+
+/* ═══════════════════════════════════════════
+   CONFETTI / CELEBRATION
+   ═══════════════════════════════════════════ */
+.confetti-container{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  pointer-events:none;z-index:1000;overflow:hidden;
+}
+.confetti-piece{
+  position:absolute;width:10px;height:10px;top:-20px;
+  animation:confetti-fall 3s ease-in forwards;
+}
+@keyframes confetti-fall{
+  0%{transform:translateY(0) rotate(0deg);opacity:1}
+  100%{transform:translateY(100vh) rotate(720deg);opacity:0}
+}
+
+/* ═══════════════════════════════════════════
+   MODAL (Big Idea / Lesson Detail)
+   ═══════════════════════════════════════════ */
+.modal-overlay{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);
+  z-index:500;display:none;align-items:center;justify-content:center;
+}
+.modal-overlay.active{display:flex}
+.modal{
+  background:var(--bg2);border:1px solid var(--border);border-radius:16px;
+  padding:28px 32px;max-width:600px;width:90%;max-height:80vh;overflow-y:auto;
+  position:relative;animation:modal-in .3s ease;
+}
+@keyframes modal-in{from{opacity:0;transform:translateY(20px) scale(.96)}to{opacity:1;transform:none}}
+.modal-close{
+  position:absolute;top:12px;right:16px;
+  width:32px;height:32px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--text3);font-size:18px;
+  background:var(--bg3);border:1px solid var(--border);
+  transition:all .2s;
+}
+.modal-close:hover{color:var(--text);border-color:var(--border2)}
+.modal h2{font-size:18px;font-weight:600;color:var(--text);margin-bottom:12px}
+.modal p{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:12px}
+.modal .highlight{color:var(--purple);font-weight:500}
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════ */
+@media(max-width:900px){
+  .info-grid,.po-grid{grid-template-columns:1fr}
+  .tools-grid{grid-template-columns:1fr 1fr}
+  .stats-bar{flex-wrap:wrap}
+  .stat-card{min-width:100px}
+}
+@media(max-width:600px){
+  .tools-grid{grid-template-columns:1fr}
+  .module-map{padding:16px 6px}
+  .module-node{min-width:110px}
+  .node-circle{width:56px;height:56px;font-size:22px}
+}
+
+/* ═══════════════════════════════════════════
+   BATCH SELECT MODAL
+   ═══════════════════════════════════════════ */
+.batch-modal-overlay{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,0.7);backdrop-filter:blur(6px);
+  z-index:500;display:none;align-items:flex-start;justify-content:center;
+  padding:80px 20px 120px;overflow-y:auto;
+}
+.batch-modal-overlay.active{display:flex}
+.batch-modal{
+  background:var(--bg2);border:1px solid var(--border);border-radius:16px;
+  padding:0;width:90%;max-width:700px;
+  animation:modal-in .3s ease;
+  display:flex;flex-direction:column;
+  max-height:80vh;
+}
+.bm-header{
+  padding:20px 24px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;background:var(--bg2);z-index:2;border-radius:16px 16px 0 0;
+}
+.bm-title{font-size:16px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px}
+.bm-count{
+  font-size:12px;padding:3px 10px;border-radius:20px;
+  background:var(--purple-dim);color:var(--purple);font-weight:600;
+}
+.bm-close{
+  width:32px;height:32px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--text3);font-size:18px;
+  background:var(--bg3);border:1px solid var(--border);transition:all .2s;
+}
+.bm-close:hover{color:var(--text);border-color:var(--border2)}
+.bm-modules{padding:8px 0;overflow-y:auto;flex:1;min-height:0}
+.bm-module{border-bottom:1px solid var(--border)}
+.bm-module:last-child{border-bottom:none}
+.bm-mod-header{
+  padding:12px 24px;display:flex;align-items:center;gap:10px;
+  cursor:pointer;transition:background .2s;
+}
+.bm-mod-header:hover{background:var(--bg3)}
+.bm-mod-emoji{font-size:18px}
+.bm-mod-name{font-size:13px;font-weight:600;color:var(--text);flex:1}
+.bm-mod-progress{font-size:11px;color:var(--text3)}
+.bm-mod-check{
+  width:20px;height:20px;border-radius:5px;border:2px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;cursor:pointer;transition:all .2s;color:transparent;flex-shrink:0;
+}
+.bm-mod-check.checked{background:var(--purple);border-color:var(--purple);color:#fff}
+.bm-lessons{display:none;padding:0 24px 12px 54px}
+.bm-lessons.open{display:block}
+.bm-lesson{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;border-radius:var(--radius-sm);
+  cursor:pointer;transition:all .15s;margin-bottom:4px;
+}
+.bm-lesson:hover{background:var(--bg3)}
+.bm-lesson.bm-sel{
+  background:rgba(163,113,247,0.08);
+  border:1px solid rgba(163,113,247,0.3);
+}
+.bm-lcheck{
+  width:22px;height:22px;border-radius:6px;border:2px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;cursor:pointer;transition:all .2s;color:transparent;flex-shrink:0;
+}
+.bm-lcheck.checked{background:var(--purple);border-color:var(--purple);color:#fff}
+.bm-linfo{flex:1;min-width:0}
+.bm-ltitle{font-size:13px;font-weight:500;color:var(--text);line-height:1.3}
+.bm-ldesc{font-size:11px;color:var(--text2);margin-top:2px;line-height:1.4}
+.bm-lstatus{
+  font-size:10px;padding:2px 8px;border-radius:10px;font-weight:500;flex-shrink:0;
+}
+.bm-lstatus.s-done{background:var(--green-dim);color:var(--green)}
+.bm-lstatus.s-current{background:var(--purple-dim);color:var(--purple)}
+.bm-lstatus.s-todo{background:var(--bg3);color:var(--text3)}
+
+/* ═══════════════════════════════════════════
+   COMPULSORY / OPTIONAL MODAL
+   ═══════════════════════════════════════════ */
+.co-modal-overlay{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);
+  z-index:501;display:none;align-items:center;justify-content:center;
+}
+.co-modal-overlay.active{display:flex}
+.co-modal{
+  background:var(--bg2);border:1px solid var(--border);border-radius:16px;
+  padding:0;width:90%;max-width:700px;
+  animation:modal-in .3s ease;
+  display:flex;flex-direction:column;
+  max-height:80vh;
+}
+.co-header{
+  padding:20px 24px 16px;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.co-title-wrap{display:flex;align-items:center;gap:10px}
+.co-title-wrap .bm-title{flex-direction:row;gap:8px}
+.co-close{
+  width:32px;height:32px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--text3);font-size:18px;
+  background:var(--bg3);border:1px solid var(--border);
+  transition:all .2s;flex-shrink:0;
+}
+.co-close:hover{color:var(--text);border-color:var(--border2)}
+.co-modules{padding:8px 0;overflow-y:auto;flex:1;min-height:0}
+.co-module{border-bottom:1px solid var(--border)}
+.co-module:last-child{border-bottom:none}
+.co-mod-header{
+  padding:12px 24px;display:flex;align-items:center;gap:10px;
+  cursor:pointer;transition:background .2s;
+}
+.co-mod-header:hover{background:var(--bg3)}
+.co-mod-emoji{font-size:18px}
+.co-mod-name{font-size:13px;font-weight:600;color:var(--text);flex:1}
+.co-mod-count{font-size:11px;color:var(--text3)}
+.co-mod-toggle{
+  font-size:10px;padding:3px 10px;border-radius:10px;font-weight:500;
+  cursor:pointer;transition:all .2s;flex-shrink:0;
+  border:1px solid var(--border);background:var(--bg);color:var(--text2);
+}
+.co-mod-toggle:hover{border-color:var(--border2);color:var(--text)}
+.co-lessons{display:none;padding:0 24px 12px 54px}
+.co-lessons.open{display:block}
+.co-lesson{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;border-radius:var(--radius-sm);
+  margin-bottom:4px;transition:all .15s;
+}
+.co-linfo{flex:1;min-width:0}
+.co-ltitle{font-size:13px;font-weight:500;color:var(--text);line-height:1.3}
+.co-ldesc{font-size:11px;color:var(--text2);margin-top:2px;line-height:1.4}
+.co-toggle{
+  font-size:11px;padding:4px 12px;border-radius:10px;font-weight:600;
+  cursor:pointer;transition:all .2s;flex-shrink:0;white-space:nowrap;
+  border:1px solid;user-select:none;
+}
+.co-toggle.compulsory{
+  background:rgba(63,185,80,0.12);border-color:rgba(63,185,80,0.3);color:var(--green);
+}
+.co-toggle.optional{
+  background:rgba(139,148,158,0.08);border-color:var(--border);color:var(--text3);
+}
+.co-toggle:hover{opacity:.85}
+.co-footer{
+  padding:16px 24px;border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:flex-end;gap:12px;
+  position:sticky;bottom:0;background:var(--bg2);border-radius:0 0 16px 16px;
+  z-index:1;
+}
+.bm-footer{
+  padding:16px 24px;border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  position:sticky;bottom:0;background:var(--bg2);border-radius:0 0 16px 16px;
+}
+.bm-footer-left{display:flex;gap:8px}
+.bm-btn{
+  padding:10px 20px;border-radius:var(--radius-sm);
+  font-size:13px;font-weight:600;cursor:pointer;
+  border:none;transition:all .2s;
+}
+.bm-btn:disabled{opacity:.4;cursor:not-allowed;transform:none !important}
+.bm-btn-done{background:var(--green);color:#fff}
+.bm-btn-done:hover:not(:disabled){background:#2ea043;transform:translateY(-1px)}
+.bm-btn-undo{background:var(--amber);color:#000}
+.bm-btn-undo:hover:not(:disabled){background:#b8860b;transform:translateY(-1px)}
+.bm-btn-cancel{background:var(--bg3);color:var(--text2);border:1px solid var(--border)}
+.bm-btn-cancel:hover{color:var(--text);border-color:var(--border2)}
+
+/* ═══════════════════════════════════════════
+   RESET TEMPLATE MODAL
+   ═══════════════════════════════════════════ */
+.rt-toggle{
+  font-size:11px;padding:4px 10px;border-radius:10px;font-weight:600;
+  cursor:pointer;transition:all .2s;flex-shrink:0;white-space:nowrap;
+  border:1px solid;user-select:none;min-width:56px;text-align:center;
+}
+.rt-toggle.todo{background:rgba(139,148,158,0.08);border-color:var(--border);color:var(--text3)}
+.rt-toggle.current{background:rgba(250,204,21,0.12);border-color:rgba(250,204,21,0.3);color:var(--amber)}
+.rt-toggle.done{background:rgba(63,185,80,0.12);border-color:rgba(63,185,80,0.3);color:var(--green)}
+.rt-toggle:hover{opacity:.8}
+.rt-quick-btns{display:flex;gap:6px;flex-wrap:wrap}
+.rt-quick-btn{
+  font-size:11px;padding:5px 12px;border-radius:10px;font-weight:500;
+  cursor:pointer;transition:all .2s;border:1px solid var(--border);
+  background:var(--bg);color:var(--text2);
+}
+.rt-quick-btn:hover{border-color:var(--border2);color:var(--text);background:var(--bg3)}
+
+/* ═══════════════════════════════════════════
+   SCROLLBAR
+   ═══════════════════════════════════════════ */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+</style>
+</head>
+<body>
+
+<!-- ═══ TOP BAR ═══ -->
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="topbar-logo">🗺️</div>
+    <div>
+      <div class="topbar-title">10DGT Adventure Map</div>
+      <div class="topbar-sub">Year 10 Digital Technologies · Burnside High School</div>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <div class="lang-switch" id="lang-switch">
+      <button class="lang-btn active" onclick="switchLang('en')">EN</button>
+      <button class="lang-btn" onclick="switchLang('zh')">中</button>
+      <button class="lang-btn" onclick="switchLang('ja')">日</button>
+      <button class="lang-btn" onclick="switchLang('ko')">한</button>
+    </div>
+    <button class="btn" onclick="saveProgress()">💾 <span class="r-text">Save</span></button>
+    <div class="dropdown" id="actions-dropdown">
+      <button class="dropdown-btn" onclick="toggleDropdown(event)">⚙️ <span class="r-text">Actions</span></button>
+      <div class="dropdown-menu">
+        <button class="dropdown-item" onclick="resetProgress();closeDropdown()">🔄 Reset</button>
+        <button class="dropdown-item" onclick="openRtModal();closeDropdown()">📋 Template</button>
+        <button class="dropdown-item" onclick="openBatchModal();closeDropdown()">☑️ Batch</button>
+        <button class="dropdown-item" onclick="openCoModal();closeDropdown()">⚙️ Compulsory</button>
+        <button class="dropdown-item" onclick="showHelp();closeDropdown()">❓ Help</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ STATS BAR ═══ -->
+<div class="stats-bar">
+  <div class="stat-card">
+    <div class="stat-icon">🏆</div>
+    <div class="stat-info">
+      <div class="stat-label">Modules Done</div>
+      <div class="stat-value green" id="stat-modules">0 / 6</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon">📍</div>
+    <div class="stat-info">
+      <div class="stat-label">Lessons Done</div>
+      <div class="stat-value purple" id="stat-lessons">0 / 22</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon">🔥</div>
+    <div class="stat-info">
+      <div class="stat-label">Current</div>
+      <div class="stat-value amber" id="stat-current">—</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon">⭐</div>
+    <div class="stat-info">
+      <div class="stat-label">XP Earned</div>
+      <div class="stat-value" style="color:var(--cyan)" id="stat-xp">0</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ OVERALL PROGRESS ═══ -->
+<div class="progress-section">
+  <div class="progress-track">
+    <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+  </div>
+  <div class="progress-label">
+    <span>Overall journey progress</span>
+    <span id="progress-pct">0%</span>
+  </div>
+</div>
+
+<!-- ═══ BIG IDEA BANNER ═══ -->
+<div class="big-idea-banner" onclick="openBigIdeaModal()">
+  <div class="bi-header">
+    <span class="bi-tag">💡 Big Idea</span>
+    <span class="bi-module-tag" id="bi-module-tag">Module 4: Computer Science</span>
+  </div>
+  <div class="bi-quote" id="bi-quote">
+    Computers only understand 0s and 1s — so how does all information get turned into that?
+  </div>
+  <div class="bi-desc" id="bi-desc">
+    Everything on your device — photos, music, text, games — is stored as binary data. This is the "engine room" behind everything.
+  </div>
+  <div class="bi-maori" id="bi-maori">
+    "I orea te tuatara, ka patu ki waho" — Problem-solving through creative thinking, adaptability, and perseverance.
+  </div>
+</div>
+
+<!-- ═══ MODULE MAP ═══ -->
+<div class="map-section">
+  <div class="section-label">🗺️ Your Digital Journey — 10 Modules</div>
+  <div class="module-map" id="module-map"></div>
+</div>
+
+<!-- ═══ MODULE DETAIL PANELS ═══ -->
+<div id="module-details"></div>
+
+<!-- ═══ THREE COLUMNS INFO ═══ -->
+<div class="info-grid" id="info-grid">
+  <div class="info-card ic-green">
+    <div class="ic-top-line"></div>
+    <div class="ic-label" id="ic-last-label">✅ Last Completed</div>
+    <div class="ic-title" id="ic-last-title">—</div>
+    <ul class="ic-list" id="ic-last-list"></ul>
+  </div>
+  <div class="info-card ic-purple">
+    <div class="ic-top-line"></div>
+    <div class="ic-label" id="ic-now-label">🎯 Current Mission</div>
+    <div class="ic-title" id="ic-now-title">—</div>
+    <ul class="ic-list" id="ic-now-list"></ul>
+  </div>
+  <div class="info-card ic-amber">
+    <div class="ic-top-line"></div>
+    <div class="ic-label" id="ic-next-label">🔜 Coming Up</div>
+    <div class="ic-title" id="ic-next-title">—</div>
+    <ul class="ic-list" id="ic-next-list"></ul>
+  </div>
+</div>
+
+<!-- ═══ TOOLS ═══ -->
+<div class="tools-section">
+  <div class="section-label" id="tools-label">🧰 Tools for this lesson</div>
+  <div class="tools-grid" id="tools-grid">
+    <div class="tool-card" data-href="https://docs.google.com/document/d/14FUnmwh_XHbDmHi0D8yjzabHnF_Hs6BuSlveuc0dBk4/edit?usp=sharing">
+      <div class="t-icon">🔍</div>
+      <div class="t-name" id="tool-name-0"></div>
+      <div class="t-tip" id="tool-tip-0"></div>
+    </div>
+    <div class="tool-card" data-href="https://sites.google.com/burnside.school.nz/bhs-digital-technologies/junior/10dgt/y10-0-start-of-course#h.2truasknbfes">
+      <div class="t-icon">📁</div>
+      <div class="t-name" id="tool-name-1"></div>
+      <div class="t-tip" id="tool-tip-1"></div>
+    </div>
+    <div class="tool-card" data-href="https://www.csfieldguide.org.nz/en/interactives/binary-cards/">
+      <div class="t-icon">🃏</div>
+      <div class="t-name" id="tool-name-2"></div>
+      <div class="t-tip" id="tool-tip-2"></div>
+    </div>
+    <div class="tool-card" data-href="https://sites.google.com/burnside.school.nz/bhs-digital-technologies/junior/10dgt">
+      <div class="t-icon">🌐</div>
+      <div class="t-name" id="tool-name-3"></div>
+      <div class="t-tip" id="tool-tip-3"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ NZ CURRICULUM ═══ --><!-- ═══ NZ CURRICULUM ═══ -->
+<div class="curriculum-section">
+  <div class="section-label" id="curriculum-label">📋 NZ Curriculum — Progress Outcomes</div>
+  <div class="po-grid" id="po-grid">
+    <div class="po-card">
+      <span class="po-level l3">PO3</span>
+      <ul class="po-items">
+        <li id="poL30"></li>
+        <li id="poL31"></li>
+        <li id="poL32"></li>
+        <li id="poL33"></li>
+      </ul>
+    </div>
+    <div class="po-card">
+      <span class="po-level l4">PO4</span>
+      <ul class="po-items">
+        <li id="poL40"></li>
+        <li id="poL41"></li>
+        <li id="poL42"></li>
+        <li id="poL43"></li>
+        <li id="poL44"></li>
+        <li id="poL45"></li>
+      </ul>
+    </div>
+    <div class="po-card">
+      <span class="po-level l5">PO5</span>
+      <ul class="po-items">
+        <li id="poL50"></li>
+        <li id="poL51"></li>
+        <li id="poL52"></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL ═══ -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal" id="modal-content" onclick="event.stopPropagation()">
+    <div class="modal-close" onclick="closeModal()">✕</div>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<!-- ═══ RESET TEMPLATE MODAL ═══ -->
+<div class="co-modal-overlay" id="rt-overlay">
+  <div class="co-modal" style="max-width:680px">
+    <div class="co-header">
+      <div class="co-title-wrap">
+        <div class="bm-title">
+          <span id="rt-title">🔧 Reset Template</span>
+          <span class="bm-count" id="rt-count" style="background:rgba(250,204,21,0.12);color:var(--amber)">0/0</span>
+        </div>
+      </div>
+      <div class="co-close" onclick="closeRtModal()">✕</div>
+    </div>
+    <div class="co-modules" id="rt-modules" style="padding:8px 24px"></div>
+    <div class="co-footer">
+      <div class="rt-quick-btns">
+        <button class="rt-quick-btn" onclick="rtQuick('todo')">Todo</button>
+        <button class="rt-quick-btn" onclick="rtQuick('current')">Current</button>
+        <button class="rt-quick-btn" onclick="rtQuick('done')">Done</button>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="bm-btn bm-btn-cancel" onclick="closeRtModal()">✕ <span id="rt-cancel-text">Cancel</span></button>
+        <button class="bm-btn bm-btn-undo" onclick="applyRtTemplate()">🔄 <span id="rt-apply-text">Apply</span></button>
+        <button class="bm-btn bm-btn-done" onclick="saveRtTemplate()">💾 <span id="rt-save-text">Save</span></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ COMPULSORY/OPTIONAL MODAL ═══ -->
+<div class="co-modal-overlay" id="co-overlay">
+  <div class="co-modal">
+    <div class="co-header">
+      <div class="co-title-wrap">
+        <div class="bm-title">
+          <span id="co-title-text">⚙️ Compulsory / Optional</span>
+          <span class="bm-count" id="co-count" style="background:rgba(63,185,80,0.15);color:var(--green)">0 / 0</span>
+        </div>
+      </div>
+      <div class="co-close" onclick="closeCoModal()">✕</div>
+    </div>
+    <div class="co-modules" id="co-modules"></div>
+    <div class="co-footer">
+      <button class="bm-btn bm-btn-cancel" onclick="closeCoModal()">✕ <span id="co-cancel-text">Cancel</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ BATCH SELECT MODAL ═══ -->
+<div class="batch-modal-overlay" id="batch-overlay">
+  <div class="batch-modal">
+    <div class="bm-header">
+      <div class="bm-title">
+        <span id="bm-title-text">☑️ Select Tasks</span>
+        <span class="bm-count" id="bm-count">0</span>
+      </div>
+      <div class="bm-close" onclick="closeBatchModal()">✕</div>
+    </div>
+    <div class="bm-modules" id="bm-modules"></div>
+    <div class="bm-footer">
+      <div class="bm-footer-left">
+        <button class="bm-btn bm-btn-done" id="bm-btn-done" onclick="batchMarkDone()" disabled>✓ Complete</button>
+        <button class="bm-btn bm-btn-undo" id="bm-btn-undo" onclick="batchMarkCurrent()" disabled>↩ Undo</button>
+      </div>
+      <button class="bm-btn bm-btn-cancel" onclick="closeBatchModal()">✕ Cancel</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══ CONFETTI ═══ -->
+<div class="confetti-container" id="confetti-container"></div>
+
+<!-- ═══════════════════════════════════════════
+     JAVASCRIPT — DATA & INTERACTION
+     ═══════════════════════════════════════════ -->
+<script>
+// ───────────────────────────────────────
+// DATA MODEL — modules and their lessons
+// ───────────────────────────────────────
+const DATA = {
+  modules: [
+    {
+      id: 'm1', num: 1, emoji: '🖼️', name: 'Image Creation',
+      dateRange: 'Mar 2026',
+      bigIdea: 'How can we use digital tools to create, edit, and manipulate images — and what makes an image effective?',
+      bigIdeaDesc: 'In this module you will explore digital image creation tools and techniques. You will learn how to create original images, understand image formats, and apply design principles to communicate ideas visually.',
+      maori: '',
+      schoologyTopic: 'Topic 1 | Image Creation',
+      lessons: [
+        { id:'m1l1', title:'Image Creation Submissions', desc:'Submit your best image creation work for assessment. Apply your skills in digital image manipulation, composition, and creative expression.', type:'Assignment', extra:false, assessment:true, assessmentMarks:null, date:'Mar', optional:false },
+      ]
+    },
+    {
+      id: 'm2', num: 2, emoji: '🌐', name: 'Website',
+      dateRange: 'Mar – Apr 2026',
+      bigIdea: 'How do we create effective websites that communicate information clearly and engage users?',
+      bigIdeaDesc: 'Learn the fundamentals of web design and development. Understand HTML structure, CSS styling, and user experience principles.',
+      maori: '',
+      schoologyTopic: 'Topic 2 | Website',
+      lessons: [
+        { id:'m2l1', title:'Your Website URL & Term 1 Check In', desc:'Submit your website URL and complete the Term 1 check-in. Share the URL of your published website for review.', type:'Assignment', extra:false, assessment:false, assessmentMarks:null, date:'Mar', optional:false },
+        { id:'m2l2', title:'Website Screenshot Submission', desc:'Submit a screenshot of your website showing the key pages and features you have created.', type:'Assignment', extra:false, assessment:true, assessmentMarks:null, date:'Apr', optional:false },
+      ]
+    },
+    {
+      id: 'm3', num: 3, emoji: '💻', name: 'Computer Science',
+      dateRange: 'Apr – Sep 2026',
+      bigIdea: 'How do computers represent and process data using binary systems — and why does this matter for digital technologies?',
+      bigIdeaDesc: 'This module covers the fundamentals of computer science: binary and hexadecimal number systems, ASCII and UTF-8 text encoding, error detection methods, and searching and sorting algorithms.',
+      maori: '',
+      schoologyTopic: 'Topic 3 | Computer Science',
+      submodules: [
+        { name:'Binary & Hexadecimal', emoji:'🔢', topic:1, lessons:['m3l1','m3l2','m3l3','m3l4','m3l5','m3l6','m3l7','m3l8','m3l9','m3l10'] },
+        { name:'ASCII & UTF-8', emoji:'🔤', topic:2, lessons:['m3l13','m3l14','m3l15','m3l16','m3l17','m3l18'] },
+        { name:'Error Detection', emoji:'🛡️', topic:3, lessons:['m3l19','m3l20','m3l21'] },
+        { name:'Searching & Sorting', emoji:'📊', topic:4, lessons:['m3l11','m3l12'] },
+        { name:'CS End-of-Topic Tasks', emoji:'📝', topic:5, lessons:['m3l22','m3l23','m3l24'] }
+      ],
+      lessons: [
+        // Binary & Hexadecimal (Topic 1)
+        { id:'m3l1', title:'CS Task 1.2 - Binary Worksheet', desc:'Practice converting between binary and decimal numbers.', type:'CT', extra:false, assessment:false, assessmentMarks:null, date:'Apr', optional:false },
+        { id:'m3l2', title:'CS Task 1.3 - Checkpoint | Binary', desc:'Check your understanding of binary number conversions.', type:'CT', extra:false, assessment:true, assessmentMarks:null, date:'Apr', optional:false },
+        { id:'m3l3', title:'CS Task 1.4 - Hexadecimal, Decimal, and Binary conversion', desc:'Learn to convert between hexadecimal, decimal, and binary systems.', type:'CT', extra:false, assessment:false, assessmentMarks:null, date:'Apr', optional:false },
+        { id:'m3l4', title:'CS Task 1.6 - Checkpoint | Hexadecimal Numbers', desc:'Check your understanding of hexadecimal conversions.', type:'CT', extra:false, assessment:true, assessmentMarks:null, date:'May', optional:false },
+        { id:'m3l5', title:'Best Flipplybit Score', desc:'Achieve your best score in the Flipplybit binary game.', type:'CT', extra:false, assessment:false, assessmentMarks:null, date:'May', optional:false },
+        { id:'m3l6', title:'CS Task 1.7 - Hex Colour Dragon', desc:'Use hexadecimal colour codes to create your Hex Colour Dragon.', type:'CT', extra:false, assessment:false, assessmentMarks:null, date:'May', optional:false },
+        { id:'m3l7', title:'Best Hex Invaders Score', desc:'Achieve your best score in the Hex Invaders game.', type:'CT', extra:false, assessment:false, assessmentMarks:null, date:'May', optional:false },
+        { id:'m3l8', title:'CS Task 1.9 - Checkpoint | Hex Colours', desc:'Check your understanding of hexadecimal colour representation.', type:'CT', extra:false, assessment:true, assessmentMarks:null, date:'May', optional:false },
+        { id:'m3l9', title:'CS EoT Assessment: Binary and Hex', desc:'End of topic assessment covering binary and hexadecimal concepts.', type:'CT', extra:false, assessment:true, assessmentMarks:null, date:'Jun', optional:false },
+        { id:'m3l10', title:'CS Task 1.Extra - Martian Messages', desc:'Decode binary messages from Mars in this extension challenge.', type:'CT', extra:true, assessment:false, assessmentMarks:null, date:'Jun', optional:true },
+        // ASCII & UTF-8 (Topic 2)
+        { id:'m3l13', title:'CS Task 2.1 - Introduction to ASCII', desc:'Learn how computers represent text characters using ASCII encoding.', type:'CT', extra:false, assessment:false, assessmentMarks:null, date:'Jun', optional:false },
+        { id:'m3l14', title:'CS Task 2.2 - Exploring ASCII', desc:'Explore ASCII codes in depth and practice character encoding.', type:'CT', extra:false, assessment:false, assessmentMarks:null, date:'Jun', optional:false },
+        { id:'m3l15', title:'CS Task 2.3 - ASCII Art Made By You!', desc:'Create your own ASCII art using text characters.', type:'CT', extra:false, assessment:false, assessmentMarks:null, date:'Jun', optional:false },
+        { id:'m3l16', title:'CS EoT Assessment: ASCII and UTF-8', desc:'End of topic assessment covering ASCII and UTF-8 encoding.', type:'CT', extra:false, assessment:true, assessmentMarks:null, date:'Jul', optional:false },
+        { id:'m3l17', title:'CS Task 2.Extra - Building an ASCII Translator using a Spreadsheet', desc:'Build an ASCII translator using a spreadsheet.', type:'CT', extra:true, assessment:false, assessmentMarks:null, date:'Jul', optional:true },
+        { id:'m3l18', title:'CS Task 2.Extra - Coding an ASCII Converter in Python', desc:'Code an ASCII converter using Python programming.', type:'CT', extra:true, assessment:false, assessmentMarks:null, date:'Jul', optional:true },
+        // Error Detection (Topic 3)
+        { id:'m3l19', title:'CS Task 3.1 - Error checking in ASCII', desc:'Learn how error checking works in ASCII data transmission.', type:'CT', extra:false, assessment:false, assessmentMarks:null, date:'Aug', optional:false },
+        { id:'m3l20', title:'CS Task 3.4 - Error Detection Barcodes', desc:'Explore how barcodes use error detection to ensure accuracy.', type:'CT', extra:false, assessment:false, assessmentMarks:null, date:'Aug', optional:false },
+        { id:'m3l21', title:'CS EoT Assessment: Parity and GTIN-13 product barcodes', desc:'End of topic assessment on parity bits and GTIN-13 barcodes.', type:'CT', extra:false, assessment:true, assessmentMarks:null, date:'Aug', optional:false },
+        // Searching & Sorting (Topic 4)
+        { id:'m3l11', title:'CS Task 4.1 - Searching and Sorting Worksheet', desc:'Learn about different searching and sorting algorithms.', type:'CT', extra:false, assessment:false, assessmentMarks:null, date:'Aug', optional:false },
+        { id:'m3l12', title:'EoT CS Assessment - Searching and Sorting Quiz', desc:'End of topic quiz on searching and sorting algorithms.', type:'CT', extra:false, assessment:true, assessmentMarks:null, date:'Sep', optional:false },
+        // Optional End-of-Topic Tasks (after 4 subtopics)
+        { id:'m3l22', title:'Computer Science End-of-topic Test', desc:'Comprehensive end-of-topic test covering all CS concepts.', type:'Assessment', extra:false, assessment:true, assessmentMarks:null, date:'Sep', optional:true },
+        { id:'m3l23', title:'Computer Science End of Topic Test', desc:'Alternative end-of-topic test for Computer Science module.', type:'Assessment', extra:false, assessment:true, assessmentMarks:null, date:'Sep', optional:true },
+        { id:'m3l24', title:'Computer Science Checklist', desc:'Review and verify all Computer Science tasks are complete.', type:'Assignment', extra:false, assessment:false, assessmentMarks:null, date:'Sep', optional:true },
+      ]
+    },
+    {
+      id: 'm4', num: 4, emoji: '🐍', name: 'Programming with Python',
+      dateRange: 'Sep – Oct 2026',
+      bigIdea: 'How do we give instructions to a computer using code — and what are the building blocks of programming?',
+      bigIdeaDesc: 'Learn to program using Python. You will use sequences, selections, and iterations to create programs that solve real problems, while developing computational thinking skills.',
+      maori: '',
+      schoologyTopic: 'Topic 4 | Programming in Python',
+      lessons: [
+        { id:'m4wl1', type:'DDDO', link:'https://sites.google.com/burnside.school.nz/bhs-digital-technologies/junior/10dgt/y10-4-python-programming' },
+        { id:'m4wl2', type:'DDDO', link:'https://youtu.be/EFmxPMdBqmU' }
+      ]
+    },
+    {
+      id: 'm5', num: 5, emoji: '🎨', name: '3D Modelling',
+      dateRange: 'Oct 2026',
+      bigIdea: 'How do we create 3D models that bring ideas to life in digital space?',
+      bigIdeaDesc: 'Using Blender, you will learn the basics of 3D modelling. Create objects from scratch and understand the principles of 3D design.',
+      maori: '',
+      schoologyTopic: 'Topic 5 | 3D Modelling',
+      lessons: [
+        { id:'m5l1', title:'Your Best Model', desc:'Submit your best 3D model created in Blender.', type:'Assignment', extra:false, assessment:true, assessmentMarks:null, date:'Nov', optional:false },
+      ]
+    },
+    {
+      id: 'm6', num: 6, emoji: '🎬', name: 'Animation',
+      dateRange: 'Oct – Nov 2026',
+      bigIdea: 'How do we bring 3D models to life through animation?',
+      bigIdeaDesc: 'Using Blender, learn to create animations using timeline and keyframe tools. Develop skills in motion design and visual storytelling.',
+      maori: '',
+      schoologyTopic: 'Topic 6 | Animation',
+      lessons: [
+        { id:'m6l1', title:'Your Best Animation', desc:'Submit your best animation for assessment.', type:'Assignment', extra:false, assessment:true, assessmentMarks:null, date:'Nov', optional:false },
+      ]
+    },
+    {
+      id: 'm7', num: 7, emoji: '🔧', name: 'Design for Manufacturing',
+      dateRange: 'Nov 2026',
+      bigIdea: 'How do we design objects that can be manufactured using digital fabrication technologies?',
+      bigIdeaDesc: 'Learn about design for manufacturing principles, including 3D printing and laser cutting. Understand tolerances, materials, and production processes.',
+      maori: '',
+      schoologyTopic: 'Topic 7 | Design for Manufacturing',
+      lessons: [
+        { id:'m7l1', type:'DDDO', link:'https://sites.google.com/burnside.school.nz/bhs-digital-technologies/junior/10dgt/y10-7-design-for-manufacturing' }
+      ]
+    },
+    {
+      id: 'm8', num: 8, emoji: '🎵', name: 'Audio Visual',
+      dateRange: 'Nov 2026',
+      bigIdea: 'How do we create effective audio and visual content that communicates meaning?',
+      bigIdeaDesc: 'Explore digital audio and video production. Learn editing techniques, file formats, and storytelling through multimedia.',
+      maori: '',
+      schoologyTopic: 'Topic 8 | Audio Visual',
+      lessons: [
+        { id:'m8l1', type:'DDDO', link:'https://sites.google.com/burnside.school.nz/bhs-digital-technologies/junior/10dgt/y10-8-audio-visual' }
+      ]
+    },
+    {
+      id: 'm9', num: 9, emoji: '🎮', name: 'Video Game Development',
+      dateRange: 'Nov 2026',
+      bigIdea: 'How do we design and develop interactive video games?',
+      bigIdeaDesc: 'Learn the principles of game design and development. Create your own playable game using visual programming or game development tools.',
+      maori: '',
+      schoologyTopic: 'Topic 9 | Video Game Development',
+      lessons: [
+        { id:'m9l1', type:'DDDO', link:'https://sites.google.com/burnside.school.nz/bhs-digital-technologies/junior/10dgt/y10-9-video-game-dev' }
+      ]
+    },
+    {
+      id: 'm10', num: 10, emoji: '🚀', name: 'Student Led Project',
+      dateRange: 'Nov – Dec 2026',
+      bigIdea: 'How can I apply everything I have learned to create a meaningful digital project of my own?',
+      bigIdeaDesc: 'This is your chance to showcase all the skills you have developed throughout the year. Choose a project that interests you, plan it, build it, and present it at the BHS Year 10 Tech Fair.',
+      maori: '',
+      schoologyTopic: 'Topic 10 | Student Led Personal Project',
+      lessons: [
+        { id:'m10l1', title:'Project Planning', desc:'Plan your personal project: define the scope, tools, and timeline.', type:'DDDO', extra:false, assessment:false, assessmentMarks:null, date:'Nov', optional:false },
+        { id:'m10l2', title:'10DGT Presentation Board', desc:'Create your presentation board for the Tech Fair showcase.', type:'Assignment', extra:false, assessment:true, assessmentMarks:null, date:'Dec', optional:false },
+      ]
+    },
+  ]
+};
+
+// ───────────────────────────────────────
+// STATE MANAGEMENT
+// ───────────────────────────────────────
+const STORAGE_KEY = '10dgt_adventure_progress';
+
+// XP values
+const XP_LESSON = 50;
+const XP_MODULE = 200;
+const XP_ALL = 500;
+
+let currentLang = localStorage.getItem('10dgt_lang') || 'en';
+let state = loadState();
+
+// ───────────────────────────────────────
+// INTERNATIONALIZATION
+// ───────────────────────────────────────
+const i18n = {
+  en: {
+    // Top bar
+    title: '10DGT Adventure Map',
+    subtitle: 'Year 10 Digital Technologies · Burnside High School',
+    // Stats
+    modulesDone: 'Modules Done',
+    lessonsDone: 'Lessons Done',
+    current: 'Current',
+    xpEarned: 'XP Earned',
+    // Progress
+    overallProgress: 'Overall journey progress',
+    // Big Idea
+    bigIdea: '💡 Big Idea',
+    // Module map
+    yourJourney: '🗺️ Your Digital Journey — 10 Modules',
+    module: 'Module',
+    completed: 'Completed',
+    lessons: 'Lessons',
+    of: 'of',
+    lessonsComplete: 'lessons complete',
+    // Lesson tags
+    done: 'Done',
+    now: 'Now',
+    todo: 'Todo',
+    // Info columns
+    lastCompleted: '✅ Last Completed',
+    currentMission: '🎯 Current Mission',
+    comingUp: '🔜 Coming Up',
+    next: 'Next',
+    nextModule: 'Next module',
+    clickToAdvance: 'Click lessons above to mark progress',
+    allComplete: 'All modules completed!',
+    finalLesson: 'Final lesson in this module!',
+    batchModeOn: 'Exit Batch',
+    batchModeOff: 'Batch',
+    selected: 'selected',
+    batchUndo: 'Undo',
+    batchCancel: 'Cancel',
+    // Tools
+    toolsForThisLesson: '🧰 Tools for this lesson',
+    // Curriculum
+    nzCurriculum: '📋 NZ Curriculum — Progress Outcomes',
+    // Buttons
+    reset: '🔄 Reset',
+    save: '💾 Save',
+    howItWorks: '❓',
+    // Help modal
+    helpTitle: '🗺️ How the Adventure Map Works',
+    helpDesc: 'This is your <span class="highlight">interactive learning journey</span> for 9DGT. Track your progress through each module and lesson!',
+    helpGreen: '<strong style="color:var(--text)">🟢 Green (Done)</strong> — Lessons you have completed. Click to undo if needed.',
+    helpPurple: '<strong style="color:var(--text)">🟣 Purple (Current)</strong> — Where you are right now. Click to mark as done and advance!',
+    helpGrey: '<strong style="color:var(--text)">⬜ Grey (Todo)</strong> — Not yet started. Click to mark as done.',
+    helpXP: '<strong style="color:var(--text)">🎮 XP System:</strong>',
+    helpXPDesc: 'Each lesson = <span class="highlight">50 XP</span> · Module completion = <span class="highlight">200 XP bonus</span> · All complete = <span class="highlight">500 XP bonus</span>',
+    helpSave: '<strong style="color:var(--text)">💾 Saving:</strong>',
+    helpSaveDesc: 'Progress auto-saves to your browser. Click "Save" anytime, or use "Reset" to start over.',
+    helpBigIdea: '<strong style="color:var(--text)">💡 Big Idea:</strong>',
+    helpBigIdeaDesc: 'Click the purple banner at the top to see the driving question for the current module.',
+    helpModules: '<strong style="color:var(--text)">📂 Module Details:</strong>',
+    helpModulesDesc: 'Click any module node on the map to expand its lesson list and see individual progress.',
+    // Big Idea modal
+    moduleProgress: 'Module Progress',
+    clickToJump: '→ Click to jump to next task',
+    // Toast
+    progressSaved: '💾 Progress saved!',
+    progressReset: '🔄 Progress reset!',
+    resetTemplateSaved: '🔧 Reset template saved!',
+    resetTemplateTitle: '🔧 Reset Template',
+    save: 'Save',
+    actions: 'Actions',
+    // Confirm
+    confirmReset: 'Reset all progress? This cannot be undone.',
+    // Badges
+    assessment: 'Assessment',
+    extra: 'Extra',
+    optional: 'Optional',
+    topic: 'Topic',
+    // Dropdown
+    template: 'Template',
+    batch: 'Batch',
+    compulsory: 'Compulsory',
+    help: 'Help',
+    // Compulsory modal
+    coAllCompulsory: 'All compulsory',
+    coAllOptional: 'All optional',
+    coSetAll: 'Set all',
+    coCompulsory: 'Compulsory',
+    coOptional: 'Optional',
+    coTitle: '⚙️ Compulsory / Optional',
+    // Reset template
+    rtTodo: 'Todo',
+    rtCurrent: 'Current',
+    rtDone: 'Done',
+    rtApply: 'Apply',
+    // Tools
+    toolName0: 'Problem Solving Training',
+    toolTip0: 'Leverage Google search & AI tools, but always maintain critical thinking.',
+    toolName1: 'Submit Work to Google Classroom',
+    toolTip1: 'Essential Y9 skill — know how to submit your work to Google Classroom.',
+    toolName2: 'Binary Card Simulator',
+    toolTip2: 'The most important tool for understanding binary concepts.',
+    toolName3: 'File Management',
+    toolTip3: 'Clear file management helps you keep a clear mind.',
+    // NZ Curriculum
+    poL30: 'Understand that there can be more than one algorithm for the same problem',
+    poL31: 'Decompose problems into step-by-step instructions to create algorithms',
+    poL32: 'Use logical thinking to predict the behaviour of programs',
+    poL33: 'Develop and debug simple programs using inputs, outputs, sequence, and iteration',
+    poL40: 'Create algorithms using sequence, selection, and iteration',
+    poL41: 'Implement basic selection structures using comparative operators',
+    poL42: 'Debug and correct program errors',
+    poL43: 'Explain why errors occurred and how they were fixed',
+    poL44: 'Evaluate the efficiency of algorithms',
+    poL45: 'Understand the need for computers to search and sort large amounts of data',
+    poL50: 'Independently decompose problems into algorithms',
+    poL51: 'Use different data types and logical operators',
+    poL52: 'Systematic documentation, testing, and HCI-based development',
+    // Batch modal
+    batchComplete: 'Complete',
+    batchCancel: 'Cancel',
+    // ── Module names ──
+    modName_m1: 'Image Creation',
+    modName_m2: 'Website',
+    modName_m3: 'Computer Science',
+    modName_m4: 'Programming with Python',
+    modName_m5: '3D Modelling',
+    modName_m6: 'Animation',
+    modName_m7: 'Design for Manufacturing',
+    modName_m8: 'Audio Visual',
+    modName_m9: 'Video Game Development',
+    modName_m10: 'Student Led Project',
+    // ── Module Big Ideas ──
+    modBigIdea_m1: 'How can we use digital tools to create, edit, and manipulate images — and what makes an image effective?',
+    modBigIdea_m2: 'How do we create effective websites that communicate information clearly and engage users?',
+    modBigIdea_m3: 'How do computers represent and process data using binary systems — and why does this matter for digital technologies?',
+    modBigIdea_m4: 'How do we give instructions to a computer using code — and what are the building blocks of programming?',
+    modBigIdea_m5: 'How do we create 3D models that bring ideas to life in digital space?',
+    modBigIdea_m6: 'How do we bring 3D models to life through animation?',
+    modBigIdea_m7: 'How do we design objects that can be manufactured using digital fabrication technologies?',
+    modBigIdea_m8: 'How do we create effective audio and visual content that communicates meaning?',
+    modBigIdea_m9: 'How do we design and develop interactive video games?',
+    modBigIdea_m10: 'How can I apply everything I have learned to create a meaningful digital project of my own?',
+    modBigIdeaDesc_m1: 'In this module you will explore digital image creation tools and techniques. You will learn how to create original images, understand image formats, and apply design principles to communicate ideas visually.',
+    modBigIdeaDesc_m2: 'Learn the fundamentals of web design and development. Understand HTML structure, CSS styling, and user experience principles.',
+    modBigIdeaDesc_m3: 'This module covers the fundamentals of computer science: binary and hexadecimal number systems, ASCII and UTF-8 text encoding, error detection methods, and searching and sorting algorithms.',
+    modBigIdeaDesc_m4: 'Learn to program using Python. You will use sequences, selections, and iterations to create programs that solve real problems, while developing computational thinking skills.',
+    modBigIdeaDesc_m5: 'Using Blender, you will learn the basics of 3D modelling. Create objects from scratch and understand the principles of 3D design.',
+    modBigIdeaDesc_m6: 'Using Blender, learn to create animations using timeline and keyframe tools. Develop skills in motion design and visual storytelling.',
+    modBigIdeaDesc_m7: 'Learn about design for manufacturing principles, including 3D printing and laser cutting. Understand tolerances, materials, and production processes.',
+    modBigIdeaDesc_m8: 'Explore digital audio and video production. Learn editing techniques, file formats, and storytelling through multimedia.',
+    modBigIdeaDesc_m9: 'Learn the principles of game design and development. Create your own playable game using visual programming or game development tools.',
+    modBigIdeaDesc_m10: 'This is your chance to showcase all the skills you have developed throughout the year. Choose a project that interests you, plan it, build it, and present it at the BHS Year 10 Tech Fair.',
+    subName_m3s0: 'Binary & Hexadecimal',
+    subName_m3s1: 'ASCII & UTF-8',
+    subName_m3s2: 'Error Detection',
+    subName_m3s3: 'Searching & Sorting',
+    subName_m3s4: 'CS End-of-Topic Tasks',
+    subName_m7s0: 'Design for Manufacturing',
+    subName_m7s1: 'Audio Visual',
+    subName_m7s2: 'Video Game Development',
+    lesTitle_m1l1: 'Image Creation Submissions',
+    lesTitle_m3l1: 'CS Task 1.2 - Binary Worksheet',
+    lesTitle_m3l2: 'CS Task 1.3 - Checkpoint | Binary',
+    lesTitle_m3l3: 'CS Task 1.4 - Hexadecimal, Decimal, and Binary conversion',
+    lesTitle_m3l4: 'CS Task 1.6 - Checkpoint | Hexadecimal Numbers',
+    lesTitle_m3l5: 'Best Flipplybit Score',
+    lesTitle_m3l6: 'CS Task 1.7 - Hex Colour Dragon',
+    lesTitle_m3l7: 'Best Hex Invaders Score',
+    lesTitle_m3l8: 'CS Task 1.9 - Checkpoint | Hex Colours',
+    lesTitle_m3l9: 'CS EoT Assessment: Binary and Hex',
+    lesTitle_m3l10: 'CS Task 1.Extra - Martian Messages',
+    lesTitle_m3l13: 'CS Task 2.1 - Introduction to ASCII',
+    lesTitle_m3l14: 'CS Task 2.2 - Exploring ASCII',
+    lesTitle_m3l15: 'CS Task 2.3 - ASCII Art Made By You!',
+    lesTitle_m3l16: 'CS EoT Assessment: ASCII and UTF-8',
+    lesTitle_m3l17: 'CS Task 2.Extra - Building an ASCII Translator using a Spreadsheet',
+    lesTitle_m3l18: 'CS Task 2.Extra - Coding an ASCII Converter in Python',
+    lesTitle_m3l19: 'CS Task 3.1 - Error checking in ASCII',
+    lesTitle_m3l20: 'CS Task 3.4 - Error Detection Barcodes',
+    lesTitle_m3l21: 'CS EoT Assessment: Parity and GTIN-13 product barcodes',
+    lesTitle_m2l1: 'Your Website URL & Term 1 Check In',
+    lesTitle_m2l2: 'Website Screenshot Submission',
+    lesTitle_m5l1: 'Your Best Model',
+    lesTitle_m6l1: 'Your Best Animation',
+    lesTitle_m3l22: 'Computer Science End-of-topic Test',
+    lesTitle_m3l23: 'Computer Science End of Topic Test',
+    lesTitle_m3l24: 'Computer Science Checklist',
+    lesTitle_m3l11: 'CS Task 4.1 - Searching and Sorting Worksheet',
+    lesDesc_m3l11: 'Learn about different searching and sorting algorithms.',
+    lesTitle_m3l12: 'EoT CS Assessment - Searching and Sorting Quiz',
+    lesDesc_m3l12: 'End of topic quiz on searching and sorting algorithms.',
+    lesTitle_m10l1: 'Project Planning',
+    lesTitle_m10l2: '10DGT Presentation Board',
+    lesTitle_m4wl1: 'File Management',
+    lesDesc_m4wl1: 'Know where your work is (especially on your own device).',
+    lesTitle_m4wl2: 'Animation vs Coding',
+    lesDesc_m4wl2: 'Learn about the differences between animation and programming approaches.',
+    lesTitle_m7l1: 'Submit your best work by adding it to your website!',
+    lesDesc_m7l1: 'Submit your best Design for Manufacturing project to your website.',
+    lesTitle_m8l1: 'Upload your video to your website',
+    lesDesc_m8l1: 'Upload your Audio Visual project video to your website.',
+    lesTitle_m9l1: 'Embed Your GDevelop Game in your Website',
+    lesDesc_m9l1: 'Embed your completed GDevelop game into your website.',
+    lesDesc_m1l1: 'Submit your best image creation work for assessment. Apply your skills in digital image manipulation, composition, and creative expression.',
+    lesDesc_m3l1: 'Practice converting between binary and decimal numbers.',
+    lesDesc_m3l2: 'Check your understanding of binary number conversions.',
+    lesDesc_m3l3: 'Learn to convert between hexadecimal, decimal, and binary systems.',
+    lesDesc_m3l4: 'Check your understanding of hexadecimal conversions.',
+    lesDesc_m3l5: 'Achieve your best score in the Flipplybit binary game.',
+    lesDesc_m3l6: 'Use hexadecimal colour codes to create your Hex Colour Dragon.',
+    lesDesc_m3l7: 'Achieve your best score in the Hex Invaders game.',
+    lesDesc_m3l8: 'Check your understanding of hexadecimal colour representation.',
+    lesDesc_m3l9: 'End of topic assessment covering binary and hexadecimal concepts.',
+    lesDesc_m3l10: 'Decode binary messages from Mars in this extension challenge.',
+    lesDesc_m3l13: 'Learn how computers represent text characters using ASCII encoding.',
+    lesDesc_m3l14: 'Explore ASCII codes in depth and practice character encoding.',
+    lesDesc_m3l15: 'Create your own ASCII art using text characters.',
+    lesDesc_m3l16: 'End of topic assessment covering ASCII and UTF-8 encoding.',
+    lesDesc_m3l17: 'Build an ASCII translator using a spreadsheet.',
+    lesDesc_m3l18: 'Code an ASCII converter using Python programming.',
+    lesDesc_m3l19: 'Learn how error checking works in ASCII data transmission.',
+    lesDesc_m3l20: 'Explore how barcodes use error detection to ensure accuracy.',
+    lesDesc_m3l21: 'End of topic assessment on parity bits and GTIN-13 barcodes.',
+    lesDesc_m3l22: 'Comprehensive end-of-topic test covering all computer science concepts.',
+    lesDesc_m3l23: 'Alternative end-of-topic test for the Computer Science module.',
+    lesDesc_m3l24: 'Review and verify all Computer Science tasks have been completed.',
+    lesDesc_m5l1: 'Learn the basics of 3D modelling using Blender software.',
+    lesDesc_m5l2: 'Submit your best 3D model created in Blender.',
+    lesDesc_m6l1: 'Create animations using Blender\'s timeline and keyframe tools.',
+    lesDesc_m6l2: 'Submit your best animation for assessment.',
+    lesDesc_m10l1: 'Plan your personal project: define the scope, tools, and timeline.',
+    lesDesc_m10l2: 'Create your presentation board for the Tech Fair showcase.',
+    toolName0: 'Problem Solving Training',
+    toolTip0: 'Use Google Search & AI tools wisely, but keep critical thinking.',
+    toolName1: 'File Management',
+    toolTip1: 'Know where your work is (especially on your own device)',
+    toolName2: 'Binary Card Simulator',
+    toolTip2: 'The most important tool for understanding binary.',
+    toolName3: '10DGT Course Website',
+    toolTip3: 'All teaching materials and resources for Year 10 Digital Technologies.',
+  },
+  zh: {
+    title: '10DGT 冒险地图',
+    subtitle: '10年级数字技术 · 伯恩赛德高中',
+    modulesDone: '已完成模块',
+    lessonsDone: '已完成课程',
+    current: '当前',
+    xpEarned: '获得经验值',
+    overallProgress: '整体学习进度',
+    bigIdea: '💡 核心问题',
+    yourJourney: '🗺️ 你的数字之旅 — 10个模块',
+    module: '模块',
+    completed: '已完成',
+    lessons: '课程',
+    of: '/',
+    lessonsComplete: '个课程已完成',
+    done: '完成',
+    now: '进行中',
+    todo: '待完成',
+    lastCompleted: '✅ 最近完成',
+    currentMission: '🎯 当前任务',
+    comingUp: '🔜 即将开始',
+    next: '下一个',
+    nextModule: '下一模块',
+    clickToAdvance: '点击上方课程标记进度',
+    allComplete: '所有模块已完成！',
+    finalLesson: '本模块最后一课！',
+    batchModeOn: '退出批量',
+    batchModeOff: '批量选择',
+    selected: '个已选',
+    batchUndo: '撤销',
+    batchCancel: '取消',
+    toolsForThisLesson: '🧰 本课工具',
+    nzCurriculum: '📋 新西兰课程大纲 — 进阶成果',
+    reset: '🔄 重置',
+    save: '💾 保存',
+    howItWorks: '❓',
+    helpTitle: '🗺️ 冒险地图使用说明',
+    helpDesc: '这是你的 9DGT <span class="highlight">互动学习之旅</span>。通过每个模块和课程来追踪你的进度！',
+    helpGreen: '<strong style="color:var(--text)">🟢 绿色（已完成）</strong> — 你已完成的课程。点击可撤销。',
+    helpPurple: '<strong style="color:var(--text)">🟣 紫色（进行中）</strong> — 你当前所在的位置。点击标记完成并前进！',
+    helpGrey: '<strong style="color:var(--text)">⬜ 灰色（待完成）</strong> — 尚未开始。点击标记完成。',
+    helpXP: '<strong style="color:var(--text)">🎮 经验值系统：</strong>',
+    helpXPDesc: '每节课 = <span class="highlight">50 XP</span> · 模块完成 = <span class="highlight">200 XP 奖励</span> · 全部完成 = <span class="highlight">500 XP 奖励</span>',
+    helpSave: '<strong style="color:var(--text)">💾 保存：</strong>',
+    helpSaveDesc: '进度自动保存到浏览器。随时点击"保存"，或使用"重置"重新开始。',
+    helpBigIdea: '<strong style="color:var(--text)">💡 核心问题：</strong>',
+    helpBigIdeaDesc: '点击顶部的紫色横幅，查看当前模块的驱动问题。',
+    helpModules: '<strong style="color:var(--text)">📂 模块详情：</strong>',
+    helpModulesDesc: '点击地图上的任意模块节点，展开其课程列表并查看个人进度。',
+    moduleProgress: '模块进度',
+    clickToJump: '→ 点击跳转到下一个任务',
+    progressSaved: '💾 进度已保存！',
+    progressReset: '🔄 进度已重置！',
+    resetTemplateSaved: '🔧 重置模板已保存！',
+    resetTemplateTitle: '🔧 重置模板',
+    save: '保存',
+    actions: '操作',
+    confirmReset: '确定要重置所有进度吗？此操作无法撤销。',
+    assessment: '评估',
+    extra: '附加',
+    optional: '选修',
+    topic: '专题',
+    template: '模板',
+    batch: '批量',
+    compulsory: '必修',
+    help: '帮助',
+    coAllCompulsory: '全部必修',
+    coAllOptional: '全部选修',
+    coSetAll: '全选',
+    coCompulsory: '必修',
+    coOptional: '选修',
+    coTitle: '⚙️ 必修 / 选修',
+    rtTodo: '待完成',
+    rtCurrent: '进行中',
+    rtDone: '已完成',
+    rtApply: '应用',
+    // Tools
+    toolName0: '问题解决训练',
+    toolTip0: '善用 Google 搜索与 AI 工具，但需要保持批判性思维。',
+    toolName1: '提交作业到 Google Classroom',
+    toolTip1: '9年级基础技能 — 知道如何将作业提交到 Google Classroom。',
+    toolName2: '二进制卡片模拟器',
+    toolTip2: '最重要的辅助理解二进制的工具。',
+    toolName3: '文件管理',
+    toolTip3: '清晰的文件管理能让你保持清晰的头脑。',
+    // NZ Curriculum
+    poL30: '理解同一问题可以有多种算法',
+    poL31: '将问题分解为逐步指令以创建算法',
+    poL32: '使用逻辑思维预测程序行为',
+    poL33: '开发并调试使用输入、输出、顺序和迭代的简单程序',
+    poL40: '使用顺序、选择和迭代创建算法',
+    poL41: '使用比较运算符实现基本选择结构',
+    poL42: '调试并纠正程序错误',
+    poL43: '解释错误原因及修复方法',
+    poL44: '评估算法效率',
+    poL45: '理解计算机搜索和排序大量数据的需求',
+    poL50: '独立将问题分解为算法',
+    poL51: '使用不同数据类型和逻辑运算符',
+    poL52: '系统性文档化、测试及基于HCI的开发',
+    // Batch modal
+    batchComplete: '完成',
+    batchCancel: '取消',
+    // ── Module names ──
+    modName_m1: '图像创作',
+    modName_m2: '网站建设',
+    modName_m3: '计算机科学',
+    modName_m4: 'Python编程',
+    modName_m5: '3D建模',
+    modName_m6: '动画制作',
+    modName_m7: '制造设计',
+    modName_m8: '音视频',
+    modName_m9: '电子游戏开发',
+    modName_m10: '学生自主项目',
+    // ── Module Big Ideas ──
+    modBigIdea_m1: '如何使用数字工具来创建、编辑和处理图像——是什么让图像有效？',
+    modBigIdea_m2: '我们如何创建能清晰传达信息并吸引用户的有效网站？',
+    modBigIdea_m3: '计算机如何使用二进制系统表示和处理数据——这对数字技术为什么重要？',
+    modBigIdea_m4: '我们如何用代码给计算机下达指令——编程的基本构建块是什么？',
+    modBigIdea_m5: '我们如何在数字空间中创建让想法栩栩如生的3D模型？',
+    modBigIdea_m6: '我们如何通过动画让3D模型活起来？',
+    modBigIdea_m7: '我们如何设计能够使用数字化制造技术生产的产品？',
+    modBigIdea_m8: '我们如何创建有效传达意义的音频和视觉内容？',
+    modBigIdea_m9: '我们如何设计和开发互动电子游戏？',
+    modBigIdea_m10: '我如何将所学的所有知识应用到自己有意义的数字项目中？',
+    modBigIdeaDesc_m1: '在本模块中，你将探索数字图像创作工具和技术，学习创建原创图像、理解图像格式，并应用设计原则以视觉方式传达想法。',
+    modBigIdeaDesc_m2: '学习网页设计和开发的基础知识。了解HTML结构、CSS样式和用户体验原则。',
+    modBigIdeaDesc_m3: '本模块涵盖计算机科学的基础知识：二进制和十六进制数制、ASCII和UTF-8文本编码、错误检测方法，以及搜索和排序算法。',
+    modBigIdeaDesc_m4: '学习使用Python编程。你将使用顺序、选择和迭代来创建解决实际问题的程序，同时培养计算思维能力。',
+    modBigIdeaDesc_m5: '使用Blender学习3D建模基础知识。从头开始创建对象并理解3D设计原理。',
+    modBigIdeaDesc_m6: '使用Blender学习使用时间线和关键帧工具创建动画。培养运动设计和视觉叙事技能。',
+    modBigIdeaDesc_m7: '学习制造设计原则，包括3D打印和激光切割。了解公差、材料和生产流程。',
+    modBigIdeaDesc_m8: '探索数字音频和视频制作。学习编辑技术、文件格式和多媒体叙事。',
+    modBigIdeaDesc_m9: '学习游戏设计和开发的原则。使用可视化编程或游戏开发工具创建你自己的可玩游戏。',
+    modBigIdeaDesc_m10: '这是你展示全年所学技能的机会。选择你感兴趣的项目，进行规划、制作，并在BHS十年级技术博览会上展示。',
+    subName_m3s0: '二进制与十六进制',
+    subName_m3s1: 'ASCII与UTF-8',
+    subName_m3s2: '错误检测',
+    subName_m3s3: '搜索与排序',
+    subName_m3s4: '计算机科学单元末任务',
+    subName_m7s0: '制造设计',
+    subName_m7s1: '音视频',
+    subName_m7s2: '电子游戏开发',
+    lesTitle_m1l1: '图像创作提交',
+    lesTitle_m3l1: 'CS 任务1.2 - 二进制练习',
+    lesTitle_m3l2: 'CS 任务1.3 - 检查点：二进制',
+    lesTitle_m3l3: 'CS 任务1.4 - 十六/十/二进制转换',
+    lesTitle_m3l4: 'CS 任务1.6 - 检查点：十六进制',
+    lesTitle_m3l5: '最佳Flipplybit分数',
+    lesTitle_m3l6: 'CS 任务1.7 - 十六进制色彩龙',
+    lesTitle_m3l7: '最佳Hex Invaders分数',
+    lesTitle_m3l8: 'CS 任务1.9 - 检查点：十六进制色彩',
+    lesTitle_m3l9: 'CS 期末评估：二进制与十六进制',
+    lesTitle_m3l10: 'CS 任务1.附加 - 火星信息',
+    lesTitle_m3l13: 'CS 任务2.1 - ASCII入门',
+    lesTitle_m3l14: 'CS 任务2.2 - 探索ASCII',
+    lesTitle_m3l15: 'CS 任务2.3 - 你的ASCII艺术作品!',
+    lesTitle_m3l16: 'CS 期末评估：ASCII与UTF-8',
+    lesTitle_m3l17: 'CS 任务2.附加 - 使用表格构建ASCII翻译器',
+    lesTitle_m3l18: 'CS 任务2.附加 - 用Python编写ASCII转换器',
+    lesTitle_m3l19: 'CS 任务3.1 - ASCII错误检测',
+    lesTitle_m3l20: 'CS 任务3.4 - 错误检测条形码',
+    lesTitle_m3l21: 'CS 期末评估：奇偶校验与GTIN-13产品条形码',
+    lesTitle_m5l1: 'CS 任务4.1 - 搜索与排序练习',
+    lesTitle_m5l2: 'CS 期末评估 - 搜索与排序测验',
+    lesTitle_m2l1: '你的网站URL与Term 1检查',
+    lesTitle_m2l2: '网站截图提交',
+    lesTitle_m5l1: '使用Blender进行3D建模',
+    lesTitle_m5l2: '你的最佳模型',
+    lesTitle_m6l1: '你的最佳动画',
+    lesTitle_m3l22: '计算机科学单元末测试',
+    lesTitle_m3l23: '计算机科学单元测试',
+    lesTitle_m3l24: '计算机科学检查清单',
+    lesTitle_m3l11: 'CS任务4.1 - 搜索与排序练习',
+    lesDesc_m3l11: '学习不同的搜索和排序算法。',
+    lesTitle_m3l12: 'CS单元末评估 - 搜索与排序测验',
+    lesDesc_m3l12: '关于搜索和排序算法的单元末测验。',
+    lesTitle_m4wl1: '文件管理',
+    lesDesc_m4wl1: '了解你的文件存放位置（尤其是在自己的设备上）',
+    lesTitle_m4wl2: '动画与编程',
+    lesDesc_m4wl2: '了解动画与编程方法的区别。',
+    lesTitle_m7l1: '将您的最佳作品添加到网站！',
+    lesDesc_m7l1: '将您的"设计制造"最佳项目提交到您的网站。',
+    lesTitle_m8l1: '将视频上传到您的网站',
+    lesDesc_m8l1: '将您的"视听"项目视频上传到您的网站。',
+    lesTitle_m9l1: '在您的网站中嵌入GDevelop游戏',
+    lesDesc_m9l1: '将您完成的GDevelop游戏嵌入到您的网站中。',
+    lesTitle_m10l1: '项目规划',
+    lesTitle_m10l2: '10DGT展示板',
+    lesDesc_m1l1: '提交你的最佳图像创作作品以进行评估。展示你在数字图像处理、构图和创意表达方面的技能。',
+    lesDesc_m3l1: '练习二进制和十进制数字之间的转换。',
+    lesDesc_m3l2: '检查你对二进制数字转换的理解。',
+    lesDesc_m3l3: '学习二进制、十进制和十六进制之间的转换。',
+    lesDesc_m3l4: '检查你对十六进制转换的理解。',
+    lesDesc_m3l5: '在Flipplybit二进制游戏中取得最佳成绩。',
+    lesDesc_m3l6: '使用十六进制颜色代码创建你的十六进制色彩龙。',
+    lesDesc_m3l7: '在Hex Invaders游戏中取得最佳成绩。',
+    lesDesc_m3l8: '检查你对十六进制颜色表示的理解。',
+    lesDesc_m3l9: '涵盖二进制和十六进制概念的期末评估。',
+    lesDesc_m3l10: '在这个拓展挑战中解码来自火星的二进制信息。',
+    lesDesc_m3l13: '学习计算机如何使用ASCII编码表示文本字符。',
+    lesDesc_m3l14: '深入探索ASCII码并练习字符编码。',
+    lesDesc_m3l15: '使用文本字符创建你自己的ASCII艺术。',
+    lesDesc_m3l16: '涵盖ASCII和UTF-8编码的期末评估。',
+    lesDesc_m3l17: '使用电子表格构建ASCII翻译器。',
+    lesDesc_m3l18: '使用Python编程编写ASCII转换器。',
+    lesDesc_m3l19: '学习错误检测如何在ASCII数据传输中工作。',
+    lesDesc_m3l20: '探索条形码如何使用错误检测来确保准确性。',
+    lesDesc_m3l21: '关于奇偶校验和GTIN-13条形码的期末评估。',
+    lesDesc_m5l1: '学习使用Blender软件进行3D建模的基础知识。',
+    lesDesc_m2l1: '提交你的网站URL并完成Term 1检查。分享你已发布网站的URL供审核。',
+    lesDesc_m2l2: '提交展示你创建的关键页面和功能的网站截图。',
+    lesDesc_m5l1: '学习使用Blender软件进行3D建模的基础知识。',
+    lesDesc_m5l2: '提交你在Blender中创建的最佳3D模型。',
+    lesDesc_m6l1: '使用Blender的时间线和关键帧工具创建动画。',
+    lesDesc_m6l2: '提交你的最佳动画作品以进行评估。',
+    lesDesc_m3l22: '涵盖所有计算机科学概念的期末单元测试。',
+    lesDesc_m3l23: '计算机科学模块的替代期末测试。',
+    lesDesc_m3l24: '复习并核实所有计算机科学任务已完成。',
+    lesDesc_m10l1: '规划你的个人项目：定义范围、工具和时间线。',
+    lesDesc_m10l2: '为技术博览会展示创建你的演示板。',
+    toolName0: '问题解决训练',
+    toolTip0: '善用Google搜索与AI工具，但需保持批判性思维。',
+    toolName1: '文件管理',
+    toolTip1: '了解你的文件存放位置（尤其是在自己的设备上）',
+    toolName2: '二进制卡片模拟器',
+    toolTip2: '理解二进制最重要的辅助工具。',
+    toolName3: '10DGT课程网站',
+    toolTip3: '10年级数字技术课程的所有教学材料和资源。',
+  },
+  ja: {
+    title: '10DGT 冒険マップ',
+    subtitle: '中学10年 デジタルテクノロジー · バーンサイド高校',
+    modulesDone: '完了モジュール',
+    lessonsDone: '完了レッスン',
+    current: '現在',
+    xpEarned: '獲得XP',
+    overallProgress: '全体の旅の進捗',
+    bigIdea: '💡 ビッグアイデア',
+    yourJourney: '🗺️ あなたのデジタルの旅 — 10モジュール',
+    module: 'モジュール',
+    completed: '完了',
+    lessons: 'レッスン',
+    of: '/',
+    lessonsComplete: 'レッスン完了',
+    done: '完了',
+    now: '進行中',
+    todo: '未着手',
+    lastCompleted: '✅ 最後に完了',
+    currentMission: '🎯 現在のミッション',
+    comingUp: '🔜 次の予定',
+    next: '次',
+    nextModule: '次のモジュール',
+    clickToAdvance: '上のレッスンをクリックして進捗をマーク',
+    allComplete: 'すべてのモジュールが完了しました！',
+    finalLesson: 'このモジュールの最終レッスン！',
+    batchModeOn: '一括解除',
+    batchModeOff: '一括選択',
+    selected: '件選択中',
+    batchUndo: '戻す',
+    batchCancel: '閉じる',
+    toolsForThisLesson: '🧰 今回のツール',
+    nzCurriculum: '📋 NZカリキュラム — 進捗アウトカム',
+    reset: '🔄 リセット',
+    save: '💾 保存',
+    howItWorks: '❓',
+    helpTitle: '🗺️ 冒険マップの使い方',
+    helpDesc: 'これは9DGTの<span class="highlight">インタラクティブな学習の旅</span>です。各モジュールとレッスンの進捗を追跡しましょう！',
+    helpGreen: '<strong style="color:var(--text)">🟢 緑（完了）</strong> — 完了したレッスン。クリックで元に戻せます。',
+    helpPurple: '<strong style="color:var(--text)">🟣 紫（進行中）</strong> — 現在の位置。クリックで完了をマークして進みましょう！',
+    helpGrey: '<strong style="color:var(--text)">⬜ 灰色（未着手）</strong> — まだ開始していません。クリックで完了をマーク。',
+    helpXP: '<strong style="color:var(--text)">🎮 XPシステム：</strong>',
+    helpXPDesc: '各レッスン = <span class="highlight">50 XP</span> · モジュール完了 = <span class="highlight">200 XP ボーナス</span> · 全完了 = <span class="highlight">500 XP ボーナス</span>',
+    helpSave: '<strong style="color:var(--text)">💾 保存：</strong>',
+    helpSaveDesc: '進捗はブラウザに自動保存されます。いつでも「保存」をクリック、「リセット」で最初から。',
+    helpBigIdea: '<strong style="color:var(--text)">💡 ビッグアイデア：</strong>',
+    helpBigIdeaDesc: '上部の紫のバナーをクリックして、現在のモジュールの推進問題を確認しましょう。',
+    helpModules: '<strong style="color:var(--text)">📂 モジュール詳細：</strong>',
+    helpModulesDesc: 'マップ上のモジュールノードをクリックして、レッスンリストを展開し個別の進捗を確認。',
+    moduleProgress: 'モジュール進捗',
+    clickToJump: '→ クリックして次のタスクへ',
+    progressSaved: '💾 進捗を保存しました！',
+    progressReset: '🔄 進捗をリセットしました！',
+    resetTemplateSaved: '🔧 リセットテンプレートを保存しました！',
+    resetTemplateTitle: '🔧 リセットテンプレート',
+    save: '保存',
+    actions: 'アクション',
+    confirmReset: 'すべての進捗をリセットしますか？この操作は元に戻せません。',
+    assessment: '評価',
+    extra: 'エキストラ',
+    optional: '自由',
+    topic: 'トピック',
+    template: 'テンプレート',
+    batch: '一括',
+    compulsory: '必修',
+    help: 'ヘルプ',
+    coAllCompulsory: '全て必修',
+    coAllOptional: '全て自由',
+    coSetAll: '全選択',
+    coCompulsory: '必修',
+    coOptional: '自由',
+    coTitle: '⚙️ 必修 / 自由',
+    rtTodo: '未着手',
+    rtCurrent: '進行中',
+    rtDone: '完了',
+    rtApply: '適用',
+    // Tools
+    toolName0: '問題解決トレーニング',
+    toolTip0: 'Google 検索と AI ツールを活用するが、常にクリティカルシンキングを保つ。',
+    toolName1: 'Google Classroom への提出方法',
+    toolTip1: '9年生の基本スキル — Google Classroom に作業を提出する方法を知る。',
+    toolName2: 'バイナリカードシミュレーター',
+    toolTip2: 'バイナリ概念を理解するための最も重要なツール。',
+    toolName3: 'ファイル管理',
+    toolTip3: '明確なファイル管理でクリアなマインドを保つ。',
+    // NZ Curriculum
+    poL30: '同じ問題に対して複数のアルゴリズムが存在することを理解する',
+    poL31: '問題をステップバイステップの指示に分解してアルゴリズムを作成する',
+    poL32: '論理的な思考を使用してプログラムの動作を予測する',
+    poL33: '入力、出力、順序、反復を使用した単純なプログラムを開発し、デバッグする',
+    poL40: '順序、選択、反復を使用してアルゴリズムを作成する',
+    poL41: '比較演算子を使用して基本的な選択構造を実装する',
+    poL42: 'プログラムのデバッグとエラー修正',
+    poL43: 'エラーが発生した理由と修正方法を説明する',
+    poL44: 'アルゴリズムの効率性を評価する',
+    poL45: 'コンピュータが大規模データの検索とソートを必要とすることを理解する',
+    poL50: '自律的に問題をアルゴリズムに分解する',
+    poL51: '異なるデータ型と論理演算子を使用する',
+    poL52: '体系的な文書化、テスト、HCIに基づく開発',
+    // Batch modal
+    batchComplete: '完了',
+    batchCancel: '閉じる',
+    // ── Module names ──
+    modName_m1: '画像制作',
+    modName_m2: 'ウェブサイト',
+    modName_m3: 'コンピュータ科学',
+    modName_m4: 'Pythonプログラミング',
+    modName_m5: '3Dモデリング',
+    modName_m6: 'アニメーション',
+    modName_m7: '製造設計',
+    modName_m8: 'オーディオビジュアル',
+    modName_m9: 'ビデオゲーム開発',
+    modName_m10: '生徒主導プロジェクト',
+    // ── Module Big Ideas ──
+    modBigIdea_m1: 'どのようにデジタルツールを使って画像を作成・編集・操作できるのか——そして何が画像を効果的にするのか？',
+    modBigIdea_m2: 'どのように情報を明確に伝え、ユーザーを引きつける効果的なウェブサイトを作成するのか？',
+    modBigIdea_m3: 'コンピュータはどのようにバイナリシステムを使用してデータを表現・処理するのか——なぜデジタル技術にとって重要なのか？',
+    modBigIdea_m4: 'どのようにコードを使ってコンピュータに指示を出すのか——プログラミングの構成要素とは何か？',
+    modBigIdea_m5: 'どのようにアイデアをデジタル空間で命を吹き込む3Dモデルを作成するのか？',
+    modBigIdea_m6: 'どのように3Dモデルにアニメーションで命を与えるのか？',
+    modBigIdea_m7: 'どのようにデジタルファブリケーション技術で製造できる製品を設計するのか？',
+    modBigIdea_m8: 'どのように効果的なオーディオビジュアルコンテンツを作成して意味を伝えるのか？',
+    modBigIdea_m9: 'どのようにインタラクティブなビデオゲームを設計・開発するのか？',
+    modBigIdea_m10: '学んだすべてを応用して、自分自身の意味のあるデジタルプロジェクトをどのように作成できるか？',
+    modBigIdeaDesc_m1: 'このモジュールでは、デジタル画像作成ツールと技法を探求します。オリジナル画像の作成、画像フォーマットの理解、ビジュアルでアイデアを伝えるためのデザイン原則の適用を学びます。',
+    modBigIdeaDesc_m2: 'ウェブデザインと開発の基礎を学びます。HTML構造、CSSスタイリング、ユーザー体験の原則を理解します。',
+    modBigIdeaDesc_m3: 'このモジュールはコンピュータ科学の基礎をカバーします：バイナリ・16進数システム、ASCII・UTF-8テキストエンコーディング、エラー検出方法、探索・ソートアルゴリズム。',
+    modBigIdeaDesc_m4: 'Pythonを使用してプログラミングを学びます。順次・選択・反復を使用して реальныйな問題を解決するプログラムを作成し、計算的思考スキルを開発します。',
+    modBigIdeaDesc_m5: 'Blenderを使用して3Dモデリングの基礎を学びます。ゼロからオブジェクトを作成し、3Dデザインの原則を理解します。',
+    modBigIdeaDesc_m6: 'Blenderを使用してタイムラインとキーフレームツールでアニメーションを作成する方法を学びます。モーションデザインとビジュアルストーリーテリングのスキルを開発します。',
+    modBigIdeaDesc_m7: '3Dプリンティングとレーザー切断を含む製造設計の原則を学びます公差、材料、生産プロセスについて理解します。',
+    modBigIdeaDesc_m8: 'デジタルオーディオとビデオ制作を探求します。編集技術、ファイルフォーマット、マルチメディアストーリーテリングを学びます。',
+    modBigIdeaDesc_m9: 'ゲームデザインと開発のパ принциповを学びます。ビジュアルプログラミングまたはゲーム開発ツールを使用して自分でプレイ可能なゲームを作成します。',
+    modBigIdeaDesc_m10: 'これは年間を通じて開発したすべてのスキルを披露するチャンスです。関心のあるプロジェクトを選び、計画し、構築し、BHS 10年生テックフェアで発表します。',
+    subName_m3s0: '2進数と16進数',
+    subName_m3s1: 'ASCII・UTF-8',
+    subName_m3s2: 'エラー検出',
+    subName_m3s3: '探索とソート',
+    subName_m3s4: 'コンピュータサイエンス単元末タスク',
+    subName_m7s0: '製造設計',
+    subName_m7s1: 'オーディオビジュアル',
+    subName_m7s2: 'ビデオゲーム開発',
+    lesTitle_m1l1: '画像制作提出',
+    lesTitle_m3l1: 'CS課題1.2 — 2進数ワークシート',
+    lesTitle_m3l2: 'CS課題1.3 — チェックポイント：2進数',
+    lesTitle_m3l3: 'CS課題1.4 — 16進・10進・2進数変換',
+    lesTitle_m3l4: 'CS課題1.6 — チェックポイント：16進数',
+    lesTitle_m3l5: 'Flipplybitの最高スコア',
+    lesTitle_m3l6: 'CS課題1.7 — 16進数カラードラゴン',
+    lesTitle_m3l7: 'Hex Invadersの最高スコア',
+    lesTitle_m3l8: 'CS課題1.9 — チェックポイント：16進数カラー',
+    lesTitle_m3l9: 'CS期末評価：2進数と16進数',
+    lesTitle_m3l10: 'CS課題1.余分 — 火星からのメッセージ',
+    lesTitle_m3l13: 'CS課題2.1 — ASCII入門',
+    lesTitle_m3l14: 'CS課題2.2 — ASCIIの探求',
+    lesTitle_m3l15: 'CS課題2.3 — 自分で作るASCIIアート！',
+    lesTitle_m3l16: 'CS期末評価：ASCIIとUTF-8',
+    lesTitle_m3l17: 'CS課題2.余分 — ASCII翻訳器（スプレッドシート）',
+    lesTitle_m3l18: 'CS課題2.余分 — ASCII変換器（Python）',
+    lesTitle_m3l19: 'CS課題3.1 — ASCIIのエラーチェック',
+    lesTitle_m3l20: 'CS課題3.4 — エラー検出バーコード',
+    lesTitle_m3l21: 'CS期末評価：パリティとGTIN-13',
+    lesTitle_m5l1: 'CS課題4.1 — 探索とソートワークシート',
+    lesTitle_m5l2: 'CS期末評価 — 探索とソートクイズ',
+    lesTitle_m2l1: 'あなたのウェブサイトURLとTerm 1チェックイン',
+    lesTitle_m2l2: 'ウェブサイトスクリーンショット提出',
+    lesTitle_m5l1: 'Blenderで3Dモデリング',
+    lesTitle_m5l2: 'あなたの最高のモデル',
+    lesTitle_m6l1: 'あなたの最高のアニメーション',
+    lesTitle_m3l22: 'コンピュータサイエンス単元末テスト',
+    lesTitle_m3l23: 'コンピュータサイエンス単元テスト',
+    lesTitle_m3l24: 'コンピュータサイエンスチェックリスト',
+    lesTitle_m3l11: 'CS課題4.1 — 探索とソートワークシート',
+    lesDesc_m3l11: 'さまざまな探索とソートアルゴリズムについて学びます。',
+    lesTitle_m3l12: 'CS単元末評価 — 探索とソートクイズ',
+    lesDesc_m3l12: '探索とソートアルゴリズムに関する単元末クイズ。',
+    lesTitle_m10l1: 'プロジェクト計画',
+    lesTitle_m10l2: '10DGTプレゼンテーションボード',
+    lesTitle_m4wl1: 'ファイル管理',
+    lesDesc_m4wl1: 'ファイルの保存場所を把握する（特に自分のデバイス上）',
+    lesTitle_m4wl2: 'アニメーションvsコーディング',
+    lesDesc_m4wl2: 'アニメーションとプログラミングアプローチの違いについて学びます。',
+    lesTitle_m7l1: '最高の作品をウェブサイトに追加してください！',
+    lesDesc_m7l1: '製造設計の最佳プロジェクトをウェブサイトに提出。',
+    lesTitle_m8l1: 'ビデオをウェブサイトにアップロード',
+    lesDesc_m8l1: 'オーディオビジュアルプロジェクトのビデオをウェブサイトにアップロード。',
+    lesTitle_m9l1: 'ウェブサイトにGDevelopゲームを埋め込む',
+    lesDesc_m9l1: '完成したGDevelopゲームをウェブサイトに埋め込みます。',
+    lesDesc_m1l1: 'デジタル画像作成ツールと技法を探求し、デジタル画像処理、構図、クリエイティブ表現のスキルを披露します。',
+    lesDesc_m3l1: '2進数と10進数の変換を練習します。',
+    lesDesc_m3l2: '2進数変換の理解を確認します。',
+    lesDesc_m3l3: '16進数、10進数、2進数間の変換を学びます。',
+    lesDesc_m3l4: '16進数変換の理解を確認します。',
+    lesDesc_m3l5: 'Flipplybitバイナリゲームで最高得点を達成。',
+    lesDesc_m3l6: '16進数カラーコードを使用して16進数カラードラゴンを作成。',
+    lesDesc_m3l7: 'Hex Invadersゲームで最高得点を達成。',
+    lesDesc_m3l8: '16進数カラー表現の理解を確認します。',
+    lesDesc_m3l9: '2進数と16進数の概念をカバーする期末評価。',
+    lesDesc_m3l10: 'この拡張チャレンジで火星からの2進数メッセージをデコード。',
+    lesDesc_m3l13: 'コンピュータがASCIIエンコーディングを使用してテキスト文字を表現する方法を学びます。',
+    lesDesc_m3l14: 'ASCIIコードを深く探求し、文字エンコーディングを練習します。',
+    lesDesc_m3l15: 'テキスト文字を使用して自分のASCIIアートを作成。',
+    lesDesc_m3l16: 'ASCIIとUTF-8エンコーディングをカバーする期末評価。',
+    lesDesc_m3l17: 'スプレッドシートを使用してASCII翻訳器を構築。',
+    lesDesc_m3l18: 'PythonプログラミングでASCII変換器をコーディング。',
+    lesDesc_m3l19: 'ASCIIデータ転送でエラーチェックがどのように機能するかを学びます。',
+    lesDesc_m3l20: 'バーコードがエラー検出を使用して精度を確保する方法を探求します。',
+    lesDesc_m3l21: 'パリティビットとGTIN-13バーコードに関する期末評価。',
+    lesDesc_m5l1: 'Blenderソフトウェアを使用した3Dモデリングの基礎を学びます。',
+    lesDesc_m2l1: 'あなたのウェブサイトURLを提出し、Term 1チェックインを完了してください。公開ウェブサイトURLを共有して確認を受けてください。',
+    lesDesc_m2l2: '作成した主要ページと機能を示すウェブサイトのスクリーンショットを提出。',
+    lesDesc_m5l1: 'Blenderソフトウェアを使用した3Dモデリングの基礎を学びます。',
+    lesDesc_m5l2: 'Blenderで作成した最高の3Dモデルを送信。',
+    lesDesc_m6l1: 'Blenderのタイムラインとキーフレームツールを使用してアニメーションを作成。',
+    lesDesc_m6l2: '最高杰作のアニメーションを送信して評価を受けます。',
+    lesDesc_m3l22: 'すべてのコンピュータサイエンス概念をカバーする総合期末テスト。',
+    lesDesc_m3l23: 'コンピュータサイエンスモジュールの代替期末テスト。',
+    lesDesc_m3l24: 'すべてのコンピュータサイエンスタスクが完了していることを確認します。',
+    lesDesc_m10l1: '個人プロジェクトを計画：スコープ、ツール、タイムラインを定義。',
+    lesDesc_m10l2: 'テックフェア展示用のプレゼンテーションボードを作成。',
+    toolName0: '問題解決トレーニング',
+    toolTip0: 'Google検索とAIツールを上手に活用しましょう。',
+    toolName1: 'ファイル管理',
+    toolTip1: 'ファイルの保存場所を把握する（特に自分のデバイス上）',
+    toolName2: '2進数カードシミュレーター',
+    toolTip2: '2進数を理解するための最も重要なツール。',
+    toolName3: '10DGTコースウェブサイト',
+    toolTip3: '10年生デジタルテクノロジーの全教材とリソース。',
+  },
+  ko: {
+    title: '10DGT 모험 지도',
+    subtitle: '중학교 10학년 디지털 기술 · 번사이드 고등학교',
+    modulesDone: '완료 모듈',
+    lessonsDone: '완료 수업',
+    current: '현재',
+    xpEarned: '획득 XP',
+    overallProgress: '전체 여정 진행률',
+    bigIdea: '💡 핵심 아이디어',
+    yourJourney: '🗺️ 디지털 여정 — 10개 모듈',
+    module: '모듈',
+    completed: '완료',
+    lessons: '수업',
+    of: '/',
+    lessonsComplete: '수업 완료',
+    done: '완료',
+    now: '진행 중',
+    todo: '미착수',
+    lastCompleted: '✅ 마지막 완료',
+    currentMission: '🎯 현재 미션',
+    comingUp: '🔜 다음 예정',
+    next: '다음',
+    nextModule: '다음 모듈',
+    clickToAdvance: '위 수업을 클릭하여 진행 상태를 표시하세요',
+    allComplete: '모든 모듈이 완료되었습니다!',
+    finalLesson: '이 모듈의 마지막 수업!',
+    batchModeOn: '일괄 해제',
+    batchModeOff: '일괄 선택',
+    selected: '개 선택됨',
+    batchUndo: '취소',
+    batchCancel: '닫기',
+    toolsForThisLesson: '🧰 이번 수업 도구',
+    nzCurriculum: '📋 NZ 교육과정 — 진행 결과',
+    reset: '🔄 초기화',
+    save: '💾 저장',
+    howItWorks: '❓',
+    helpTitle: '🗺️ 모험 지도 사용법',
+    helpDesc: '이것은 9DGT를 위한 <span class="highlight">인터랙티브 학습 여정</span>입니다. 각 모듈과 수업의 진행 상황을 추적하세요!',
+    helpGreen: '<strong style="color:var(--text)">🟢 초록 (완료)</strong> — 완료한 수업입니다. 클릭하면 취소됩니다.',
+    helpPurple: '<strong style="color:var(--text)">🟣 보라 (진행 중)</strong> — 현재 위치입니다. 클릭하여 완료 표시 후 다음으로!',
+    helpGrey: '<strong style="color:var(--text)">⬜ 회색 (미착수)</strong> — 아직 시작하지 않았습니다. 클릭하여 완료 표시.',
+    helpXP: '<strong style="color:var(--text)">🎮 XP 시스템:</strong>',
+    helpXPDesc: '각 수업 = <span class="highlight">50 XP</span> · 모듈 완료 = <span class="highlight">200 XP 보너스</span> · 전체 완료 = <span class="highlight">500 XP 보너스</span>',
+    helpSave: '<strong style="color:var(--text)">💾 저장:</strong>',
+    helpSaveDesc: '진행 상황이 브라우저에 자동 저장됩니다. 언제든지 "저장"을 클릭하거나 "초기화"로 다시 시작.',
+    helpBigIdea: '<strong style="color:var(--text)">💡 핵심 아이디어:</strong>',
+    helpBigIdeaDesc: '상단의 보라색 배너를 클릭하여 현재 모듈의 핵심 질문을 확인하세요.',
+    helpModules: '<strong style="color:var(--text)">📂 모듈 상세:</strong>',
+    helpModulesDesc: '지도에서 모듈 노드를 클릭하여 수업 목록을 펼치고 개별 진행 상황을 확인하세요.',
+    moduleProgress: '모듈 진행률',
+    clickToJump: '→ 클릭하여 다음 작업으로 이동',
+    progressSaved: '💾 진행 상황이 저장되었습니다!',
+    progressReset: '🔄 진행 상황이 초기화되었습니다!',
+    resetTemplateSaved: '🔧 리셋 템플릿이 저장되었습니다!',
+    resetTemplateTitle: '🔧 리셋 템플릿',
+    save: '저장',
+    actions: '작업',
+    confirmReset: '모든 진행 상황을 초기화하시겠습니까? 이 작업은 되돌릴 수 없습니다.',
+    assessment: '평가',
+    extra: '추가',
+    optional: '선택',
+    topic: '주제',
+    template: '템플릿',
+    batch: '일괄',
+    compulsory: '필수',
+    help: '도움말',
+    coAllCompulsory: '전체 필수',
+    coAllOptional: '전체 선택',
+    coSetAll: '전체 설정',
+    coCompulsory: '필수',
+    coOptional: '선택',
+    coTitle: '⚙️ 필수 / 선택',
+    rtTodo: '미착수',
+    rtCurrent: '진행 중',
+    rtDone: '완료',
+    rtApply: '적용',
+    // Tools
+    toolName0: '문제 해결 훈련',
+    toolTip0: 'Google 검색과 AI 도구를 활용하되, 항상 비판적 사고를 유지할 것.',
+    toolName1: 'Google Classroom 제출 방법',
+    toolTip1: '9학년 기본 스킬 — Google Classroom에 작업을 제출하는 방법.',
+    toolName2: '이진 카드 시뮬레이터',
+    toolTip2: '이진 개념을 이해하는 데 가장 중요한 도구.',
+    toolName3: '파일 관리',
+    toolTip3: '체계적인 파일 관리로 명확한 사고를 유지할 것.',
+    // NZ Curriculum
+    poL30: '같은 문제에 대해 여러 알고리즘이 존재할 수 있음을 이해한다',
+    poL31: '문제를 단계별 지시로 분해하여 알고리즘을 만든다',
+    poL32: '논리적 사고로 프로그램 동작을 예측한다',
+    poL33: '입력, 출력, 순차, 반복을 사용하는 단순 프로그램을 개발하고 디버그한다',
+    poL40: '순차, 선택, 반복을 사용하여 알고리즘을 만든다',
+    poL41: '비교 연산자를 사용하여 기본 선택 구조를 구현한다',
+    poL42: '프로그램 오류를 디버그하고 수정한다',
+    poL43: '오류가 발생한 이유와 수정 방법을 설명한다',
+    poL44: '알고리즘 효율성을 평가한다',
+    poL45: '컴퓨터가 많은 양의 데이터를 검색하고 정렬해야 함을 이해한다',
+    poL50: '독립적으로 문제를 알고리즘으로 분해한다',
+    poL51: '다른 데이터 유형과 논리 연산자를 사용한다',
+    poL52: '체계적인 문서화, 테스트 및 HCI 기반 개발',
+    // Batch modal
+    batchComplete: '완료',
+    batchCancel: '닫기',
+    // ── Module names ──
+    modName_m1: '이미지 만들기',
+    modName_m2: '웹사이트',
+    modName_m3: '컴퓨터 과학',
+    modName_m4: 'Python 프로그래밍',
+    modName_m5: '3D 모델링',
+    modName_m6: '애니메이션',
+    modName_m7: '제조 설계',
+    modName_m8: '오디오 비주얼',
+    modName_m9: '비디오 게임 개발',
+    modName_m10: '학생 주도 프로젝트',
+    modBigIdea_m1: '디지털 도구를 사용하여 이미지를 어떻게 만들고, 편집하고, 조작할 수 있을까요?',
+    modBigIdea_m2: '정보를 명확하게 전달하고 사용자를 참여시키는 효과적인 웹사이트를 어떻게 만들까요?',
+    modBigIdea_m3: '컴퓨터는 바이너리 시스템을 사용하여 데이터를 어떻게 표현하고 처리할까요? 왜 디지털 기술에 중요할까요?',
+    modBigIdea_m4: '코드로 컴퓨터에 어떻게 지시를 내릴까요? 프로그래밍의 기본 블록은 무엇일까요?',
+    modBigIdea_m5: '디지털 공간에서 아이디어에 생명력을 불어넣는 3D 모델을 어떻게 만들까요?',
+    modBigIdea_m6: '애니메이션으로 3D 모델에 어떻게 생명력을 불어넣을까요?',
+    modBigIdea_m7: '디지털 제조 기술로 생산할 수 있는 제품을 어떻게 설계할까요?',
+    modBigIdea_m8: '효과적으로 의미를 전달하는 오디오 비주얼 콘텐츠를 어떻게 만들까요?',
+    modBigIdea_m9: '대화형 비디오 게임을 어떻게 설계하고 개발할까요?',
+    modBigIdea_m10: '배운 모든 것을 응용하여 의미 있는 나만의 디지털 프로젝트를 어떻게 만들 수 있을까요?',
+    modBigIdeaDesc_m1: '이 모듈에서는 디지털 이미지 제작 도구와 기법을 탐구합니다.',
+    modBigIdeaDesc_m3: '컴퓨터는 모든 데이터를 2진수로 저장합니다. 2진수와 16진수 시스템을 배웁니다.',
+    modBigIdeaDesc_m4: 'ASCII 및 UTF-8 텍스트 인코딩을 탐구하고 오류 검출 방법을 배웁니다.',
+    modBigIdeaDesc_m5: '데이터를 효율적으로 검색하고 정렬하는 기본 알고리즘을 배웁니다.',
+    modBigIdeaDesc_m6: 'Python을 사용하여 순차, 선택, 반복으로 프로그래밍을 배웁니다.',
+    modBigIdeaDesc_m7: 'Blender를 사용하여 3D 모델링 기초를 배우고 애니메이션을 만듭니다.',
+    modBigIdeaDesc_m8: 'BHS 기술 박람회에서 발표할 개인 프로젝트로 모든 기술을 선보입니다.',
+    subName_m3s0: '2진수와 16진수',
+    subName_m3s1: 'ASCII와 UTF-8',
+    subName_m3s2: '오류 검출',
+    subName_m3s3: '검색과 정렬',
+    subName_m3s4: '컴퓨터 과학 단원말 과제',
+    subName_m7s0: '제조 설계',
+    subName_m7s1: '오디오 비주얼',
+    subName_m7s2: '비디오 게임 개발',
+    lesTitle_m1l1: '이미지 만들기 제출',
+    lesTitle_m3l1: 'CS 과제 1.2 — 2진수 워크시트',
+    lesTitle_m3l2: 'CS 과제 1.3 — 체크포인트: 2진수',
+    lesTitle_m3l3: 'CS 과제 1.4 — 16진수/10진수/2진수 변환',
+    lesTitle_m3l4: 'CS 과제 1.6 — 체크포인트: 16진수',
+    lesTitle_m3l5: 'Flipplybit 최고 점수',
+    lesTitle_m3l6: 'CS 과제 1.7 — 16진수 컬러 드래곤',
+    lesTitle_m3l7: 'Hex Invaders 최고 점수',
+    lesTitle_m3l8: 'CS 과제 1.9 — 체크포인트: 16진수 컬러',
+    lesTitle_m3l9: 'CS 기말 평가: 2진수와 16진수',
+    lesTitle_m3l10: 'CS 과제 1.추가 — 화성 메시지',
+    lesTitle_m3l13: 'CS 과제 2.1 — ASCII 소개',
+    lesTitle_m3l14: 'CS 과제 2.2 — ASCII 탐구',
+    lesTitle_m3l15: 'CS 과제 2.3 — 나만의 ASCII 아트!',
+    lesTitle_m3l16: 'CS 기말 평가: ASCII와 UTF-8',
+    lesTitle_m3l17: 'CS 과제 2.추가 — ASCII 번역기(스프레드시트)',
+    lesTitle_m3l18: 'CS 과제 2.추가 — ASCII 변환기(Python)',
+    lesTitle_m3l19: 'CS 과제 3.1 — ASCII 오류 검사',
+    lesTitle_m3l20: 'CS 과제 3.4 — 오류 검출 바코드',
+    lesTitle_m3l21: 'CS 기말 평가: 패리티와 GTIN-13',
+    lesTitle_m5l1: 'CS 과제 4.1 — 검색과 정렬 워크시트',
+    lesTitle_m5l2: 'CS 기말 평가 — 검색과 정렬 퀴즈',
+    lesTitle_m2l1: '웹사이트 URL 및 Term 1 체크인',
+    lesTitle_m2l2: '웹사이트 스크린샷 제출',
+    lesTitle_m5l1: 'Blender로 3D 모델링',
+    lesTitle_m5l2: '최고의 모델',
+    lesTitle_m6l1: '최고의 애니메이션',
+    lesTitle_m3l22: '컴퓨터 과학 단원말 테스트',
+    lesTitle_m3l23: '컴퓨터 과학 단원 테스트',
+    lesTitle_m3l24: '컴퓨터 과학 체크리스트',
+    lesTitle_m3l11: 'CS 과제 4.1 — 검색과 정렬 워크시트',
+    lesDesc_m3l11: '다양한 검색과 정렬 알고리즘에 대해 배웁니다.',
+    lesTitle_m3l12: 'CS 기말 평가 — 검색과 정렬 퀴즈',
+    lesDesc_m3l12: '검색과 정렬 알고리즘에 대한 기말 퀴즈.',
+    lesTitle_m6l1: 'Blender로 3D 모델링',
+    lesTitle_m10l1: '프로젝트 기획',
+    lesTitle_m10l2: '10DGT 프레젠테이션 보드',
+    lesTitle_m4wl1: '파일 관리',
+    lesDesc_m4wl1: '파일 저장 위치를 파악하세요 (특히 자신의 기기에서)',
+    lesTitle_m4wl2: '애니메이션 vs 코딩',
+    lesDesc_m4wl2: '애니메이션과 프로그래밍 접근 방식의 차이점에 대해 알아보기.',
+    lesTitle_m7l1: '최고의 작품을 웹사이트에 추가하세요!',
+    lesDesc_m7l1: '제조 설계 최고의 프로젝트를 웹사이트에 제출.',
+    lesTitle_m8l1: '웹사이트에 비디오 업로드',
+    lesDesc_m8l1: '오디오 비주얼 프로젝트 비디오를 웹사이트에 업로드.',
+    lesTitle_m9l1: '웹사이트에 GDevelop 게임 임베드',
+    lesDesc_m9l1: '완성된 GDevelop 게임을 웹사이트에 임베드.',
+    lesDesc_m1l1: '디지털 이미지 처리, 구도, 창의적 표현方面的技能을展示합니다.',
+    lesDesc_m3l2: 'CS 과제 1.3 — 체크포인트: 2진수',
+    lesDesc_m3l3: 'CS 과제 1.4 — 16진수/10진수/2진수 변환',
+    lesDesc_m3l4: 'CS 과제 1.6 — 체크포인트: 16진수',
+    lesDesc_m3l5: 'Flipplybit 최고 점수',
+    lesDesc_m3l6: 'CS 과제 1.7 — 16진수 컬러 드래곤',
+    lesDesc_m3l7: 'Hex Invaders 최고 점수',
+    lesDesc_m3l8: 'CS 과제 1.9 — 체크포인트: 16진수 컬러',
+    lesDesc_m3l9: 'CS 기말 평가: 2진수와 16진수',
+    lesDesc_m3l10: 'CS 과제 1.추가 — 화성 메시지',
+    lesDesc_m2l1: '웹사이트 URL을 제출하고 Term 1 체크인을 완료하세요.',
+    lesDesc_m2l2: '생성한 주요 페이지와 기능을 보여주는 웹사이트 스크린샷을 제출하세요.',
+    lesDesc_m5l1: 'Blender 소프트웨어로 3D 모델링의 기초를 배웁니다.',
+    lesDesc_m5l2: 'Blender에서 만든 최고의 3D 모델을 제출하세요.',
+    lesDesc_m6l1: 'Blender의 타임라인과 키프레임 도구로 애니메이션을 만듭니다.',
+    lesDesc_m6l2: '최고의 애니메이션을 제출하여 평가를 받으세요.',
+    lesDesc_m3l22: '모든 컴퓨터 과학 개념을 다루는 종합 단원말 테스트.',
+    lesDesc_m3l23: '컴퓨터 과학 모듈의 대안 단원말 테스트.',
+    lesDesc_m3l24: '모든 컴퓨터 과학 과제가 완료되었는지 확인합니다.',
+    lesDesc_m10l1: '개인 프로젝트를 기획: 범위, 도구, 타임라인을 정의합니다.',
+    lesDesc_m10l2: '테크 박람회 전시를 위한 프레젠테이션 보드를 만듭니다.',
+    toolName0: '문제 해결 훈련',
+    toolTip0: 'Google 검색과 AI 도구를 현명하게 사용하되, 비판적 사고를 유지하세요.',
+    toolName1: '파일 관리',
+    toolTip1: '파일 저장 위치를 파악하세요 (특히 자신의 기기에서)',
+    toolName2: '2진수 카드 시뮬레이터',
+    toolTip2: '2진수를 이해하는 데 가장 중요한 도구.',
+    toolName3: '10DGT 코스 웹사이트',
+    toolTip3: '10학년 디지털 기술의 모든 교재와 리소스.',
+  }
+};
+
+function t(key) { return (i18n[currentLang] && i18n[currentLang][key]) || i18n.en[key] || key; }
+
+function switchLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('10dgt_lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.textContent === lang.toUpperCase() || 
+      (lang === 'zh' && btn.textContent === '中') ||
+      (lang === 'ja' && btn.textContent === '日') ||
+      (lang === 'ko' && btn.textContent === '한'));
+  });
+  // Remember open module before re-render
+  const openBody = document.querySelector('.ld-body.open');
+  let openModId = null;
+  if (openBody) {
+    const id = openBody.id; // body-m1, body-m2, etc.
+    openModId = id.replace('body-', '');
+  }
+  render();
+  // Restore open state
+  if (openModId) {
+    const body = document.getElementById(`body-${openModId}`);
+    const arrow = document.getElementById(`arrow-${openModId}`);
+    if (body) body.classList.add('open');
+    if (arrow) arrow.style.transform = 'rotate(180deg)';
+  }
+}
+
+function defaultState() {
+  // Default: modules 1-3 done, CS up to image representation done, currently on Programming in Python
+  const lessonStates = {};
+  const pythonDoneIds = ['m4wl1'];
+  DATA.modules.forEach(m => {
+    m.lessons.forEach(l => {
+      if (m.num <= 3) lessonStates[l.id] = 'done';
+      else if (m.num === 4) {
+        // Python module: webLinks - m4wl1 is current, m4wl2 is todo
+        if (l.id === 'm4wl1') lessonStates[l.id] = 'done';
+        else if (l.id === 'm4wl2') lessonStates[l.id] = 'current';
+        else lessonStates[l.id] = 'todo';
+      }
+      else lessonStates[l.id] = 'todo';
+    });
+  });
+  return { lessons: lessonStates };
+}
+
+function loadState() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      // Validate structure
+      if (parsed && parsed.lessons) return parsed;
+    }
+  } catch(e) {}
+  return defaultState();
+}
+
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function saveProgress() {
+  saveState();
+  showToast(t('progressSaved'));
+}
+
+function resetProgress() {
+  if (!confirm(t('confirmReset'))) return;
+  state = getResetTemplateState();
+  saveState();
+  render();
+  showToast(t('progressReset'));
+}
+
+// ───────────────────────────────────────
+// RESET TEMPLATE
+// ───────────────────────────────────────
+const RT_STORAGE = '9dgt_reset_template';
+
+function getResetTemplateState() {
+  const saved = localStorage.getItem(RT_STORAGE);
+  if (saved) {
+    try {
+      const parsed = JSON.parse(saved);
+      if (parsed && parsed.lessons) return parsed;
+    } catch(e) {}
+  }
+  return defaultState();
+}
+
+function loadResetTemplate() {
+  const saved = localStorage.getItem(RT_STORAGE);
+  if (saved) {
+    try { return JSON.parse(saved); } catch(e) {}
+  }
+  // Bootstrap from current defaultState
+  const ds = defaultState();
+  saveResetTemplate(ds);
+  return ds;
+}
+
+function saveResetTemplate(template) {
+  localStorage.setItem(RT_STORAGE, JSON.stringify(template));
+}
+
+let rtEdit = null; // working copy of template being edited
+
+function openRtModal() {
+  rtEdit = JSON.parse(JSON.stringify(loadResetTemplate()));
+  document.getElementById('rt-title').textContent = t('resetTemplateTitle');
+  document.getElementById('rt-cancel-text').textContent = t('batchCancel');
+  document.getElementById('rt-save-text').textContent = t('save');
+  document.getElementById('rt-apply-text').textContent = t('rtApply');
+  // Update quick buttons
+  const quickBtns = document.querySelectorAll('.rt-quick-btn');
+  if (quickBtns[0]) quickBtns[0].textContent = t('rtTodo');
+  if (quickBtns[1]) quickBtns[1].textContent = t('rtCurrent');
+  if (quickBtns[2]) quickBtns[2].textContent = t('rtDone');
+  renderRtModal();
+  document.getElementById('rt-overlay').classList.add('active');
+}
+
+function closeRtModal() {
+  document.getElementById('rt-overlay').classList.remove('active');
+  rtEdit = null;
+}
+
+function saveRtTemplate() {
+  saveResetTemplate(rtEdit);
+  showToast(t('resetTemplateSaved'));
+  closeRtModal();
+}
+
+function applyRtTemplate() {
+  if (!confirm(t('confirmReset'))) return;
+  state = getResetTemplateState();
+  saveState();
+  render();
+  closeRtModal();
+  showToast(t('progressReset'));
+}
+
+function cycleRtStatus(lessonId) {
+  const order = ['todo','current','done'];
+  const cur = rtEdit.lessons[lessonId] || 'todo';
+  const idx = order.indexOf(cur);
+  rtEdit.lessons[lessonId] = order[(idx+1) % 3];
+  renderRtModal();
+}
+
+function rtQuick(status) {
+  if (!rtEdit) return;
+  DATA.modules.forEach(m => m.lessons.forEach(l => { rtEdit.lessons[l.id] = status; }));
+  renderRtModal();
+}
+
+function renderRtModal() {
+  if (!rtEdit) return;
+  const container = document.getElementById('rt-modules');
+  container.innerHTML = '';
+  let doneCount = 0, totalCount = 0;
+
+  DATA.modules.forEach(mod => {
+    const modEl = document.createElement('div');
+    modEl.className = 'co-module';
+    let modHtml = `
+      <div class="co-mod-header" onclick="toggleRtModule('${mod.id}')">
+        <span class="co-mod-emoji">${mod.emoji}</span>
+        <span class="co-mod-name">${t('modName_' + mod.id)}</span>
+        <span class="co-mod-count">${mod.lessons.filter(l=>rtEdit.lessons[l.id]==='done').length}/${mod.lessons.length}</span>
+        <span style="color:var(--text3);font-size:10px">▼</span>
+      </div>
+      <div class="co-lessons open" id="rt-lessons-${mod.id}">`;
+    mod.lessons.forEach(l => {
+      totalCount++;
+      const s = rtEdit.lessons[l.id] || 'todo';
+      if (s === 'done') doneCount++;
+      const label = s === 'done' ? t('done') : s === 'current' ? t('now') : t('todo');
+      modHtml += `
+        <div class="co-lesson">
+          <div class="co-linfo">
+            <div class="co-ltitle">${l.title}</div>
+            <div class="co-ldesc">${l.desc}</div>
+          </div>
+          <span class="rt-toggle ${s}" onclick="cycleRtStatus('${l.id}')">${label}</span>
+        </div>`;
+    });
+    modHtml += '</div>';
+    modEl.innerHTML = modHtml;
+    container.appendChild(modEl);
+  });
+
+  document.getElementById('rt-count').textContent = `${doneCount}/${totalCount}`;
+}
+
+function toggleRtModule(modId) {
+  const el = document.getElementById(`rt-lessons-${modId}`);
+  if (el) el.classList.toggle('open');
+}
+
+// ───────────────────────────────────────
+// DERIVED STATE
+// ───────────────────────────────────────
+function getModuleStatus(mod) {
+  const requiredLessons = mod.lessons.filter(l => isCompulsory(l.id));
+  const requiredStatuses = requiredLessons.map(l => state.lessons[l.id]);
+  if (requiredStatuses.length > 0 && requiredStatuses.every(s => s === 'done')) return 'done';
+  return 'current';
+}
+
+function getLessonStatus(lessonId) {
+  return state.lessons[lessonId] || 'todo';
+}
+
+function getModuleProgress(mod) {
+  const requiredLessons = mod.lessons.filter(l => isCompulsory(l.id));
+  const total = requiredLessons.length;
+  const done = requiredLessons.filter(l => state.lessons[l.id] === 'done').length;
+  return { done, total, pct: total > 0 ? Math.round((done/total)*100) : 0 };
+}
+
+// Track which module is currently shown in the Big Idea Banner
+let activeModuleId = null;
+
+function getCurrentModule() {
+  return DATA.modules.find(m => getModuleStatus(m) === 'current') || DATA.modules[0];
+}
+
+function getActiveModule() {
+  if (activeModuleId) return DATA.modules.find(m => m.id === activeModuleId) || getCurrentModule();
+  return getCurrentModule();
+}
+
+function getCurrentLesson() {
+  for (const mod of DATA.modules) {
+    for (const les of mod.lessons) {
+      if (state.lessons[les.id] === 'current') return { mod, lesson: les };
+    }
+  }
+  return null;
+}
+
+function calculateXP() {
+  let xp = 0;
+  DATA.modules.forEach(m => {
+    m.lessons.forEach(l => {
+      if (state.lessons[l.id] === 'done') {
+        if (isCompulsory(l.id)) xp += l.assessment ? 100 : XP_LESSON;
+        else xp += 25; // optional lessons give reduced XP
+      }
+    });
+    if (getModuleStatus(m) === 'done') xp += XP_MODULE;
+  });
+  // Bonus if all compulsory done
+  let totalCompulsory = 0, doneCompulsory = 0;
+  DATA.modules.forEach(m => m.lessons.forEach(l => {
+    if (isCompulsory(l.id)) { totalCompulsory++; if (state.lessons[l.id] === 'done') doneCompulsory++; }
+  }));
+  if (totalCompulsory > 0 && doneCompulsory === totalCompulsory) xp += XP_ALL;
+  return xp;
+}
+
+function getOverallProgress() {
+  let total = 0, done = 0;
+  DATA.modules.forEach(m => {
+    m.lessons.forEach(l => {
+      if (isCompulsory(l.id)) {
+        total++;
+        if (state.lessons[l.id] === 'done') done++;
+      }
+    });
+  });
+  return total > 0 ? Math.round((done/total)*100) : 0;
+}
+
+// ───────────────────────────────────────
+// BATCH / MULTI-SELECT MODE
+// ───────────────────────────────────────
+let batchSelected = new Set();
+
+function openBatchModal() {
+  batchSelected.clear();
+  // Pre-select all completed lessons for convenience
+  DATA.modules.forEach(mod => {
+    mod.lessons.forEach(l => {
+      if (state.lessons[l.id] === 'done') batchSelected.add(l.id);
+    });
+  });
+  renderBatchModal();
+  // Translate batch modal static elements
+  const cancelBtn = document.querySelector('#batch-overlay .bm-btn-cancel');
+  if (cancelBtn) cancelBtn.textContent = '✕ ' + t('batchCancel');
+  document.getElementById('batch-overlay').classList.add('active');
+}
+
+function closeBatchModal() {
+  document.getElementById('batch-overlay').classList.remove('active');
+  batchSelected.clear();
+}
+
+function renderBatchModal() {
+  const container = document.getElementById('bm-modules');
+  container.innerHTML = '';
+  
+  DATA.modules.forEach(mod => {
+    const total = mod.lessons.length;
+    const done = mod.lessons.filter(l => state.lessons[l.id] === 'done').length;
+    const modEl = document.createElement('div');
+    modEl.className = 'bm-module';
+    
+    // Count how many lessons in this module are selected
+    const allIds = mod.lessons.map(l => l.id);
+    const selCount = allIds.filter(id => batchSelected.has(id)).length;
+    const allSel = selCount === allIds.length && allIds.length > 0;
+    
+    modEl.innerHTML = `
+      <div class="bm-mod-header" onclick="toggleBatchModule('${mod.id}')">
+        <span class="bm-mod-emoji">${mod.emoji}</span>
+        <span class="bm-mod-name">${t('modName_' + mod.id)}</span>
+        <span class="bm-mod-progress">${done}/${total}</span>
+        <div class="bm-mod-check ${allSel ? 'checked' : ''}" onclick="event.stopPropagation(); toggleBatchModAll('${mod.id}')">✓</div>
+      </div>
+      <div class="bm-lessons" id="bm-lessons-${mod.id}">
+        ${mod.lessons.map(les => {
+          const ls = state.lessons[les.id] || 'todo';
+          const isSel = batchSelected.has(les.id);
+          const statusClass = ls === 'done' ? 's-done' : ls === 'current' ? 's-current' : 's-todo';
+          const statusText = ls === 'done' ? t('done') : ls === 'current' ? t('now') : t('todo');
+          const typeBadge = les.type ? `<span style="font-size:9px;padding:1px 5px;border-radius:8px;background:${les.type==='DDDO'?'rgba(210,153,34,0.15)':'rgba(63,185,80,0.15)'};color:${les.type==='DDDO'?'var(--amber)':'var(--green)'};font-weight:600">${les.type}</span>` : '';
+          const assessBadge = les.assessment ? '<span style="font-size:9px;padding:1px 5px;border-radius:8px;background:rgba(248,81,73,0.15);color:var(--red);font-weight:600">\uD83D\uDCDD</span>' : '';
+          return `
+            <div class="bm-lesson ${isSel ? 'bm-sel' : ''}" onclick="toggleBatchLesson('${les.id}')">
+              <div class="bm-lcheck ${isSel ? 'checked' : ''}">✓</div>
+              <div class="bm-linfo">
+                <div class="bm-ltitle">${t('lesTitle_' + les.id)} ${typeBadge}${assessBadge}</div>
+                <div class="bm-ldesc">${t('lesDesc_' + les.id)}</div>
+              </div>
+              <span class="bm-lstatus ${statusClass}">${statusText}</span>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
+    container.appendChild(modEl);
+  });
+  
+  updateBatchCount();
+}
+
+// ───────────────────────────────────────
+// COMPULSORY / OPTIONAL MANAGEMENT
+// ───────────────────────────────────────
+const CO_STORAGE_KEY = '9dgt_compulsory';
+let compulsorySet = new Set();
+
+function loadCompulsory() {
+  try {
+    const saved = localStorage.getItem(CO_STORAGE_KEY);
+    if (saved) {
+      const arr = JSON.parse(saved);
+      if (Array.isArray(arr)) { compulsorySet = new Set(arr); return; }
+    }
+  } catch(e) {}
+  // Default: all lessons are compulsory
+  const allIds = [];
+  DATA.modules.forEach(m => m.lessons.forEach(l => allIds.push(l.id)));
+  compulsorySet = new Set(allIds);
+}
+
+function saveCompulsory() {
+  localStorage.setItem(CO_STORAGE_KEY, JSON.stringify([...compulsorySet]));
+}
+
+function isCompulsory(lessonId) {
+  return compulsorySet.has(lessonId);
+}
+
+function openCoModal() {
+  document.getElementById('co-title-text').textContent = t('coTitle');
+  document.getElementById('co-cancel-text').textContent = t('batchCancel');
+  renderCoModal();
+  document.getElementById('co-overlay').classList.add('active');
+}
+
+function closeCoModal() {
+  document.getElementById('co-overlay').classList.remove('active');
+  saveCompulsory();
+  render(); // re-render main page with updated badges
+}
+
+function renderCoModal() {
+  const container = document.getElementById('co-modules');
+  container.innerHTML = '';
+
+  DATA.modules.forEach(mod => {
+    const total = mod.lessons.length;
+    const compCount = mod.lessons.filter(l => isCompulsory(l.id)).length;
+    const modEl = document.createElement('div');
+    modEl.className = 'co-module';
+
+    modEl.innerHTML = `
+      <div class="co-mod-header" onclick="toggleCoModule('${mod.id}')">
+        <span class="co-mod-emoji">${mod.emoji}</span>
+        <span class="co-mod-name">${t('modName_' + mod.id)}</span>
+        <span class="co-mod-count">${compCount}/${total}</span>
+        <span class="co-mod-toggle" onclick="event.stopPropagation(); toggleCoModAll('${mod.id}')" id="co-toggle-${mod.id}">${compCount === total ? t('coAllCompulsory') : compCount === 0 ? t('coAllOptional') : t('coSetAll')}</span>
+      </div>
+      <div class="co-lessons" id="co-lessons-${mod.id}">
+        ${mod.lessons.map(les => {
+          const isComp = isCompulsory(les.id);
+          const typeBadge = les.type ? `<span style="font-size:9px;padding:1px 5px;border-radius:8px;background:${les.type==='DDDO'?'rgba(210,153,34,0.15)':'rgba(63,185,80,0.15)'};color:${les.type==='DDDO'?'var(--amber)':'var(--green)'};font-weight:600">${les.type}</span>` : '';
+          const assessBadge = les.assessment ? '<span style="font-size:9px;padding:1px 5px;border-radius:8px;background:rgba(248,81,73,0.15);color:var(--red);font-weight:600">📝</span>' : '';
+          return `
+            <div class="co-lesson">
+              <div class="co-linfo">
+                <div class="co-ltitle">${t('lesTitle_' + les.id)} ${typeBadge}${assessBadge}</div>
+                <div class="co-ldesc">${t('lesDesc_' + les.id)}</div>
+              </div>
+              <span class="co-toggle ${isComp ? 'compulsory' : 'optional'}" onclick="toggleCompulsory('${les.id}')">
+                ${isComp ? '✓ ' + t('coCompulsory') : '○ ' + t('coOptional')}
+              </span>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
+    container.appendChild(modEl);
+  });
+  updateCoCount();
+}
+
+function updateCoCount() {
+  let total = 0, comp = 0;
+  DATA.modules.forEach(m => m.lessons.forEach(l => {
+    total++;
+    if (isCompulsory(l.id)) comp++;
+  }));
+  document.getElementById('co-count').textContent = `${comp} / ${total}`;
+}
+
+function toggleCompulsory(lessonId) {
+  if (compulsorySet.has(lessonId)) compulsorySet.delete(lessonId);
+  else compulsorySet.add(lessonId);
+  saveCompulsory();
+  // Preserve scroll position and open modules
+  const container = document.getElementById('co-modules');
+  const scrollTop = container ? container.scrollTop : 0;
+  const openIds = [];
+  document.querySelectorAll('.co-lessons.open').forEach(el => {
+    if (el.id) openIds.push(el.id.replace('co-lessons-', ''));
+  });
+  renderCoModal();
+  openIds.forEach(id => {
+    const el = document.getElementById(`co-lessons-${id}`);
+    if (el) el.classList.add('open');
+  });
+  if (container) container.scrollTop = scrollTop;
+}
+
+function toggleCoModule(modId) {
+  const el = document.getElementById(`co-lessons-${modId}`);
+  if (!el) return;
+  const isOpen = el.classList.contains('open');
+  document.querySelectorAll('.co-lessons').forEach(b => b.classList.remove('open'));
+  if (!isOpen) el.classList.add('open');
+}
+
+function toggleCoModAll(modId) {
+  const mod = DATA.modules.find(m => m.id === modId);
+  if (!mod) return;
+  const allComp = mod.lessons.every(l => isCompulsory(l.id));
+  if (allComp) {
+    // Make all optional
+    mod.lessons.forEach(l => compulsorySet.delete(l.id));
+  } else {
+    // Make all compulsory
+    mod.lessons.forEach(l => compulsorySet.add(l.id));
+  }
+  renderCoModal();
+}
+
+function toggleBatchModule(modId) {
+  const el = document.getElementById(`bm-lessons-${modId}`);
+  if (el) el.classList.toggle('open');
+}
+
+function toggleBatchModAll(modId) {
+  const mod = DATA.modules.find(m => m.id === modId);
+  if (!mod) return;
+  const allIds = mod.lessons.map(l => l.id);
+  const allSel = allIds.every(id => batchSelected.has(id));
+  
+  if (allSel) {
+    allIds.forEach(id => batchSelected.delete(id));
+  } else {
+    allIds.forEach(id => batchSelected.add(id));
+  }
+  const container = document.getElementById('bm-modules');
+  const scrollTop = container ? container.scrollTop : 0;
+  renderBatchModal();
+  // Re-open this module
+  const el = document.getElementById(`bm-lessons-${modId}`);
+  if (el) el.classList.add('open');
+  if (container) container.scrollTop = scrollTop;
+}
+
+function toggleBatchLesson(lessonId) {
+  if (batchSelected.has(lessonId)) {
+    batchSelected.delete(lessonId);
+  } else {
+    batchSelected.add(lessonId);
+  }
+  // Update this lesson's DOM directly without re-rendering everything
+  const lessonEl = document.querySelector(`[onclick="toggleBatchLesson('${lessonId}')"]`);
+  if (lessonEl) {
+    const isSel = batchSelected.has(lessonId);
+    lessonEl.classList.toggle('bm-sel', isSel);
+    const check = lessonEl.querySelector('.bm-lcheck');
+    if (check) check.classList.toggle('checked', isSel);
+  }
+  updateBatchCount();
+}
+
+function updateBatchCount() {
+  const count = batchSelected.size;
+  document.getElementById('bm-count').textContent = count;
+  document.getElementById('bm-btn-done').disabled = count === 0;
+  document.getElementById('bm-btn-undo').disabled = count === 0;
+  document.getElementById('bm-title-text').textContent = '☑️ ' + t('batchModeOff');
+  document.getElementById('bm-btn-done').textContent = '✓ ' + t('done');
+  document.getElementById('bm-btn-undo').textContent = '↩ ' + t('batchUndo');
+}
+
+function batchMarkDone() {
+  if (batchSelected.size === 0) return;
+  const affectedMods = new Set();
+  batchSelected.forEach(id => {
+    state.lessons[id] = 'done';
+    for (const mod of DATA.modules) {
+      if (mod.lessons.find(l => l.id === id)) { affectedMods.add(mod.id); break; }
+    }
+  });
+  // Set current to next non-done in each affected module
+  affectedMods.forEach(modId => {
+    const mod = DATA.modules.find(m => m.id === modId);
+    if (!mod) return;
+    let found = false;
+    for (const l of mod.lessons) {
+      if (state.lessons[l.id] !== 'done') {
+        state.lessons[l.id] = 'current';
+        found = true;
+        break;
+      }
+    }
+    if (!found) {
+      const modIdx = DATA.modules.indexOf(mod);
+      const nextMod = DATA.modules[modIdx + 1];
+      if (nextMod) {
+        const firstNonDone = nextMod.lessons.find(l => state.lessons[l.id] !== 'done');
+        if (firstNonDone) state.lessons[firstNonDone.id] = 'current';
+      }
+    }
+  });
+  // Confetti for completed modules
+  affectedMods.forEach(modId => {
+    const mod = DATA.modules.find(m => m.id === modId);
+    if (mod && mod.lessons.filter(l => !l.extra).every(l => state.lessons[l.id] === 'done')) {
+      launchConfetti();
+    }
+  });
+  
+  closeBatchModal();
+  saveState();
+  render();
+  restoreOpenModule();
+}
+
+function batchMarkCurrent() {
+  if (batchSelected.size === 0) return;
+  batchSelected.forEach(id => {
+    state.lessons[id] = 'current';
+  });
+  closeBatchModal();
+  saveState();
+  render();
+  restoreOpenModule();
+}
+
+function restoreOpenModule() {
+  // Re-expand the first module that has any non-done lessons (likely the one user was working on)
+  for (const mod of DATA.modules) {
+    const hasActivity = mod.lessons.some(l => state.lessons[l.id] === 'current');
+    if (hasActivity) {
+      const body = document.getElementById(`body-${mod.id}`);
+      const arrow = document.getElementById(`arrow-${mod.id}`);
+      if (body) { body.classList.add('open'); }
+      if (arrow) { arrow.style.transform = 'rotate(180deg)'; }
+      break;
+    }
+  }
+}
+
+// ───────────────────────────────────────
+// TOGGLE LESSON STATE
+// ───────────────────────────────────────
+function toggleLesson(lessonId, e) {
+  if (e) { e.stopPropagation(); e.preventDefault(); }
+  const current = state.lessons[lessonId];
+  
+  // Find lesson and module
+  let targetMod = null, targetLesson = null, targetIdx = -1;
+  for (const mod of DATA.modules) {
+    const idx = mod.lessons.findIndex(l => l.id === lessonId);
+    if (idx >= 0) { targetMod = mod; targetLesson = mod.lessons[idx]; targetIdx = idx; break; }
+  }
+  if (!targetMod) return;
+
+  if (current === 'done') {
+    // Mark as current (undo)
+    state.lessons[lessonId] = 'current';
+  } else if (current === 'current' || current === 'todo') {
+    
+    // Mark as done
+    state.lessons[lessonId] = 'done';
+    
+    // Find the NEXT non-done lesson in the same module
+    let nextLesson = null;
+    for (let i = targetIdx + 1; i < targetMod.lessons.length; i++) {
+      if (state.lessons[targetMod.lessons[i].id] !== 'done') {
+        nextLesson = targetMod.lessons[i];
+        break;
+      }
+    }
+    
+    if (nextLesson) {
+      state.lessons[nextLesson.id] = 'current';
+    } else {
+      // No more non-done lessons in this module — check if module is complete
+      const allRequiredDone = targetMod.lessons.filter(l => isCompulsory(l.id)).every(l => state.lessons[l.id] === 'done');
+      if (allRequiredDone) {
+        // Unlock next module
+        const modIdx = DATA.modules.indexOf(targetMod);
+        const nextMod = DATA.modules[modIdx + 1];
+        if (nextMod && nextMod.lessons.length > 0) {
+          state.lessons[nextMod.lessons[0].id] = 'current';
+        }
+        launchConfetti();
+      }
+    }
+  }
+  
+  saveState();
+  // Remember which module body is open before re-render
+  const openModId = targetMod ? targetMod.id : null;
+  render();
+  // Restore the open state
+  if (openModId) {
+    const body = document.getElementById(`body-${openModId}`);
+    const arrow = document.getElementById(`arrow-${openModId}`);
+    if (body) { body.classList.add('open'); }
+    if (arrow) { arrow.style.transform = 'rotate(180deg)'; }
+  }
+}
+
+// ───────────────────────────────────────
+// RENDER
+// ───────────────────────────────────────
+function render() {
+  renderStats();
+  renderProgress();
+  renderBigIdea();
+  renderModuleMap();
+  renderModuleDetails();
+  renderInfoColumns();
+  document.getElementById('tools-label').textContent = t('toolsForThisLesson');
+  document.getElementById('curriculum-label').textContent = t('nzCurriculum');
+  // Translate Tools section
+  for (let i = 0; i < 4; i++) {
+    const nameEl = document.getElementById(`tool-name-${i}`);
+    const tipEl = document.getElementById(`tool-tip-${i}`);
+    if (nameEl) nameEl.textContent = t(`toolName${i}`);
+    if (tipEl) tipEl.textContent = t(`toolTip${i}`);
+  }
+  // Tool card click → open link
+  document.querySelectorAll('.tool-card[data-href]').forEach(card => {
+    card.addEventListener('click', () => window.open(card.dataset.href, '_blank'));
+  });
+  // Translate NZ Curriculum section
+  const poKeys = ['poL30','poL31','poL32','poL33','poL40','poL41','poL42','poL43','poL44','poL45','poL50','poL51','poL52'];
+  poKeys.forEach(key => {
+    const el = document.getElementById(key);
+    if (el) el.textContent = t(key);
+  });
+  // Translate Batch modal buttons
+  document.getElementById('bm-btn-done').textContent = '✓ ' + t('batchComplete');
+  document.getElementById('bm-btn-undo').textContent = '↩ ' + t('batchUndo');
+  document.querySelectorAll('.topbar-title')[0].textContent = t('title');
+  document.querySelectorAll('.topbar-sub')[0].textContent = t('subtitle');
+  // Update topbar buttons
+  document.querySelectorAll('.r-text')[0].textContent = t('save').replace('💾 ','').replace('💾','');
+  document.querySelectorAll('.r-text')[1].textContent = t('actions');
+  // Update dropdown menu items
+  const dropItems = document.querySelectorAll('.dropdown-item');
+  if (dropItems[0]) dropItems[0].innerHTML = '🔄 ' + t('reset');
+  if (dropItems[1]) dropItems[1].innerHTML = '📋 ' + t('template');
+  if (dropItems[2]) dropItems[2].innerHTML = '☑️ ' + t('batch');
+  if (dropItems[3]) dropItems[3].innerHTML = '⚙️ ' + t('compulsory');
+  if (dropItems[4]) dropItems[4].innerHTML = '❓ ' + t('help');
+}
+
+function renderStats() {
+  const doneMods = DATA.modules.filter(m => getModuleStatus(m) === 'done').length;
+  let totalLessons = 0, doneLessons = 0;
+  DATA.modules.forEach(m => {
+    m.lessons.forEach(l => {
+      if (isCompulsory(l.id)) {
+        totalLessons++;
+        if (state.lessons[l.id] === 'done') doneLessons++;
+      }
+    });
+  });
+  const cur = getCurrentModule();
+  const xp = calculateXP();
+  
+  document.getElementById('stat-modules').textContent = `${doneMods} / 6`;
+  document.getElementById('stat-lessons').textContent = `${doneLessons} / ${totalLessons}`;
+  document.getElementById('stat-current').textContent = cur ? t('modName_' + cur.id) : '—';
+  document.getElementById('stat-xp').textContent = xp.toLocaleString();
+  document.querySelectorAll('.stat-label')[0].textContent = t('modulesDone');
+  document.querySelectorAll('.stat-label')[1].textContent = t('lessonsDone');
+  document.querySelectorAll('.stat-label')[2].textContent = t('current');
+  document.querySelectorAll('.stat-label')[3].textContent = t('xpEarned');
+}
+
+function renderProgress() {
+  const pct = getOverallProgress();
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-pct').textContent = pct + '%';
+  document.querySelector('.progress-label span:first-child').textContent = t('overallProgress');
+}
+
+function renderBigIdea(mod) {
+  const cur = mod || getCurrentModule();
+  activeModuleId = cur.id;
+  document.querySelector('.bi-tag').textContent = t('bigIdea');
+  document.getElementById('bi-module-tag').textContent = `${t('module')} ${cur.num}: ${t('modName_' + cur.id)}`;
+  document.getElementById('bi-quote').textContent = t('modBigIdea_' + cur.id);
+  document.getElementById('bi-desc').textContent = t('modBigIdeaDesc_' + cur.id);
+  document.getElementById('bi-maori').textContent = cur.maori ? `"${cur.maori}"` : '';
+  document.getElementById('bi-maori').style.display = cur.maori ? 'block' : 'none';
+}
+
+function renderModuleMap() {
+  const container = document.getElementById('module-map');
+  container.innerHTML = '';
+  document.querySelector('.section-label').textContent = t('yourJourney');
+
+  DATA.modules.forEach(mod => {
+    const status = getModuleStatus(mod);
+    const progress = getModuleProgress(mod);
+
+    const node = document.createElement('div');
+    node.className = `module-node m-${status}`;
+    node.onclick = () => jumpToModule(mod.id);
+
+    let checkHtml = status === 'done' ? '<div class="node-check">✓</div>' : '';
+
+    node.innerHTML = `
+      <div class="node-circle">${mod.emoji}${checkHtml}</div>
+      <div class="node-label">
+        <div class="node-num">${t('module')} ${mod.num}</div>
+        <div class="node-name">${t('modName_' + mod.id)}</div>
+        <div class="node-status">${
+          status === 'done' ? `✅ ${progress.pct}%` :
+          `🎮 ${progress.pct}%`
+        }</div>
+      </div>
+    `;
+    container.appendChild(node);
+  });
+}
+
+function renderModuleDetails() {
+  const container = document.getElementById('module-details');
+  container.innerHTML = '';
+  
+  DATA.modules.forEach(mod => {
+    const status = getModuleStatus(mod);
+    const progress = getModuleProgress(mod);
+    
+    const detail = document.createElement('div');
+    detail.className = 'lesson-detail';
+    detail.id = `detail-${mod.id}`;
+    
+    const badgeColor = status === 'done' ? 'tag-done' : 'tag-current';
+    const badgeText = status === 'done' ? t('completed') : `${progress.done}/${progress.total} ${t('lessons')}`;
+
+    // Build lesson steps — grouped by submodules if available
+    let stepsHtml = '';
+    if (mod.submodules && mod.submodules.length > 0) {
+      // Render with submodule grouping
+      stepsHtml = mod.submodules.map((sub, subIdx) => {
+        const subLessons = sub.lessons.map(id => mod.lessons.find(l => l.id === id)).filter(Boolean);
+        const subCompulsory = subLessons.filter(l => isCompulsory(l.id));
+        const subDone = subCompulsory.filter(l => state.lessons[l.id] === 'done').length;
+        const subTotal = subCompulsory.length;
+        const subPct = subTotal > 0 ? Math.round((subDone/subTotal)*100) : 0;
+        const allDone = subTotal > 0 && subDone === subTotal;
+        
+        const lessonsHtml = subLessons.map((les, idx) => {
+          const ls = state.lessons[les.id] || 'todo';
+          const cbClass = ls === 'done' ? 's-done' : ls === 'current' ? 's-current' : 's-todo';
+          const cbIcon = ls === 'done' ? '✓' : ls === 'current' ? '▶' : idx+1;
+          const tagClass = ls === 'done' ? 'tag-done' : ls === 'current' ? 'tag-current' : 'tag-todo';
+          const tagText = ls === 'done' ? t('done') : ls === 'current' ? t('now') : t('todo');
+          const typeBadge = les.type ? `<span style="font-size:10px;padding:1px 6px;border-radius:10px;background:${les.type==='DDDO'?'rgba(210,153,34,0.15)':'rgba(63,185,80,0.15)'};color:${les.type==='DDDO'?'var(--amber)':'var(--green)'};font-weight:600">${les.type}</span>` : '';
+          const assessBadge = les.assessment ? '<span style="font-size:10px;padding:1px 6px;border-radius:10px;background:rgba(248,81,73,0.15);color:var(--red);font-weight:600">📝 ' + t('assessment') + '</span>' : '';
+          const extraBadge = les.extra ? '<span style="font-size:10px;padding:1px 6px;border-radius:10px;background:rgba(88,166,255,0.15);color:var(--blue);font-weight:600">⭐ ' + t('extra') + '</span>' : '';
+          const optionalBadge = !isCompulsory(les.id) ? '<span style="font-size:10px;padding:1px 6px;border-radius:10px;background:rgba(139,148,158,0.12);color:var(--text3);font-weight:500;border:1px dashed var(--border)">○ ' + t('optional') + '</span>' : '';
+          const badges = [typeBadge, assessBadge, extraBadge, optionalBadge].filter(b=>b).join(' ');
+          const optClass = !isCompulsory(les.id) ? ' is-optional' : '';
+          return `
+            <div class="lesson-step${optClass}" style="${les.extra ? ';border-left:2px solid var(--blue)' : les.assessment ? ';border-left:2px solid var(--red)' : ''}"
+                 onclick="toggleLesson('${les.id}', event)">
+              <div class="step-checkbox ${cbClass}">${cbIcon}</div>
+              <div class="step-info">
+                <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+                  <div class="step-title">${t('lesTitle_' + les.id)}</div>
+                  ${badges}
+                </div>
+                <div class="step-desc">${t('lesDesc_' + les.id)}</div>
+              </div>
+              <span class="step-tag ${tagClass}">${tagText}</span>
+            </div>
+          `;
+        }).join('');
+
+        return `
+          <div class="submodule-group">
+            <div class="submodule-header" onclick="toggleSubmodule('${mod.id}-sub${subIdx}', event)">
+              <div class="submodule-header-left">
+                <span class="submodule-emoji">${sub.emoji}</span>
+                <span class="submodule-name">${t('subName_' + mod.id + 's' + subIdx)}</span>
+                <span class="submodule-topic">${t('topic')} ${sub.topic}</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px">
+                <div class="submodule-progress"><div class="submodule-progress-fill" style="width:${subPct}%"></div></div>
+                <span class="submodule-badge" style="${allDone ? 'background:var(--green-dim);color:var(--green)' : ''}">${subDone}/${subTotal}</span>
+                <span style="color:var(--text3);font-size:10px;transition:transform .3s" id="sub-arrow-${mod.id}-sub${subIdx}">▼</span>
+              </div>
+            </div>
+            <div class="submodule-lessons open" id="sub-body-${mod.id}-sub${subIdx}" style="max-height:2000px">
+              <div class="lesson-steps" style="gap:6px">
+                ${lessonsHtml}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    } else if (mod.webLinks && mod.webLinks.length > 0) {
+    } else {
+      // Standard flat list (no submodules)
+      stepsHtml = `<div class="lesson-steps">${mod.lessons.map((les, idx) => {
+        const ls = state.lessons[les.id] || 'todo';
+        const cbClass = ls === 'done' ? 's-done' : ls === 'current' ? 's-current' : 's-todo';
+        const cbIcon = ls === 'done' ? '✓' : ls === 'current' ? '▶' : idx+1;
+        const tagClass = ls === 'done' ? 'tag-done' : ls === 'current' ? 'tag-current' : 'tag-todo';
+        const tagText = ls === 'done' ? t('done') : ls === 'current' ? t('now') : t('todo');
+        const typeBadge = les.type ? `<span style="font-size:10px;padding:1px 6px;border-radius:10px;background:${les.type==='DDDO'?'rgba(210,153,34,0.15)':'rgba(63,185,80,0.15)'};color:${les.type==='DDDO'?'var(--amber)':'var(--green)'};font-weight:600">${les.type}</span>` : '';
+        const assessBadge = les.assessment ? '<span style="font-size:10px;padding:1px 6px;border-radius:10px;background:rgba(248,81,73,0.15);color:var(--red);font-weight:600">📝 ' + t('assessment') + '</span>' : '';
+        const extraBadge = les.extra ? '<span style="font-size:10px;padding:1px 6px;border-radius:10px;background:rgba(88,166,255,0.15);color:var(--blue);font-weight:600">⭐ ' + t('extra') + '</span>' : '';
+        const optionalBadge = !isCompulsory(les.id) ? '<span style="font-size:10px;padding:1px 6px;border-radius:10px;background:rgba(139,148,158,0.12);color:var(--text3);font-weight:500;border:1px dashed var(--border)">○ ' + t('optional') + '</span>' : '';
+        const webLinkBadge = les.link ? '<span style="font-size:10px;padding:1px 6px;border-radius:10px;background:rgba(88,166,255,0.15);color:var(--blue);font-weight:600">🌐 Web Link</span>' : '';
+        const dateStr = '';
+        const badges = [typeBadge, assessBadge, extraBadge, optionalBadge, webLinkBadge].filter(b=>b).join(' ');
+        const optClass = !isCompulsory(les.id) ? ' is-optional' : '';
+        const titleContent = les.link 
+          ? `<a href="${les.link}" target="_blank" rel="noopener" style="color:var(--blue);text-decoration:none" onclick="event.stopPropagation()">🌐 ${t('lesTitle_' + les.id)}</a>`
+          : t('lesTitle_' + les.id);
+        return `
+          <div class="lesson-step${optClass}" style="${les.extra ? ';border-left:2px solid var(--blue)' : les.assessment ? ';border-left:2px solid var(--red)' : les.link ? ';border-left:2px solid var(--blue)' : ''}"
+               onclick="toggleLesson('${les.id}', event)">
+            <div class="step-checkbox ${cbClass}">${cbIcon}</div>
+            <div class="step-info">
+              <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+                <div class="step-title">${titleContent}</div>
+                ${badges}
+              </div>
+              <div class="step-desc">${t('lesDesc_' + les.id)}</div>
+            </div>
+            <span class="step-tag ${tagClass}">${tagText}</span>
+          </div>
+        `;
+      }).join('')}</div>`;
+    }
+
+    detail.innerHTML = `
+      <div class="ld-header" onclick="toggleModuleExpand('${mod.id}')">
+        <div class="ld-left">
+          <div class="ld-emoji">${mod.emoji}</div>
+          <div>
+            <div class="ld-title">${t('modName_' + mod.id)}</div>
+            <div class="ld-subtitle">${t('module')} ${mod.num} · ${progress.done} ${t('of')} ${progress.total} ${t('lessonsComplete')}</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <div class="ld-progress-bar"><div class="ld-progress-fill" style="width:${progress.pct}%"></div></div>
+          <span class="ld-badge ${badgeColor}">${badgeText}</span>
+          <span class="ld-arrow" style="color:var(--text3);font-size:12px;transition:transform .3s" id="arrow-${mod.id}">▼</span>
+        </div>
+      </div>
+      <div class="ld-body" id="body-${mod.id}">
+        ${stepsHtml}
+      </div>
+    `;
+    container.appendChild(detail);
+  });
+}
+
+function toggleSubmodule(subId, e) {
+  if (e) { e.stopPropagation(); e.preventDefault(); }
+  const body = document.getElementById(`sub-body-${subId}`);
+  const arrow = document.getElementById(`sub-arrow-${subId}`);
+  if (!body) return;
+  const isOpen = body.style.maxHeight !== '0px';
+  body.style.maxHeight = isOpen ? '0px' : '2000px';
+  body.style.overflow = 'hidden';
+  body.style.transition = 'max-height .3s ease';
+  if (arrow) arrow.style.transform = isOpen ? 'rotate(-90deg)' : 'rotate(0deg)';
+}
+
+function renderInfoColumns() {
+  const cur = getCurrentModule();
+  const currentLes = getCurrentLesson();
+  
+  // Find last done lesson
+  let lastDone = null;
+  for (let i = DATA.modules.length - 1; i >= 0; i--) {
+    for (let j = DATA.modules[i].lessons.length - 1; j >= 0; j--) {
+      if (state.lessons[DATA.modules[i].lessons[j].id] === 'done') {
+        lastDone = { mod: DATA.modules[i], lesson: DATA.modules[i].lessons[j] };
+        break;
+      }
+    }
+    if (lastDone) break;
+  }
+  
+  // Find current module (for column context)
+  
+  // Last completed — show recent done lessons dynamically
+  const lastList = document.getElementById('ic-last-list');
+  lastList.innerHTML = '';
+  if (lastDone) {
+    document.getElementById('ic-last-title').textContent = t('lesTitle_' + lastDone.lesson.id);
+    const prevIdx = lastDone.mod.lessons.indexOf(lastDone.lesson);
+    // Show up to 3 lessons around the last done one
+    const descItems = lastDone.mod.lessons.slice(Math.max(0, prevIdx-2), prevIdx+1).map(l => ({title: t('lesTitle_' + l.id), desc: t('lesDesc_' + l.id)}));
+    descItems.forEach(l => {
+      const li = document.createElement('li');
+      li.innerHTML = `<span class="ic-dot green"></span><span>${l.desc}</span>`;
+      lastList.appendChild(li);
+    });
+  } else {
+    document.getElementById('ic-last-title').textContent = '—';
+  }
+
+  // Current — show current lesson info dynamically
+  const nowList = document.getElementById('ic-now-list');
+  nowList.innerHTML = '';
+  if (currentLes) {
+    document.getElementById('ic-now-title').textContent = t('lesTitle_' + currentLes.lesson.id);
+    const curIdx = cur.lessons.findIndex(l => l.id === currentLes.lesson.id);
+    // Current lesson desc
+    const li1 = document.createElement('li');
+    li1.innerHTML = `<span class="ic-dot purple"></span><span>${t('lesDesc_' + currentLes.lesson.id)}</span>`;
+    nowList.appendChild(li1);
+    // Next lesson in module
+    if (curIdx + 1 < cur.lessons.length) {
+      const li2 = document.createElement('li');
+      li2.innerHTML = `<span class="ic-dot purple"></span><span>→ ${t('lesTitle_' + cur.lessons[curIdx+1].id)}: ${t('lesDesc_' + cur.lessons[curIdx+1].id)}</span>`;
+      nowList.appendChild(li2);
+    } else {
+      const li2 = document.createElement('li');
+      li2.innerHTML = `<span class="ic-dot purple"></span><span>${t('finalLesson')}</span>`;
+      nowList.appendChild(li2);
+    }
+  } else {
+    document.getElementById('ic-now-title').textContent = '—';
+  }
+
+  // Coming up — show next uncompleted compulsory lesson across all modules
+  const nextList = document.getElementById('ic-next-list');
+  nextList.innerHTML = '';
+  let nextCompulsory = null;
+  let nextCompulsoryMod = null;
+  for (const mod of DATA.modules) {
+    for (const les of mod.lessons) {
+      if (isCompulsory(les.id) && state.lessons[les.id] !== 'done') {
+        nextCompulsory = les;
+        nextCompulsoryMod = mod;
+        break;
+      }
+    }
+    if (nextCompulsory) break;
+  }
+
+  if (nextCompulsory && nextCompulsoryMod) {
+    document.getElementById('ic-next-title').textContent = t('next') + ': ' + t('lesTitle_' + nextCompulsory.id);
+    const li1 = document.createElement('li');
+    li1.innerHTML = `<span class="ic-dot amber"></span><span>${t('lesDesc_' + nextCompulsory.id)}</span>`;
+    nextList.appendChild(li1);
+    // Also show which module it belongs to
+    const li2 = document.createElement('li');
+    li2.innerHTML = `<span class="ic-dot amber"></span><span>${nextCompulsoryMod.emoji} ${t('module')} ${nextCompulsoryMod.num}: ${t('modName_' + nextCompulsoryMod.id)}</span>`;
+    nextList.appendChild(li2);
+  } else {
+    document.getElementById('ic-next-title').textContent = '🎉 ' + t('allComplete');
+  }
+  // Update info column labels
+  document.querySelector('.ic-green .ic-label').textContent = t('lastCompleted');
+  document.querySelector('.ic-purple .ic-label').textContent = t('currentMission');
+  document.querySelector('.ic-amber .ic-label').textContent = t('comingUp');
+}
+
+// ───────────────────────────────────────
+// INTERACTIONS
+// ───────────────────────────────────────
+function toggleModuleExpand(modId) {
+  const body = document.getElementById(`body-${modId}`);
+  const arrow = document.getElementById(`arrow-${modId}`);
+  if (!body) return;
+  const isOpen = body.classList.contains('open');
+  // Close all
+  document.querySelectorAll('.ld-body').forEach(b => b.classList.remove('open'));
+  document.querySelectorAll('.ld-arrow').forEach(a => a.style.transform = 'rotate(0deg)');
+  // Toggle this one
+    if (!isOpen) {
+    body.classList.add('open');
+    if (arrow) arrow.style.transform = 'rotate(180deg)';
+    // Update Big Idea Banner to match the clicked module
+    const mod = DATA.modules.find(m => m.id === modId);
+    if (mod) renderBigIdea(mod);
+  }
+}
+
+// ───────────────────────────────────────
+// BIG IDEA MODAL
+// ───────────────────────────────────────
+function openBigIdeaModal() {
+  const cur = getActiveModule();
+  const progress = getModuleProgress(cur);
+  // Find the first not-done lesson (compulsory first, then optional)
+  const firstTodo = cur.lessons.find(l => state.lessons[l.id] !== 'done');
+  const hasTodo = !!firstTodo;
+  const body = document.getElementById('modal-body');
+  body.innerHTML = `
+    <h2>${t('bigIdea')} — ${t('module')} ${cur.num}: ${t('modName_' + cur.id)}</h2>
+    <p style="font-size:15px;color:var(--text);font-weight:500;line-height:1.6;border-left:3px solid var(--purple);padding-left:16px">
+      ${t('modBigIdea_' + cur.id)}
+    </p>
+    <p>${t('modBigIdeaDesc_' + cur.id)}</p>
+    ${cur.maori ? `<p style="font-style:italic;color:var(--purple);margin-top:12px">"${cur.maori}"</p>` : ''}
+    <div style="margin-top:16px;padding:12px;background:var(--bg);border-radius:var(--radius-sm);border:1px solid var(--border);${hasTodo ? 'cursor:pointer;transition:background .2s;' : ''}"
+         ${hasTodo ? `onclick="jumpToNextLesson('${cur.id}')" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='var(--bg)'"` : ''}
+    >
+      <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">${t('moduleProgress')}</div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="flex:1;height:6px;background:var(--bg3);border-radius:3px;overflow:hidden">
+          <div style="height:100%;background:var(--purple);border-radius:3px;width:${progress.pct}%"></div>
+        </div>
+        <span style="font-size:12px;color:var(--text2)">${progress.done}/${progress.total}</span>
+      </div>
+      ${hasTodo ? `<div style="font-size:11px;color:var(--cyan);margin-top:8px">→ ${t('clickToJump')}</div>` : ''}
+    </div>
+  `;
+  document.getElementById('modal-overlay').classList.add('active');
+}
+
+function jumpToNextLesson(modId) {
+  const mod = DATA.modules.find(m => m.id === modId);
+  if (!mod) return;
+  // Close the modal first
+  document.getElementById('modal-overlay').classList.remove('active');
+  
+  // Close all other module bodies (ld-body) first
+  document.querySelectorAll('.ld-body').forEach(b => b.classList.remove('open'));
+  document.querySelectorAll('.ld-arrow').forEach(a => a.style.transform = 'rotate(0deg)');
+  
+  // Ensure module is expanded (don't use toggleModuleExpand as it would close an already-open module)
+  setTimeout(() => {
+    const body = document.getElementById(`body-${modId}`);
+    const arrow = document.getElementById(`arrow-${modId}`);
+    if (body && !body.classList.contains('open')) {
+      body.classList.add('open');
+      if (arrow) arrow.style.transform = 'rotate(180deg)';
+    }
+    // Update Big Idea Banner
+    if (mod) renderBigIdea(mod);
+    // Find and scroll to lesson - prefer first not-done, otherwise last lesson
+    setTimeout(() => {
+      const firstTodo = mod.lessons.find(l => state.lessons[l.id] !== 'done');
+      // If all done, use the last lesson
+      const targetLesson = firstTodo || (mod.lessons.length > 0 ? mod.lessons[mod.lessons.length - 1] : null);
+      if (!targetLesson) return;
+      // If module has submodules, expand the correct submodule first
+      if (mod.submodules && mod.submodules.length > 0) {
+        for (let i = 0; i < mod.submodules.length; i++) {
+          const sub = mod.submodules[i];
+          if (sub.lessons.includes(targetLesson.id)) {
+            const subBody = document.getElementById(`sub-body-${modId}-sub${i}`);
+            const subArrow = document.getElementById(`sub-arrow-${modId}-sub${i}`);
+            if (subBody && !subBody.classList.contains('open')) {
+              subBody.classList.add('open');
+              if (subArrow) subArrow.style.transform = 'rotate(180deg)';
+            }
+            break;
+          }
+        }
+      }
+      // Scroll to the lesson step - find it by data attribute or content
+      const lessonSteps = document.querySelectorAll('.lesson-step');
+      for (const step of lessonSteps) {
+        if (step.getAttribute('onclick') && step.getAttribute('onclick').includes(`'${targetLesson.id}'`)) {
+          step.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          // Highlight flash
+          step.style.transition = 'box-shadow .3s, border-color .3s';
+          step.style.boxShadow = '0 0 0 2px var(--cyan), 0 0 16px rgba(57,210,192,0.25)';
+          step.style.borderColor = 'var(--cyan)';
+          setTimeout(() => {
+            step.style.boxShadow = '';
+            step.style.borderColor = '';
+          }, 2000);
+          break;
+        }
+      }
+    }, 200);
+  }, 100);
+}
+
+// Jump to module from module-map click
+function jumpToModule(modId) {
+  const mod = DATA.modules.find(m => m.id === modId);
+  if (!mod) return;
+  
+  // Close the modal first
+  document.getElementById('modal-overlay').classList.remove('active');
+  
+  // Close all other module bodies (ld-body) first
+  document.querySelectorAll('.ld-body').forEach(b => b.classList.remove('open'));
+  document.querySelectorAll('.ld-arrow').forEach(a => a.style.transform = 'rotate(0deg)');
+  
+  // Check if there are lessons in this module
+  const hasLessons = mod.lessons && mod.lessons.length > 0;
+  const firstTodo = hasLessons ? mod.lessons.find(l => state.lessons[l.id] !== 'done') : null;
+  
+  if (firstTodo) {
+    // Has incomplete lessons - expand module and jump to first incomplete lesson
+    const body = document.getElementById(`body-${modId}`);
+    const arrow = document.getElementById(`arrow-${modId}`);
+    if (body && !body.classList.contains('open')) {
+      body.classList.add('open');
+      if (arrow) arrow.style.transform = 'rotate(180deg)';
+    }
+    renderBigIdea(mod);
+    
+    setTimeout(() => {
+      // Expand submodule if needed
+      if (mod.submodules && mod.submodules.length > 0) {
+        for (let i = 0; i < mod.submodules.length; i++) {
+          if (mod.submodules[i].lessons.includes(firstTodo.id)) {
+            const subBody = document.getElementById(`sub-body-${modId}-sub${i}`);
+            const subArrow = document.getElementById(`sub-arrow-${modId}-sub${i}`);
+            if (subBody && !subBody.classList.contains('open')) {
+              subBody.classList.add('open');
+              if (subArrow) subArrow.style.transform = 'rotate(180deg)';
+            }
+            break;
+          }
+        }
+      }
+      // Scroll to the lesson
+      const lessonSteps = document.querySelectorAll('.lesson-step');
+      for (const step of lessonSteps) {
+        if (step.getAttribute('onclick') && step.getAttribute('onclick').includes(`'${firstTodo.id}'`)) {
+          step.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          step.style.transition = 'box-shadow .3s, border-color .3s';
+          step.style.boxShadow = '0 0 0 2px var(--cyan), 0 0 16px rgba(57,210,192,0.25)';
+          step.style.borderColor = 'var(--cyan)';
+          setTimeout(() => {
+            step.style.boxShadow = '';
+            step.style.borderColor = '';
+          }, 2000);
+          break;
+        }
+      }
+    }, 200);
+  } else {
+    // All done or no lessons - jump to module's lesson-detail section
+    const body = document.getElementById(`body-${modId}`);
+    const arrow = document.getElementById(`arrow-${modId}`);
+    const lessonDetail = document.getElementById(`detail-${modId}`);
+    
+    // Always expand module
+    if (body && !body.classList.contains('open')) {
+      body.classList.add('open');
+      if (arrow) arrow.style.transform = 'rotate(180deg)';
+    }
+    renderBigIdea(mod);
+    
+    // Scroll to lesson-detail
+    if (lessonDetail) {
+      setTimeout(() => {
+        lessonDetail.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+  }
+}
+
+function closeModal(e) {
+  if (e && e.target !== document.getElementById('modal-overlay') && !e.target.classList.contains('modal-close')) return;
+  document.getElementById('modal-overlay').classList.remove('active');
+}
+
+function toggleDropdown(e) {
+  e.stopPropagation();
+  document.getElementById('actions-dropdown').classList.toggle('open');
+}
+function closeDropdown() {
+  document.getElementById('actions-dropdown').classList.remove('open');
+}
+document.addEventListener('click', () => closeDropdown());
+
+function showHelp() {
+  const body = document.getElementById('modal-body');
+  body.innerHTML = `
+    <h2>${t('helpTitle')}</h2>
+    <p>${t('helpDesc')}</p>
+    <p>${t('helpGreen')}</p>
+    <p>${t('helpPurple')}</p>
+    <p>${t('helpGrey')}</p>
+    <p style="margin-top:12px">${t('helpXP')}</p>
+    <p>${t('helpXPDesc')}</p>
+    <p style="margin-top:12px">${t('helpSave')}</p>
+    <p>${t('helpSaveDesc')}</p>
+    <p style="margin-top:12px">${t('helpBigIdea')}</p>
+    <p>${t('helpBigIdeaDesc')}</p>
+    <p style="margin-top:12px">${t('helpModules')}</p>
+    <p>${t('helpModulesDesc')}</p>
+  `;
+  document.getElementById('modal-overlay').classList.add('active');
+}
+
+// ───────────────────────────────────────
+// CONFETTI CELEBRATION
+// ───────────────────────────────────────
+function launchConfetti() {
+  const container = document.getElementById('confetti-container');
+  const colors = ['#3FB950','#A371F7','#D29922','#58A6FF','#F85149','#39D2C0','#FF6B9D'];
+  
+  for (let i = 0; i < 60; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.style.left = Math.random() * 100 + '%';
+    piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+    piece.style.animationDelay = Math.random() * 1.5 + 's';
+    piece.style.animationDuration = (2 + Math.random() * 2) + 's';
+    piece.style.width = (6 + Math.random() * 8) + 'px';
+    piece.style.height = (6 + Math.random() * 8) + 'px';
+    piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+    container.appendChild(piece);
+  }
+  
+  setTimeout(() => { container.innerHTML = ''; }, 4000);
+}
+
+// ───────────────────────────────────────
+// TOAST
+// ───────────────────────────────────────
+function showToast(msg) {
+  const toast = document.createElement('div');
+  toast.style.cssText = `
+    position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+    background:var(--bg2);color:var(--text);border:1px solid var(--border);
+    padding:10px 20px;border-radius:var(--radius-sm);font-size:13px;
+    z-index:9999;animation:modal-in .3s ease;
+    box-shadow:0 4px 16px rgba(0,0,0,.4);
+  `;
+  toast.textContent = msg;
+  document.body.appendChild(toast);
+  setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity .3s'; }, 2000);
+  setTimeout(() => toast.remove(), 2500);
+}
+
+// ───────────────────────────────────────
+// KEYBOARD SHORTCUTS
+// ───────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    closeBatchModal();
+    closeCoModal();
+    closeRtModal();
+    closeModal({ target: document.getElementById('modal-overlay') });
+  }
+  if (e.key === 's' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); saveProgress(); }
+});
+
+// ───────────────────────────────────────
+// INIT
+// ───────────────────────────────────────
+loadCompulsory();
+switchLang(currentLang);
+</script>
+
+</body>
+</html>
