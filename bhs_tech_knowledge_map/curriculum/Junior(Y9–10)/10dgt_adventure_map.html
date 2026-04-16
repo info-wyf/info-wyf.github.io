@@ -1307,8 +1307,8 @@ const i18n = {
     lesDesc_m3l12: 'End of topic quiz on searching and sorting algorithms.',
     lesTitle_m10l1: 'Project Planning',
     lesTitle_m10l2: '10DGT Presentation Board',
-    lesTitle_m4wl1: 'File Management',
-    lesDesc_m4wl1: 'Know where your work is (especially on your own device).',
+    lesTitle_m4wl1: 'BHS Programming Page',
+    lesDesc_m4wl1: 'Python is an easy-to-learn and powerful programming language suitable for both beginners and advanced applications.',
     lesTitle_m4wl2: 'Animation vs Coding',
     lesDesc_m4wl2: 'Learn about the differences between animation and programming approaches.',
     lesTitle_m7l1: 'Submit your best work by adding it to your website!',
@@ -1531,8 +1531,8 @@ const i18n = {
     lesDesc_m3l11: '学习不同的搜索和排序算法。',
     lesTitle_m3l12: 'CS单元末评估 - 搜索与排序测验',
     lesDesc_m3l12: '关于搜索和排序算法的单元末测验。',
-    lesTitle_m4wl1: '文件管理',
-    lesDesc_m4wl1: '了解你的文件存放位置（尤其是在自己的设备上）',
+    lesTitle_m4wl1: 'BHS编程页面',
+    lesDesc_m4wl1: 'Python 是一种简单易学又功能强大的编程语言，适合从入门到高级开发的各种应用。',
     lesTitle_m4wl2: '动画与编程',
     lesDesc_m4wl2: '了解动画与编程方法的区别。',
     lesTitle_m7l1: '将您的最佳作品添加到网站！',
@@ -1762,8 +1762,8 @@ const i18n = {
     lesDesc_m3l12: '探索とソートアルゴリズムに関する単元末クイズ。',
     lesTitle_m10l1: 'プロジェクト計画',
     lesTitle_m10l2: '10DGTプレゼンテーションボード',
-    lesTitle_m4wl1: 'ファイル管理',
-    lesDesc_m4wl1: 'ファイルの保存場所を把握する（特に自分のデバイス上）',
+    lesTitle_m4wl1: 'BHSプログラミングページ',
+    lesDesc_m4wl1: 'Pythonは、初心者から高度な開発まで対応できる、学びやすく強力なプログラミング言語です。',
     lesTitle_m4wl2: 'アニメーションvsコーディング',
     lesDesc_m4wl2: 'アニメーションとプログラミングアプローチの違いについて学びます。',
     lesTitle_m7l1: '最高の作品をウェブサイトに追加してください！',
@@ -1988,8 +1988,8 @@ const i18n = {
     lesTitle_m6l1: 'Blender로 3D 모델링',
     lesTitle_m10l1: '프로젝트 기획',
     lesTitle_m10l2: '10DGT 프레젠테이션 보드',
-    lesTitle_m4wl1: '파일 관리',
-    lesDesc_m4wl1: '파일 저장 위치를 파악하세요 (특히 자신의 기기에서)',
+    lesTitle_m4wl1: 'BHS 프로그래밍 페이지',
+    lesDesc_m4wl1: 'Python은 초보자부터 고급 개발까지 모두에 적합한 배우기 쉽고 강력한 프로그래밍 언어입니다.',
     lesTitle_m4wl2: '애니메이션 vs 코딩',
     lesDesc_m4wl2: '애니메이션과 프로그래밍 접근 방식의 차이점에 대해 알아보기.',
     lesTitle_m7l1: '최고의 작품을 웹사이트에 추가하세요!',
@@ -3151,12 +3151,11 @@ function jumpToNextLesson(modId) {
           }
         }
       }
-      // Scroll to the lesson step - find it by data attribute or content
+      // Highlight the lesson step with scroll
       const lessonSteps = document.querySelectorAll('.lesson-step');
       for (const step of lessonSteps) {
         if (step.getAttribute('onclick') && step.getAttribute('onclick').includes(`'${targetLesson.id}'`)) {
           step.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          // Highlight flash
           step.style.transition = 'box-shadow .3s, border-color .3s';
           step.style.boxShadow = '0 0 0 2px var(--cyan), 0 0 16px rgba(57,210,192,0.25)';
           step.style.borderColor = 'var(--cyan)';
@@ -3216,14 +3215,18 @@ function jumpToModule(modId) {
       const lessonSteps = document.querySelectorAll('.lesson-step');
       for (const step of lessonSteps) {
         if (step.getAttribute('onclick') && step.getAttribute('onclick').includes(`'${firstTodo.id}'`)) {
+          // Auto-scroll to highlight the target lesson
           step.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          step.style.transition = 'box-shadow .3s, border-color .3s';
-          step.style.boxShadow = '0 0 0 2px var(--cyan), 0 0 16px rgba(57,210,192,0.25)';
-          step.style.borderColor = 'var(--cyan)';
           setTimeout(() => {
-            step.style.boxShadow = '';
-            step.style.borderColor = '';
-          }, 2000);
+            // Highlight flash
+            step.style.transition = 'box-shadow .3s, border-color .3s';
+            step.style.boxShadow = '0 0 0 2px var(--cyan), 0 0 16px rgba(57,210,192,0.25)';
+            step.style.borderColor = 'var(--cyan)';
+            setTimeout(() => {
+              step.style.boxShadow = '';
+              step.style.borderColor = '';
+            }, 2000);
+          }, 300);
           break;
         }
       }
