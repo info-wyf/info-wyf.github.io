@@ -109,7 +109,7 @@
     "desc_en": "Y9 Digital Technologies. Core: digital outcomes created by people for society. Self-paced learning. 7 modules in order: Start of Course, Artificial Intelligence, Image Manipulation (GIMP), Data Visualisation, Computer Science, Programming with Scratch, Character Design / Digital Outcomes. PO2-PO5 aligned.",
     "desc_zh": "9 年级数字技术。核心：数字成果由社会中人创造并服务于社会。自主学习模式。7 个模块依次：课程入门、人工智能、图像处理（GIMP）、数据可视化、计算机科学、Scratch 编程、角色设计/数字产物。对应 PO2-PO5。",
 "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/junior/9dgt",
-  "url2": "./curriculum/Junior(Y9–10)/9dgt_adventure_map.html",
+  "url2": "./curriculum/JuniorY9Y10/9dgt_adventure_map.html",
   "links": [
     "m9-soc",
     "m9-ai",
@@ -147,7 +147,7 @@
     "desc_en": "Y10 Digital Technologies — 11 modules: Start of Course, Image Creation, Website, CS, Python, 3D Modelling, Animation, DfM, AV, Game Dev, Student Project. Ends with Y10 Tech Fair.",
     "desc_zh": "10 年级数字技术 — 11 个模块：课程入门、图像创建、网站、计算机科学、Python、3D建模、动画、制造设计、音视频、游戏开发、学生主导项目。年终 Tech Fair。",
     "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/junior/10dgt",
-    "url2": "./curriculum/Junior(Y9–10)/10dgt_adventure_map.html",
+    "url2": "./curriculum/JuniorY9Y10/10dgt_adventure_map.html",
     "links": [
       "m10-soc",
       "m10-image",
@@ -642,6 +642,7 @@
     "desc_en": "NCEA L1: Python + SQL + Web dev. 6 modules: Programming, NCEA-Auto, Databases, Web Learning, Web Project, HCI External. AS92004 (5cr) + US28776 L2 (4cr) + AS92005 (5cr) + AS92006 external (5cr). 19 credits total.",
     "desc_zh": "NCEA L1：Python + SQL + Web 开发。6 个模块：编程、NCEA-Auto、数据库、Web 学习、Web 项目、HCI 外部考试。共 19 学分。",
     "url": "https://sites.google.com/burnside.school.nz/bhs-digital-technologies/year-11/11dtp",
+    "url2": "./curriculum/Year11/11dtp_adventure_map.html",
     "links": [
       "m11dtp-prog",
       "m11dtp-nceaauto",

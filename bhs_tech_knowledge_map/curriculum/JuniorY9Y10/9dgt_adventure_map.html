@@ -1,0 +1,3079 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>9DGT Adventure Map — Burnside High School</title>
+<style>
+
+/* ═══════════════════════════════════════════
+   BASE RESET & THEME
+   ═══════════════════════════════════════════ */
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0D1117;--bg2:#161B22;--bg3:#21262D;
+  --border:#30363D;--border2:#484F58;
+  --text:#E6EDF3;--text2:#8B949E;--text3:#6E7681;
+  --green:#3FB950;--green-dim:#1A4D2E;--green-glow:#238636;
+  --purple:#A371F7;--purple-dim:#2D1B69;--purple-glow:#8957E5;
+  --amber:#D29922;--amber-dim:#3D2E00;--amber-glow:#9E6A03;
+  --red:#F85149;--blue:#58A6FF;--cyan:#39D2C0;
+  --module-done:#3FB950;--module-current:#A371F7;--module-locked:#6E7681;
+  --radius:12px;--radius-sm:8px;
+}
+html{font-size:16px}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+  background:var(--bg);color:var(--text);
+  min-height:100vh;overflow-x:hidden;
+  background-image:
+    radial-gradient(ellipse at 20% 0%, rgba(163,113,247,0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 100%, rgba(63,185,80,0.06) 0%, transparent 50%);
+}
+
+/* ═══════════════════════════════════════════
+   TOP NAV BAR
+   ═══════════════════════════════════════════ */
+.topbar{
+  position:sticky;top:0;z-index:100;
+  background:rgba(13,17,23,0.85);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  padding:12px 24px;display:flex;align-items:center;justify-content:space-between;
+}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.topbar-logo{font-size:22px}
+.topbar-title{font-size:15px;font-weight:600;color:var(--text)}
+.topbar-sub{font-size:12px;color:var(--text2)}
+.topbar-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+
+/* Dropdown menu */
+.dropdown{position:relative}
+.dropdown-btn{
+  padding:6px 14px;border-radius:var(--radius-sm);
+  font-size:12px;font-weight:500;cursor:pointer;
+  border:1px solid var(--border);background:var(--bg2);color:var(--text2);
+  transition:all .2s;display:flex;align-items:center;gap:6px;
+}
+.dropdown-btn:hover{border-color:var(--border2);background:var(--bg3)}
+.dropdown-menu{
+  position:absolute;top:calc(100% + 6px);right:0;
+  background:#1e2130;border:1px solid rgba(255,255,255,0.08);
+  border-radius:10px;box-shadow:0 8px 32px rgba(0,0,0,.5),0 2px 8px rgba(0,0,0,.3);
+  min-width:180px;z-index:100;padding:6px 0;
+  opacity:0;visibility:hidden;transform:translateY(-4px);
+  transition:all .15s ease;
+}
+.dropdown.open .dropdown-menu{opacity:1;visibility:visible;transform:translateY(0)}
+.dropdown-item{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 16px;font-size:13px;color:rgba(255,255,255,0.85);
+  cursor:pointer;transition:all .15s;border:none;background:none;width:100%;text-align:left;
+  letter-spacing:0.01em;
+}
+.dropdown-item:hover{background:rgba(255,255,255,0.06);color:#fff}
+.dropdown-item:active{background:rgba(255,255,255,0.1)}
+.btn{
+  padding:6px 14px;border-radius:var(--radius-sm);
+  font-size:12px;font-weight:500;cursor:pointer;
+  border:1px solid var(--border);background:var(--bg2);color:var(--text2);
+  transition:all .2s;display:flex;align-items:center;gap:6px;
+}
+.btn:hover{border-color:var(--border2);color:var(--text);background:var(--bg3)}
+.btn-purple{border-color:var(--purple);color:var(--purple);background:var(--purple-dim)}
+.btn-purple:hover{background:rgba(163,113,247,0.2)}
+
+.lang-switch{
+  display:flex;gap:0;border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;
+}
+.lang-btn{
+  padding:6px 10px;font-size:12px;font-weight:600;cursor:pointer;
+  border:none;background:var(--bg2);color:var(--text3);
+  transition:all .2s;line-height:1;
+}
+.lang-btn:not(:last-child){border-right:1px solid var(--border)}
+.lang-btn.active{background:var(--purple-dim);color:var(--purple)}
+.lang-btn:hover:not(.active){background:var(--bg3);color:var(--text2)}
+
+/* ═══════════════════════════════════════════
+   OVERVIEW STATS BAR
+   ═══════════════════════════════════════════ */
+.stats-bar{
+  display:flex;gap:12px;padding:16px 24px;flex-wrap:wrap;
+}
+.stat-card{
+  flex:1;min-width:120px;
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
+  padding:14px 16px;display:flex;align-items:center;gap:12px;
+}
+.stat-icon{font-size:24px;flex-shrink:0}
+.stat-info{display:flex;flex-direction:column}
+.stat-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em}
+.stat-value{font-size:18px;font-weight:700;margin-top:2px}
+.stat-value.green{color:var(--green)}
+.stat-value.purple{color:var(--purple)}
+.stat-value.amber{color:var(--amber)}
+
+/* ═══════════════════════════════════════════
+   PROGRESS OVERALL BAR
+   ═══════════════════════════════════════════ */
+.progress-section{padding:0 24px 16px}
+.progress-track{
+  height:6px;background:var(--bg3);border-radius:3px;overflow:hidden;position:relative;
+}
+.progress-fill{
+  height:100%;border-radius:3px;
+  background:linear-gradient(90deg, var(--green), var(--cyan));
+  transition:width .6s cubic-bezier(.22,1,.36,1);
+  position:relative;
+}
+.progress-fill::after{
+  content:'';position:absolute;right:0;top:50%;transform:translateY(-50%);
+  width:12px;height:12px;border-radius:50%;
+  background:var(--cyan);box-shadow:0 0 8px var(--cyan);
+}
+.progress-label{display:flex;justify-content:space-between;margin-top:6px}
+.progress-label span{font-size:11px;color:var(--text3)}
+
+/* ═══════════════════════════════════════════
+   BIG IDEA BANNER
+   ═══════════════════════════════════════════ */
+.big-idea-banner{
+  margin:0 24px 16px;padding:20px 24px;
+  background:linear-gradient(135deg, var(--purple-dim) 0%, rgba(89,55,175,0.15) 100%);
+  border:1px solid rgba(163,113,247,0.3);border-radius:var(--radius);
+  cursor:pointer;transition:all .3s;position:relative;overflow:hidden;
+}
+.big-idea-banner::before{
+  content:'';position:absolute;top:-50%;right:-20%;width:200px;height:200px;
+  background:radial-gradient(circle, rgba(163,113,247,0.15), transparent 70%);
+  pointer-events:none;
+}
+.big-idea-banner:hover{border-color:var(--purple);transform:translateY(-1px)}
+.bi-header{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.bi-tag{
+  font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;
+  padding:3px 10px;border-radius:20px;
+  background:rgba(163,113,247,0.2);color:var(--purple);
+}
+.bi-module-tag{font-size:10px;color:var(--text3)}
+.bi-quote{
+  font-size:16px;font-weight:500;color:var(--text);line-height:1.5;
+  margin-bottom:8px;padding-left:16px;border-left:3px solid var(--purple);
+}
+.bi-desc{font-size:13px;color:var(--text2);line-height:1.6}
+.bi-maori{font-size:12px;font-style:italic;color:var(--purple);margin-top:8px;opacity:.8}
+
+/* ═══════════════════════════════════════════
+   MODULE MAP (MAIN ADVENTURE MAP)
+   ═══════════════════════════════════════════ */
+.map-section{padding:0 24px 24px}
+.section-label{
+  font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;
+  color:var(--text3);margin-bottom:14px;
+}
+
+.module-map{
+  display:flex;gap:0;align-items:stretch;overflow-x:auto;
+  padding:20px 10px;scrollbar-width:thin;
+  scrollbar-color:var(--border) transparent;
+}
+.module-map::-webkit-scrollbar{height:6px}
+.module-map::-webkit-scrollbar-track{background:transparent}
+.module-map::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+.module-node{
+  flex:1;min-width:140px;display:flex;flex-direction:column;align-items:center;
+  cursor:pointer;position:relative;transition:all .3s;
+}
+.module-node:not(:last-child)::after{
+  content:'';position:absolute;top:44px;left:calc(50% + 36px);
+  width:calc(100% - 72px);height:3px;z-index:1;
+  border-radius:2px;transition:all .4s;
+}
+/* connector states */
+.module-node.m-done:not(:last-child)::after{background:var(--green)}
+.module-node.m-current:not(:last-child)::after{
+  background:repeating-linear-gradient(90deg, var(--purple) 0 6px, transparent 6px 12px);
+  animation:dash-flow 1s linear infinite;
+}
+.module-node.m-locked:not(:last-child)::after{
+  background:repeating-linear-gradient(90deg, var(--border) 0 4px, transparent 4px 8px);
+}
+@keyframes dash-flow{to{background-position:12px 0}}
+
+.node-circle{
+  width:72px;height:72px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:28px;position:relative;z-index:2;
+  transition:all .3s;border:3px solid transparent;
+}
+.m-done .node-circle{
+  background:var(--green-dim);border-color:var(--green);
+  box-shadow:0 0 20px rgba(63,185,80,0.2);
+}
+.m-current .node-circle{
+  background:var(--purple-dim);border-color:var(--purple);
+  box-shadow:0 0 24px rgba(163,113,247,0.3);
+  animation:pulse-current 2s ease-in-out infinite;
+}
+.m-locked .node-circle{
+  background:var(--bg2);border-color:var(--border);
+}
+@keyframes pulse-current{
+  0%,100%{box-shadow:0 0 24px rgba(163,113,247,0.3)}
+  50%{box-shadow:0 0 36px rgba(163,113,247,0.5)}
+}
+.node-check{
+  position:absolute;top:-4px;right:-4px;width:22px;height:22px;border-radius:50%;
+  background:var(--green);display:flex;align-items:center;justify-content:center;
+  font-size:12px;color:#fff;font-weight:700;z-index:3;
+  box-shadow:0 2px 6px rgba(0,0,0,.3);
+}
+.node-label{margin-top:8px;text-align:center}
+.node-num{font-size:10px;color:var(--text3);font-weight:500}
+.node-name{font-size:12px;font-weight:600;margin-top:2px;line-height:1.3}
+.m-done .node-name{color:var(--green)}
+.m-current .node-name{color:var(--purple)}
+.m-locked .node-name{color:var(--text3)}
+.node-status{
+  font-size:10px;margin-top:4px;padding:2px 10px;border-radius:20px;font-weight:500;
+}
+.m-done .node-status{background:var(--green-dim);color:var(--green)}
+.m-current .node-status{background:var(--purple-dim);color:var(--purple)}
+.m-locked .node-status{background:var(--bg2);color:var(--text3);border:1px solid var(--border)}
+
+.module-node:hover{transform:translateY(-4px)}
+.module-node.m-locked:hover{transform:translateY(-2px)}
+
+/* ═══════════════════════════════════════════
+   LESSON DETAIL PANEL (per module)
+   ═══════════════════════════════════════════ */
+.lesson-detail{
+  margin:0 24px 20px;
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
+  overflow:hidden;transition:all .3s;
+}
+.ld-header{
+  padding:16px 20px;display:flex;align-items:center;justify-content:space-between;
+  cursor:pointer;transition:background .2s;
+}
+.ld-header:hover{background:var(--bg3)}
+.ld-left{display:flex;align-items:center;gap:12px}
+.ld-emoji{font-size:24px}
+.ld-title{font-size:14px;font-weight:600;color:var(--text)}
+.ld-subtitle{font-size:12px;color:var(--text2);margin-top:2px}
+.ld-progress-bar{
+  width:120px;height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;
+}
+.ld-progress-fill{
+  height:100%;border-radius:2px;transition:width .4s;
+  background:linear-gradient(90deg, var(--green), var(--cyan));
+}
+.ld-badge{
+  font-size:10px;padding:3px 8px;border-radius:10px;font-weight:600;
+}
+.ld-body{padding:0 20px;max-height:0;overflow:hidden;transition:max-height .4s ease,padding .4s}
+.ld-body.open{max-height:4000px;padding:0 20px 20px}
+
+.lesson-steps{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+.lesson-step{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 14px;border-radius:var(--radius-sm);
+  background:var(--bg);border:1px solid var(--border);
+  cursor:pointer;transition:all .2s;position:relative;
+}
+.lesson-step:hover{border-color:var(--border2);background:var(--bg3)}
+.step-checkbox{
+  width:24px;height:24px;border-radius:6px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;cursor:pointer;transition:all .2s;
+  border:2px solid var(--border);
+}
+.step-checkbox.s-done{background:var(--green);border-color:var(--green);color:#fff}
+.step-checkbox.s-current{border-color:var(--purple);background:var(--purple-dim);color:var(--purple)}
+.step-checkbox.s-locked{border-color:var(--border);color:var(--text3)}
+.step-checkbox.s-todo{border-color:var(--border);color:var(--text3)}
+.step-info{flex:1;min-width:0}
+.step-title{font-size:13px;font-weight:500;color:var(--text);line-height:1.3}
+.step-desc{font-size:11px;color:var(--text2);margin-top:2px;line-height:1.4}
+.step-tag{
+  font-size:10px;padding:2px 8px;border-radius:10px;font-weight:500;flex-shrink:0;
+}
+.tag-done{background:var(--green-dim);color:var(--green)}
+.tag-current{background:var(--purple-dim);color:var(--purple)}
+.tag-locked{background:var(--bg2);color:var(--text3);border:1px solid var(--border)}
+.tag-todo{background:var(--bg2);color:var(--text3)}
+.tag-optional{background:rgba(139,148,158,0.12);color:var(--text3);border:1px dashed var(--border)}
+.lesson-step.is-optional{opacity:.65;border-left:2px dashed var(--border3) !important}
+.lesson-step.is-optional:hover{opacity:1}
+
+/* ═══════════════════════════════════════════
+   THREE COLUMNS INFO
+   ═══════════════════════════════════════════ */
+.info-grid{
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;
+  padding:0 24px 20px;
+}
+.info-card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
+  padding:16px;transition:all .2s;
+}
+.info-card:hover{border-color:var(--border2)}
+.ic-top-line{height:3px;border-radius:2px;margin:-16px -16px 14px;border-radius:var(--radius) var(--radius) 0 0}
+.ic-green .ic-top-line{background:var(--green)}
+.ic-purple .ic-top-line{background:var(--purple)}
+.ic-amber .ic-top-line{background:var(--amber)}
+.ic-label{
+  font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;
+  color:var(--text3);margin-bottom:6px;
+}
+.ic-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:10px;line-height:1.3}
+.ic-list{list-style:none}
+.ic-list li{
+  font-size:12px;color:var(--text2);padding:4px 0;
+  display:flex;gap:8px;align-items:flex-start;line-height:1.4;
+}
+.ic-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.ic-dot.green{background:var(--green)}
+.ic-dot.purple{background:var(--purple)}
+.ic-dot.amber{background:var(--amber)}
+
+/* ═══════════════════════════════════════════
+   TOOLS SECTION
+   ═══════════════════════════════════════════ */
+.tools-section{padding:0 24px 20px}
+.tools-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.tool-card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
+  padding:14px;cursor:pointer;transition:all .25s;
+}
+.tool-card:hover{border-color:var(--purple);transform:translateY(-2px);
+  box-shadow:0 4px 16px rgba(0,0,0,.3)}
+.t-icon{font-size:20px;margin-bottom:6px}
+.t-name{font-size:12px;font-weight:600;color:var(--text);margin-bottom:4px}
+.t-tip{font-size:11px;color:var(--text2);line-height:1.4}
+
+/* ═══════════════════════════════════════════
+   NZ CURRICULUM ALIGNED SECTION
+   ═══════════════════════════════════════════ */
+.curriculum-section{padding:0 24px 20px}
+.po-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.po-card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
+  padding:14px;position:relative;overflow:hidden;
+}
+.po-level{
+  font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px;
+  display:inline-block;margin-bottom:8px;
+}
+.po-level.l3{background:rgba(63,185,80,0.15);color:var(--green)}
+.po-level.l4{background:rgba(163,113,247,0.15);color:var(--purple)}
+.po-level.l5{background:rgba(210,153,34,0.15);color:var(--amber)}
+.po-items{list-style:none}
+.po-items li{
+  font-size:11px;color:var(--text2);padding:3px 0;line-height:1.4;
+  display:flex;gap:6px;align-items:flex-start;
+}
+.po-items li::before{content:'→';color:var(--text3);flex-shrink:0;font-size:10px}
+
+/* ═══════════════════════════════════════════
+   SUBMODULE GROUPS (within lesson detail)
+   ═══════════════════════════════════════════ */
+.submodule-group{
+  margin-bottom:12px;
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  overflow:hidden;
+  background:rgba(255,255,255,0.02);
+}
+.submodule-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 14px;cursor:pointer;
+  background:var(--bg3);
+  border-bottom:1px solid var(--border);
+  transition:background .2s;
+}
+.submodule-header:hover{background:rgba(255,255,255,0.06)}
+.submodule-header-left{
+  display:flex;align-items:center;gap:8px;
+}
+.submodule-emoji{font-size:16px}
+.submodule-name{font-size:13px;font-weight:600;color:var(--text)}
+.submodule-topic{font-size:10px;color:var(--text3);padding:1px 6px;border-radius:8px;background:var(--bg2)}
+.submodule-progress{
+  width:80px;height:4px;background:var(--bg);border-radius:2px;overflow:hidden;
+}
+.submodule-progress-fill{height:100%;border-radius:2px;transition:width .4s;background:linear-gradient(90deg,var(--green),var(--cyan))}
+.submodule-badge{
+  font-size:10px;padding:2px 8px;border-radius:10px;font-weight:500;
+  background:var(--bg2);color:var(--text3);
+}
+.submodule-lessons{padding:4px}
+.submodule-lessons.open{padding:4px}
+
+/* ═══════════════════════════════════════════
+   CONFETTI / CELEBRATION
+   ═══════════════════════════════════════════ */
+.confetti-container{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  pointer-events:none;z-index:1000;overflow:hidden;
+}
+.confetti-piece{
+  position:absolute;width:10px;height:10px;top:-20px;
+  animation:confetti-fall 3s ease-in forwards;
+}
+@keyframes confetti-fall{
+  0%{transform:translateY(0) rotate(0deg);opacity:1}
+  100%{transform:translateY(100vh) rotate(720deg);opacity:0}
+}
+
+/* ═══════════════════════════════════════════
+   SITE FOOTER
+   ═══════════════════════════════════════════ */
+.site-footer{
+  text-align:center;
+  padding:16px 20px;
+  font-size:12px;
+  color:var(--text3);
+  border-top:1px solid var(--border);
+  background:var(--bg2);
+  margin-top:auto;
+}
+
+/* ═══════════════════════════════════════════
+   MODAL (Big Idea / Lesson Detail)
+   ═══════════════════════════════════════════ */
+.modal-overlay{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);
+  z-index:500;display:none;align-items:center;justify-content:center;
+}
+.modal-overlay.active{display:flex}
+.modal{
+  background:var(--bg2);border:1px solid var(--border);border-radius:16px;
+  padding:28px 32px;max-width:600px;width:90%;max-height:80vh;overflow-y:auto;
+  position:relative;animation:modal-in .3s ease;
+}
+@keyframes modal-in{from{opacity:0;transform:translateY(20px) scale(.96)}to{opacity:1;transform:none}}
+.modal-close{
+  position:absolute;top:12px;right:16px;
+  width:32px;height:32px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--text3);font-size:18px;
+  background:var(--bg3);border:1px solid var(--border);
+  transition:all .2s;
+}
+.modal-close:hover{color:var(--text);border-color:var(--border2)}
+.modal h2{font-size:18px;font-weight:600;color:var(--text);margin-bottom:12px}
+.modal p{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:12px}
+.modal .highlight{color:var(--purple);font-weight:500}
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════ */
+@media(max-width:900px){
+  .info-grid,.po-grid{grid-template-columns:1fr}
+  .tools-grid{grid-template-columns:1fr 1fr}
+  .stats-bar{flex-wrap:wrap}
+  .stat-card{min-width:100px}
+}
+@media(max-width:600px){
+  .tools-grid{grid-template-columns:1fr}
+  .module-map{padding:16px 6px}
+  .module-node{min-width:110px}
+  .node-circle{width:56px;height:56px;font-size:22px}
+}
+
+/* ═══════════════════════════════════════════
+   BATCH SELECT MODAL
+   ═══════════════════════════════════════════ */
+.batch-modal-overlay{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,0.7);backdrop-filter:blur(6px);
+  z-index:500;display:none;align-items:flex-start;justify-content:center;
+  padding:80px 20px 120px;overflow-y:auto;
+}
+.batch-modal-overlay.active{display:flex}
+.batch-modal{
+  background:var(--bg2);border:1px solid var(--border);border-radius:16px;
+  padding:0;width:90%;max-width:700px;
+  animation:modal-in .3s ease;
+  display:flex;flex-direction:column;
+  max-height:calc(100vh - 200px);
+}
+.bm-header{
+  padding:20px 24px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;background:var(--bg2);z-index:2;border-radius:16px 16px 0 0;
+}
+.bm-title{font-size:16px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px}
+.bm-count{
+  font-size:12px;padding:3px 10px;border-radius:20px;
+  background:var(--purple-dim);color:var(--purple);font-weight:600;
+}
+.bm-close{
+  width:32px;height:32px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--text3);font-size:18px;
+  background:var(--bg3);border:1px solid var(--border);transition:all .2s;
+}
+.bm-close:hover{color:var(--text);border-color:var(--border2)}
+.bm-modules{padding:8px 0;overflow-y:auto;flex:1;min-height:0}
+.bm-module{border-bottom:1px solid var(--border)}
+.bm-module:last-child{border-bottom:none}
+.bm-mod-header{
+  padding:12px 24px;display:flex;align-items:center;gap:10px;
+  cursor:pointer;transition:background .2s;
+}
+.bm-mod-header:hover{background:var(--bg3)}
+.bm-mod-emoji{font-size:18px}
+.bm-mod-name{font-size:13px;font-weight:600;color:var(--text);flex:1}
+.bm-mod-progress{font-size:11px;color:var(--text3)}
+.bm-mod-check{
+  width:20px;height:20px;border-radius:5px;border:2px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;cursor:pointer;transition:all .2s;color:transparent;flex-shrink:0;
+}
+.bm-mod-check.checked{background:var(--purple);border-color:var(--purple);color:#fff}
+.bm-lessons{display:none;padding:0 24px 12px 54px}
+.bm-lessons.open{display:block}
+.bm-lesson{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;border-radius:var(--radius-sm);
+  cursor:pointer;transition:all .15s;margin-bottom:4px;
+}
+.bm-lesson:hover{background:var(--bg3)}
+.bm-lesson.bm-sel{
+  background:rgba(163,113,247,0.08);
+  border:1px solid rgba(163,113,247,0.3);
+}
+.bm-lcheck{
+  width:22px;height:22px;border-radius:6px;border:2px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;cursor:pointer;transition:all .2s;color:transparent;flex-shrink:0;
+}
+.bm-lcheck.checked{background:var(--purple);border-color:var(--purple);color:#fff}
+.bm-linfo{flex:1;min-width:0}
+.bm-ltitle{font-size:13px;font-weight:500;color:var(--text);line-height:1.3}
+.bm-ldesc{font-size:11px;color:var(--text2);margin-top:2px;line-height:1.4}
+.bm-lstatus{
+  font-size:10px;padding:2px 8px;border-radius:10px;font-weight:500;flex-shrink:0;
+}
+.bm-lstatus.s-done{background:var(--green-dim);color:var(--green)}
+.bm-lstatus.s-current{background:var(--purple-dim);color:var(--purple)}
+.bm-lstatus.s-todo{background:var(--bg3);color:var(--text3)}
+
+/* ═══════════════════════════════════════════
+   COMPULSORY / OPTIONAL MODAL
+   ═══════════════════════════════════════════ */
+.co-modal-overlay{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);
+  z-index:501;display:none;align-items:center;justify-content:center;
+}
+.co-modal-overlay.active{display:flex}
+.co-modal{
+  background:var(--bg2);border:1px solid var(--border);border-radius:16px;
+  padding:0;width:90%;max-width:700px;
+  animation:modal-in .3s ease;
+  display:flex;flex-direction:column;
+  max-height:calc(100vh - 200px);
+}
+.co-header{
+  padding:20px 24px 16px;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.co-title-wrap{display:flex;align-items:center;gap:10px}
+.co-title-wrap .bm-title{flex-direction:row;gap:8px}
+.co-close{
+  width:32px;height:32px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--text3);font-size:18px;
+  background:var(--bg3);border:1px solid var(--border);
+  transition:all .2s;flex-shrink:0;
+}
+.co-close:hover{color:var(--text);border-color:var(--border2)}
+.co-modules{padding:8px 0;overflow-y:auto;flex:1;min-height:0}
+.co-module{border-bottom:1px solid var(--border)}
+.co-module:last-child{border-bottom:none}
+.co-mod-header{
+  padding:12px 24px;display:flex;align-items:center;gap:10px;
+  cursor:pointer;transition:background .2s;
+}
+.co-mod-header:hover{background:var(--bg3)}
+.co-mod-emoji{font-size:18px}
+.co-mod-name{font-size:13px;font-weight:600;color:var(--text);flex:1}
+.co-mod-count{font-size:11px;color:var(--text3)}
+.co-mod-toggle{
+  font-size:10px;padding:3px 10px;border-radius:10px;font-weight:500;
+  cursor:pointer;transition:all .2s;flex-shrink:0;
+  border:1px solid var(--border);background:var(--bg);color:var(--text2);
+}
+.co-mod-toggle:hover{border-color:var(--border2);color:var(--text)}
+.co-lessons{display:none;padding:0 24px 12px 54px}
+.co-lessons.open{display:block}
+.co-lesson{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;border-radius:var(--radius-sm);
+  margin-bottom:4px;transition:all .15s;
+}
+.co-linfo{flex:1;min-width:0}
+.co-ltitle{font-size:13px;font-weight:500;color:var(--text);line-height:1.3}
+.co-ldesc{font-size:11px;color:var(--text2);margin-top:2px;line-height:1.4}
+.co-toggle{
+  font-size:11px;padding:4px 12px;border-radius:10px;font-weight:600;
+  cursor:pointer;transition:all .2s;flex-shrink:0;white-space:nowrap;
+  border:1px solid;user-select:none;
+}
+.co-toggle.compulsory{
+  background:rgba(63,185,80,0.12);border-color:rgba(63,185,80,0.3);color:var(--green);
+}
+.co-toggle.optional{
+  background:rgba(139,148,158,0.08);border-color:var(--border);color:var(--text3);
+}
+.co-toggle:hover{opacity:.85}
+.co-footer{
+  padding:16px 24px;border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:flex-end;gap:12px;
+  position:sticky;bottom:0;background:var(--bg2);border-radius:0 0 16px 16px;
+  z-index:1;
+}
+.bm-footer{
+  padding:16px 24px;border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  position:sticky;bottom:0;background:var(--bg2);border-radius:0 0 16px 16px;
+}
+.bm-footer-left{display:flex;gap:8px}
+.bm-btn{
+  padding:10px 20px;border-radius:var(--radius-sm);
+  font-size:13px;font-weight:600;cursor:pointer;
+  border:none;transition:all .2s;
+}
+.bm-btn:disabled{opacity:.4;cursor:not-allowed;transform:none !important}
+.bm-btn-done{background:var(--green);color:#fff}
+.bm-btn-done:hover:not(:disabled){background:#2ea043;transform:translateY(-1px)}
+.bm-btn-undo{background:var(--amber);color:#000}
+.bm-btn-undo:hover:not(:disabled){background:#b8860b;transform:translateY(-1px)}
+.bm-btn-cancel{background:var(--bg3);color:var(--text2);border:1px solid var(--border)}
+.bm-btn-cancel:hover{color:var(--text);border-color:var(--border2)}
+
+/* ═══════════════════════════════════════════
+   RESET TEMPLATE MODAL
+   ═══════════════════════════════════════════ */
+.rt-toggle{
+  font-size:11px;padding:4px 10px;border-radius:10px;font-weight:600;
+  cursor:pointer;transition:all .2s;flex-shrink:0;white-space:nowrap;
+  border:1px solid;user-select:none;min-width:56px;text-align:center;
+}
+.rt-toggle.todo{background:rgba(139,148,158,0.08);border-color:var(--border);color:var(--text3)}
+.rt-toggle.current{background:rgba(250,204,21,0.12);border-color:rgba(250,204,21,0.3);color:var(--amber)}
+.rt-toggle.done{background:rgba(63,185,80,0.12);border-color:rgba(63,185,80,0.3);color:var(--green)}
+.rt-toggle:hover{opacity:.8}
+.rt-quick-btns{display:flex;gap:6px;flex-wrap:wrap}
+.rt-quick-btn{
+  font-size:11px;padding:5px 12px;border-radius:10px;font-weight:500;
+  cursor:pointer;transition:all .2s;border:1px solid var(--border);
+  background:var(--bg);color:var(--text2);
+}
+.rt-quick-btn:hover{border-color:var(--border2);color:var(--text);background:var(--bg3)}
+
+/* ═══════════════════════════════════════════
+   SCROLLBAR
+   ═══════════════════════════════════════════ */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+
+
+</style>
+</head>
+<body>
+
+<!-- ═══ TOP BAR ═══ -->
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="topbar-logo">🗺️</div>
+    <div>
+      <div class="topbar-title">9DGT Adventure Map</div>
+      <div class="topbar-sub">Year 9 9DGT Adventure Map · Burnside High School</div>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <div class="lang-switch" id="lang-switch">
+      <button class="lang-btn active" onclick="switchLang('en')">EN</button>
+      <button class="lang-btn" onclick="switchLang('zh')">中</button>
+      <button class="lang-btn" onclick="switchLang('ja')">日</button>
+      <button class="lang-btn" onclick="switchLang('ko')">한</button>
+    </div>
+    <button class="btn" onclick="saveProgress()">💾 <span class="r-text">Save</span></button>
+    <div class="dropdown" id="actions-dropdown">
+      <button class="dropdown-btn" onclick="toggleDropdown(event)">⚙️ <span class="r-text">Actions</span></button>
+      <div class="dropdown-menu">
+        <button class="dropdown-item" onclick="resetProgress();closeDropdown()">🔄 Reset</button>
+        <button class="dropdown-item" onclick="openRtModal();closeDropdown()">📋 Template</button>
+        <button class="dropdown-item" onclick="openBatchModal();closeDropdown()">☑️ Batch</button>
+        <button class="dropdown-item" onclick="openCoModal();closeDropdown()">⚙️ Compulsory</button>
+        <button class="dropdown-item" onclick="showHelp();closeDropdown()">❓ Help</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══ STATS BAR ═══ -->
+<div class="stats-bar">
+  <div class="stat-card">
+    <div class="stat-icon">🏆</div>
+    <div class="stat-info">
+      <div class="stat-label">Modules Done</div>
+      <div class="stat-value green" id="stat-modules">0 / 6</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon">📍</div>
+    <div class="stat-info">
+      <div class="stat-label">Lessons Done</div>
+      <div class="stat-value purple" id="stat-lessons">0 / 39</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon">🔥</div>
+    <div class="stat-info">
+      <div class="stat-label">Current</div>
+      <div class="stat-value amber" id="stat-current">—</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon">⭐</div>
+    <div class="stat-info">
+      <div class="stat-label">XP Earned</div>
+      <div class="stat-value" style="color:var(--cyan)" id="stat-xp">0</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══ OVERALL PROGRESS ═══ -->
+<div class="progress-section">
+  <div class="progress-track">
+    <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+  </div>
+  <div class="progress-label">
+    <span>Overall journey progress</span>
+    <span id="progress-pct">0%</span>
+  </div>
+</div>
+
+
+<!-- ═══ BIG IDEA BANNER ═══ -->
+<div class="big-idea-banner" onclick="openBigIdeaModal()">
+  <div class="bi-header">
+    <span class="bi-tag">💡 Big Idea</span>
+    <span class="bi-module-tag" id="bi-module-tag">Module 1: Artificial Intelligence</span>
+  </div>
+  <div class="bi-quote" id="bi-quote">How do machines learn patterns from data to make decisions — and what are the limits?</div>
+  <div class="bi-desc" id="bi-desc">AI systems learn from examples, not instructions. They find patterns in data that humans might miss. But they can also make mistakes, show bias, and lack true understanding. This module explores how AI works on the surface, and why we need to think critically about its outputs.</div>
+  <div class="bi-maori" id="bi-maori"></div>
+</div>
+
+
+<!-- ═══ MODULE MAP ═══ -->
+<div class="map-section">
+  <div class="section-label">🗺️ Your Digital Journey — 6 Modules</div>
+  <div class="module-map" id="module-map"></div>
+</div>
+
+
+<!-- ═══ MODULE DETAIL PANELS ═══ -->
+<div id="module-details"></div>
+
+<!-- ═══ THREE COLUMNS INFO ═══ -->
+<div class="info-grid" id="info-grid">
+  <div class="info-card ic-green">
+    <div class="ic-top-line"></div>
+    <div class="ic-label" id="ic-last-label">✅ Last Completed</div>
+    <div class="ic-title" id="ic-last-title">—</div>
+    <ul class="ic-list" id="ic-last-list"></ul>
+  </div>
+  <div class="info-card ic-purple">
+    <div class="ic-top-line"></div>
+    <div class="ic-label" id="ic-now-label">🎯 Current Mission</div>
+    <div class="ic-title" id="ic-now-title">—</div>
+    <ul class="ic-list" id="ic-now-list"></ul>
+  </div>
+  <div class="info-card ic-amber">
+    <div class="ic-top-line"></div>
+    <div class="ic-label" id="ic-next-label">🔜 Coming Up</div>
+    <div class="ic-title" id="ic-next-title">—</div>
+    <ul class="ic-list" id="ic-next-list"></ul>
+  </div>
+</div>
+
+<!-- ═══ TOOLS (Dynamic from usefulLinks) ═══ -->
+<div class="tools-section"><div class="section-label" id="tools-label">🧰 Tools for this lesson</div><div class="tools-grid" id="tools-grid"><div class="tool-card" data-href="https://docs.google.com/document/d/14FUnmwh_XHbDmHi0D8yjzabHnF_Hs6BuSlveuc0dBk4/edit?usp=sharing"><div class="t-icon">🔍</div><div class="t-name" id="tool-name-0">Problem Solving Training</div><div class="t-tip" id="tool-tip-0">Leverage Google search & AI tools, but always maintain critical thinking.</div></div>
+<div class="tool-card" data-href="https://sites.google.com/burnside.school.nz/bhs-digital-technologies/junior/9dgt/y9-5-artificial-intelligence/y9-5-1-ai-image-creation#h.s0a74c7agns7"><div class="t-icon">📤</div><div class="t-name" id="tool-name-1">Submit Work to Google Classroom</div><div class="t-tip" id="tool-tip-1">Essential Y9 skill — know how to submit your work to Google Classroom.</div></div>
+<div class="tool-card" data-href="https://www.csfieldguide.org.nz/en/interactives/binary-cards/"><div class="t-icon">🃏</div><div class="t-name" id="tool-name-2">Binary Card Simulator</div><div class="t-tip" id="tool-tip-2">The most important tool for understanding binary concepts.</div></div>
+<div class="tool-card" data-href="https://sites.google.com/burnside.school.nz/bhs-digital-technologies/junior/9dgt/y9-0-start-of-course#h.jlfuuc5t6aua"><div class="t-icon">📁</div><div class="t-name" id="tool-name-3">File Management</div><div class="t-tip" id="tool-tip-3">Clear file management helps you keep a clear mind.</div></div></div></div>
+
+<!-- ═══ CURRICULUM SECTION (Dynamic based on Year Level) ═══ -->
+<div class="curriculum-section"><div class="section-label" id="curriculum-label">📋 NCEA Standards</div><div class="po-grid" id="po-grid"><div class="po-card"><span class="po-level l3">PO3</span><ul class="po-items"><li id="poL30"></li>
+<li id="poL31"></li></ul></div>
+<div class="po-card"><span class="po-level l4">PO4</span><ul class="po-items"><li id="poL40"></li>
+<li id="poL41"></li>
+<li id="poL42"></li>
+<li id="poL43"></li>
+<li id="poL44"></li></ul></div>
+<div class="po-card"><span class="po-level l5">PO5</span><ul class="po-items"><li id="poL50"></li>
+<li id="poL51"></li>
+<li id="poL52"></li></ul></div></div></div>
+
+<!-- ═══ MODAL ═══ -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal" id="modal-content" onclick="event.stopPropagation()">
+    <div class="modal-close" onclick="closeModal()">✕</div>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<!-- ═══ RESET TEMPLATE MODAL ═══ -->
+<div class="co-modal-overlay" id="rt-overlay">
+  <div class="co-modal" style="max-width:680px">
+    <div class="co-header">
+      <div class="co-title-wrap">
+        <div class="bm-title">
+          <span id="rt-title">🔧 Reset Template</span>
+          <span class="bm-count" id="rt-count" style="background:rgba(250,204,21,0.12);color:var(--amber)">0/0</span>
+        </div>
+      </div>
+      <div class="co-close" onclick="closeRtModal()">✕</div>
+    </div>
+    <div class="co-modules" id="rt-modules" style="padding:8px 24px"></div>
+    <div class="co-footer">
+      <div class="rt-quick-btns">
+        <button class="rt-quick-btn" onclick="rtQuick('todo')">Todo</button>
+        <button class="rt-quick-btn" onclick="rtQuick('current')">Current</button>
+        <button class="rt-quick-btn" onclick="rtQuick('done')">Done</button>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="bm-btn bm-btn-cancel" onclick="closeRtModal()">✕ <span id="rt-cancel-text">Cancel</span></button>
+        <button class="bm-btn bm-btn-undo" onclick="applyRtTemplate()">🔄 <span id="rt-apply-text">Reset</span></button>
+        <button class="bm-btn bm-btn-done" onclick="saveRtTemplate()">💾 <span id="rt-save-text">Save</span></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ COMPULSORY/OPTIONAL MODAL ═══ -->
+<div class="co-modal-overlay" id="co-overlay">
+  <div class="co-modal">
+    <div class="co-header">
+      <div class="co-title-wrap">
+        <div class="bm-title">
+          <span id="co-title-text">⚙️ Compulsory / Optional</span>
+          <span class="bm-count" id="co-count" style="background:rgba(63,185,80,0.15);color:var(--green)">0 / 0</span>
+        </div>
+      </div>
+      <div class="co-close" onclick="closeCoModal()">✕</div>
+    </div>
+    <div class="co-modules" id="co-modules"></div>
+    <div class="co-footer">
+      <button class="bm-btn bm-btn-cancel" onclick="closeCoModal()">✕ <span id="co-cancel-text">Close</span></button>
+    </div>
+  </div>
+</div>
+
+<div class="batch-modal-overlay" id="batch-overlay">
+  <div class="batch-modal">
+    <div class="bm-header">
+      <div class="bm-title">
+        <span id="bm-title-text">☑️ Batch</span>
+        <span class="bm-count" id="bm-count" style="background:rgba(163,113,247,0.12);color:var(--purple)">0</span>
+      </div>
+      <div class="bm-close" onclick="closeBatchModal()">✕</div>
+    </div>
+    <div class="bm-modules" id="bm-modules"></div>
+    <div class="bm-footer" style="justify-content:space-between">
+      <div class="bm-footer-left">
+        <button class="bm-btn bm-btn-undo" id="bm-btn-undo" onclick="batchUndo()" disabled>↩ Undo</button>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="bm-btn bm-btn-cancel" onclick="closeBatchModal()">✕ Cancel</button>
+        <button class="bm-btn bm-btn-done" id="bm-btn-done" onclick="batchMarkDone()" disabled>✓ Done</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     JAVASCRIPT — DATA & INTERACTION
+     ═══════════════════════════════════════════ -->
+<script>
+// ───────────────────────────────────────
+// SETTINGS
+// ───────────────────────────────────────
+window.SETTINGS_CODE = '9DGT';
+const SETTINGS = {"code":"9DGT","year":"Year 9","name":"9DGT Adventure Map","school":"Burnside High School","xpLesson":50,"xpAssessment":100,"xpModule":200,"xpAll":500,"storageKey":"9dgt_adventure_progress","curriculumType":"ncea","usefulLinks":[{"emoji":"🔍","name":"Problem Solving Training","tip":"Leverage Google search & AI tools, but always maintain critical thinking.","href":"https://docs.google.com/document/d/14FUnmwh_XHbDmHi0D8yjzabHnF_Hs6BuSlveuc0dBk4/edit?usp=sharing"},{"emoji":"📤","name":"Submit Work to Google Classroom","tip":"Essential Y9 skill — know how to submit your work to Google Classroom.","href":"https://sites.google.com/burnside.school.nz/bhs-digital-technologies/junior/9dgt/y9-5-artificial-intelligence/y9-5-1-ai-image-creation#h.s0a74c7agns7"},{"emoji":"🃏","name":"Binary Card Simulator","tip":"The most important tool for understanding binary concepts.","href":"https://www.csfieldguide.org.nz/en/interactives/binary-cards/"},{"emoji":"📁","name":"File Management","tip":"Clear file management helps you keep a clear mind.","href":"https://sites.google.com/burnside.school.nz/bhs-digital-technologies/junior/9dgt/y9-0-start-of-course#h.jlfuuc5t6aua"}]};
+const I18N = window.i18n;
+
+// ───────────────────────────────────────
+// DATA MODEL — modules and their lessons
+// ───────────────────────────────────────
+const DATA = {
+  modules: [
+  {
+    "id": "m1",
+    "num": 1,
+    "emoji": "🤖",
+    "name": "Artificial Intelligence",
+    "dateRange": "3 Feb – 20 Feb 2026",
+    "bigIdea": "How do machines learn patterns from data to make decisions — and what are the limits?",
+    "bigIdeaDesc": "AI systems learn from examples, not instructions. They find patterns in data that humans might miss. But they can also make mistakes, show bias, and lack true understanding. This module explores how AI works on the surface, and why we need to think critically about its outputs.",
+    "maori": "",
+    "lessons": [
+      {
+        "id": "m1l1",
+        "title": "AI — Digital Sketchbook",
+        "desc": "Brainstorm & explore what AI means in everyday life through a creative sketchbook activity.",
+        "type": "CT",
+        "extra": false,
+        "assessment": false,
+        "date": "3 Feb"
+      },
+      {
+        "id": "m1l2",
+        "title": "Introduction to Machine Learning",
+        "desc": "How do machines learn from examples? Training data, patterns, and predictions.",
+        "type": "CT",
+        "extra": false,
+        "assessment": false,
+        "date": "10 Feb"
+      },
+      {
+        "id": "m1l3",
+        "title": "Introduction to Large Language Models",
+        "desc": "Understanding how LLMs like ChatGPT work — generating text one token at a time.",
+        "type": "CT",
+        "extra": false,
+        "assessment": false,
+        "date": "10 Feb"
+      },
+      {
+        "id": "m1l4",
+        "title": "Prompt Engineering",
+        "desc": "Hands-on with AI tools. Crafting effective prompts to get useful, accurate results.",
+        "type": "CT",
+        "extra": false,
+        "assessment": false,
+        "date": "13 Feb"
+      },
+      {
+        "id": "m1l5",
+        "title": "Ethics and Use at School",
+        "desc": "AI ethics, bias, misinformation, and responsible use in a school context.",
+        "type": "CT",
+        "extra": false,
+        "assessment": false,
+        "date": "17 Feb"
+      }
+    ]
+  },
+  {
+    "id": "m2",
+    "num": 2,
+    "emoji": "🖼️",
+    "name": "Image Manipulation",
+    "dateRange": "23 Feb – 6 Mar 2026",
+    "bigIdea": "Digital images are just numbers in a grid — understanding pixels opens up creative control.",
+    "bigIdeaDesc": "Every digital photo is a grid of tiny squares (pixels), each with a colour number. By manipulating these numbers, we can enhance, transform, and create entirely new images. This connects directly to binary data representation.",
+    "maori": "",
+    "lessons": [
+      {
+        "id": "m2l1",
+        "title": "Learning Gimp: Sheep Tutorial",
+        "desc": "Getting started with GIMP — follow the sheep tutorial to learn core tools and interface.",
+        "type": "CT",
+        "extra": false,
+        "assessment": false,
+        "date": "23 Feb"
+      },
+      {
+        "id": "m2l2",
+        "title": "Learning Gimp: Animal Advice Meme",
+        "desc": "Create an animal advice meme using GIMP skills — layers, text, and image compositing.",
+        "type": "CT",
+        "extra": false,
+        "assessment": false,
+        "date": "2 Mar"
+      },
+      {
+        "id": "m2l3",
+        "title": "Learning Gimp: Personal Choice",
+        "desc": "Apply GIMP skills to a personal creative project of your choice. Extra submission opportunity.",
+        "type": "CT",
+        "extra": true,
+        "assessment": false,
+        "date": "6 Mar"
+      }
+    ]
+  },
+  {
+    "id": "m3",
+    "num": 3,
+    "emoji": "📊",
+    "name": "Data Visualisation",
+    "dateRange": "9 Mar – 20 Mar 2026",
+    "bigIdea": "Raw data tells a story when you know how to present it — the right chart reveals the right insight.",
+    "bigIdeaDesc": "Data is everywhere, but it is useless without clear visualisation. Choosing the right chart type, using colour effectively, and designing for your audience are key skills. Good data viz turns confusion into clarity.",
+    "maori": "",
+    "lessons": [
+      {
+        "id": "m3l1",
+        "title": "Infographic",
+        "desc": "Design and create an infographic that presents data visually using effective design principles.",
+        "type": "CT",
+        "extra": false,
+        "assessment": false,
+        "date": "9 Mar"
+      }
+    ]
+  },
+  {
+    "id": "m4",
+    "num": 4,
+    "emoji": "💻",
+    "name": "Computer Science",
+    "dateRange": "23 Mar – 1 May 2026",
+    "bigIdea": "Mō ngā mea katoa i roto i te rorohiko, he mati tonu: hei rahi pea, he ingoa, he whakaahua — ko te tekau paheka e whakamahia ana hei tuatahi. (Everything in a computer is just bits — binary is used first.)",
+    "bigIdeaDesc": "This module explores the fundamental building blocks of digital information: binary numbers, image representation, text compression, decomposition, and algorithms. Understanding these concepts reveals how computers store, process, and transmit all forms of data.",
+    "maori": "Mō ngā mea katoa i roto i te rorohiko, he mati tonu: hei rahi pea, he ingoa, he whakaahua — ko te tekau paheka e whakamahia ana hei tuatahi.",
+    "submodules": [
+      {
+        "name": "Binary",
+        "emoji": "🔢",
+        "topic": 1,
+        "lessons": [
+          "m4l1",
+          "m4l2",
+          "m4l3",
+          "m4l4",
+          "m4l5"
+        ]
+      },
+      {
+        "name": "Image Representation",
+        "emoji": "🖼️",
+        "topic": 2,
+        "lessons": [
+          "m4l6",
+          "m4l7"
+        ]
+      },
+      {
+        "name": "Text Compression",
+        "emoji": "📝",
+        "topic": 3,
+        "lessons": [
+          "m4l8",
+          "m4l9",
+          "m4l10"
+        ]
+      },
+      {
+        "name": "Decomposition",
+        "emoji": "🧩",
+        "topic": 4,
+        "lessons": [
+          "m4l11",
+          "m4l12"
+        ]
+      }
+    ],
+    "lessons": [
+      {
+        "id": "m4l1",
+        "title": "CS Task 1.1 — Introduction to Binary",
+        "desc": "Learn how computers use binary (0s and 1s) to represent all data. Convert between denary and binary.",
+        "type": "CT",
+        "extra": false,
+        "assessment": false,
+        "date": "24 Mar"
+      },
+      {
+        "id": "m4l2",
+        "title": "CS Task 1.3 — Do you know binary?",
+        "desc": "Check how well you understand binary with practice exercises and self-assessment.",
+        "type": "CT",
+        "extra": false,
+        "assessment": false,
+        "date": "26 Mar"
+      },
+      {
+        "id": "m4l3",
+        "title": "End of Topic Assessment: Binary",
+        "desc": "Summative assessment on binary number representation and conversion. Worth 10 marks.",
+        "type": "CT",
+        "extra": false,
+        "assessment": true,
+        "date": "27 Mar"
+      },
+      {
+        "id": "m4l4",
+        "title": "EXTRA: CS Task 1.4 — Sending Secret Messages",
+        "desc": "Encode and decode secret messages using binary. Fun extension activity.",
+        "type": "CT",
+        "extra": true,
+        "assessment": false,
+        "date": ""
+      },
+      {
+        "id": "m4l5",
+        "title": "EXTRA: CS Task 1.5 — Binary Message Poster",
+        "desc": "Create a visual poster demonstrating how binary messages work.",
+        "type": "CT",
+        "extra": true,
+        "assessment": false,
+        "date": ""
+      },
+      {
+        "id": "m4l6",
+        "title": "CS Task 2.1 — Bitmaps & Run Length Encoding",
+        "desc": "How are images stored? Learn bitmap representation and run-length encoding compression.",
+        "type": "CT",
+        "extra": false,
+        "assessment": false,
+        "date": "31 Mar"
+      },
+      {
+        "id": "m4l7",
+        "title": "End of Topic Assessment: Image Representation",
+        "desc": "Quiz assessment on how computers store and represent images using binary.",
+        "type": "CT",
+        "extra": false,
+        "assessment": true,
+        "date": "2 Apr"
+      },
+      {
+        "id": "m4l8",
+        "title": "CS Task 3.1 — Poi E Text Compression",
+        "desc": "Compress the lyrics of Poi E using text compression techniques — a te reo Māori connection.",
+        "type": "CT",
+        "extra": false,
+        "assessment": false,
+        "date": "21 Apr"
+      },
+      {
+        "id": "m4l9",
+        "title": "CS Task 3.2 — Decode & Encode using Dictionaries",
+        "desc": "Use dictionary-based encoding to compress and decompress text efficiently.",
+        "type": "CT",
+        "extra": false,
+        "assessment": false,
+        "date": "22 Apr"
+      },
+      {
+        "id": "m4l10",
+        "title": "End of Topic Assessment: Text Compression",
+        "desc": "Summative assessment on text compression methods and dictionary encoding. Worth 3 marks.",
+        "type": "CT",
+        "extra": false,
+        "assessment": true,
+        "date": "24 Apr"
+      },
+      {
+        "id": "m4l11",
+        "title": "CS Task 4.2 — Getting a Glass of Water",
+        "desc": "Decomposition practice: break down getting a glass of water into precise steps.",
+        "type": "CT",
+        "extra": false,
+        "assessment": false,
+        "date": "30 Apr"
+      },
+      {
+        "id": "m4l12",
+        "title": "End of Topic Assessment: Decomposition",
+        "desc": "Write decomposition instructions for an everyday task. Worth 3 marks.",
+        "type": "CT",
+        "extra": false,
+        "assessment": true,
+        "date": "1 May"
+      }
+    ]
+  },
+  {
+    "id": "m5",
+    "num": 5,
+    "emoji": "🐱",
+    "name": "Programming",
+    "dateRange": "4 May – 29 May 2026",
+    "bigIdea": "Programming is teaching a computer to solve problems step by step — through sequences, selections, and iterations we bring ideas to life.",
+    "bigIdeaDesc": "In this module you will learn programming fundamentals using Scratch — sequences, events, loops, conditionals, and variables. You will build a multiplication quiz and a guessing game, developing the same computational thinking used by professional developers. These thinking skills transfer to any programming language.",
+    "maori": "",
+    "lessons": [
+      {
+        "id": "m5l1",
+        "title": "Task 1A–1E — Programming Fundamentals in Scratch",
+        "desc": "Core Scratch skills: interface, sprites, sequences, events, loops, conditionals, and variables. Five sub-tasks.",
+        "type": "CT",
+        "extra": false,
+        "assessment": false,
+        "date": "4 May"
+      },
+      {
+        "id": "m5l2",
+        "title": "Task 2 — Multiplication Quiz in Scratch",
+        "desc": "Build an interactive multiplication quiz that tests the user and gives feedback.",
+        "type": "CT",
+        "extra": false,
+        "assessment": false,
+        "date": "13 May"
+      },
+      {
+        "id": "m5l3",
+        "title": "EoT Guessing Game Scratch Assessment",
+        "desc": "Design and code a number guessing game in Scratch. End-of-topic assessment — worth CT marks.",
+        "type": "CT",
+        "extra": false,
+        "assessment": true,
+        "date": "21 May"
+      },
+      {
+        "id": "m5l4",
+        "title": "EXTRA — Debugging in Scratch",
+        "desc": "Find and fix bugs in broken Scratch programs. Build debugging skills.",
+        "type": "CT",
+        "extra": true,
+        "assessment": false,
+        "date": ""
+      },
+      {
+        "id": "m5l5",
+        "title": "EXTRA — Scratch Vocabulary Trainer Tasks",
+        "desc": "Extend your Scratch skills with vocabulary trainer challenges.",
+        "type": "CT",
+        "extra": true,
+        "assessment": false,
+        "date": ""
+      }
+    ]
+  },
+  {
+    "id": "m6",
+    "num": 6,
+    "emoji": "🎨",
+    "name": "Character Project",
+    "dateRange": "1 Jun – 3 Jul 2026",
+    "bigIdea": "Great digital outcomes start with a design process — plan, create, test, improve.",
+    "bigIdeaDesc": "This capstone DDDO (Designing and Developing Digital Outcomes) project brings everything together. You will use a structured design process to plan, develop, test, and refine a character design project. It connects programming, visual design, data skills, and the creative thinking developed throughout the course.",
+    "maori": "",
+    "lessons": [
+      {
+        "id": "m6l1",
+        "title": "DDDO Project Evidence",
+        "desc": "Plan, design, build, test, and refine a character project. Submit evidence of the full design process. DDDO assessment.",
+        "type": "DDDO",
+        "extra": false,
+        "assessment": true,
+        "date": "1 Jun"
+      }
+    ]
+  }
+]
+};
+
+// ───────────────────────────────────────
+// STATE MANAGEMENT
+// ───────────────────────────────────────
+const STORAGE_KEY = '9dgt_adventure_progress';
+
+// XP values
+const XP_LESSON = 50;
+const XP_MODULE = 200;
+const XP_ALL = 500;
+
+let currentLang = localStorage.getItem(STORAGE_KEY + '_lang') || 'en';
+let state = loadState();
+
+// ───────────────────────────────────────
+// INTERNATIONALIZATION
+// ───────────────────────────────────────
+
+// Build i18n with base translations + user translations merged
+const i18n = {
+  en: Object.assign({
+    title: 'Adventure Map',
+    subtitle: 'Digital Technologies',
+    modulesDone: 'Modules Done',
+    lessonsDone: 'Lessons Done',
+    current: 'Current',
+    xpEarned: 'XP Earned',
+    overallProgress: 'Overall journey progress',
+    bigIdea: '💡 Big Idea',
+    yourJourney: '🗺️ Your Digital Journey',
+    done: 'Done',
+    now: 'Now',
+    todo: 'Todo',
+    lastCompleted: '✅ Last Completed',
+    currentMission: '🎯 Current Mission',
+    comingUp: '🔜 Coming Up',
+    clickToAdvance: 'Click lessons above to mark progress',
+    moduleProgress: 'Module Progress',
+    clickToJump: 'Click to jump to next lesson →',
+    assessment: 'Assessment',
+    extra: 'Extra',
+    optional: 'Optional',
+    progressSaved: 'Progress saved!',
+    confirmReset: 'Reset all progress?',
+    progressReset: 'Progress reset!',
+    module: 'Module',
+    helpTitle: 'How to Use',
+    helpDesc: 'Click on lessons to mark them as complete. Your progress is automatically saved.',
+    helpGreen: '✅ Green = Completed lessons',
+    helpPurple: '▶ Purple = Current lesson (click to complete)',
+    helpGrey: '⬜ Grey = Upcoming lessons',
+    helpXP: '🎮 XP System:',
+    helpXPDesc: 'Each lesson = 50 XP · Assessment = 100 XP · Module complete = 200 XP bonus · All complete = 500 XP bonus',
+    helpSave: '💾 Save:',
+    helpSaveDesc: 'Progress is auto-saved to your browser. Click Save anytime, or use Reset to start fresh.',
+    helpBigIdeaDesc: 'Click the purple banner at the top to see the driving question for the current module.',
+    helpModulesDesc: 'Click any module node on the map to expand its lesson list and track your progress.',
+    toolsLabel: 'Tools',
+    toolPlaceholder: 'Add tools from Settings',
+    helpTitle: 'Help',
+    resetTemplate: 'Reset Template',
+    batch: 'Batch',
+    compulsory: 'Compulsory',
+    help: 'Help',
+    allComplete: 'All modules complete!',
+    batchComplete: 'Complete',
+    batchCancel: 'Cancel',
+    undo: 'Undo',
+    cancel: 'Cancel',
+    save: 'Save',
+    close: 'Close',
+    compulsoryOptional: 'Compulsory / Optional',
+    coAllCompulsory: 'All Compulsory',
+    coAllOptional: 'All Optional',
+    coSetAll: 'Set All',
+    coCompulsory: 'Compulsory',
+    coOptional: 'Optional',
+    completed: 'Completed',
+    lessons: 'Lessons',
+    of: 'of',
+    lessonsComplete: 'lessons complete',
+    next: 'Next',
+    nextModule: 'Next module',
+    finalLesson: 'Final lesson in this module!',
+    batchModeOn: 'Exit Batch',
+    batchModeOff: 'Batch',
+    selected: 'selected',
+    batchUndo: 'Undo',
+    toolsForThisLesson: '🧰 Tools for this lesson',
+    reset: 'Reset',
+    howItWorks: '❓',
+    helpBigIdea: '<strong style="color:var(--text)">💡 Big Idea:</strong>',
+    helpModules: '<strong style="color:var(--text)">📂 Module Details:</strong>',
+    resetTemplateSaved: '🔧 Reset template saved!',
+    resetTemplateTitle: '🔧 Reset Template',
+    actions: 'Actions',
+    topic: 'Topic',
+    template: 'Template',
+    coTitle: '⚙️ Compulsory / Optional',
+    rtTodo: 'Todo',
+    rtCurrent: 'Current',
+    rtDone: 'Done',
+    rtReset: 'Reset',
+  }, {"title":"9DGT Adventure Map","subtitle":"Year 9 Digital Technologies · Burnside High School","modulesDone":"Modules Done","lessonsDone":"Lessons Done","current":"Current","xpEarned":"XP Earned","overallProgress":"Overall journey progress","bigIdea":"💡 Big Idea","yourJourney":"🗺️ Your Digital Journey — 6 Modules","module":"Module","completed":"Completed","lessons":"Lessons","of":"of","lessonsComplete":"lessons complete","done":"Done","now":"Now","todo":"Todo","lastCompleted":"✅ Last Completed","currentMission":"🎯 Current Mission","comingUp":"🔜 Coming Up","next":"Next","nextModule":"Next module","clickToAdvance":"Click lessons above to mark progress","allComplete":"All modules completed!","finalLesson":"Final lesson in this module!","batchModeOn":"Exit Batch","batchModeOff":"Batch","selected":"selected","batchUndo":"Undo","batchCancel":"Cancel","toolsForThisLesson":"🧰 Tools for this lesson","nzCurriculum":"📋 NZ Curriculum — Progress Outcomes","reset":"🔄 Reset","save":"Save","howItWorks":"❓","helpTitle":"🗺️ How the Adventure Map Works","helpDesc":"This is your <span class=\"highlight\">interactive learning journey</span> for 9DGT. Track your progress through each module and lesson!","helpGreen":"<strong style=\"color:var(--text)\">🟢 Green (Done)</strong> — Lessons you have completed. Click to undo if needed.","helpPurple":"<strong style=\"color:var(--text)\">🟣 Purple (Current)</strong> — Where you are right now. Click to mark as done and advance!","helpGrey":"<strong style=\"color:var(--text)\">⬜ Grey (Todo)</strong> — Not yet started. Click to mark as done.","helpXP":"<strong style=\"color:var(--text)\">🎮 XP System:</strong>","helpXPDesc":"Each lesson = <span class=\"highlight\">50 XP</span> · Module completion = <span class=\"highlight\">200 XP bonus</span> · All complete = <span class=\"highlight\">500 XP bonus</span>","helpSave":"<strong style=\"color:var(--text)\">💾 Saving:</strong>","helpSaveDesc":"Progress auto-saves to your browser. Click \"Save\" anytime, or use \"Reset\" to start over.","helpBigIdea":"<strong style=\"color:var(--text)\">💡 Big Idea:</strong>","helpBigIdeaDesc":"Click the purple banner at the top to see the driving question for the current module.","helpModules":"<strong style=\"color:var(--text)\">📂 Module Details:</strong>","helpModulesDesc":"Click any module node on the map to expand its lesson list and see individual progress.","moduleProgress":"Module Progress","clickToJump":"→ Click to jump to next task","progressSaved":"💾 Progress saved!","progressReset":"🔄 Progress reset!","resetTemplateSaved":"🔧 Reset template saved!","resetTemplateTitle":"🔧 Reset Template","actions":"Actions","confirmReset":"Reset all progress? This cannot be undone.","assessment":"Assessment","extra":"Extra","optional":"Optional","topic":"Topic","template":"Template","batch":"Batch","compulsory":"Compulsory","help":"Help","coAllCompulsory":"All compulsory","coAllOptional":"All optional","coSetAll":"Set all","coCompulsory":"Compulsory","coOptional":"Optional","coTitle":"⚙️ Compulsory / Optional","rtTodo":"Todo","rtCurrent":"Current","rtDone":"Done","rtApply":"Apply","toolName0":"Problem Solving Training","toolTip0":"Leverage Google search & AI tools, but always maintain critical thinking.","toolName1":"Submit Work to Google Classroom","toolTip1":"Essential Y9 skill — know how to submit your work to Google Classroom.","toolName2":"Binary Card Simulator","toolTip2":"The most important tool for understanding binary concepts.","toolName3":"File Management","toolTip3":"Clear file management helps you keep a clear mind.","poL30":"Multiple algorithms for the same problem","poL31":"Digital devices store data using two states (bits)","poL40":"Debug simple algorithms & programs","poL41":"Explain errors & fixes","poL42":"Detect errors in data storage/transmission","poL43":"Evaluate algorithm efficiency","poL44":"Search & sort large datasets","poL50":"Complex data types using binary digits","poL51":"Independent algorithm decomposition","poL52":"Variables, selection & iteration","batchComplete":"Complete","modName_m1":"Artificial Intelligence","modName_m2":"Image Manipulation","modName_m3":"Data Visualisation","modName_m4":"Computer Science","modName_m5":"Programming","modName_m6":"Character Project","modBigIdea_m1":"How do machines learn patterns from data to make decisions — and what are the limits?","modBigIdea_m2":"Digital images are just numbers in a grid — understanding pixels opens up creative control.","modBigIdea_m3":"Raw data tells a story when you know how to present it — the right chart reveals the right insight.","modBigIdea_m4":"Mō ngā mea katoa i roto i te rorohiko, he mati tonu: hei rahi pea, he ingoa, he whakaahua — ko te tekau paheka e whakamahia ana hei tuatahi. (Everything in a computer is just bits — binary is used first.)","modBigIdea_m5":"Programming is teaching a computer to solve problems step by step — through sequences, selections, and iterations we bring ideas to life.","modBigIdea_m6":"Great digital outcomes start with a design process — plan, create, test, improve.","modBigIdeaDesc_m1":"AI systems learn from examples, not instructions. They find patterns in data that humans might miss. But they can also make mistakes, show bias, and lack true understanding. This module explores how AI works on the surface, and why we need to think critically about its outputs.","modBigIdeaDesc_m2":"Every digital photo is a grid of tiny squares (pixels), each with a colour number. By manipulating these numbers, we can enhance, transform, and create entirely new images. This connects directly to binary data representation.","modBigIdeaDesc_m3":"Data is everywhere, but it is useless without clear visualisation. Choosing the right chart type, using colour effectively, and designing for your audience are key skills. Good data viz turns confusion into clarity.","modBigIdeaDesc_m4":"This module explores the fundamental building blocks of digital information: binary numbers, image representation, text compression, decomposition, and algorithms. Understanding these concepts reveals how computers store, process, and transmit all forms of data.","modBigIdeaDesc_m5":"In this module you will learn programming fundamentals using Scratch — sequences, events, loops, conditionals, and variables. You will build a multiplication quiz and a guessing game, developing the same computational thinking used by professional developers. These thinking skills transfer to any programming language.","modBigIdeaDesc_m6":"This capstone DDDO (Designing and Developing Digital Outcomes) project brings everything together. You will use a structured design process to plan, develop, test, and refine a character design project. It connects programming, visual design, data skills, and the creative thinking developed throughout the course.","subName_m4s0":"Binary","subName_m4s1":"Image Representation","subName_m4s2":"Text Compression","subName_m4s3":"Decomposition","lesTitle_m1l1":"AI — Digital Sketchbook","lesTitle_m1l2":"Introduction to Machine Learning","lesTitle_m1l3":"Introduction to Large Language Models","lesTitle_m1l4":"Prompt Engineering","lesTitle_m1l5":"Ethics and Use at School","lesTitle_m2l1":"Learning Gimp: Sheep Tutorial","lesTitle_m2l2":"Learning Gimp: Animal Advice Meme","lesTitle_m2l3":"Learning Gimp: Personal Choice","lesTitle_m3l1":"Infographic","lesTitle_m4l1":"CS Task 1.1 — Introduction to Binary","lesTitle_m4l2":"CS Task 1.3 — Do you know binary?","lesTitle_m4l3":"End of Topic Assessment: Binary","lesTitle_m4l4":"EXTRA: CS Task 1.4 — Sending Secret Messages","lesTitle_m4l5":"EXTRA: CS Task 1.5 — Binary Message Poster","lesTitle_m4l6":"CS Task 2.1 — Bitmaps & Run Length Encoding","lesTitle_m4l7":"End of Topic Assessment: Image Representation","lesTitle_m4l8":"CS Task 3.1 — Poi E Text Compression","lesTitle_m4l9":"CS Task 3.2 — Decode & Encode using Dictionaries","lesTitle_m4l10":"End of Topic Assessment: Text Compression","lesTitle_m4l11":"CS Task 4.2 — Getting a Glass of Water","lesTitle_m4l12":"End of Topic Assessment: Decomposition","lesTitle_m5l1":"Task 1A–1E — Programming Fundamentals in Scratch","lesTitle_m5l2":"Task 2 — Multiplication Quiz in Scratch","lesTitle_m5l3":"EoT Guessing Game Scratch Assessment","lesTitle_m5l4":"EXTRA — Debugging in Scratch","lesTitle_m5l5":"EXTRA — Scratch Vocabulary Trainer Tasks","lesTitle_m6l1":"DDDO Project Evidence","lesDesc_m1l1":"Brainstorm & explore what AI means in everyday life through a creative sketchbook activity.","lesDesc_m1l2":"How do machines learn from examples? Training data, patterns, and predictions.","lesDesc_m1l3":"Understanding how LLMs like ChatGPT work — generating text one token at a time.","lesDesc_m1l4":"Hands-on with AI tools. Crafting effective prompts to get useful, accurate results.","lesDesc_m1l5":"AI ethics, bias, misinformation, and responsible use in a school context.","lesDesc_m2l1":"Getting started with GIMP — follow the sheep tutorial to learn core tools and interface.","lesDesc_m2l2":"Create an animal advice meme using GIMP skills — layers, text, and image compositing.","lesDesc_m2l3":"Apply GIMP skills to a personal creative project of your choice. Extra submission opportunity.","lesDesc_m3l1":"Design and create an infographic that presents data visually using effective design principles.","lesDesc_m4l1":"Learn how computers use binary (0s and 1s) to represent all data. Convert between denary and binary.","lesDesc_m4l2":"Check how well you understand binary with practice exercises and self-assessment.","lesDesc_m4l3":"Summative assessment on binary number representation and conversion. Worth 10 marks.","lesDesc_m4l4":"Encode and decode secret messages using binary. Fun extension activity.","lesDesc_m4l5":"Create a visual poster demonstrating how binary messages work.","lesDesc_m4l6":"How are images stored? Learn bitmap representation and run-length encoding compression.","lesDesc_m4l7":"Quiz assessment on how computers store and represent images using binary.","lesDesc_m4l8":"Compress the lyrics of Poi E using text compression techniques — a te reo Māori connection.","lesDesc_m4l9":"Use dictionary-based encoding to compress and decompress text efficiently.","lesDesc_m4l10":"Summative assessment on text compression methods and dictionary encoding. Worth 3 marks.","lesDesc_m4l11":"Decomposition practice: break down getting a glass of water into precise steps.","lesDesc_m4l12":"Write decomposition instructions for an everyday task. Worth 3 marks.","lesDesc_m5l1":"Core Scratch skills: interface, sprites, sequences, events, loops, conditionals, and variables. Five sub-tasks.","lesDesc_m5l2":"Build an interactive multiplication quiz that tests the user and gives feedback.","lesDesc_m5l3":"Design and code a number guessing game in Scratch. End-of-topic assessment — worth CT marks.","lesDesc_m5l4":"Find and fix bugs in broken Scratch programs. Build debugging skills.","lesDesc_m5l5":"Extend your Scratch skills with vocabulary trainer challenges.","lesDesc_m6l1":"Plan, design, build, test, and refine a character project. Submit evidence of the full design process. DDDO assessment.","poTitle3":"Progress Outcome 3 — Te Tapa","poTitle4":"Progress Outcome 4 — Te Tapa","poTitle5":"Progress Outcome 5 — Te Tapa","modMaori_m4":"Mō ngā mea katoa i roto i te rorohiko, he mati tonu: hei rahi pea, he ingoa, he whakaahua — ko te tekau paheka e whakamahia ana hei tuatahi."}),
+  zh: Object.assign({
+    title: '冒险地图',
+    subtitle: '数字技术',
+    modulesDone: '已完成模块',
+    lessonsDone: '已完成课程',
+    current: '当前',
+    xpEarned: '获得经验值',
+    overallProgress: '整体学习进度',
+    bigIdea: '💡 核心问题',
+    yourJourney: '🗺️ 你的数字之旅',
+    done: '完成',
+    now: '进行中',
+    todo: '待完成',
+    lastCompleted: '✅ 最近完成',
+    currentMission: '🎯 当前任务',
+    comingUp: '🔜 即将开始',
+    assessment: '评估',
+    extra: '附加',
+    optional: '选修',
+    progressSaved: '进度已保存！',
+    confirmReset: '重置所有进度？',
+    progressReset: '进度已重置！',
+    module: '模块',
+    helpTitle: '使用方法',
+    helpDesc: '点击课程标记为完成。进度会自动保存。',
+    helpGreen: '✅ 绿色 = 已完成课程',
+    helpPurple: '▶ 紫色 = 当前课程（点击完成）',
+    helpGrey: '⬜ 灰色 = 即将开始的课程',
+    helpXP: '🎮 经验值系统：',
+    helpXPDesc: '每节课 = 50 XP · 评估课 = 100 XP · 模块完成 = 200 XP 奖励 · 全部完成 = 500 XP 奖励',
+    helpSave: '💾 保存：',
+    helpSaveDesc: '进度自动保存到浏览器。随时点击"保存"，或使用"重置"重新开始。',
+    helpBigIdeaDesc: '点击顶部的紫色横幅，查看当前模块的驱动问题。',
+    helpModulesDesc: '点击地图上的任意模块节点，展开其课程列表并查看个人进度。',
+    moduleProgress: '模块进度',
+    clickToJump: '点击跳转到下一课 →',
+    toolsLabel: '工具',
+    toolPlaceholder: '请在设置中添加工具',
+    helpTitle: '帮助',
+    resetTemplate: '重置模板',
+    batch: '批量',
+    compulsory: '必修',
+    help: '帮助',
+    allComplete: '所有模块已完成！',
+    batchComplete: '完成',
+    batchCancel: '取消',
+    undo: '撤销',
+    cancel: '取消',
+    save: '保存',
+    close: '关闭',
+    compulsoryOptional: '必修 / 选修',
+    coAllCompulsory: '全部必修',
+    coAllOptional: '全部选修',
+    coSetAll: '全选',
+    coCompulsory: '必修',
+    coOptional: '选修',
+    completed: '已完成',
+    lessons: '课程',
+    of: '/',
+    lessonsComplete: '个课程已完成',
+    next: '下一个',
+    nextModule: '下一模块',
+    finalLesson: '本模块最后一课！',
+    batchModeOn: '退出批量',
+    batchModeOff: '批量选择',
+    selected: '个已选',
+    batchUndo: '撤销',
+    toolsForThisLesson: '🧰 本课工具',
+    reset: '重置',
+    howItWorks: '❓',
+    helpBigIdea: '<strong style="color:var(--text)">💡 核心问题：</strong>',
+    helpModules: '<strong style="color:var(--text)">📂 模块详情：</strong>',
+    resetTemplateSaved: '🔧 重置模板已保存！',
+    resetTemplateTitle: '🔧 重置模板',
+    actions: '操作',
+    topic: '专题',
+    template: '模板',
+    coTitle: '⚙️ 必修 / 选修',
+    rtTodo: '待完成',
+    rtCurrent: '进行中',
+    rtDone: '已完成',
+    rtReset: '重置',
+  }, {"title":"9DGT 冒险地图","subtitle":"9年级数字技术 · 伯恩赛德高中","modulesDone":"已完成模块","lessonsDone":"已完成课程","current":"当前","xpEarned":"获得经验值","overallProgress":"整体学习进度","bigIdea":"💡 核心问题","yourJourney":"🗺️ 你的数字之旅 — 6个模块","module":"模块","completed":"已完成","lessons":"课程","of":"/","lessonsComplete":"个课程已完成","done":"完成","now":"进行中","todo":"待完成","lastCompleted":"✅ 最近完成","currentMission":"🎯 当前任务","comingUp":"🔜 即将开始","next":"下一个","nextModule":"下一模块","clickToAdvance":"点击上方课程标记进度","allComplete":"所有模块已完成！","finalLesson":"本模块最后一课！","batchModeOn":"退出批量","batchModeOff":"批量选择","selected":"个已选","batchUndo":"撤销","batchCancel":"取消","toolsForThisLesson":"🧰 本课工具","nzCurriculum":"📋 新西兰课程大纲 — 进阶成果","reset":"🔄 重置","save":"保存","howItWorks":"❓","helpTitle":"🗺️ 冒险地图使用说明","helpDesc":"这是你的 9DGT <span class=\"highlight\">互动学习之旅</span>。通过每个模块和课程来追踪你的进度！","helpGreen":"<strong style=\"color:var(--text)\">🟢 绿色（已完成）</strong> — 你已完成的课程。点击可撤销。","helpPurple":"<strong style=\"color:var(--text)\">🟣 紫色（进行中）</strong> — 你当前所在的位置。点击标记完成并前进！","helpGrey":"<strong style=\"color:var(--text)\">⬜ 灰色（待完成）</strong> — 尚未开始。点击标记完成。","helpXP":"<strong style=\"color:var(--text)\">🎮 经验值系统：</strong>","helpXPDesc":"每节课 = <span class=\"highlight\">50 XP</span> · 模块完成 = <span class=\"highlight\">200 XP 奖励</span> · 全部完成 = <span class=\"highlight\">500 XP 奖励</span>","helpSave":"<strong style=\"color:var(--text)\">💾 保存：</strong>","helpSaveDesc":"进度自动保存到浏览器。随时点击\"保存\"，或使用\"重置\"重新开始。","helpBigIdea":"<strong style=\"color:var(--text)\">💡 核心问题：</strong>","helpBigIdeaDesc":"点击顶部的紫色横幅，查看当前模块的驱动问题。","helpModules":"<strong style=\"color:var(--text)\">📂 模块详情：</strong>","helpModulesDesc":"点击地图上的任意模块节点，展开其课程列表并查看个人进度。","moduleProgress":"模块进度","clickToJump":"→ 点击跳转到下一个任务","progressSaved":"💾 进度已保存！","progressReset":"🔄 进度已重置！","resetTemplateSaved":"🔧 重置模板已保存！","resetTemplateTitle":"🔧 重置模板","actions":"操作","confirmReset":"确定要重置所有进度吗？此操作无法撤销。","assessment":"评估","extra":"附加","optional":"选修","topic":"专题","template":"模板","batch":"批量","compulsory":"必修","help":"帮助","coAllCompulsory":"全部必修","coAllOptional":"全部选修","coSetAll":"全选","coCompulsory":"必修","coOptional":"选修","coTitle":"⚙️ 必修 / 选修","rtTodo":"待完成","rtCurrent":"进行中","rtDone":"已完成","rtApply":"应用","toolName0":"问题解决训练","toolTip0":"善用 Google 搜索与 AI 工具，但需要保持批判性思维。","toolName1":"提交作业到 Google Classroom","toolTip1":"9年级基础技能 — 知道如何将作业提交到 Google Classroom。","toolName2":"二进制卡片模拟器","toolTip2":"最重要的辅助理解二进制的工具。","toolName3":"文件管理","toolTip3":"清晰的文件管理能让你保持清晰的头脑。","poL30":"同一问题的多种算法","poL31":"数字设备使用两种状态（比特）存储数据","poL40":"调试简单算法和程序","poL41":"解释错误及修复方法","poL42":"检测数据存储/传输中的错误","poL43":"评估算法效率","poL44":"搜索与排序大型数据集","poL50":"使用二进制数字的复杂数据类型","poL51":"独立进行算法分解","poL52":"变量、选择与迭代","batchComplete":"完成","modName_m1":"人工智能","modName_m2":"图像处理","modName_m3":"数据可视化","modName_m4":"计算机科学","modName_m5":"编程","modName_m6":"角色项目","modBigIdea_m1":"机器如何从数据中学习模式来做出决策——其局限又是什么？","modBigIdea_m2":"数字图像只是网格中的数字——理解像素就能获得创意控制力。","modBigIdea_m3":"原始数据在你懂得如何呈现时就能讲述故事——正确的图表揭示正确的洞察。","modBigIdea_m4":"Mō ngā mea katoa i roto i te rorohiko, he mati tonu: hei rahi pea, he ingoa, he whakaahua — ko te tekau paheka e whakamahia ana hei tuatahi.（计算机中的一切都只是比特——二进制是基础。）","modBigIdea_m5":"编程就是一步一步教计算机解决问题——通过顺序、选择和迭代，让想法变为现实。","modBigIdea_m6":"优秀的数字成果始于设计流程——规划、创建、测试、改进。","modBigIdeaDesc_m1":"AI 系统从示例中学习，而非从指令中学习。它们能发现人类可能忽略的数据模式，但也可能犯错、显示偏见、缺乏真正的理解。本模块从表面探索 AI 的工作原理，以及为什么我们需要对其输出进行批判性思考。","modBigIdeaDesc_m2":"每张数字照片都是一个微小方格（像素）的网格，每个像素都有一个颜色数字。通过操作这些数字，我们可以增强、转换并创建全新的图像。这与二进制数据表示直接相关。","modBigIdeaDesc_m3":"数据无处不在，但如果没有清晰的可视化就没有用。选择正确的图表类型、有效使用颜色、为受众设计，都是关键技能。好的数据可视化能将困惑变为清晰。","modBigIdeaDesc_m4":"本模块探索数字信息的基本构建块：二进制数、图像表示、文本压缩、分解和算法。理解这些概念，揭示计算机如何存储、处理和传输所有形式的数据。","modBigIdeaDesc_m5":"在本模块中，你将使用 Scratch 学习编程基础——顺序、事件、循环、条件和变量。你将构建一个乘法测验和一个猜数字游戏，培养专业开发者使用的计算思维。这些思维技能可迁移到任何编程语言。","modBigIdeaDesc_m6":"这个综合 DDDO（设计和开发数字成果）项目将一切串联起来。你将使用结构化的设计流程来规划、开发、测试和完善一个角色设计项目，整合编程、视觉设计、数据技能以及整个课程中培养的创意思维。","subName_m4s0":"二进制","subName_m4s1":"图像表示","subName_m4s2":"文本压缩","subName_m4s3":"分解","lesTitle_m1l1":"AI — 数字速写本","lesTitle_m1l2":"机器学习入门","lesTitle_m1l3":"大语言模型入门","lesTitle_m1l4":"提示工程","lesTitle_m1l5":"伦理与校园使用","lesTitle_m2l1":"学习 GIMP：绵羊教程","lesTitle_m2l2":"学习 GIMP：动物建议表情包","lesTitle_m2l3":"学习 GIMP：自由创作","lesTitle_m3l1":"信息图表","lesTitle_m4l1":"CS 任务 1.1 — 二进制入门","lesTitle_m4l2":"CS 任务 1.3 — 你了解二进制吗？","lesTitle_m4l3":"专题评估：二进制","lesTitle_m4l4":"附加：CS 任务 1.4 — 发送秘密信息","lesTitle_m4l5":"附加：CS 任务 1.5 — 二进制信息海报","lesTitle_m4l6":"CS 任务 2.1 — 位图与行程编码","lesTitle_m4l7":"专题评估：图像表示","lesTitle_m4l8":"CS 任务 3.1 — Poi E 文本压缩","lesTitle_m4l9":"CS 任务 3.2 — 使用字典编码与解码","lesTitle_m4l10":"专题评估：文本压缩","lesTitle_m4l11":"CS 任务 4.2 — 倒一杯水","lesTitle_m4l12":"专题评估：分解","lesTitle_m5l1":"任务 1A–1E — Scratch 编程基础","lesTitle_m5l2":"任务 2 — Scratch 乘法测验","lesTitle_m5l3":"期末猜数字游戏 Scratch 评估","lesTitle_m5l4":"附加 — Scratch 调试","lesTitle_m5l5":"附加 — Scratch 词汇训练器任务","lesTitle_m6l1":"DDDO 项目证据","lesDesc_m1l1":"通过创意速写本活动，头脑风暴并探索 AI 在日常生活中的含义。","lesDesc_m1l2":"机器如何从示例中学习？训练数据、模式和预测。","lesDesc_m1l3":"理解 ChatGPT 等大语言模型的工作原理——一次生成一个词元。","lesDesc_m1l4":"动手使用 AI 工具。编写有效的提示以获得有用的、准确的结果。","lesDesc_m1l5":"AI 伦理、偏见、错误信息和在学校中的负责任使用。","lesDesc_m2l1":"GIMP 入门——跟随绵羊教程学习核心工具和界面。","lesDesc_m2l2":"使用 GIMP 技能创建动物建议表情包——图层、文字和图像合成。","lesDesc_m2l3":"将 GIMP 技能应用于你选择的个人创意项目。额外提交机会。","lesDesc_m3l1":"使用有效的设计原则，设计并创建一张以视觉方式呈现数据的图表。","lesDesc_m4l1":"学习计算机如何使用二进制（0 和 1）来表示所有数据。在十进制和二进制之间转换。","lesDesc_m4l2":"通过练习题和自我评估来检验你对二进制的理解。","lesDesc_m4l3":"关于二进制数表示和转换的总结性评估。满分 10 分。","lesDesc_m4l4":"使用二进制编码和解码秘密信息。有趣的拓展活动。","lesDesc_m4l5":"创建一张展示二进制信息工作原理的可视化海报。","lesDesc_m4l6":"图像如何存储？学习位图表示和行程编码压缩。","lesDesc_m4l7":"关于计算机如何使用二进制存储和表示图像的测验评估。","lesDesc_m4l8":"使用文本压缩技术压缩 Poi E 的歌词——一个毛利语文化连接。","lesDesc_m4l9":"使用基于字典的编码来高效压缩和解压缩文本。","lesDesc_m4l10":"关于文本压缩方法和字典编码的总结性评估。满分 3 分。","lesDesc_m4l11":"分解练习：将\"倒一杯水\"分解为精确的步骤。","lesDesc_m4l12":"为日常任务编写分解指令。满分 3 分。","lesDesc_m5l1":"Scratch 核心技能：界面、角色、顺序、事件、循环、条件和变量。五个子任务。","lesDesc_m5l2":"构建一个交互式乘法测验，测试用户并给出反馈。","lesDesc_m5l3":"在 Scratch 中设计和编写一个猜数字游戏。期末评估——占 CT 分数。","lesDesc_m5l4":"在损坏的 Scratch 程序中发现并修复错误。培养调试技能。","lesDesc_m5l5":"通过词汇训练器挑战拓展你的 Scratch 技能。","lesDesc_m6l1":"规划、设计、构建、测试和完善一个角色项目。提交完整设计过程的证据。DDDO 评估。","poTitle3":"进步阶段 3 — Te Tapa","poTitle4":"进步阶段 4 — Te Tapa","poTitle5":"进步阶段 5 — Te Tapa","modMaori_m4":"Mō ngā mea katoa i roto i te rorohiko, he mati tonu: hei rahi pea, he ingoa, he whakaahua — ko te tekau paheka e whakamahia ana hei tuatahi."}),
+  ja: Object.assign({
+    title: '冒険マップ',
+    subtitle: 'デジタルテクノロジー',
+    modulesDone: '完了モジュール',
+    lessonsDone: '完了レッスン',
+    current: '現在',
+    xpEarned: '獲得XP',
+    overallProgress: '全体の旅の進捗',
+    moduleProgress: 'モジュールの進捗',
+    clickToJump: '次のレッスンにジャンプ →',
+    bigIdea: '💡 ビッグアイデア',
+    yourJourney: '🗺️ あなたのデジタルの旅',
+    done: '完了',
+    now: '進行中',
+    todo: '未着手',
+    lastCompleted: '✅ 最後に完了',
+    currentMission: '🎯 現在のミッション',
+    comingUp: '🔜 次の予定',
+    assessment: '評価',
+    extra: 'エキストラ',
+    optional: '自由',
+    progressSaved: '進捗が保存されました！',
+    confirmReset: 'すべての進捗をリセットしますか？',
+    progressReset: '進捗がリセットされました！',
+    module: 'モジュール',
+    helpTitle: '使い方',
+    helpDesc: 'レッスンクリックで完了をマーク。進捗は自動保存されます。',
+    helpGreen: '✅ 緑 = 完了したレッスン',
+    helpPurple: '▶ 紫 = 現在のレッスン（クリックで完了）',
+    helpGrey: '⬜ グレー = 次のレッスン',
+    helpXP: '🎮 XPシステム：',
+    helpXPDesc: '各レッスン = 50 XP · 評価 = 100 XP · モジュール完了 = 200 XPボーナス · 全完了 = 500 XPボーナス',
+    helpSave: '💾 保存：',
+    helpSaveDesc: '進捗はブラウザに自動保存されます。「保存」をクリックするか、「リセット」で最初から.',
+    helpBigIdeaDesc: '上部のパープルバナーをクリックして、現在のモジュールの驱动質問を表示.',
+    helpModulesDesc: 'マップ上の任意モジュールをクリックして、レッスンリストを展開.',
+    toolsLabel: 'ツール',
+    toolPlaceholder: '設定からツールを追加',
+    helpTitle: 'ヘルプ',
+    resetTemplate: 'テンプレートリセット',
+    batch: 'バッチ',
+    compulsory: '必修',
+    help: 'ヘルプ',
+    allComplete: '全モジュール完了！',
+    batchComplete: '完了',
+    batchCancel: 'キャンセル',
+    undo: '元に戻す',
+    cancel: 'キャンセル',
+    save: '保存',
+    close: '閉じる',
+    compulsoryOptional: '必修 / 選択',
+    coAllCompulsory: 'すべて必修',
+    coAllOptional: 'すべて選択',
+    coSetAll: 'すべて設定',
+    coCompulsory: '必修',
+    coOptional: '選択',
+    completed: '完了',
+    lessons: 'レッスン',
+    of: '/',
+    lessonsComplete: 'レッスン完了',
+    next: '次',
+    nextModule: '次のモジュール',
+    finalLesson: 'このモジュールの最終レッスン！',
+    batchModeOn: '一括解除',
+    batchModeOff: '一括選択',
+    selected: '件選択中',
+    batchUndo: '戻す',
+    toolsForThisLesson: '🧰 今回のツール',
+    reset: 'リセット',
+    howItWorks: '❓',
+    helpBigIdea: '<strong style="color:var(--text)">💡 ビッグアイデア：</strong>',
+    helpModules: '<strong style="color:var(--text)">📂 モジュール詳細：</strong>',
+    resetTemplateSaved: '🔧 リセットテンプレートを保存しました！',
+    resetTemplateTitle: '🔧 リセットテンプレート',
+    actions: 'アクション',
+    topic: 'トピック',
+    template: 'テンプレート',
+    coTitle: '⚙️ 必修 / 自由',
+    rtTodo: '未着手',
+    rtCurrent: '進行中',
+    rtDone: '完了',
+    rtReset: 'リセット',
+  }, {"title":"9DGT 冒険マップ","subtitle":"中学9年 デジタルテクノロジー · バーンサイド高校","modulesDone":"完了モジュール","lessonsDone":"完了レッスン","current":"現在","xpEarned":"獲得XP","overallProgress":"全体の旅の進捗","bigIdea":"💡 ビッグアイデア","yourJourney":"🗺️ あなたのデジタルの旅 — 6モジュール","module":"モジュール","completed":"完了","lessons":"レッスン","of":"/","lessonsComplete":"レッスン完了","done":"完了","now":"進行中","todo":"未着手","lastCompleted":"✅ 最後に完了","currentMission":"🎯 現在のミッション","comingUp":"🔜 次の予定","next":"次","nextModule":"次のモジュール","clickToAdvance":"上のレッスンをクリックして進捗をマーク","allComplete":"すべてのモジュールが完了しました！","finalLesson":"このモジュールの最終レッスン！","batchModeOn":"一括解除","batchModeOff":"一括選択","selected":"件選択中","batchUndo":"戻す","batchCancel":"閉じる","toolsForThisLesson":"🧰 今回のツール","nzCurriculum":"📋 NZカリキュラム — 進捗アウトカム","reset":"🔄 リセット","save":"保存","howItWorks":"❓","helpTitle":"🗺️ 冒険マップの使い方","helpDesc":"これは9DGTの<span class=\"highlight\">インタラクティブな学習の旅</span>です。各モジュールとレッスンの進捗を追跡しましょう！","helpGreen":"<strong style=\"color:var(--text)\">🟢 緑（完了）</strong> — 完了したレッスン。クリックで元に戻せます。","helpPurple":"<strong style=\"color:var(--text)\">🟣 紫（進行中）</strong> — 現在の位置。クリックで完了をマークして進みましょう！","helpGrey":"<strong style=\"color:var(--text)\">⬜ 灰色（未着手）</strong> — まだ開始していません。クリックで完了をマーク。","helpXP":"<strong style=\"color:var(--text)\">🎮 XPシステム：</strong>","helpXPDesc":"各レッスン = <span class=\"highlight\">50 XP</span> · モジュール完了 = <span class=\"highlight\">200 XP ボーナス</span> · 全完了 = <span class=\"highlight\">500 XP ボーナス</span>","helpSave":"<strong style=\"color:var(--text)\">💾 保存：</strong>","helpSaveDesc":"進捗はブラウザに自動保存されます。いつでも「保存」をクリック、「リセット」で最初から。","helpBigIdea":"<strong style=\"color:var(--text)\">💡 ビッグアイデア：</strong>","helpBigIdeaDesc":"上部の紫のバナーをクリックして、現在のモジュールの推進問題を確認しましょう。","helpModules":"<strong style=\"color:var(--text)\">📂 モジュール詳細：</strong>","helpModulesDesc":"マップ上のモジュールノードをクリックして、レッスンリストを展開し個別の進捗を確認。","moduleProgress":"モジュール進捗","clickToJump":"→ クリックして次のタスクへ","progressSaved":"💾 進捗を保存しました！","progressReset":"🔄 進捗をリセットしました！","resetTemplateSaved":"🔧 リセットテンプレートを保存しました！","resetTemplateTitle":"🔧 リセットテンプレート","actions":"アクション","confirmReset":"すべての進捗をリセットしますか？この操作は元に戻せません。","assessment":"評価","extra":"エキストラ","optional":"自由","topic":"トピック","template":"テンプレート","batch":"一括","compulsory":"必修","help":"ヘルプ","coAllCompulsory":"全て必修","coAllOptional":"全て自由","coSetAll":"全選択","coCompulsory":"必修","coOptional":"自由","coTitle":"⚙️ 必修 / 自由","rtTodo":"未着手","rtCurrent":"進行中","rtDone":"完了","rtApply":"適用","toolName0":"問題解決トレーニング","toolTip0":"Google 検索と AI ツールを活用するが、常にクリティカルシンキングを保つ。","toolName1":"Google Classroom への提出方法","toolTip1":"9年生の基本スキル — Google Classroom に作業を提出する方法を知る。","toolName2":"バイナリカードシミュレーター","toolTip2":"バイナリ概念を理解するための最も重要なツール。","toolName3":"ファイル管理","toolTip3":"明確なファイル管理でクリアなマインドを保つ。","poL30":"同じ問題に対する複数のアルゴリズム","poL31":"デジタルデバイスは2つの状態（ビット）でデータを保存する","poL40":"シンプルなアルゴリズムとプログラムのデバッグ","poL41":"エラーと修正の説明","poL42":"データ保存/転送中のエラー検出","poL43":"アルゴリズム効率の評価","poL44":"大規模データセットの検索とソート","poL50":"バイナリ数字を使用する複雑なデータ型","poL51":"独立したアルゴリズムの分解","poL52":"変数、選択と反復","batchComplete":"完了","modName_m1":"人工知能","modName_m2":"画像操作","modName_m3":"データ可視化","modName_m4":"コンピュータサイエンス","modName_m5":"プログラミング","modName_m6":"キャラクタープロジェクト","modBigIdea_m1":"機械はどのようにデータからパターンを学び、意思決定するのか — そしてその限界は何か？","modBigIdea_m2":"デジタル画像は格子状の数字にすぎない — ピクセルを理解すればクリエイティブなコントロールができる。","modBigIdea_m3":"適切に提示すれば、生データは物語を語る — 正しいチャートが正しい洞察を明らかにする。","modBigIdea_m4":"Mō ngā mea katoa i roto i te rorohiko, he mati tonu: hei rahi pea, he ingoa, he whakaahua — ko te tekau paheka e whakamahia ana hei tuatahi.（コンピュータ内のすべてはビット — バイナリが最初に使われる。）","modBigIdea_m5":"プログラミングとは、コンピュータに一歩一歩問題を解決させること — 順次、選択、反復を通じてアイデアを実現する。","modBigIdea_m6":"優れたデジタル成果物は設計プロセスから始まる — 計画、作成、テスト、改善。","modBigIdeaDesc_m1":"AI システムは指示ではなく、例から学習します。人間が見逃すかもしれないデータパターンを見つけますが、間違いをしたり、バイアスを示したり、真の理解を欠いたりすることもあります。このモジュールでは、AI の表面的な仕組みと、その出力を批判的に考える必要がある理由を探ります。","modBigIdeaDesc_m2":"すべてのデジタル写真は小さな正方形（ピクセル）の格子であり、各ピクセルには色の数字があります。これらの数字を操作することで、画像を強化、変換、そして全く新しい画像を作成できます。これはバイナリデータ表現に直接つながります。","modBigIdeaDesc_m3":"データはどこにでもありますが、明確な可視化がなければ役に立ちません。正しいチャートタイプの選択、効果的な色の使用、オーディエンスに合わせたデザインが重要なスキルです。良いデータビジュアライゼーションは混乱を明確さに変えます。","modBigIdeaDesc_m4":"このモジュールでは、バイナリ数、画像表現、テキスト圧縮、分解、アルゴリズムなど、デジタル情報の基本的な構成要素を探ります。これらの概念を理解することで、コンピュータがどのようにあらゆる形式のデータを保存、処理、送信するかが明らかになります。","modBigIdeaDesc_m5":"このモジュールでは、Scratch を使ってプログラミングの基礎——順次、イベント、ループ、条件分岐、変数を学びます。掛け算クイズと数当てゲームを作成し、プロの開発者と同じ計算的思考を育成します。これらの思考スキルはどんなプログラミング言語にも応用できます。","modBigIdeaDesc_m6":"この総合 DDDO（デジタル成果物の設計と開発）プロジェクトは、すべてを統合します。構造化された設計プロセスを使用して、キャラクターデザインプロジェクトを計画、開発、テスト、改良します。プログラミング、ビジュアルデザイン、データスキル、そしてコース全体で培った創造的思考を結びつけます。","subName_m4s0":"バイナリ","subName_m4s1":"画像表現","subName_m4s2":"テキスト圧縮","subName_m4s3":"分解","lesTitle_m1l1":"AI — デジタルスケッチブック","lesTitle_m1l2":"機械学習入門","lesTitle_m1l3":"大規模言語モデル入門","lesTitle_m1l4":"プロンプトエンジニアリング","lesTitle_m1l5":"倫理と学校での利用","lesTitle_m2l1":"GIMP 学習：羊チュートリアル","lesTitle_m2l2":"GIMP 学習：動物アドバイスミーム","lesTitle_m2l3":"GIMP 学習：自由選択","lesTitle_m3l1":"インフォグラフィック","lesTitle_m4l1":"CS タスク 1.1 — バイナリ入門","lesTitle_m4l2":"CS タスク 1.3 — バイナリがわかる？","lesTitle_m4l3":"トピック評価：バイナリ","lesTitle_m4l4":"EXTRA：CS タスク 1.4 — 秘密のメッセージを送ろう","lesTitle_m4l5":"EXTRA：CS タスク 1.5 — バイナリメッセージポスター","lesTitle_m4l6":"CS タスク 2.1 — ビットマップとランレングス符号化","lesTitle_m4l7":"トピック評価：画像表現","lesTitle_m4l8":"CS タスク 3.1 — Poi E テキスト圧縮","lesTitle_m4l9":"CS タスク 3.2 — 辞書を使ったエンコードとデコード","lesTitle_m4l10":"トピック評価：テキスト圧縮","lesTitle_m4l11":"CS タスク 4.2 — コップの水を注ぐ","lesTitle_m4l12":"トピック評価：分解","lesTitle_m5l1":"タスク 1A–1E — Scratch プログラミング基礎","lesTitle_m5l2":"タスク 2 — Scratch 掛け算クイズ","lesTitle_m5l3":"期末 数当てゲーム Scratch 評価","lesTitle_m5l4":"EXTRA — Scratch デバッグ","lesTitle_m5l5":"EXTRA — Scratch 語彙トレーナータスク","lesTitle_m6l1":"DDDO プロジェクト証拠","lesDesc_m1l1":"クリエイティブなスケッチブック活動を通じて、AI が日常生活で何を意味するのかをブレインストーミングして探る。","lesDesc_m1l2":"機械は例からどのように学ぶのか？トレーニングデータ、パターン、予測。","lesDesc_m1l3":"ChatGPT などの LLM の仕組みを理解する — 一度に一つのトークンを生成する。","lesDesc_m1l4":"AI ツールを実際に使う。有用で正確な結果を得るための効果的なプロンプトの作成。","lesDesc_m1l5":"AI の倫理、バイアス、誤情報、学校での責任ある利用。","lesDesc_m2l1":"GIMP 入門 — 羊チュートリアルに従ってコアツールとインターフェースを学ぶ。","lesDesc_m2l2":"GIMP スキルを使って動物アドバイスミームを作成 — レイヤー、テキスト、画像合成。","lesDesc_m2l3":"GIMP スキルを選択した個人的なクリエイティブプロジェクトに応用。追加提出の機会。","lesDesc_m3l1":"効果的なデザイン原則を使って、データを視覚的に表現するインフォグラフィックを設計・作成する。","lesDesc_m4l1":"コンピュータがバイナリ（0 と 1）を使ってすべてのデータを表現する方法を学ぶ。十進数とバイナリの変換。","lesDesc_m4l2":"練習問題と自己評価でバイナリの理解度を確認する。","lesDesc_m4l3":"バイナリ数表現と変換に関する総合評価。10 点満点。","lesDesc_m4l4":"バイナリを使って秘密のメッセージをエンコード・デコードする。楽しい拡張活動。","lesDesc_m4l5":"バイナリメッセージの仕組みを示すビジュアルポスターを作成する。","lesDesc_m4l6":"画像はどう保存されるか？ビットマップ表現とランレングス符号化圧縮を学ぶ。","lesDesc_m4l7":"コンピュータがバイナリを使って画像を保存・表現する方法に関するクイズ評価。","lesDesc_m4l8":"テキスト圧縮技術を使って Poi E の歌詞を圧縮する — マオリ語の文化的つながり。","lesDesc_m4l9":"辞書ベースのエンコーディングを使ってテキストを効率的に圧縮・展開する。","lesDesc_m4l10":"テキスト圧縮方法と辞書エンコーディングに関する総合評価。3 点満点。","lesDesc_m4l11":"分解の練習：「コップの水を注ぐ」を正確なステップに分解する。","lesDesc_m4l12":"日常のタスクに対する分解指示を書く。3 点満点。","lesDesc_m5l1":"Scratch コアスキル：インターフェース、スプライト、順次、イベント、ループ、条件分岐、変数。5 つのサブタスク。","lesDesc_m5l2":"ユーザーをテストしフィードバックを与えるインタラクティブな掛け算クイズを作る。","lesDesc_m5l3":"Scratch で数当てゲームを設計・コーディングする。期末評価 — CT 点数に加算。","lesDesc_m5l4":"壊れた Scratch プログラムのバグを見つけて修正する。デバッグスキルの構築。","lesDesc_m5l5":"語彙トレーナーの課題で Scratch スキルをさらに伸ばす。","lesDesc_m6l1":"キャラクタープロジェクトを計画、設計、構築、テスト、改良する。設計プロセス全体の証拠を提出。DDDO 評価。","poTitle3":"Progress Outcome 3 — Te Tapa","poTitle4":"Progress Outcome 4 — Te Tapa","poTitle5":"Progress Outcome 5 — Te Tapa","modMaori_m4":"Mō ngā mea katoa i roto i te rorohiko, he mati tonu: hei rahi pea, he ingoa, he whakaahua — ko te tekau paheka e whakamahia ana hei tuatahi."}),
+  ko: Object.assign({
+    title: '어드벤처 맵',
+    subtitle: '디지털 기술',
+    modulesDone: '완료 모듈',
+    lessonsDone: '완료 레슨',
+    current: '현재',
+    xpEarned: '획득 XP',
+    overallProgress: '전체 여정 진행률',
+    bigIdea: '💡 빅 아이디어',
+    yourJourney: '🗺️ 나의 디지털 여정',
+    done: '완료',
+    now: '진행 중',
+    todo: '할 일',
+    lastCompleted: '✅ 마지막 완료',
+    currentMission: '🎯 현재 미션',
+    comingUp: '🔜 다음 예정',
+    assessment: '평가',
+    extra: '추가',
+    optional: '선택',
+    progressSaved: '진행률이 저장되었습니다!',
+    confirmReset: '모든 진행률을 초기화하시겠습니까?',
+    progressReset: '진행률이 초기화되었습니다!',
+    module: '모듈',
+    helpTitle: '사용 방법',
+    helpDesc: '레슨을 클릭하여 완료로 표시하세요. 진행률은 자동으로 저장됩니다.',
+    helpGreen: '✅ 녹색 = 완료된 레슨',
+    helpPurple: '▶ 보라색 = 현재 레슨 (클릭하여 완료)',
+    helpGrey: '⬜ 회색 = 다음 레슨',
+    helpXP: '🎮 XP 시스템：',
+    helpXPDesc: '각 레슨 = 50 XP · 평가 = 100 XP · 모듈 완료 = 200 XP 보너스 · 전체 완료 = 500 XP 보너스',
+    helpSave: '💾 저장：',
+    helpSaveDesc: '진행률은 브라우저에 자동 저장됩니다.「저장」을 클릭하거나「초기화」로 처음부터.',
+    helpBigIdeaDesc: '상단의 보라색 배너를 클릭하여 현재 모듈의 핵심 질문을 확인.',
+    helpModulesDesc: '지도에서 모듈 노드를 클릭하여 레슨 목록을 확장하고 진행률 추적.',
+    moduleProgress: '모듈 진행률',
+    clickToJump: '다음 레슨으로 이동 →',
+    toolsLabel: '도구',
+    toolPlaceholder: '설정에서 도구 추가',
+    helpTitle: '도움말',
+    resetTemplate: '템플릿 초기화',
+    batch: '배치',
+    compulsory: '필수',
+    help: '도움말',
+    allComplete: '모든 모듈 완료!',
+    batchComplete: '완료',
+    batchCancel: '취소',
+    undo: '실행 취소',
+    cancel: '취소',
+    save: '저장',
+    close: '닫기',
+    compulsoryOptional: '필수 / 선택',
+    coAllCompulsory: '모두 필수',
+    coAllOptional: '모두 선택',
+    coSetAll: '모두 설정',
+    coCompulsory: '필수',
+    coOptional: '선택',
+    completed: '완료',
+    lessons: '수업',
+    of: '/',
+    lessonsComplete: '수업 완료',
+    next: '다음',
+    nextModule: '다음 모듈',
+    finalLesson: '이 모듈의 마지막 수업!',
+    batchModeOn: '일괄 해제',
+    batchModeOff: '일괄 선택',
+    selected: '개 선택됨',
+    batchUndo: '취소',
+    toolsForThisLesson: '🧰 이번 수업 도구',
+    reset: '초기화',
+    howItWorks: '❓',
+    helpBigIdea: '<strong style="color:var(--text)">💡 핵심 아이디어:</strong>',
+    helpModules: '<strong style="color:var(--text)">📂 모듈 상세:</strong>',
+    resetTemplateSaved: '🔧 리셋 템플릿이 저장되었습니다!',
+    resetTemplateTitle: '🔧 리셋 템플릿',
+    actions: '작업',
+    topic: '주제',
+    template: '템플릿',
+    coTitle: '⚙️ 필수 / 선택',
+    rtTodo: '미착수',
+    rtCurrent: '진행 중',
+    rtDone: '완료',
+    rtReset: '재설정',
+  }, {"title":"9DGT 모험 지도","subtitle":"중학교 9학년 디지털 기술 · 번사이드 고등학교","modulesDone":"완료 모듈","lessonsDone":"완료 수업","current":"현재","xpEarned":"획득 XP","overallProgress":"전체 여정 진행률","bigIdea":"💡 핵심 아이디어","yourJourney":"🗺️ 디지털 여정 — 6개 모듈","module":"모듈","completed":"완료","lessons":"수업","of":"/","lessonsComplete":"수업 완료","done":"완료","now":"진행 중","todo":"미착수","lastCompleted":"✅ 마지막 완료","currentMission":"🎯 현재 미션","comingUp":"🔜 다음 예정","next":"다음","nextModule":"다음 모듈","clickToAdvance":"위 수업을 클릭하여 진행 상태를 표시하세요","allComplete":"모든 모듈이 완료되었습니다!","finalLesson":"이 모듈의 마지막 수업!","batchModeOn":"일괄 해제","batchModeOff":"일괄 선택","selected":"개 선택됨","batchUndo":"취소","batchCancel":"닫기","toolsForThisLesson":"🧰 이번 수업 도구","nzCurriculum":"📋 NZ 교육과정 — 진행 결과","reset":"🔄 초기화","save":"저장","howItWorks":"❓","helpTitle":"🗺️ 모험 지도 사용법","helpDesc":"이것은 9DGT를 위한 <span class=\"highlight\">인터랙티브 학습 여정</span>입니다. 각 모듈과 수업의 진행 상황을 추적하세요!","helpGreen":"<strong style=\"color:var(--text)\">🟢 초록 (완료)</strong> — 완료한 수업입니다. 클릭하면 취소됩니다.","helpPurple":"<strong style=\"color:var(--text)\">🟣 보라 (진행 중)</strong> — 현재 위치입니다. 클릭하여 완료 표시 후 다음으로!","helpGrey":"<strong style=\"color:var(--text)\">⬜ 회색 (미착수)</strong> — 아직 시작하지 않았습니다. 클릭하여 완료 표시.","helpXP":"<strong style=\"color:var(--text)\">🎮 XP 시스템:</strong>","helpXPDesc":"각 수업 = <span class=\"highlight\">50 XP</span> · 모듈 완료 = <span class=\"highlight\">200 XP 보너스</span> · 전체 완료 = <span class=\"highlight\">500 XP 보너스</span>","helpSave":"<strong style=\"color:var(--text)\">💾 저장:</strong>","helpSaveDesc":"진행 상황이 브라우저에 자동 저장됩니다. 언제든지 \"저장\"을 클릭하거나 \"초기화\"로 다시 시작.","helpBigIdea":"<strong style=\"color:var(--text)\">💡 핵심 아이디어:</strong>","helpBigIdeaDesc":"상단의 보라색 배너를 클릭하여 현재 모듈의 핵심 질문을 확인하세요.","helpModules":"<strong style=\"color:var(--text)\">📂 모듈 상세:</strong>","helpModulesDesc":"지도에서 모듈 노드를 클릭하여 수업 목록을 펼치고 개별 진행 상황을 확인하세요.","moduleProgress":"모듈 진행률","clickToJump":"→ 클릭하여 다음 작업으로 이동","progressSaved":"💾 진행 상황이 저장되었습니다!","progressReset":"🔄 진행 상황이 초기화되었습니다!","resetTemplateSaved":"🔧 리셋 템플릿이 저장되었습니다!","resetTemplateTitle":"🔧 리셋 템플릿","actions":"작업","confirmReset":"모든 진행 상황을 초기화하시겠습니까? 이 작업은 되돌릴 수 없습니다.","assessment":"평가","extra":"추가","optional":"선택","topic":"주제","template":"템플릿","batch":"일괄","compulsory":"필수","help":"도움말","coAllCompulsory":"전체 필수","coAllOptional":"전체 선택","coSetAll":"전체 설정","coCompulsory":"필수","coOptional":"선택","coTitle":"⚙️ 필수 / 선택","rtTodo":"미착수","rtCurrent":"진행 중","rtDone":"완료","rtApply":"적용","toolName0":"문제 해결 훈련","toolTip0":"Google 검색과 AI 도구를 활용하되, 항상 비판적 사고를 유지할 것.","toolName1":"Google Classroom 제출 방법","toolTip1":"9학년 기본 스킬 — Google Classroom에 작업을 제출하는 방법.","toolName2":"이진 카드 시뮬레이터","toolTip2":"이진 개념을 이해하는 데 가장 중요한 도구.","toolName3":"파일 관리","toolTip3":"체계적인 파일 관리로 명확한 사고를 유지할 것.","poL30":"같은 문제에 대한 여러 알고리즘","poL31":"디지털 기기는 두 가지 상태(비트)로 데이터를 저장한다","poL40":"간단한 알고리즘 및 프로그램 디버그","poL41":"오류 및 수정 설명","poL42":"데이터 저장/전송 중 오류 감지","poL43":"알고리즘 효율성 평가","poL44":"대규모 데이터셋 검색 및 정렬","poL50":"이진 숫자를 사용하는 복합 데이터 유형","poL51":"독립적인 알고리즘 분해","poL52":"변수, 선택 및 반복","batchComplete":"완료","modName_m1":"인공지능","modName_m2":"이미지 조작","modName_m3":"데이터 시각화","modName_m4":"컴퓨터 과학","modName_m5":"프로그래밍","modName_m6":"캐릭터 프로젝트","modBigIdea_m1":"기계는 데이터에서 어떻게 패턴을 학습하여 결정을 내리는가 — 그리고 한계는 무엇인가?","modBigIdea_m2":"디지털 이미지는 그리드 안의 숫자일 뿐 — 픽셀을 이해하면 창의적 통제력이 열린다.","modBigIdea_m3":"올바르게 표현하면 원시 데이터도 이야기를 한다 — 올바른 차트가 올바른 통찰을 보여준다.","modBigIdea_m4":"Mō ngā mea katoa i roto i te rorohiko, he mati tonu: hei rahi pea, he ingoa, he whakaahua — ko te tekau paheka e whakamahia ana hei tuatahi.（컴퓨터의 모든 것은 비트 — 바이너리가 가장 먼저 쓰인다.)","modBigIdea_m5":"프로그래밍은 컴퓨터에게 단계별로 문제를 해결하도록 가르치는 것 — 순서, 선택, 반복을 통해 아이디어를 현실로 만든다.","modBigIdea_m6":"훌륭한 디지털 결과물은 설계 과정에서 시작된다 — 계획, 만들기, 테스트, 개선.","modBigIdeaDesc_m1":"AI 시스템은 지시가 아닌 예시로부터 학습합니다. 인간이 놓칠 수 있는 데이터 패턴을 찾지만, 실수를 하거나 편향을 보이거나 진정한 이해가 부족할 수도 있습니다. 이 모듈에서는 AI의 표면적인 작동 방식과 그 출력에 대해 비판적으로 생각해야 하는 이유를 탐구합니다.","modBigIdeaDesc_m2":"모든 디지털 사진은 작은 정사각형(픽셀)의 그리드이며, 각 픽셀에는 색상 숫자가 있습니다. 이 숫자들을 조작하여 이미지를 향상시키고, 변형하고, 완전히 새로운 이미지를 만들 수 있습니다. 이것은 바이너리 데이터 표현과 직접적으로 연결됩니다.","modBigIdeaDesc_m3":"데이터는 어디에나 있지만, 명확한 시각화 없이는 쓸모가 없습니다. 올바른 차트 유형 선택, 효과적인 색상 사용, 대상에 맞는 디자인이 핵심 기술입니다. 좋은 데이터 시각화는 혼란을 명확함으로 바꿉니다.","modBigIdeaDesc_m4":"이 모듈에서는 바이너리 숫자, 이미지 표현, 텍스트 압축, 분해, 알고리즘 등 디지털 정보의 기본 구성 요소를 탐구합니다. 이러한 개념을 이해하면 컴퓨터가 모든 형태의 데이터를 어떻게 저장, 처리, 전송하는지 알게 됩니다.","modBigIdeaDesc_m5":"이 모듈에서는 Scratch를 사용하여 프로그래밍 기초 — 순서, 이벤트, 루프, 조건문, 변수를 배웁니다. 곱셈 퀴즈와 숫자 맞추기 게임을 만들며, 전문 개발자가 사용하는 것과 같은 계산적 사고를 발달시킵니다. 이 사고 기술은 모든 프로그래밍 언어로 전이됩니다.","modBigIdeaDesc_m6":"이 종합 DDDO(디지털 결과물 설계 및 개발) 프로젝트는 모든 것을 하나로 연결합니다. 구조화된 설계 프로세스를 사용하여 캐릭터 디자인 프로젝트를 계획, 개발, 테스트, 개선합니다. 프로그래밍, 시각 디자인, 데이터 기술, 전 과정에서 발달시킨 창의적 사고를 연결합니다.","subName_m4s0":"바이너리","subName_m4s1":"이미지 표현","subName_m4s2":"텍스트 압축","subName_m4s3":"분해","lesTitle_m1l1":"AI — 디지털 스케치북","lesTitle_m1l2":"머신러닝 입문","lesTitle_m1l3":"대규모 언어 모델 입문","lesTitle_m1l4":"프롬프트 엔지니어링","lesTitle_m1l5":"윤리와 학교에서의 사용","lesTitle_m2l1":"GIMP 학습: 양 튜토리얼","lesTitle_m2l2":"GIMP 학습: 동물 조언 밈","lesTitle_m2l3":"GIMP 학습: 자유 선택","lesTitle_m3l1":"인포그래픽","lesTitle_m4l1":"CS 과제 1.1 — 바이너리 입문","lesTitle_m4l2":"CS 과제 1.3 — 바이너리를 아시나요?","lesTitle_m4l3":"단원 평가: 바이너리","lesTitle_m4l4":"추가: CS 과제 1.4 — 비밀 메시지 보내기","lesTitle_m4l5":"추가: CS 과제 1.5 — 바이너리 메시지 포스터","lesTitle_m4l6":"CS 과제 2.1 — 비트맵과 런렝스 인코딩","lesTitle_m4l7":"단원 평가: 이미지 표현","lesTitle_m4l8":"CS 과제 3.1 — Poi E 텍스트 압축","lesTitle_m4l9":"CS 과제 3.2 — 사전을 활용한 인코딩과 디코딩","lesTitle_m4l10":"단원 평가: 텍스트 압축","lesTitle_m4l11":"CS 과제 4.2 — 물 한 잔 따르기","lesTitle_m4l12":"단원 평가: 분해","lesTitle_m5l1":"과제 1A–1E — Scratch 프로그래밍 기초","lesTitle_m5l2":"과제 2 — Scratch 곱셈 퀴즈","lesTitle_m5l3":"기말 숫자 맞추기 게임 Scratch 평가","lesTitle_m5l4":"추가 — Scratch 디버깅","lesTitle_m5l5":"추가 — Scratch 어휘 트레이너 과제","lesTitle_m6l1":"DDDO 프로젝트 증거","lesDesc_m1l1":"창의적인 스케치북 활동을 통해 AI가 일상생활에서 어떤 의미를 갖는지 브레인스토밍하고 탐구한다.","lesDesc_m1l2":"기계는 예시로부터 어떻게 학습하는가? 훈련 데이터, 패턴, 예측.","lesDesc_m1l3":"ChatGPT 같은 LLM의 작동 원리 이해 — 한 번에 하나의 토큰을 생성한다.","lesDesc_m1l4":"AI 도구를 직접 사용한다. 유용하고 정확한 결과를 얻기 위한 효과적인 프롬프트 작성.","lesDesc_m1l5":"AI 윤리, 편향, 잘못된 정보, 학교에서의 책임 있는 사용.","lesDesc_m2l1":"GIMP 시작 — 양 튜토리얼을 따라 핵심 도구와 인터페이스를 배운다.","lesDesc_m2l2":"GIMP 기술을 사용하여 동물 조언 밈을 만든다 — 레이어, 텍스트, 이미지 합성.","lesDesc_m2l3":"GIMP 기술을 선택한 개인 창의 프로젝트에 적용한다. 추가 제출 기회.","lesDesc_m3l1":"효과적인 디자인 원칙을 사용하여 데이터를 시각적으로 표현하는 인포그래픽을 디자인하고 만든다.","lesDesc_m4l1":"컴퓨터가 바이너리(0과 1)를 사용하여 모든 데이터를 표현하는 방법을 배운다. 십진수와 바이너리 간 변환.","lesDesc_m4l2":"연습 문제와 자기 평가를 통해 바이너리에 대한 이해도를 확인한다.","lesDesc_m4l3":"바이너리 수 표현과 변환에 대한 총괄 평가. 10점 만점.","lesDesc_m4l4":"바이너리를 사용하여 비밀 메시지를 인코딩하고 디코딩한다. 재미있는 확장 활동.","lesDesc_m4l5":"바이너리 메시지의 작동 원리를 보여주는 시각적 포스터를 만든다.","lesDesc_m4l6":"이미지는 어떻게 저장되는가? 비트맵 표현과 런렝스 인코딩 압축을 배운다.","lesDesc_m4l7":"컴퓨터가 바이너리를 사용하여 이미지를 저장하고 표현하는 방법에 대한 퀴즈 평가.","lesDesc_m4l8":"텍스트 압축 기술을 사용하여 Poi E의 가사를 압축한다 — 마오리어 문화적 연결.","lesDesc_m4l9":"사전 기반 인코딩을 사용하여 텍스트를 효율적으로 압축하고 압축 해제한다.","lesDesc_m4l10":"텍스트 압축 방법과 사전 인코딩에 대한 총괄 평가. 3점 만점.","lesDesc_m4l11":"분해 연습: \"물 한 잔 따르기\"를 정확한 단계로 분해한다.","lesDesc_m4l12":"일상적인 작업에 대한 분해 지시문을 작성한다. 3점 만점.","lesDesc_m5l1":"Scratch 핵심 기술: 인터페이스, 스프라이트, 순서, 이벤트, 루프, 조건문, 변수. 5개의 하위 과제.","lesDesc_m5l2":"사용자를 테스트하고 피드백을 제공하는 인터랙티브 곱셈 퀴즈를 만든다.","lesDesc_m5l3":"Scratch로 숫자 맞추기 게임을 설계하고 코딩한다. 기말 평가 — CT 점수에 반영.","lesDesc_m5l4":"고장난 Scratch 프로그램에서 버그를 찾고 수정한다. 디버깅 기술 구축.","lesDesc_m5l5":"어휘 트레이너 도전으로 Scratch 기술을 확장한다.","lesDesc_m6l1":"캐릭터 프로젝트를 계획, 설계, 구축, 테스트, 개선한다. 전체 설계 과정의 증거를 제출. DDDO 평가.","poTitle3":"Progress Outcome 3 — Te Tapa","poTitle4":"Progress Outcome 4 — Te Tapa","poTitle5":"Progress Outcome 5 — Te Tapa","modMaori_m4":"Mō ngā mea katoa i roto i te rorohiko, he mati tonu: hei rahi pea, he ingoa, he whakaahua — ko te tekau paheka e whakamahia ana hei tuatahi."}),
+};
+
+
+function t(key, fallback) { if(i18n[currentLang]&&i18n[currentLang][key]!==undefined)return i18n[currentLang][key]; if(i18n.en[key]!==undefined)return i18n.en[key]; return fallback!==undefined?fallback:key; }
+
+// Build tools section HTML
+function buildToolsSection(settings, i18n) {
+  const links = settings && settings.usefulLinks ? settings.usefulLinks : [];
+  if (!links || links.length === 0) return '';
+  const cards = links.map((link, idx) => {
+    const href = link.href || '#';
+    const emoji = link.emoji || '🔗';
+    const nameKey = 'toolName' + idx;
+    const tipKey = 'toolTip' + idx;
+    const name = (i18n && i18n.en && i18n.en[nameKey]) || link.name || nameKey;
+    const tip = (i18n && i18n.en && i18n.en[tipKey]) || link.tip || tipKey;
+    return '<div class="tool-card" data-href="' + href + '"><div class="t-icon">' + emoji + '</div><div class="t-name" id="tool-name-' + idx + '">' + name + '</div><div class="t-tip" id="tool-tip-' + idx + '">' + tip + '</div></div>';
+  }).join('\n');
+  const labelText = (i18n && i18n.en && i18n.en.toolsForThisLesson) || '🧰 Useful Links';
+  return '<div class="tools-section"><div class="section-label" id="tools-label">' + labelText + '</div><div class="tools-grid" id="tools-grid">' + cards + '</div></div>';
+}
+
+function switchLang(lang) {
+  currentLang = lang;
+  localStorage.setItem(STORAGE_KEY + '_lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.textContent === lang.toUpperCase() || 
+      (lang === 'zh' && btn.textContent === '中') ||
+      (lang === 'ja' && btn.textContent === '日') ||
+      (lang === 'ko' && btn.textContent === '한'));
+  });
+  // Remember open module before re-render
+  const openBody = document.querySelector('.ld-body.open');
+  let openModId = null;
+  if (openBody) {
+    const id = openBody.id; // body-m1, body-m2, etc.
+    openModId = id.replace('body-', '');
+  }
+  render();
+  // Restore open state
+  if (openModId) {
+    const body = document.getElementById(`body-${openModId}`);
+    const arrow = document.getElementById(`arrow-${openModId}`);
+    if (body) body.classList.add('open');
+    if (arrow) arrow.style.transform = 'rotate(180deg)';
+  }
+}
+
+function defaultState() {
+  // Default: modules 1-3 done, CS up to image representation done, currently on Programming in Python
+  const lessonStates = {};
+  const pythonDoneIds = ['m4wl1'];
+  DATA.modules.forEach(m => {
+    m.lessons.forEach(l => {
+      if (m.num <= 3) lessonStates[l.id] = 'done';
+      else if (m.num === 4) {
+        // Python module: webLinks - m4wl1 is current, m4wl2 is todo
+        if (l.id === 'm4wl1') lessonStates[l.id] = 'done';
+        else if (l.id === 'm4wl2') lessonStates[l.id] = 'current';
+        else lessonStates[l.id] = 'todo';
+      }
+      else lessonStates[l.id] = 'todo';
+    });
+  });
+  return { lessons: lessonStates };
+}
+
+function loadState() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      // Validate structure
+      if (parsed && parsed.lessons) return parsed;
+    }
+  } catch(e) {}
+  return defaultState();
+}
+
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function saveProgress() {
+  saveState();
+  showToast(t('progressSaved'));
+}
+
+function resetProgress() {
+  if (!confirm(t('confirmReset'))) return;
+  state = getResetTemplateState();
+  saveState();
+  render();
+  showToast(t('progressReset'));
+}
+
+// ───────────────────────────────────────
+// RESET TEMPLATE
+// ───────────────────────────────────────
+const RT_STORAGE = STORAGE_KEY + '_reset_template';
+
+function getResetTemplateState() {
+  const saved = localStorage.getItem(RT_STORAGE);
+  if (saved) {
+    try {
+      const parsed = JSON.parse(saved);
+      if (parsed && parsed.lessons) return parsed;
+    } catch(e) {}
+  }
+  return defaultState();
+}
+
+function loadResetTemplate() {
+  const saved = localStorage.getItem(RT_STORAGE);
+  if (saved) {
+    try { return JSON.parse(saved); } catch(e) {}
+  }
+  // Bootstrap from current defaultState
+  const ds = defaultState();
+  saveResetTemplate(ds);
+  return ds;
+}
+
+function saveResetTemplate(template) {
+  localStorage.setItem(RT_STORAGE, JSON.stringify(template));
+}
+
+let rtEdit = null; // working copy of template being edited
+
+function openRtModal() {
+  rtEdit = JSON.parse(JSON.stringify(loadResetTemplate()));
+  document.getElementById('rt-title').textContent = t('resetTemplateTitle');
+  document.getElementById('rt-cancel-text').textContent = t('batchCancel');
+  document.getElementById('rt-save-text').textContent = t('save');
+  document.getElementById('rt-apply-text').textContent = t('rtReset');
+  // Update quick buttons
+  const quickBtns = document.querySelectorAll('.rt-quick-btn');
+  if (quickBtns[0]) quickBtns[0].textContent = t('rtTodo');
+  if (quickBtns[1]) quickBtns[1].textContent = t('rtCurrent');
+  if (quickBtns[2]) quickBtns[2].textContent = t('rtDone');
+  renderRtModal();
+  document.getElementById('rt-overlay').classList.add('active');
+}
+
+function closeRtModal() {
+  document.getElementById('rt-overlay').classList.remove('active');
+  rtEdit = null;
+}
+
+function saveRtTemplate() {
+  saveResetTemplate(rtEdit);
+  showToast(t('resetTemplateSaved'));
+  closeRtModal();
+}
+
+function applyRtTemplate() {
+  if (!confirm(t('confirmReset'))) return;
+  state = getResetTemplateState();
+  saveState();
+  render();
+  closeRtModal();
+  showToast(t('progressReset'));
+}
+
+function cycleRtStatus(lessonId) {
+  const order = ['todo','current','done'];
+  const cur = rtEdit.lessons[lessonId] || 'todo';
+  const idx = order.indexOf(cur);
+  rtEdit.lessons[lessonId] = order[(idx+1) % 3];
+  renderRtModal();
+}
+
+function rtQuick(status) {
+  if (!rtEdit) return;
+  DATA.modules.forEach(m => m.lessons.forEach(l => { rtEdit.lessons[l.id] = status; }));
+  renderRtModal();
+}
+
+function renderRtModal() {
+  if (!rtEdit) return;
+  const container = document.getElementById('rt-modules');
+  container.innerHTML = '';
+  let doneCount = 0, totalCount = 0;
+
+  DATA.modules.forEach(mod => {
+    const modEl = document.createElement('div');
+    modEl.className = 'co-module';
+    let modHtml = `
+      <div class="co-mod-header" onclick="toggleRtModule('${mod.id}')">
+        <span class="co-mod-emoji">${mod.emoji}</span>
+        <span class="co-mod-name">${t('modName_' + mod.id)}</span>
+        <span class="co-mod-count">${mod.lessons.filter(l=>rtEdit.lessons[l.id]==='done').length}/${mod.lessons.length}</span>
+        <span style="color:var(--text3);font-size:10px">▼</span>
+      </div>
+      <div class="co-lessons open" id="rt-lessons-${mod.id}">`;
+    mod.lessons.forEach(l => {
+      totalCount++;
+      const s = rtEdit.lessons[l.id] || 'todo';
+      if (s === 'done') doneCount++;
+      const label = s === 'done' ? t('done') : s === 'current' ? t('now') : t('todo');
+      modHtml += `
+        <div class="co-lesson">
+          <div class="co-linfo">
+            <div class="co-ltitle">${t('lesTitle_' + l.id, l.title || '')}</div>
+            <div class="co-ldesc">${t('lesDesc_' + l.id, l.desc || '')}</div>
+          </div>
+          <span class="rt-toggle ${s}" onclick="cycleRtStatus('${l.id}')">${label}</span>
+        </div>`;
+    });
+    modHtml += '</div>';
+    modEl.innerHTML = modHtml;
+    container.appendChild(modEl);
+  });
+
+  document.getElementById('rt-count').textContent = `${doneCount}/${totalCount}`;
+}
+
+function toggleRtModule(modId) {
+  const el = document.getElementById(`rt-lessons-${modId}`);
+  if (el) el.classList.toggle('open');
+}
+
+// ───────────────────────────────────────
+// DERIVED STATE
+// ───────────────────────────────────────
+function getModuleStatus(mod) {
+  const requiredLessons = mod.lessons.filter(l => isCompulsory(l.id));
+  const requiredStatuses = requiredLessons.map(l => state.lessons[l.id]);
+  if (requiredStatuses.length > 0 && requiredStatuses.every(s => s === 'done')) return 'done';
+  return 'current';
+}
+
+function getLessonStatus(lessonId) {
+  return state.lessons[lessonId] || 'todo';
+}
+
+function getModuleProgress(mod) {
+  const requiredLessons = mod.lessons.filter(l => isCompulsory(l.id));
+  const total = requiredLessons.length;
+  const done = requiredLessons.filter(l => state.lessons[l.id] === 'done').length;
+  return { done, total, pct: total > 0 ? Math.round((done/total)*100) : 0 };
+}
+
+// Track which module is currently shown in the Big Idea Banner
+let activeModuleId = null;
+
+function getCurrentModule() {
+  return DATA.modules.find(m => getModuleStatus(m) === 'current') || DATA.modules[0];
+}
+
+function getActiveModule() {
+  if (activeModuleId) return DATA.modules.find(m => m.id === activeModuleId) || getCurrentModule();
+  return getCurrentModule();
+}
+
+function getCurrentLesson() {
+  for (const mod of DATA.modules) {
+    for (const les of mod.lessons) {
+      if (state.lessons[les.id] === 'current') return { mod, lesson: les };
+    }
+  }
+  return null;
+}
+
+function calculateXP() {
+  let xp = 0;
+  DATA.modules.forEach(m => {
+    m.lessons.forEach(l => {
+      if (state.lessons[l.id] === 'done') {
+        if (isCompulsory(l.id)) xp += l.assessment ? 100 : XP_LESSON;
+        else xp += 25; // optional lessons give reduced XP
+      }
+    });
+    if (getModuleStatus(m) === 'done') xp += XP_MODULE;
+  });
+  // Bonus if all compulsory done
+  let totalCompulsory = 0, doneCompulsory = 0;
+  DATA.modules.forEach(m => m.lessons.forEach(l => {
+    if (isCompulsory(l.id)) { totalCompulsory++; if (state.lessons[l.id] === 'done') doneCompulsory++; }
+  }));
+  if (totalCompulsory > 0 && doneCompulsory === totalCompulsory) xp += XP_ALL;
+  return xp;
+}
+
+function getOverallProgress() {
+  let total = 0, done = 0;
+  DATA.modules.forEach(m => {
+    m.lessons.forEach(l => {
+      if (isCompulsory(l.id)) {
+        total++;
+        if (state.lessons[l.id] === 'done') done++;
+      }
+    });
+  });
+  return total > 0 ? Math.round((done/total)*100) : 0;
+}
+
+// ───────────────────────────────────────
+// BATCH / MULTI-SELECT MODE
+// ───────────────────────────────────────
+let batchSelected = new Set();
+
+function openBatchModal() {
+  batchSelected.clear();
+  // Pre-select all completed lessons for convenience
+  DATA.modules.forEach(mod => {
+    mod.lessons.forEach(l => {
+      if (state.lessons[l.id] === 'done') batchSelected.add(l.id);
+    });
+  });
+  renderBatchModal();
+  // Translate batch modal static elements
+  const cancelBtn = document.querySelector('#batch-overlay .bm-btn-cancel');
+  if (cancelBtn) cancelBtn.textContent = '✕ ' + t('batchCancel');
+  document.getElementById('batch-overlay').classList.add('active');
+}
+
+function closeBatchModal() {
+  document.getElementById('batch-overlay').classList.remove('active');
+  batchSelected.clear();
+}
+
+function renderBatchModal() {
+  const container = document.getElementById('bm-modules');
+  container.innerHTML = '';
+  
+  DATA.modules.forEach(mod => {
+    const total = mod.lessons.length;
+    const done = mod.lessons.filter(l => state.lessons[l.id] === 'done').length;
+    const modEl = document.createElement('div');
+    modEl.className = 'bm-module';
+    
+    // Count how many lessons in this module are selected
+    const allIds = mod.lessons.map(l => l.id);
+    const selCount = allIds.filter(id => batchSelected.has(id)).length;
+    const allSel = selCount === allIds.length && allIds.length > 0;
+    
+    modEl.innerHTML = `
+      <div class="bm-mod-header" onclick="toggleBatchModule('${mod.id}')">
+        <span class="bm-mod-emoji">${mod.emoji}</span>
+        <span class="bm-mod-name">${t('modName_' + mod.id)}</span>
+        <span class="bm-mod-progress">${done}/${total}</span>
+        <div class="bm-mod-check ${allSel ? 'checked' : ''}" onclick="event.stopPropagation(); toggleBatchModAll('${mod.id}')">✓</div>
+      </div>
+      <div class="bm-lessons" id="bm-lessons-${mod.id}">
+        ${mod.lessons.map(les => {
+          const ls = state.lessons[les.id] || 'todo';
+          const isSel = batchSelected.has(les.id);
+          const statusClass = ls === 'done' ? 's-done' : ls === 'current' ? 's-current' : 's-todo';
+          const statusText = ls === 'done' ? t('done') : ls === 'current' ? t('now') : t('todo');
+          const typeBadge = les.type ? `<span style="font-size:9px;padding:1px 5px;border-radius:8px;background:${les.type==='DDDO'?'rgba(210,153,34,0.15)':'rgba(63,185,80,0.15)'};color:${les.type==='DDDO'?'var(--amber)':'var(--green)'};font-weight:600">${les.type}</span>` : '';
+          const assessBadge = les.assessment ? '<span style="font-size:9px;padding:1px 5px;border-radius:8px;background:rgba(248,81,73,0.15);color:var(--red);font-weight:600">\uD83D\uDCDD</span>' : '';
+          return `
+            <div class="bm-lesson ${isSel ? 'bm-sel' : ''}" onclick="toggleBatchLesson('${les.id}')">
+              <div class="bm-lcheck ${isSel ? 'checked' : ''}">✓</div>
+              <div class="bm-linfo">
+                <div class="bm-ltitle">${t('lesTitle_' + les.id)} ${typeBadge}${assessBadge}</div>
+                <div class="bm-ldesc">${t('lesDesc_' + les.id)}</div>
+              </div>
+              <span class="bm-lstatus ${statusClass}">${statusText}</span>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
+    container.appendChild(modEl);
+  });
+  
+  updateBatchCount();
+}
+
+// ───────────────────────────────────────
+// COMPULSORY / OPTIONAL MANAGEMENT
+// ───────────────────────────────────────
+const CO_STORAGE_KEY = STORAGE_KEY + '_compulsory';
+let compulsorySet = new Set();
+
+function loadCompulsory() {
+  try {
+    const saved = localStorage.getItem(CO_STORAGE_KEY);
+    if (saved) {
+      const arr = JSON.parse(saved);
+      if (Array.isArray(arr)) { compulsorySet = new Set(arr); return; }
+    }
+  } catch(e) {}
+  // Default: all lessons are compulsory
+  const allIds = [];
+  DATA.modules.forEach(m => m.lessons.forEach(l => allIds.push(l.id)));
+  compulsorySet = new Set(allIds);
+}
+
+function saveCompulsory() {
+  localStorage.setItem(CO_STORAGE_KEY, JSON.stringify([...compulsorySet]));
+}
+
+function isCompulsory(lessonId) {
+  return compulsorySet.has(lessonId);
+}
+
+function openCoModal() {
+  document.getElementById('co-title-text').textContent = t('coTitle');
+  document.getElementById('co-cancel-text').textContent = t('batchCancel');
+  renderCoModal();
+  document.getElementById('co-overlay').classList.add('active');
+}
+
+function closeCoModal() {
+  document.getElementById('co-overlay').classList.remove('active');
+  saveCompulsory();
+  render(); // re-render main page with updated badges
+}
+
+function renderCoModal() {
+  const container = document.getElementById('co-modules');
+  container.innerHTML = '';
+
+  DATA.modules.forEach(mod => {
+    const total = mod.lessons.length;
+    const compCount = mod.lessons.filter(l => isCompulsory(l.id)).length;
+    const modEl = document.createElement('div');
+    modEl.className = 'co-module';
+
+    modEl.innerHTML = `
+      <div class="co-mod-header" onclick="toggleCoModule('${mod.id}')">
+        <span class="co-mod-emoji">${mod.emoji}</span>
+        <span class="co-mod-name">${t('modName_' + mod.id)}</span>
+        <span class="co-mod-count">${compCount}/${total}</span>
+        <span class="co-mod-toggle" onclick="event.stopPropagation(); toggleCoModAll('${mod.id}')" id="co-toggle-${mod.id}">${compCount === total ? t('coAllCompulsory') : compCount === 0 ? t('coAllOptional') : t('coSetAll')}</span>
+      </div>
+      <div class="co-lessons" id="co-lessons-${mod.id}">
+        ${mod.lessons.map(les => {
+          const isComp = isCompulsory(les.id);
+          const typeBadge = les.type ? `<span style="font-size:9px;padding:1px 5px;border-radius:8px;background:${les.type==='DDDO'?'rgba(210,153,34,0.15)':'rgba(63,185,80,0.15)'};color:${les.type==='DDDO'?'var(--amber)':'var(--green)'};font-weight:600">${les.type}</span>` : '';
+          const assessBadge = les.assessment ? '<span style="font-size:9px;padding:1px 5px;border-radius:8px;background:rgba(248,81,73,0.15);color:var(--red);font-weight:600">📝</span>' : '';
+          return `
+            <div class="co-lesson">
+              <div class="co-linfo">
+                <div class="co-ltitle">${t('lesTitle_' + les.id, les.title)} ${typeBadge}${assessBadge}</div>
+                <div class="co-ldesc">${t('lesDesc_' + les.id, les.desc)}</div>
+              </div>
+              <span class="co-toggle ${isComp ? 'compulsory' : 'optional'}" onclick="toggleCompulsory('${les.id}')">
+                ${isComp ? '✓ ' + t('coCompulsory') : '○ ' + t('coOptional')}
+              </span>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
+    container.appendChild(modEl);
+  });
+  updateCoCount();
+}
+
+function updateCoCount() {
+  let total = 0, comp = 0;
+  DATA.modules.forEach(m => m.lessons.forEach(l => {
+    total++;
+    if (isCompulsory(l.id)) comp++;
+  }));
+  document.getElementById('co-count').textContent = `${comp} / ${total}`;
+}
+
+function toggleCompulsory(lessonId) {
+  if (compulsorySet.has(lessonId)) compulsorySet.delete(lessonId);
+  else compulsorySet.add(lessonId);
+  saveCompulsory();
+  // Preserve scroll position and open modules
+  const container = document.getElementById('co-modules');
+  const scrollTop = container ? container.scrollTop : 0;
+  const openIds = [];
+  document.querySelectorAll('.co-lessons.open').forEach(el => {
+    if (el.id) openIds.push(el.id.replace('co-lessons-', ''));
+  });
+  renderCoModal();
+  openIds.forEach(id => {
+    const el = document.getElementById(`co-lessons-${id}`);
+    if (el) el.classList.add('open');
+  });
+  if (container) container.scrollTop = scrollTop;
+}
+
+function toggleCoModule(modId) {
+  const el = document.getElementById(`co-lessons-${modId}`);
+  if (!el) return;
+  const isOpen = el.classList.contains('open');
+  document.querySelectorAll('.co-lessons').forEach(b => b.classList.remove('open'));
+  if (!isOpen) el.classList.add('open');
+}
+
+function toggleCoModAll(modId) {
+  const mod = DATA.modules.find(m => m.id === modId);
+  if (!mod) return;
+  const allComp = mod.lessons.every(l => isCompulsory(l.id));
+  if (allComp) {
+    // Make all optional
+    mod.lessons.forEach(l => compulsorySet.delete(l.id));
+  } else {
+    // Make all compulsory
+    mod.lessons.forEach(l => compulsorySet.add(l.id));
+  }
+  renderCoModal();
+}
+
+function toggleBatchModule(modId) {
+  const el = document.getElementById(`bm-lessons-${modId}`);
+  if (el) el.classList.toggle('open');
+}
+
+function toggleBatchModAll(modId) {
+  const mod = DATA.modules.find(m => m.id === modId);
+  if (!mod) return;
+  const allIds = mod.lessons.map(l => l.id);
+  const allSel = allIds.every(id => batchSelected.has(id));
+  
+  if (allSel) {
+    allIds.forEach(id => batchSelected.delete(id));
+  } else {
+    allIds.forEach(id => batchSelected.add(id));
+  }
+  const container = document.getElementById('bm-modules');
+  const scrollTop = container ? container.scrollTop : 0;
+  renderBatchModal();
+  // Re-open this module
+  const el = document.getElementById(`bm-lessons-${modId}`);
+  if (el) el.classList.add('open');
+  if (container) container.scrollTop = scrollTop;
+}
+
+function toggleBatchLesson(lessonId) {
+  if (batchSelected.has(lessonId)) {
+    batchSelected.delete(lessonId);
+  } else {
+    batchSelected.add(lessonId);
+  }
+  // Update this lesson's DOM directly without re-rendering everything
+  const lessonEl = document.querySelector(`[onclick="toggleBatchLesson('${lessonId}')"]`);
+  if (lessonEl) {
+    const isSel = batchSelected.has(lessonId);
+    lessonEl.classList.toggle('bm-sel', isSel);
+    const check = lessonEl.querySelector('.bm-lcheck');
+    if (check) check.classList.toggle('checked', isSel);
+  }
+  updateBatchCount();
+}
+
+function updateBatchCount() {
+  const count = batchSelected.size;
+  document.getElementById('bm-count').textContent = count;
+  document.getElementById('bm-btn-done').disabled = count === 0;
+  document.getElementById('bm-btn-undo').disabled = count === 0;
+  document.getElementById('bm-title-text').textContent = '☑️ ' + t('batchModeOff');
+  document.getElementById('bm-btn-done').textContent = '✓ ' + t('done');
+  document.getElementById('bm-btn-undo').textContent = '↩ ' + t('batchUndo');
+}
+
+function batchMarkDone() {
+  if (batchSelected.size === 0) return;
+  const affectedMods = new Set();
+  batchSelected.forEach(id => {
+    state.lessons[id] = 'done';
+    for (const mod of DATA.modules) {
+      if (mod.lessons.find(l => l.id === id)) { affectedMods.add(mod.id); break; }
+    }
+  });
+  // Set current to next non-done in each affected module
+  affectedMods.forEach(modId => {
+    const mod = DATA.modules.find(m => m.id === modId);
+    if (!mod) return;
+    let found = false;
+    for (const l of mod.lessons) {
+      if (state.lessons[l.id] !== 'done') {
+        state.lessons[l.id] = 'current';
+        found = true;
+        break;
+      }
+    }
+    if (!found) {
+      const modIdx = DATA.modules.indexOf(mod);
+      const nextMod = DATA.modules[modIdx + 1];
+      if (nextMod) {
+        const firstNonDone = nextMod.lessons.find(l => state.lessons[l.id] !== 'done');
+        if (firstNonDone) state.lessons[firstNonDone.id] = 'current';
+      }
+    }
+  });
+  // Confetti for completed modules
+  affectedMods.forEach(modId => {
+    const mod = DATA.modules.find(m => m.id === modId);
+    if (mod && mod.lessons.filter(l => !l.extra).every(l => state.lessons[l.id] === 'done')) {
+      launchConfetti();
+    }
+  });
+  
+  closeBatchModal();
+  saveState();
+  render();
+  restoreOpenModule();
+}
+
+function batchMarkCurrent() {
+  if (batchSelected.size === 0) return;
+  batchSelected.forEach(id => {
+    state.lessons[id] = 'current';
+  });
+  closeBatchModal();
+  saveState();
+  render();
+  restoreOpenModule();
+}
+
+function restoreOpenModule() {
+  // Re-expand the first module that has any non-done lessons (likely the one user was working on)
+  for (const mod of DATA.modules) {
+    const hasActivity = mod.lessons.some(l => state.lessons[l.id] === 'current');
+    if (hasActivity) {
+      const body = document.getElementById(`body-${mod.id}`);
+      const arrow = document.getElementById(`arrow-${mod.id}`);
+      if (body) { body.classList.add('open'); }
+      if (arrow) { arrow.style.transform = 'rotate(180deg)'; }
+      break;
+    }
+  }
+}
+
+// ───────────────────────────────────────
+// TOGGLE LESSON STATE
+// ───────────────────────────────────────
+function toggleLesson(lessonId, e) {
+  if (e) { e.stopPropagation(); e.preventDefault(); }
+  const current = state.lessons[lessonId];
+  
+  // Find lesson and module
+  let targetMod = null, targetLesson = null, targetIdx = -1;
+  for (const mod of DATA.modules) {
+    const idx = mod.lessons.findIndex(l => l.id === lessonId);
+    if (idx >= 0) { targetMod = mod; targetLesson = mod.lessons[idx]; targetIdx = idx; break; }
+  }
+  if (!targetMod) return;
+
+  if (current === 'done') {
+    // Mark as current (undo)
+    state.lessons[lessonId] = 'current';
+  } else if (current === 'current' || current === 'todo') {
+    
+    // Mark as done
+    state.lessons[lessonId] = 'done';
+    
+    // Find the NEXT non-done lesson in the same module
+    let nextLesson = null;
+    for (let i = targetIdx + 1; i < targetMod.lessons.length; i++) {
+      if (state.lessons[targetMod.lessons[i].id] !== 'done') {
+        nextLesson = targetMod.lessons[i];
+        break;
+      }
+    }
+    
+    if (nextLesson) {
+      state.lessons[nextLesson.id] = 'current';
+    } else {
+      // No more non-done lessons in this module — check if module is complete
+      const allRequiredDone = targetMod.lessons.filter(l => isCompulsory(l.id)).every(l => state.lessons[l.id] === 'done');
+      if (allRequiredDone) {
+        // Unlock next module
+        const modIdx = DATA.modules.indexOf(targetMod);
+        const nextMod = DATA.modules[modIdx + 1];
+        if (nextMod && nextMod.lessons.length > 0) {
+          state.lessons[nextMod.lessons[0].id] = 'current';
+        }
+        launchConfetti();
+      }
+    }
+  }
+  
+  saveState();
+  // Remember which module body is open before re-render
+  const openModId = targetMod ? targetMod.id : null;
+  render();
+  // Restore the open state
+  if (openModId) {
+    const body = document.getElementById(`body-${openModId}`);
+    const arrow = document.getElementById(`arrow-${openModId}`);
+    if (body) { body.classList.add('open'); }
+    if (arrow) { arrow.style.transform = 'rotate(180deg)'; }
+  }
+}
+
+// ───────────────────────────────────────
+// RENDER
+// ───────────────────────────────────────
+function render() {
+  renderStats();
+  renderProgress();
+  renderBigIdea();
+  renderModuleMap();
+  renderModuleDetails();
+  renderInfoColumns();
+  // Translate Tools section (only if exists)
+  const toolsLabel = document.getElementById('tools-label');
+  if (toolsLabel) toolsLabel.textContent = t('toolsForThisLesson');
+  const curriculumLabel = document.getElementById('curriculum-label');
+  if (curriculumLabel) curriculumLabel.textContent = t('nzCurriculum');
+  // Translate Tools section
+  for (let i = 0; i < 4; i++) {
+    const nameEl = document.getElementById(`tool-name-${i}`);
+    const tipEl = document.getElementById(`tool-tip-${i}`);
+    if (nameEl) nameEl.textContent = t(`toolName${i}`);
+    if (tipEl) tipEl.textContent = t(`toolTip${i}`);
+  }
+  // Tool card click → open link
+  document.querySelectorAll('.tool-card[data-href]').forEach(card => {
+    card.addEventListener('click', () => window.open(card.dataset.href, '_blank'));
+  });
+  // Translate NZ Curriculum section (dynamic — scan i18n for poLNN keys)
+  // Only match single-digit NZ Progress Outcomes: poL3, poL4, poL5... (NOT poL30 which is NCEA)
+  Object.keys(i18n.en || {}).filter(k => /^poL[1-9]$/.test(k)).forEach(key => {
+    const el = document.getElementById(key);
+    if (el) el.textContent = t(key);
+  });
+  // Translate NCEA Standards section (dynamic — scan i18n for ncea-* AND legacy poL30/poL31 format)
+  // Legacy format: poL30, poL31, poL40... = Level 3+ Achievement Standards
+  Object.keys(i18n.en || {}).filter(k => k.startsWith('ncea-') || /^poL[3-9]\d$/.test(k)).forEach(key => {
+    const el = document.getElementById(key);
+    if (el) el.textContent = t(key);
+  });
+  // Translate Batch modal buttons
+  const bmDone = document.getElementById('bm-btn-done');
+  if (bmDone) bmDone.textContent = '✓ ' + t('batchComplete');
+  const bmUndo = document.getElementById('bm-btn-undo');
+  if (bmUndo) bmUndo.textContent = '↩ ' + t('batchUndo');
+  const topbarTitle = document.querySelectorAll('.topbar-title')[0];
+  if (topbarTitle) topbarTitle.textContent = t('title');
+  const topbarSub = document.querySelectorAll('.topbar-sub')[0];
+  if (topbarSub) topbarSub.textContent = t('subtitle');
+  // Update topbar buttons
+  const rTexts = document.querySelectorAll('.r-text');
+  if (rTexts[0]) rTexts[0].textContent = t('save').replace('💾 ','').replace('💾','');
+  if (rTexts[1]) rTexts[1].textContent = t('actions');
+  // Update dropdown menu items
+  const dropItems = document.querySelectorAll('.dropdown-item');
+  if (dropItems[0]) dropItems[0].innerHTML = '' + t('reset');
+  if (dropItems[1]) dropItems[1].innerHTML = '📋 ' + t('template');
+  if (dropItems[2]) dropItems[2].innerHTML = '☑️ ' + t('batch');
+  if (dropItems[3]) dropItems[3].innerHTML = '⚙️ ' + t('compulsory');
+  if (dropItems[4]) dropItems[4].innerHTML = '❓ ' + t('help');
+}
+
+function renderStats() {
+  const doneMods = DATA.modules.filter(m => getModuleStatus(m) === 'done').length;
+  let totalLessons = 0, doneLessons = 0;
+  DATA.modules.forEach(m => {
+    m.lessons.forEach(l => {
+      if (isCompulsory(l.id)) {
+        totalLessons++;
+        if (state.lessons[l.id] === 'done') doneLessons++;
+      }
+    });
+  });
+  const cur = getCurrentModule();
+  const xp = calculateXP();
+  
+  const statMods = document.getElementById('stat-modules');
+  const statLessons = document.getElementById('stat-lessons');
+  const statCurrent = document.getElementById('stat-current');
+  const statXp = document.getElementById('stat-xp');
+  if (statMods) statMods.textContent = `${doneMods} / ${DATA.modules.length}`;
+  if (statLessons) statLessons.textContent = `${doneLessons} / ${totalLessons}`;
+  if (statCurrent) statCurrent.textContent = cur ? t('modName_' + cur.id) : '—';
+  if (statXp) statXp.textContent = xp.toLocaleString();
+  const statLabels = document.querySelectorAll('.stat-label');
+  if (statLabels[0]) statLabels[0].textContent = t('modulesDone');
+  if (statLabels[1]) statLabels[1].textContent = t('lessonsDone');
+  if (statLabels[2]) statLabels[2].textContent = t('current');
+  if (statLabels[3]) statLabels[3].textContent = t('xpEarned');
+}
+
+function renderProgress() {
+  const pct = getOverallProgress();
+  const progressFill = document.getElementById('progress-fill');
+  const progressPct = document.getElementById('progress-pct');
+  const progressLabel = document.querySelector('.progress-label span:first-child');
+  if (progressFill) progressFill.style.width = pct + '%';
+  if (progressPct) progressPct.textContent = pct + '%';
+  if (progressLabel) progressLabel.textContent = t('overallProgress');
+}
+
+function renderBigIdea(mod) {
+  const cur = mod || getCurrentModule();
+  activeModuleId = cur.id;
+  const biTag = document.querySelector('.bi-tag');
+  const biModuleTag = document.getElementById('bi-module-tag');
+  const biQuote = document.getElementById('bi-quote');
+  const biDesc = document.getElementById('bi-desc');
+  const biMaori = document.getElementById('bi-maori');
+  if (biTag) biTag.textContent = t('bigIdea');
+  if (biModuleTag) biModuleTag.textContent = `${t('module')} ${cur.num}: ${t('modName_' + cur.id)}`;
+  if (biQuote) biQuote.textContent = t('modBigIdea_' + cur.id);
+  if (biDesc) biDesc.textContent = t('modBigIdeaDesc_' + cur.id);
+  if (biMaori) {
+    biMaori.textContent = cur.maori ? `"${cur.maori}"` : '';
+    biMaori.style.display = cur.maori ? 'block' : 'none';
+  }
+}
+
+function renderModuleMap() {
+  const container = document.getElementById('module-map');
+  container.innerHTML = '';
+  document.querySelector('.section-label').textContent = t('yourJourney');
+
+  DATA.modules.forEach(mod => {
+    const status = getModuleStatus(mod);
+    const progress = getModuleProgress(mod);
+
+    const node = document.createElement('div');
+    node.className = `module-node m-${status}`;
+    node.onclick = () => jumpToModule(mod.id);
+
+    let checkHtml = status === 'done' ? '<div class="node-check">✓</div>' : '';
+
+    node.innerHTML = `
+      <div class="node-circle">${mod.emoji}${checkHtml}</div>
+      <div class="node-label">
+        <div class="node-num">${t('module')} ${mod.num}</div>
+        <div class="node-name">${t('modName_' + mod.id)}</div>
+        <div class="node-status">${
+          status === 'done' ? `✅ ${progress.pct}%` :
+          `🎮 ${progress.pct}%`
+        }</div>
+      </div>
+    `;
+    container.appendChild(node);
+  });
+}
+
+function renderModuleDetails() {
+  const container = document.getElementById('module-details');
+  container.innerHTML = '';
+  
+  DATA.modules.forEach(mod => {
+    const status = getModuleStatus(mod);
+    const progress = getModuleProgress(mod);
+    
+    const detail = document.createElement('div');
+    detail.className = 'lesson-detail';
+    detail.id = `detail-${mod.id}`;
+    
+    const badgeColor = status === 'done' ? 'tag-done' : 'tag-current';
+    const badgeText = status === 'done' ? t('completed') : `${progress.done}/${progress.total} ${t('lessons')}`;
+
+    // Build lesson steps — maintain mod.lessons order, insert submodule headers at correct positions
+    let stepsHtml = '';
+    if (mod.submodules && mod.submodules.length > 0) {
+      // Build maps for submodule tracking
+      const lessonToSubmodule = new Map(); // lessonId -> submoduleIndex
+      const subFirstLessonIdx = new Map(); // submoduleIndex -> first lesson index in mod.lessons
+      const renderedSubmodules = new Set();
+      mod.submodules.forEach((sub, subIdx) => {
+        (sub.lessons || []).forEach(idOrObj => {
+          const lesId = typeof idOrObj === 'string' ? idOrObj : (idOrObj.id || '');
+          if (lesId) lessonToSubmodule.set(lesId, subIdx);
+        });
+        // Find first lesson index in mod.lessons
+        const firstLesId = (sub.lessons || [])[0];
+        const firstLesIdStr = typeof firstLesId === 'string' ? firstLesId : (firstLesId ? firstLesId.id : '');
+        if (firstLesIdStr && mod.lessons) {
+          const firstIdx = mod.lessons.findIndex(l => l.id === firstLesIdStr);
+          if (firstIdx >= 0) subFirstLessonIdx.set(subIdx, firstIdx);
+        }
+      });
+      
+      // Render helper function for a lesson step
+      const renderLessonStep = (les) => {
+        const ls = state.lessons[les.id] || 'todo';
+        const cbClass = ls === 'done' ? 's-done' : ls === 'current' ? 's-current' : 's-todo';
+        const cbIcon = ls === 'done' ? '✓' : ls === 'current' ? '▶' : '1';
+        const tagClass = ls === 'done' ? 'tag-done' : ls === 'current' ? 'tag-current' : 'tag-todo';
+        const tagText = ls === 'done' ? t('done') : ls === 'current' ? t('now') : t('todo');
+        const typeBadge = les.type ? `<span style="font-size:10px;padding:1px 6px;border-radius:10px;background:${les.type==='DDDO'?'rgba(210,153,34,0.15)':'rgba(63,185,80,0.15)'};color:${les.type==='DDDO'?'var(--amber)':'var(--green)'};font-weight:600">${les.type}</span>` : '';
+        const assessBadge = les.assessment ? '<span style="font-size:10px;padding:1px 6px;border-radius:10px;background:rgba(248,81,73,0.15);color:var(--red);font-weight:600">📝 ' + t('assessment') + '</span>' : '';
+        const extraBadge = les.extra ? '<span style="font-size:10px;padding:1px 6px;border-radius:10px;background:rgba(88,166,255,0.15);color:var(--blue);font-weight:600">⭐ ' + t('extra') + '</span>' : '';
+        const optionalBadge = !isCompulsory(les.id) ? '<span style="font-size:10px;padding:1px 6px;border-radius:10px;background:rgba(139,148,158,0.12);color:var(--text3);font-weight:500;border:1px dashed var(--border)">○ ' + t('optional') + '</span>' : '';
+        const webLinkBadge = les.link ? '<span style="font-size:10px;padding:1px 6px;border-radius:10px;background:rgba(88,166,255,0.15);color:var(--blue);font-weight:600">🌐 Web Link</span>' : '';
+        const badges = [typeBadge, assessBadge, extraBadge, optionalBadge, webLinkBadge].filter(b=>b).join(' ');
+        const optClass = !isCompulsory(les.id) ? ' is-optional' : '';
+        const titleContent = les.link 
+          ? `<a href="${les.link}" target="_blank" rel="noopener" style="color:var(--blue);text-decoration:none" onclick="event.stopPropagation()">🌐 ${t('lesTitle_' + les.id)}</a>`
+          : t('lesTitle_' + les.id);
+        return `
+          <div class="lesson-step${optClass}" style="${les.extra ? ';border-left:2px solid var(--blue)' : les.assessment ? ';border-left:2px solid var(--red)' : les.link ? ';border-left:2px solid var(--blue)' : ''}"
+                 onclick="toggleLesson('${les.id}', event)">
+            <div class="step-checkbox ${cbClass}">${cbIcon}</div>
+            <div class="step-info">
+              <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+                <div class="step-title">${titleContent}</div>
+                ${badges}
+              </div>
+              <div class="step-desc">${t('lesDesc_' + les.id)}</div>
+            </div>
+            <span class="step-tag ${tagClass}">${tagText}</span>
+          </div>`;
+      };
+      
+      // Render submodule helper
+      const renderSubmodule = (subIdx) => {
+        const sub = mod.submodules[subIdx];
+        const subLessons = (sub.lessons || []).map(idOrObj => {
+          const lesId = typeof idOrObj === 'string' ? idOrObj : (idOrObj.id || '');
+          return mod.lessons.find(l => l.id === lesId);
+        }).filter(Boolean);
+        const subCompulsory = subLessons.filter(l => isCompulsory(l.id));
+        const subDone = subCompulsory.filter(l => state.lessons[l.id] === 'done').length;
+        const subTotal = subCompulsory.length;
+        const subPct = subTotal > 0 ? Math.round((subDone/subTotal)*100) : 0;
+        const allDone = subTotal > 0 && subDone === subTotal;
+        return `
+          <div class="submodule-group">
+            <div class="submodule-header" onclick="toggleSubmodule('${mod.id}-sub${subIdx}', event)">
+              <div class="submodule-header-left">
+                <span class="submodule-emoji">${sub.emoji}</span>
+                <span class="submodule-name">${t('subName_' + mod.id + 's' + subIdx)}</span>
+                <span class="submodule-topic">${t('topic')} ${sub.topic}</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px">
+                <div class="submodule-progress"><div class="submodule-progress-fill" style="width:${subPct}%"></div></div>
+                <span class="submodule-badge" style="${allDone ? 'background:var(--green-dim);color:var(--green)' : ''}">${subDone}/${subTotal}</span>
+                <span style="color:var(--text3);font-size:10px;transition:transform .3s" id="sub-arrow-${mod.id}-sub${subIdx}">▼</span>
+              </div>
+            </div>
+            <div class="submodule-lessons open" id="sub-body-${mod.id}-sub${subIdx}" style="max-height:2000px">
+              <div class="lesson-steps" style="gap:6px">
+                ${subLessons.map(l => renderLessonStep(l)).join('')}
+              </div>
+            </div>
+          </div>`;
+      };
+      
+      // Traverse mod.lessons in order, insert submodule headers at correct positions
+      // Each group of standalone lessons gets its own lesson-steps container
+      let inStandaloneGroup = false;
+      let standaloneBuffer = '';
+      const flushStandalone = () => {
+        if (standaloneBuffer) {
+          stepsHtml += '<div class="lesson-steps" style="gap:6px">' + standaloneBuffer + '</div>';
+          standaloneBuffer = '';
+        }
+        inStandaloneGroup = false;
+      };
+      mod.lessons.forEach((les, idx) => {
+        const subIdx = lessonToSubmodule.get(les.id);
+        
+        // Check if this is the first lesson of a submodule
+        if (subIdx !== undefined && !renderedSubmodules.has(subIdx)) {
+          const subFirstIdx = subFirstLessonIdx.get(subIdx);
+          if (subFirstIdx === idx) {
+            // Flush any pending standalone lessons first
+            flushStandalone();
+            renderedSubmodules.add(subIdx);
+            // Render submodule
+            stepsHtml += renderSubmodule(subIdx);
+          }
+        }
+        
+        // If lesson is NOT in any submodule, add to standalone buffer
+        if (subIdx === undefined) {
+          if (!inStandaloneGroup) {
+            inStandaloneGroup = true;
+          }
+          standaloneBuffer += renderLessonStep(les);
+        }
+        // If lesson is in a submodule (not the first one), it is rendered inside renderSubmodule
+      });
+      // Flush final standalone group
+      flushStandalone();
+      // Render any empty submodules (submodules with no lessons)
+      if (mod.submodules) {
+        mod.submodules.forEach((sub, subIdx) => {
+          if (!renderedSubmodules.has(subIdx)) {
+            stepsHtml += renderSubmodule(subIdx);
+          }
+        });
+      }
+    } else if (mod.webLinks && mod.webLinks.length > 0) {
+    } else {
+      // Standard flat list (no submodules)
+      stepsHtml = `<div class="lesson-steps">${mod.lessons.map((les, idx) => {
+        const ls = state.lessons[les.id] || 'todo';
+        const cbClass = ls === 'done' ? 's-done' : ls === 'current' ? 's-current' : 's-todo';
+        const cbIcon = ls === 'done' ? '✓' : ls === 'current' ? '▶' : idx+1;
+        const tagClass = ls === 'done' ? 'tag-done' : ls === 'current' ? 'tag-current' : 'tag-todo';
+        const tagText = ls === 'done' ? t('done') : ls === 'current' ? t('now') : t('todo');
+        const typeBadge = les.type ? `<span style="font-size:10px;padding:1px 6px;border-radius:10px;background:${les.type==='DDDO'?'rgba(210,153,34,0.15)':'rgba(63,185,80,0.15)'};color:${les.type==='DDDO'?'var(--amber)':'var(--green)'};font-weight:600">${les.type}</span>` : '';
+        const assessBadge = les.assessment ? '<span style="font-size:10px;padding:1px 6px;border-radius:10px;background:rgba(248,81,73,0.15);color:var(--red);font-weight:600">📝 ' + t('assessment') + '</span>' : '';
+        const extraBadge = les.extra ? '<span style="font-size:10px;padding:1px 6px;border-radius:10px;background:rgba(88,166,255,0.15);color:var(--blue);font-weight:600">⭐ ' + t('extra') + '</span>' : '';
+        const optionalBadge = !isCompulsory(les.id) ? '<span style="font-size:10px;padding:1px 6px;border-radius:10px;background:rgba(139,148,158,0.12);color:var(--text3);font-weight:500;border:1px dashed var(--border)">○ ' + t('optional') + '</span>' : '';
+        const webLinkBadge = les.link ? '<span style="font-size:10px;padding:1px 6px;border-radius:10px;background:rgba(88,166,255,0.15);color:var(--blue);font-weight:600">🌐 Web Link</span>' : '';
+        const dateStr = '';
+        const badges = [typeBadge, assessBadge, extraBadge, optionalBadge, webLinkBadge].filter(b=>b).join(' ');
+        const optClass = !isCompulsory(les.id) ? ' is-optional' : '';
+        const titleContent = les.link 
+          ? `<a href="${les.link}" target="_blank" rel="noopener" style="color:var(--blue);text-decoration:none" onclick="event.stopPropagation()">🌐 ${t('lesTitle_' + les.id)}</a>`
+          : t('lesTitle_' + les.id);
+        return `
+          <div class="lesson-step${optClass}" style="${les.extra ? ';border-left:2px solid var(--blue)' : les.assessment ? ';border-left:2px solid var(--red)' : les.link ? ';border-left:2px solid var(--blue)' : ''}"
+               onclick="toggleLesson('${les.id}', event)">
+            <div class="step-checkbox ${cbClass}">${cbIcon}</div>
+            <div class="step-info">
+              <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+                <div class="step-title">${titleContent}</div>
+                ${badges}
+              </div>
+              <div class="step-desc">${t('lesDesc_' + les.id)}</div>
+            </div>
+            <span class="step-tag ${tagClass}">${tagText}</span>
+          </div>
+        `;
+      }).join('')}</div>`;
+    }
+
+    detail.innerHTML = `
+      <div class="ld-header" onclick="toggleModuleExpand('${mod.id}')">
+        <div class="ld-left">
+          <div class="ld-emoji">${mod.emoji}</div>
+          <div>
+            <div class="ld-title">${t('modName_' + mod.id)}</div>
+            <div class="ld-subtitle">${t('module')} ${mod.num} · ${progress.done} ${t('of')} ${progress.total} ${t('lessonsComplete')}</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <div class="ld-progress-bar"><div class="ld-progress-fill" style="width:${progress.pct}%"></div></div>
+          <span class="ld-badge ${badgeColor}">${badgeText}</span>
+          <span class="ld-arrow" style="color:var(--text3);font-size:12px;transition:transform .3s" id="arrow-${mod.id}">▼</span>
+        </div>
+      </div>
+      <div class="ld-body" id="body-${mod.id}">
+        ${stepsHtml}
+      </div>
+    `;
+    container.appendChild(detail);
+  });
+}
+
+function toggleSubmodule(subId, e) {
+  if (e) { e.stopPropagation(); e.preventDefault(); }
+  const body = document.getElementById(`sub-body-${subId}`);
+  const arrow = document.getElementById(`sub-arrow-${subId}`);
+  if (!body) return;
+  const isOpen = body.style.maxHeight !== '0px';
+  body.style.maxHeight = isOpen ? '0px' : '2000px';
+  body.style.overflow = 'hidden';
+  body.style.transition = 'max-height .3s ease';
+  if (arrow) arrow.style.transform = isOpen ? 'rotate(-90deg)' : 'rotate(0deg)';
+}
+
+function renderInfoColumns() {
+  const cur = getCurrentModule();
+  const currentLes = getCurrentLesson();
+  
+  // Find last done lesson
+  let lastDone = null;
+  for (let i = DATA.modules.length - 1; i >= 0; i--) {
+    for (let j = DATA.modules[i].lessons.length - 1; j >= 0; j--) {
+      if (state.lessons[DATA.modules[i].lessons[j].id] === 'done') {
+        lastDone = { mod: DATA.modules[i], lesson: DATA.modules[i].lessons[j] };
+        break;
+      }
+    }
+    if (lastDone) break;
+  }
+  
+  // Find current module (for column context)
+  
+  // Last completed — show recent done lessons dynamically
+  const lastList = document.getElementById('ic-last-list');
+  const lastTitle = document.getElementById('ic-last-title');
+  if (lastList) lastList.innerHTML = '';
+  if (lastDone) {
+    if (lastTitle) lastTitle.textContent = t('lesTitle_' + lastDone.lesson.id);
+    const prevIdx = lastDone.mod.lessons.indexOf(lastDone.lesson);
+    // Show up to 3 lessons around the last done one
+    const descItems = lastDone.mod.lessons.slice(Math.max(0, prevIdx-2), prevIdx+1).map(l => ({title: t('lesTitle_' + l.id), desc: t('lesDesc_' + l.id)}));
+    descItems.forEach(l => {
+      if (lastList) {
+        const li = document.createElement('li');
+        li.innerHTML = `<span class="ic-dot green"></span><span>${l.desc}</span>`;
+        lastList.appendChild(li);
+      }
+    });
+  } else {
+    if (lastTitle) lastTitle.textContent = '—';
+  }
+
+  // Current — show current lesson info dynamically
+  const nowList = document.getElementById('ic-now-list');
+  const nowTitle = document.getElementById('ic-now-title');
+  if (nowList) nowList.innerHTML = '';
+  if (currentLes) {
+    if (nowTitle) nowTitle.textContent = t('lesTitle_' + currentLes.lesson.id);
+    const curIdx = cur.lessons.findIndex(l => l.id === currentLes.lesson.id);
+    // Current lesson desc
+    if (nowList) {
+      const li1 = document.createElement('li');
+      li1.innerHTML = `<span class="ic-dot purple"></span><span>${t('lesDesc_' + currentLes.lesson.id)}</span>`;
+      nowList.appendChild(li1);
+      // Next lesson in module
+      if (curIdx + 1 < cur.lessons.length) {
+        const li2 = document.createElement('li');
+        li2.innerHTML = `<span class="ic-dot purple"></span><span>→ ${t('lesTitle_' + cur.lessons[curIdx+1].id)}: ${t('lesDesc_' + cur.lessons[curIdx+1].id)}</span>`;
+        nowList.appendChild(li2);
+      } else {
+        const li2 = document.createElement('li');
+        li2.innerHTML = `<span class="ic-dot purple"></span><span>${t('finalLesson')}</span>`;
+        nowList.appendChild(li2);
+      }
+    }
+  } else {
+    if (nowTitle) nowTitle.textContent = '—';
+  }
+
+  // Coming up — show next uncompleted compulsory lesson across all modules
+  const nextList = document.getElementById('ic-next-list');
+  const nextTitle = document.getElementById('ic-next-title');
+  if (nextList) nextList.innerHTML = '';
+  let nextCompulsory = null;
+  let nextCompulsoryMod = null;
+  for (const mod of DATA.modules) {
+    for (const les of mod.lessons) {
+      if (isCompulsory(les.id) && state.lessons[les.id] !== 'done') {
+        nextCompulsory = les;
+        nextCompulsoryMod = mod;
+        break;
+      }
+    }
+    if (nextCompulsory) break;
+  }
+
+  if (nextCompulsory && nextCompulsoryMod) {
+    if (nextTitle) nextTitle.textContent = t('next') + ': ' + t('lesTitle_' + nextCompulsory.id);
+    if (nextList) {
+      const li1 = document.createElement('li');
+      li1.innerHTML = `<span class="ic-dot amber"></span><span>${t('lesDesc_' + nextCompulsory.id)}</span>`;
+      nextList.appendChild(li1);
+      // Also show which module it belongs to
+      const li2 = document.createElement('li');
+      li2.innerHTML = `<span class="ic-dot amber"></span><span>${nextCompulsoryMod.emoji} ${t('module')} ${nextCompulsoryMod.num}: ${t('modName_' + nextCompulsoryMod.id)}</span>`;
+      nextList.appendChild(li2);
+    }
+  } else {
+    if (nextTitle) nextTitle.textContent = '🎉 ' + t('allComplete');
+  }
+  // Update info column labels
+  const icGreenLabel = document.querySelector('.ic-green .ic-label');
+  const icPurpleLabel = document.querySelector('.ic-purple .ic-label');
+  const icAmberLabel = document.querySelector('.ic-amber .ic-label');
+  if (icGreenLabel) icGreenLabel.textContent = t('lastCompleted');
+  if (icPurpleLabel) icPurpleLabel.textContent = t('currentMission');
+  if (icAmberLabel) icAmberLabel.textContent = t('comingUp');
+}
+
+// ───────────────────────────────────────
+// INTERACTIONS
+// ───────────────────────────────────────
+function toggleModuleExpand(modId) {
+  const body = document.getElementById(`body-${modId}`);
+  const arrow = document.getElementById(`arrow-${modId}`);
+  if (!body) return;
+  const isOpen = body.classList.contains('open');
+  // Close all
+  document.querySelectorAll('.ld-body').forEach(b => b.classList.remove('open'));
+  document.querySelectorAll('.ld-arrow').forEach(a => a.style.transform = 'rotate(0deg)');
+  // Toggle this one
+    if (!isOpen) {
+    body.classList.add('open');
+    if (arrow) arrow.style.transform = 'rotate(180deg)';
+    // Update Big Idea Banner to match the clicked module
+    const mod = DATA.modules.find(m => m.id === modId);
+    if (mod) renderBigIdea(mod);
+  }
+}
+
+// ───────────────────────────────────────
+// BIG IDEA MODAL
+// ───────────────────────────────────────
+function openBigIdeaModal() {
+  const cur = getActiveModule();
+  const progress = getModuleProgress(cur);
+  // Find the first not-done lesson (compulsory first, then optional)
+  const firstTodo = cur.lessons.find(l => state.lessons[l.id] !== 'done');
+  const hasTodo = !!firstTodo;
+  const body = document.getElementById('modal-body');
+  body.innerHTML = `
+    <h2>${t('bigIdea')} — ${t('module')} ${cur.num}: ${t('modName_' + cur.id)}</h2>
+    <p style="font-size:15px;color:var(--text);font-weight:500;line-height:1.6;border-left:3px solid var(--purple);padding-left:16px">
+      ${t('modBigIdea_' + cur.id)}
+    </p>
+    <p>${t('modBigIdeaDesc_' + cur.id)}</p>
+    ${cur.maori ? `<p style="font-style:italic;color:var(--purple);margin-top:12px">"${cur.maori}"</p>` : ''}
+    <div style="margin-top:16px;padding:12px;background:var(--bg);border-radius:var(--radius-sm);border:1px solid var(--border);${hasTodo ? 'cursor:pointer;transition:background .2s;' : ''}"
+         ${hasTodo ? `onclick="jumpToNextLesson('${cur.id}')" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='var(--bg)'"` : ''}
+    >
+      <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">${t('moduleProgress')}</div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="flex:1;height:6px;background:var(--bg3);border-radius:3px;overflow:hidden">
+          <div style="height:100%;background:var(--purple);border-radius:3px;width:${progress.pct}%"></div>
+        </div>
+        <span style="font-size:12px;color:var(--text2)">${progress.done}/${progress.total}</span>
+      </div>
+      ${hasTodo ? `<div style="font-size:11px;color:var(--cyan);margin-top:8px">→ ${t('clickToJump')}</div>` : ''}
+    </div>
+  `;
+  document.getElementById('modal-overlay').classList.add('active');
+}
+
+function jumpToNextLesson(modId) {
+  const mod = DATA.modules.find(m => m.id === modId);
+  if (!mod) return;
+  // Close the modal first
+  document.getElementById('modal-overlay').classList.remove('active');
+  
+  // Close all other module bodies (ld-body) first
+  document.querySelectorAll('.ld-body').forEach(b => b.classList.remove('open'));
+  document.querySelectorAll('.ld-arrow').forEach(a => a.style.transform = 'rotate(0deg)');
+  
+  // Ensure module is expanded (don't use toggleModuleExpand as it would close an already-open module)
+  setTimeout(() => {
+    const body = document.getElementById(`body-${modId}`);
+    const arrow = document.getElementById(`arrow-${modId}`);
+    if (body && !body.classList.contains('open')) {
+      body.classList.add('open');
+      if (arrow) arrow.style.transform = 'rotate(180deg)';
+    }
+    // Update Big Idea Banner
+    if (mod) renderBigIdea(mod);
+    // Find and scroll to lesson - prefer first not-done, otherwise last lesson
+    setTimeout(() => {
+      const firstTodo = mod.lessons.find(l => state.lessons[l.id] !== 'done');
+      // If all done, use the last lesson
+      const targetLesson = firstTodo || (mod.lessons.length > 0 ? mod.lessons[mod.lessons.length - 1] : null);
+      if (!targetLesson) return;
+      // If module has submodules, expand the correct submodule first
+      if (mod.submodules && mod.submodules.length > 0) {
+        for (let i = 0; i < mod.submodules.length; i++) {
+          const sub = mod.submodules[i];
+          if (sub.lessons.includes(targetLesson.id)) {
+            const subBody = document.getElementById(`sub-body-${modId}-sub${i}`);
+            const subArrow = document.getElementById(`sub-arrow-${modId}-sub${i}`);
+            if (subBody && !subBody.classList.contains('open')) {
+              subBody.classList.add('open');
+              if (subArrow) subArrow.style.transform = 'rotate(180deg)';
+            }
+            break;
+          }
+        }
+      }
+      // Highlight the lesson step with scroll
+      const lessonSteps = document.querySelectorAll('.lesson-step');
+      for (const step of lessonSteps) {
+        if (step.getAttribute('onclick') && step.getAttribute('onclick').includes(`'${targetLesson.id}'`)) {
+          step.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          step.style.transition = 'box-shadow .3s, border-color .3s';
+          step.style.boxShadow = '0 0 0 2px var(--cyan), 0 0 16px rgba(57,210,192,0.25)';
+          step.style.borderColor = 'var(--cyan)';
+          setTimeout(() => {
+            step.style.boxShadow = '';
+            step.style.borderColor = '';
+          }, 2000);
+          break;
+        }
+      }
+    }, 200);
+  }, 100);
+}
+
+// Jump to module from module-map click
+function jumpToModule(modId) {
+  const mod = DATA.modules.find(m => m.id === modId);
+  if (!mod) return;
+  
+  // Close the modal first
+  document.getElementById('modal-overlay').classList.remove('active');
+  
+  // Step 1: Collapse all other modules (immediately)
+  document.querySelectorAll('.ld-body').forEach(b => b.classList.remove('open'));
+  document.querySelectorAll('.ld-arrow').forEach(a => a.style.transform = 'rotate(0deg)');
+  document.querySelectorAll('.submodule-lessons').forEach(b => b.style.maxHeight = '0px');
+  document.querySelectorAll('[id^="sub-arrow-"]').forEach(a => a.style.transform = 'rotate(-90deg)');
+  
+  // Step 2: Expand target module (immediately)
+  const body = document.getElementById(`body-${modId}`);
+  const arrow = document.getElementById(`arrow-${modId}`);
+  if (body) body.classList.add('open');
+  if (arrow) arrow.style.transform = 'rotate(180deg)';
+  renderBigIdea(mod);
+  
+  // Step 3: Wait 450ms for expand animation → expand submodule → scroll → highlight
+  setTimeout(() => {
+    const hasLessons = mod.lessons && mod.lessons.length > 0;
+    // Find first incomplete lesson, or last lesson if all complete
+    const firstTodo = hasLessons ? mod.lessons.find(l => state.lessons[l.id] !== 'done') : null;
+    const targetLesson = firstTodo || (hasLessons ? mod.lessons[mod.lessons.length - 1] : null);
+    
+    if (targetLesson) {
+      // Expand submodule if needed
+      if (mod.submodules && mod.submodules.length > 0) {
+        for (let i = 0; i < mod.submodules.length; i++) {
+          const subLessonIds = (mod.submodules[i].lessons || []).map(l => typeof l === 'string' ? l : l.id);
+          if (subLessonIds.includes(targetLesson.id)) {
+            const subBody = document.getElementById(`sub-body-${modId}-sub${i}`);
+            const subArrow = document.getElementById(`sub-arrow-${modId}-sub${i}`);
+            if (subBody) subBody.style.maxHeight = '2000px';
+            if (subArrow) subArrow.style.transform = 'rotate(0deg)';
+            break;
+          }
+        }
+      }
+      
+      // Scroll to target lesson and highlight
+      setTimeout(() => {
+        const lessonSteps = document.querySelectorAll('.lesson-step');
+        for (const step of lessonSteps) {
+          if (step.getAttribute('onclick') && step.getAttribute('onclick').includes(`'${targetLesson.id}'`)) {
+            step.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(() => {
+              step.style.transition = 'box-shadow .3s, border-color .3s';
+              step.style.boxShadow = '0 0 0 2px var(--cyan), 0 0 16px rgba(57,210,192,0.25)';
+              step.style.borderColor = 'var(--cyan)';
+              setTimeout(() => {
+                step.style.boxShadow = '';
+                step.style.borderColor = '';
+              }, 2000);
+            }, 300);
+            break;
+          }
+        }
+      }, 100);
+    }
+  }, 450); // Wait for ld-body expand animation
+}
+
+function closeModal(e) {
+  if (e && e.target !== document.getElementById('modal-overlay') && !e.target.classList.contains('modal-close')) return;
+  document.getElementById('modal-overlay').classList.remove('active');
+}
+
+function toggleDropdown(e) {
+  e.stopPropagation();
+  document.getElementById('actions-dropdown').classList.toggle('open');
+}
+function closeDropdown() {
+  document.getElementById('actions-dropdown').classList.remove('open');
+}
+document.addEventListener('click', () => closeDropdown());
+
+function showHelp() {
+  const body = document.getElementById('modal-body');
+  body.innerHTML = `
+    <h2>${t('helpTitle')}</h2>
+    <p>${t('helpDesc')}</p>
+    <p>${t('helpGreen')}</p>
+    <p>${t('helpPurple')}</p>
+    <p>${t('helpGrey')}</p>
+    <p style="margin-top:12px">${t('helpXP')}</p>
+    <p>${t('helpXPDesc')}</p>
+    <p style="margin-top:12px">${t('helpSave')}</p>
+    <p>${t('helpSaveDesc')}</p>
+    <p style="margin-top:12px">${t('helpBigIdea')}</p>
+    <p>${t('helpBigIdeaDesc')}</p>
+    <p style="margin-top:12px">${t('helpModules')}</p>
+    <p>${t('helpModulesDesc')}</p>
+  `;
+  document.getElementById('modal-overlay').classList.add('active');
+}
+
+// ───────────────────────────────────────
+// CONFETTI CELEBRATION
+// ───────────────────────────────────────
+function launchConfetti() {
+  const container = document.getElementById('confetti-container');
+  const colors = ['#3FB950','#A371F7','#D29922','#58A6FF','#F85149','#39D2C0','#FF6B9D'];
+  
+  for (let i = 0; i < 60; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.style.left = Math.random() * 100 + '%';
+    piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+    piece.style.animationDelay = Math.random() * 1.5 + 's';
+    piece.style.animationDuration = (2 + Math.random() * 2) + 's';
+    piece.style.width = (6 + Math.random() * 8) + 'px';
+    piece.style.height = (6 + Math.random() * 8) + 'px';
+    piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+    container.appendChild(piece);
+  }
+  
+  setTimeout(() => { container.innerHTML = ''; }, 4000);
+}
+
+// ───────────────────────────────────────
+// TOAST
+// ───────────────────────────────────────
+function showToast(msg) {
+  const toast = document.createElement('div');
+  toast.style.cssText = `
+    position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+    background:var(--bg2);color:var(--text);border:1px solid var(--border);
+    padding:10px 20px;border-radius:var(--radius-sm);font-size:13px;
+    z-index:9999;animation:modal-in .3s ease;
+    box-shadow:0 4px 16px rgba(0,0,0,.4);
+  `;
+  toast.textContent = msg;
+  document.body.appendChild(toast);
+  setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity .3s'; }, 2000);
+  setTimeout(() => toast.remove(), 2500);
+}
+
+// ───────────────────────────────────────
+// KEYBOARD SHORTCUTS
+// ───────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    closeBatchModal();
+    closeCoModal();
+    closeRtModal();
+    closeModal({ target: document.getElementById('modal-overlay') });
+  }
+  if (e.key === 's' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); saveProgress(); }
+});
+
+// ───────────────────────────────────────
+// INIT
+// ───────────────────────────────────────
+loadCompulsory();
+switchLang(currentLang);
+</script>
+
+<!-- ═══ CONFETTI ═══ -->
+<div class="confetti-container" id="confetti-container"></div>
+
+<!-- ═══ SITE FOOTER ═══ -->
+<div class="site-footer">
+  <span>© 2026 YiFan Wang, Teacher of Digital Technology, Burnside High School</span>
+</div>
+</body>
+</html>
