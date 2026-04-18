@@ -355,6 +355,9 @@ body{
 .t-tip{font-size:11px;color:var(--text2);line-height:1.4}
 
 /* ═══════════════════════════════════════════
+   BACKUP SECTION
+   ═══════════════════════════════════════════ */
+/* ═══════════════════════════════════════════
    NZ CURRICULUM ALIGNED SECTION
    ═══════════════════════════════════════════ */
 .curriculum-section{padding:0 24px 20px}
@@ -709,6 +712,14 @@ body{
       <button class="lang-btn" onclick="switchLang('ko')">한</button>
     </div>
     <button class="btn" onclick="saveProgress()">💾 <span class="r-text">Save</span></button>
+    <div class="dropdown" id="backup-dropdown">
+      <button class="dropdown-btn" onclick="toggleDropdown(event)">💾 <span class="r-text">Backup</span></button>
+      <div class="dropdown-menu">
+        <button class="dropdown-item" onclick="exportProgress();closeDropdown()">📤 Export Progress</button>
+        <button class="dropdown-item" onclick="document.getElementById('import-file').click();closeDropdown()">📥 Import Progress</button>
+      </div>
+      <input type="file" id="import-file" accept=".json" style="display:none" onchange="importProgress(this)">
+    </div>
     <div class="dropdown" id="actions-dropdown">
       <button class="dropdown-btn" onclick="toggleDropdown(event)">⚙️ <span class="r-text">Actions</span></button>
       <div class="dropdown-menu">
@@ -1582,6 +1593,9 @@ const i18n = {
     resetTemplateSaved: '🔧 Reset template saved!',
     resetTemplateTitle: '🔧 Reset Template',
     actions: 'Actions',
+    backup: 'Backup',
+    exportProgress: 'Export Progress',
+    importProgress: 'Import Progress',
     topic: 'Topic',
     template: 'Template',
     coTitle: '⚙️ Compulsory / Optional',
@@ -1665,6 +1679,9 @@ const i18n = {
     resetTemplateSaved: '🔧 重置模板已保存！',
     resetTemplateTitle: '🔧 重置模板',
     actions: '操作',
+    backup: '备份',
+    exportProgress: '导出进度',
+    importProgress: '导入进度',
     topic: '专题',
     template: '模板',
     coTitle: '⚙️ 必修 / 选修',
@@ -1748,6 +1765,9 @@ const i18n = {
     resetTemplateSaved: '🔧 リセットテンプレートを保存しました！',
     resetTemplateTitle: '🔧 リセットテンプレート',
     actions: 'アクション',
+    backup: 'バックアップ',
+    exportProgress: '進捗をエクスポート',
+    importProgress: '進捗をインポート',
     topic: 'トピック',
     template: 'テンプレート',
     coTitle: '⚙️ 必修 / 自由',
@@ -1831,6 +1851,9 @@ const i18n = {
     resetTemplateSaved: '🔧 리셋 템플릿이 저장되었습니다!',
     resetTemplateTitle: '🔧 리셋 템플릿',
     actions: '작업',
+    backup: '백업',
+    exportProgress: '진행 상황 내보내기',
+    importProgress: '진행 상황 가져오기',
     topic: '주제',
     template: '템플릿',
     coTitle: '⚙️ 필수 / 선택',
@@ -1841,6 +1864,40 @@ const i18n = {
   }, {"title":"10DGT 모험 지도","subtitle":"중학교 10학년 디지털 기술 · 번사이드 고등학교","modulesDone":"완료 모듈","lessonsDone":"완료 수업","current":"현재","xpEarned":"획득 XP","overallProgress":"전체 여정 진행률","bigIdea":"💡 핵심 아이디어","yourJourney":"🗺️ 디지털 여정 — 10개 모듈","module":"모듈","completed":"완료","lessons":"수업","of":"/","lessonsComplete":"수업 완료","done":"완료","now":"진행 중","todo":"미착수","lastCompleted":"✅ 마지막 완료","currentMission":"🎯 현재 미션","comingUp":"🔜 다음 예정","next":"다음","nextModule":"다음 모듈","clickToAdvance":"위 수업을 클릭하여 진행 상태를 표시하세요","allComplete":"모든 모듈이 완료되었습니다!","finalLesson":"이 모듈의 마지막 수업!","batchModeOn":"일괄 해제","batchModeOff":"일괄 선택","selected":"개 선택됨","batchUndo":"취소","batchCancel":"닫기","toolsForThisLesson":"🧰 이번 수업 도구","nzCurriculum":"📋 NZ 교육과정 — 진행 결과","reset":"🔄 초기화","save":"저장","howItWorks":"❓","helpTitle":"🗺️ 모험 지도 사용법","helpDesc":"이것은 10DGT를 위한 <span class=\"highlight\">인터랙티브 학습 여정</span>입니다. 각 모듈과 수업의 진행 상황을 추적하세요!","helpGreen":"<strong style=\"color:var(--text)\">🟢 초록 (완료)</strong> — 완료한 수업입니다. 클릭하면 취소됩니다.","helpPurple":"<strong style=\"color:var(--text)\">🟣 보라 (진행 중)</strong> — 현재 위치입니다. 클릭하여 완료 표시 후 다음으로!","helpGrey":"<strong style=\"color:var(--text)\">⬜ 회색 (미착수)</strong> — 아직 시작하지 않았습니다. 클릭하여 완료 표시.","helpXP":"<strong style=\"color:var(--text)\">🎮 XP 시스템:</strong>","helpXPDesc":"각 수업 = <span class=\"highlight\">50 XP</span> · 모듈 완료 = <span class=\"highlight\">200 XP 보너스</span> · 전체 완료 = <span class=\"highlight\">500 XP 보너스</span>","helpSave":"<strong style=\"color:var(--text)\">💾 저장:</strong>","helpSaveDesc":"진행 상황이 브라우저에 자동 저장됩니다. 언제든지 \"저장\"을 클릭하거나 \"초기화\"로 다시 시작.","helpBigIdea":"<strong style=\"color:var(--text)\">💡 핵심 아이디어:</strong>","helpBigIdeaDesc":"상단의 보라색 배너를 클릭하여 현재 모듈의 핵심 질문을 확인하세요.","helpModules":"<strong style=\"color:var(--text)\">📂 모듈 상세:</strong>","helpModulesDesc":"지도에서 모듈 노드를 클릭하여 수업 목록을 펼치고 개별 진행 상황을 확인하세요.","moduleProgress":"모듈 진행률","clickToJump":"→ 클릭하여 다음 작업으로 이동","progressSaved":"💾 진행 상황이 저장되었습니다!","progressReset":"🔄 진행 상황이 초기화되었습니다!","resetTemplateSaved":"🔧 리셋 템플릿이 저장되었습니다!","resetTemplateTitle":"🔧 리셋 템플릿","actions":"작업","confirmReset":"모든 진행 상황을 초기화하시겠습니까? 이 작업은 되돌릴 수 없습니다.","assessment":"평가","extra":"추가","optional":"선택","topic":"주제","template":"템플릿","batch":"일괄","compulsory":"필수","help":"도움말","coAllCompulsory":"전체 필수","coAllOptional":"전체 선택","coSetAll":"전체 설정","coCompulsory":"필수","coOptional":"선택","coTitle":"⚙️ 필수 / 선택","rtTodo":"미착수","rtCurrent":"진행 중","rtDone":"완료","rtApply":"적용","toolName0":"문제 해결 훈련","toolTip0":"Google 검색과 AI 도구를 현명하게 사용하되, 비판적 사고를 유지하세요.","toolName1":"파일 관리","toolTip1":"파일 저장 위치를 파악하세요 (특히 자신의 기기에서)","toolName2":"2진수 카드 시뮬레이터","toolTip2":"2진수를 이해하는 데 가장 중요한 도구.","toolName3":"10DGT 코스 웹사이트","toolTip3":"10학년 디지털 기술의 모든 교재와 리소스.","poL30":"같은 문제에 대해 여러 알고리즘이 존재할 수 있음을 이해한다","poL31":"문제를 단계별 지시로 분해하여 알고리즘을 만든다","poL32":"논리적 사고로 프로그램 동작을 예측한다","poL33":"입력, 출력, 순차, 반복을 사용하는 단순 프로그램을 개발하고 디버그한다","poL40":"순차, 선택, 반복을 사용하여 알고리즘을 만든다","poL41":"비교 연산자를 사용하여 기본 선택 구조를 구현한다","poL42":"프로그램 오류를 디버그하고 수정한다","poL43":"오류가 발생한 이유와 수정 방법을 설명한다","poL44":"알고리즘 효율성을 평가한다","poL45":"컴퓨터가 많은 양의 데이터를 검색하고 정렬해야 함을 이해한다","poL50":"독립적으로 문제를 알고리즘으로 분해한다","poL51":"다른 데이터 유형과 논리 연산자를 사용한다","poL52":"체계적인 문서화, 테스트 및 HCI 기반 개발","batchComplete":"완료","modName_m1":"이미지 만들기","modName_m2":"웹사이트","modName_m3":"컴퓨터 과학","modName_m4":"Python 프로그래밍","modName_m5":"3D 모델링","modName_m6":"애니메이션","modName_m7":"제조 설계","modName_m8":"오디오 비주얼","modName_m9":"비디오 게임 개발","modName_m10":"학생 주도 프로젝트","modBigIdea_m1":"디지털 도구를 사용하여 이미지를 어떻게 만들고, 편집하고, 조작할 수 있을까요?","modBigIdea_m2":"정보를 명확하게 전달하고 사용자를 참여시키는 효과적인 웹사이트를 어떻게 만들까요?","modBigIdea_m3":"컴퓨터는 바이너리 시스템을 사용하여 데이터를 어떻게 표현하고 처리할까요? 왜 디지털 기술에 중요할까요?","modBigIdea_m4":"코드로 컴퓨터에 어떻게 지시를 내릴까요? 프로그래밍의 기본 블록은 무엇일까요?","modBigIdea_m5":"디지털 공간에서 아이디어에 생명력을 불어넣는 3D 모델을 어떻게 만들까요?","modBigIdea_m6":"애니메이션으로 3D 모델에 어떻게 생명력을 불어넣을까요?","modBigIdea_m7":"디지털 제조 기술로 생산할 수 있는 제품을 어떻게 설계할까요?","modBigIdea_m8":"효과적으로 의미를 전달하는 오디오 비주얼 콘텐츠를 어떻게 만들까요?","modBigIdea_m9":"대화형 비디오 게임을 어떻게 설계하고 개발할까요?","modBigIdea_m10":"배운 모든 것을 응용하여 의미 있는 나만의 디지털 프로젝트를 어떻게 만들 수 있을까요?","modBigIdeaDesc_m1":"이 모듈에서는 디지털 이미지 제작 도구와 기법을 탐구합니다.","modBigIdeaDesc_m3":"컴퓨터는 모든 데이터를 2진수로 저장합니다. 2진수와 16진수 시스템을 배웁니다.","modBigIdeaDesc_m4":"ASCII 및 UTF-8 텍스트 인코딩을 탐구하고 오류 검출 방법을 배웁니다.","modBigIdeaDesc_m5":"데이터를 효율적으로 검색하고 정렬하는 기본 알고리즘을 배웁니다.","modBigIdeaDesc_m6":"Python을 사용하여 순차, 선택, 반복으로 프로그래밍을 배웁니다.","modBigIdeaDesc_m7":"Blender를 사용하여 3D 모델링 기초를 배우고 애니메이션을 만듭니다.","modBigIdeaDesc_m8":"BHS 기술 박람회에서 발표할 개인 프로젝트로 모든 기술을 선보입니다.","subName_m3s0":"2진수와 16진수","subName_m3s1":"ASCII와 UTF-8","subName_m3s2":"오류 검출","subName_m3s3":"검색과 정렬","subName_m3s4":"컴퓨터 과학 단원말 과제","subName_m7s0":"제조 설계","subName_m7s1":"오디오 비주얼","subName_m7s2":"비디오 게임 개발","lesTitle_m1l1":"이미지 만들기 제출","lesTitle_m3l1":"CS 과제 1.2 — 2진수 워크시트","lesTitle_m3l2":"CS 과제 1.3 — 체크포인트: 2진수","lesTitle_m3l3":"CS 과제 1.4 — 16진수/10진수/2진수 변환","lesTitle_m3l4":"CS 과제 1.6 — 체크포인트: 16진수","lesTitle_m3l5":"Flipplybit 최고 점수","lesTitle_m3l6":"CS 과제 1.7 — 16진수 컬러 드래곤","lesTitle_m3l7":"Hex Invaders 최고 점수","lesTitle_m3l8":"CS 과제 1.9 — 체크포인트: 16진수 컬러","lesTitle_m3l9":"CS 기말 평가: 2진수와 16진수","lesTitle_m3l10":"CS 과제 1.추가 — 화성 메시지","lesTitle_m3l13":"CS 과제 2.1 — ASCII 소개","lesTitle_m3l14":"CS 과제 2.2 — ASCII 탐구","lesTitle_m3l15":"CS 과제 2.3 — 나만의 ASCII 아트!","lesTitle_m3l16":"CS 기말 평가: ASCII와 UTF-8","lesTitle_m3l17":"CS 과제 2.추가 — ASCII 번역기(스프레드시트)","lesTitle_m3l18":"CS 과제 2.추가 — ASCII 변환기(Python)","lesTitle_m3l19":"CS 과제 3.1 — ASCII 오류 검사","lesTitle_m3l20":"CS 과제 3.4 — 오류 검출 바코드","lesTitle_m3l21":"CS 기말 평가: 패리티와 GTIN-13","lesTitle_m5l1":"Blender로 3D 모델링","lesTitle_m5l2":"최고의 모델","lesTitle_m2l1":"웹사이트 URL 및 Term 1 체크인","lesTitle_m2l2":"웹사이트 스크린샷 제출","lesTitle_m6l1":"Blender로 3D 모델링","lesTitle_m3l22":"컴퓨터 과학 단원말 테스트","lesTitle_m3l23":"컴퓨터 과학 단원 테스트","lesTitle_m3l24":"컴퓨터 과학 체크리스트","lesTitle_m3l11":"CS 과제 4.1 — 검색과 정렬 워크시트","lesDesc_m3l11":"다양한 검색과 정렬 알고리즘에 대해 배웁니다.","lesTitle_m3l12":"CS 기말 평가 — 검색과 정렬 퀴즈","lesDesc_m3l12":"검색과 정렬 알고리즘에 대한 기말 퀴즈.","lesTitle_m10l1":"프로젝트 기획","lesTitle_m10l2":"10DGT 프레젠테이션 보드","lesTitle_m4wl1":"BHS 프로그래밍 페이지","lesDesc_m4wl1":"Python은 초보자부터 고급 개발까지 모두에 적합한 배우기 쉽고 강력한 프로그래밍 언어입니다.","lesTitle_m4wl2":"애니메이션 vs 코딩","lesDesc_m4wl2":"애니메이션과 프로그래밍 접근 방식의 차이점에 대해 알아보기.","lesTitle_m7l1":"최고의 작품을 웹사이트에 추가하세요!","lesDesc_m7l1":"제조 설계 최고의 프로젝트를 웹사이트에 제출.","lesTitle_m8l1":"웹사이트에 비디오 업로드","lesDesc_m8l1":"오디오 비주얼 프로젝트 비디오를 웹사이트에 업로드.","lesTitle_m9l1":"웹사이트에 GDevelop 게임 임베드","lesDesc_m9l1":"완성된 GDevelop 게임을 웹사이트에 임베드.","lesDesc_m1l1":"디지털 이미지 처리, 구도, 창의적 표현方面的技能을展示합니다.","lesDesc_m3l2":"CS 과제 1.3 — 체크포인트: 2진수","lesDesc_m3l3":"CS 과제 1.4 — 16진수/10진수/2진수 변환","lesDesc_m3l4":"CS 과제 1.6 — 체크포인트: 16진수","lesDesc_m3l5":"Flipplybit 최고 점수","lesDesc_m3l6":"CS 과제 1.7 — 16진수 컬러 드래곤","lesDesc_m3l7":"Hex Invaders 최고 점수","lesDesc_m3l8":"CS 과제 1.9 — 체크포인트: 16진수 컬러","lesDesc_m3l9":"CS 기말 평가: 2진수와 16진수","lesDesc_m3l10":"CS 과제 1.추가 — 화성 메시지","lesDesc_m2l1":"웹사이트 URL을 제출하고 Term 1 체크인을 완료하세요.","lesDesc_m2l2":"생성한 주요 페이지와 기능을 보여주는 웹사이트 스크린샷을 제출하세요.","lesDesc_m5l1":"Blender 소프트웨어로 3D 모델링의 기초를 배웁니다.","lesDesc_m5l2":"Blender에서 만든 최고의 3D 모델을 제출하세요.","lesDesc_m6l1":"Blender의 타임라인과 키프레임 도구로 애니메이션을 만듭니다.","lesDesc_m6l2":"최고의 애니메이션을 제출하여 평가를 받으세요.","lesDesc_m3l22":"모든 컴퓨터 과학 개념을 다루는 종합 단원말 테스트.","lesDesc_m3l23":"컴퓨터 과학 모듈의 대안 단원말 테스트.","lesDesc_m3l24":"모든 컴퓨터 과학 과제가 완료되었는지 확인합니다.","lesDesc_m10l1":"개인 프로젝트를 기획: 범위, 도구, 타임라인을 정의합니다.","lesDesc_m10l2":"테크 박람회 전시를 위한 프레젠테이션 보드를 만듭니다.","poTitle3":"Progress Outcome 3 — Te Tapa","poTitle4":"Progress Outcome 4 — Te Tapa","poTitle5":"Progress Outcome 5 — Te Tapa","modBigIdeaDesc_m2":"Learn the fundamentals of web design and development. Understand HTML structure, CSS styling, and user experience principles.","modBigIdeaDesc_m9":"Learn the principles of game design and development. Create your own playable game using visual programming or game development tools.","modBigIdeaDesc_m10":"This is your chance to showcase all the skills you have developed throughout the year. Choose a project that interests you, plan it, build it, and present it at the BHS Year 10 Tech Fair."}),
 };
 
+
+// PROGRESS BACKUP
+function exportProgress() {
+  try {
+    const data = localStorage.getItem(STORAGE_KEY);
+    if (!data) { alert('No progress to export yet!'); return; }
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const courseName = (typeof SETTINGS !== 'undefined' && SETTINGS.courseName) ? SETTINGS.courseName.replace(/[^a-z0-9]/gi, '_').toLowerCase() : 'adventure_map';
+    a.href = url;
+    a.download = courseName + '_progress_' + new Date().toISOString().slice(0, 10) + '.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('Progress exported successfully!');
+  } catch(e) { alert('Export failed: ' + e.message); }
+}
+function importProgress(fileInput) {
+  const file = fileInput.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data || !data.lessons) { alert('Invalid progress file.'); return; }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      location.reload();
+    } catch(err) { alert('Import failed: ' + err.message); }
+  };
+  reader.readAsText(file);
+  fileInput.value = '';
+}
 
 function t(key, fallback) { if(i18n[currentLang]&&i18n[currentLang][key]!==undefined)return i18n[currentLang][key]; if(i18n.en[key]!==undefined)return i18n.en[key]; return fallback!==undefined?fallback:key; }
 
@@ -2573,16 +2630,23 @@ function render() {
   const topbarSub = document.querySelectorAll('.topbar-sub')[0];
   if (topbarSub) topbarSub.textContent = t('subtitle');
   // Update topbar buttons
-  const rTexts = document.querySelectorAll('.r-text');
-  if (rTexts[0]) rTexts[0].textContent = t('save').replace('💾 ','').replace('💾','');
-  if (rTexts[1]) rTexts[1].textContent = t('actions');
-  // Update dropdown menu items
-  const dropItems = document.querySelectorAll('.dropdown-item');
-  if (dropItems[0]) dropItems[0].innerHTML = '' + t('reset');
-  if (dropItems[1]) dropItems[1].innerHTML = '📋 ' + t('template');
-  if (dropItems[2]) dropItems[2].innerHTML = '☑️ ' + t('batch');
-  if (dropItems[3]) dropItems[3].innerHTML = '⚙️ ' + t('compulsory');
-  if (dropItems[4]) dropItems[4].innerHTML = '❓ ' + t('help');
+  const topbarBtns = document.querySelectorAll('.topbar-right .btn');
+  if (topbarBtns[0]) topbarBtns[0].innerHTML = '💾 <span class="r-text">' + t('save') + '</span>';
+  const backupRText = document.querySelector('#backup-dropdown .dropdown-btn .r-text');
+  const actionsRText = document.querySelector('#actions-dropdown .dropdown-btn .r-text');
+  if (backupRText) backupRText.textContent = t('backup');
+  if (actionsRText) actionsRText.textContent = t('actions');
+  // Update backup dropdown items
+  const backupItems = document.querySelectorAll('#backup-dropdown .dropdown-item');
+  if (backupItems[0]) backupItems[0].innerHTML = '📤 ' + t('exportProgress');
+  if (backupItems[1]) backupItems[1].innerHTML = '📥 ' + t('importProgress');
+  // Update actions dropdown items
+  const actionItems = document.querySelectorAll('#actions-dropdown .dropdown-item');
+  if (actionItems[0]) actionItems[0].innerHTML = '' + t('reset');
+  if (actionItems[1]) actionItems[1].innerHTML = '📋 ' + t('template');
+  if (actionItems[2]) actionItems[2].innerHTML = '☑️ ' + t('batch');
+  if (actionItems[3]) actionItems[3].innerHTML = '⚙️ ' + t('compulsory');
+  if (actionItems[4]) actionItems[4].innerHTML = '❓ ' + t('help');
 }
 
 function renderStats() {
@@ -3183,10 +3247,12 @@ function closeModal(e) {
 
 function toggleDropdown(e) {
   e.stopPropagation();
-  document.getElementById('actions-dropdown').classList.toggle('open');
+  const clicked = e.currentTarget.closest('.dropdown');
+  document.querySelectorAll('.dropdown.open').forEach(d => { if (d !== clicked) d.classList.remove('open'); });
+  clicked.classList.toggle('open');
 }
 function closeDropdown() {
-  document.getElementById('actions-dropdown').classList.remove('open');
+  document.querySelectorAll('.dropdown.open').forEach(d => d.classList.remove('open'));
 }
 document.addEventListener('click', () => closeDropdown());
 

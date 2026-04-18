@@ -355,6 +355,9 @@ body{
 .t-tip{font-size:11px;color:var(--text2);line-height:1.4}
 
 /* ═══════════════════════════════════════════
+   BACKUP SECTION
+   ═══════════════════════════════════════════ */
+/* ═══════════════════════════════════════════
    NZ CURRICULUM ALIGNED SECTION
    ═══════════════════════════════════════════ */
 .curriculum-section{padding:0 24px 20px}
@@ -709,6 +712,14 @@ body{
       <button class="lang-btn" onclick="switchLang('ko')">한</button>
     </div>
     <button class="btn" onclick="saveProgress()">💾 <span class="r-text">Save</span></button>
+    <div class="dropdown" id="backup-dropdown">
+      <button class="dropdown-btn" onclick="toggleDropdown(event)">💾 <span class="r-text">Backup</span></button>
+      <div class="dropdown-menu">
+        <button class="dropdown-item" onclick="exportProgress();closeDropdown()">📤 Export Progress</button>
+        <button class="dropdown-item" onclick="document.getElementById('import-file').click();closeDropdown()">📥 Import Progress</button>
+      </div>
+      <input type="file" id="import-file" accept=".json" style="display:none" onchange="importProgress(this)">
+    </div>
     <div class="dropdown" id="actions-dropdown">
       <button class="dropdown-btn" onclick="toggleDropdown(event)">⚙️ <span class="r-text">Actions</span></button>
       <div class="dropdown-menu">
@@ -1379,6 +1390,9 @@ const i18n = {
     resetTemplateSaved: '🔧 Reset template saved!',
     resetTemplateTitle: '🔧 Reset Template',
     actions: 'Actions',
+    backup: 'Backup',
+    exportProgress: 'Export Progress',
+    importProgress: 'Import Progress',
     topic: 'Topic',
     template: 'Template',
     coTitle: '⚙️ Compulsory / Optional',
@@ -1462,6 +1476,9 @@ const i18n = {
     resetTemplateSaved: '🔧 重置模板已保存！',
     resetTemplateTitle: '🔧 重置模板',
     actions: '操作',
+    backup: '备份',
+    exportProgress: '导出进度',
+    importProgress: '导入进度',
     topic: '专题',
     template: '模板',
     coTitle: '⚙️ 必修 / 选修',
@@ -1545,6 +1562,9 @@ const i18n = {
     resetTemplateSaved: '🔧 リセットテンプレートを保存しました！',
     resetTemplateTitle: '🔧 リセットテンプレート',
     actions: 'アクション',
+    backup: 'バックアップ',
+    exportProgress: '進捗をエクスポート',
+    importProgress: '進捗をインポート',
     topic: 'トピック',
     template: 'テンプレート',
     coTitle: '⚙️ 必修 / 自由',
@@ -1628,6 +1648,9 @@ const i18n = {
     resetTemplateSaved: '🔧 리셋 템플릿이 저장되었습니다!',
     resetTemplateTitle: '🔧 리셋 템플릿',
     actions: '작업',
+    backup: '백업',
+    exportProgress: '진행 상황 내보내기',
+    importProgress: '진행 상황 가져오기',
     topic: '주제',
     template: '템플릿',
     coTitle: '⚙️ 필수 / 선택',
@@ -1638,6 +1661,40 @@ const i18n = {
   }, {"title":"9DGT 모험 지도","subtitle":"중학교 9학년 디지털 기술 · 번사이드 고등학교","modulesDone":"완료 모듈","lessonsDone":"완료 수업","current":"현재","xpEarned":"획득 XP","overallProgress":"전체 여정 진행률","bigIdea":"💡 핵심 아이디어","yourJourney":"🗺️ 디지털 여정 — 6개 모듈","module":"모듈","completed":"완료","lessons":"수업","of":"/","lessonsComplete":"수업 완료","done":"완료","now":"진행 중","todo":"미착수","lastCompleted":"✅ 마지막 완료","currentMission":"🎯 현재 미션","comingUp":"🔜 다음 예정","next":"다음","nextModule":"다음 모듈","clickToAdvance":"위 수업을 클릭하여 진행 상태를 표시하세요","allComplete":"모든 모듈이 완료되었습니다!","finalLesson":"이 모듈의 마지막 수업!","batchModeOn":"일괄 해제","batchModeOff":"일괄 선택","selected":"개 선택됨","batchUndo":"취소","batchCancel":"닫기","toolsForThisLesson":"🧰 이번 수업 도구","nzCurriculum":"📋 NZ 교육과정 — 진행 결과","reset":"🔄 초기화","save":"저장","howItWorks":"❓","helpTitle":"🗺️ 모험 지도 사용법","helpDesc":"이것은 9DGT를 위한 <span class=\"highlight\">인터랙티브 학습 여정</span>입니다. 각 모듈과 수업의 진행 상황을 추적하세요!","helpGreen":"<strong style=\"color:var(--text)\">🟢 초록 (완료)</strong> — 완료한 수업입니다. 클릭하면 취소됩니다.","helpPurple":"<strong style=\"color:var(--text)\">🟣 보라 (진행 중)</strong> — 현재 위치입니다. 클릭하여 완료 표시 후 다음으로!","helpGrey":"<strong style=\"color:var(--text)\">⬜ 회색 (미착수)</strong> — 아직 시작하지 않았습니다. 클릭하여 완료 표시.","helpXP":"<strong style=\"color:var(--text)\">🎮 XP 시스템:</strong>","helpXPDesc":"각 수업 = <span class=\"highlight\">50 XP</span> · 모듈 완료 = <span class=\"highlight\">200 XP 보너스</span> · 전체 완료 = <span class=\"highlight\">500 XP 보너스</span>","helpSave":"<strong style=\"color:var(--text)\">💾 저장:</strong>","helpSaveDesc":"진행 상황이 브라우저에 자동 저장됩니다. 언제든지 \"저장\"을 클릭하거나 \"초기화\"로 다시 시작.","helpBigIdea":"<strong style=\"color:var(--text)\">💡 핵심 아이디어:</strong>","helpBigIdeaDesc":"상단의 보라색 배너를 클릭하여 현재 모듈의 핵심 질문을 확인하세요.","helpModules":"<strong style=\"color:var(--text)\">📂 모듈 상세:</strong>","helpModulesDesc":"지도에서 모듈 노드를 클릭하여 수업 목록을 펼치고 개별 진행 상황을 확인하세요.","moduleProgress":"모듈 진행률","clickToJump":"→ 클릭하여 다음 작업으로 이동","progressSaved":"💾 진행 상황이 저장되었습니다!","progressReset":"🔄 진행 상황이 초기화되었습니다!","resetTemplateSaved":"🔧 리셋 템플릿이 저장되었습니다!","resetTemplateTitle":"🔧 리셋 템플릿","actions":"작업","confirmReset":"모든 진행 상황을 초기화하시겠습니까? 이 작업은 되돌릴 수 없습니다.","assessment":"평가","extra":"추가","optional":"선택","topic":"주제","template":"템플릿","batch":"일괄","compulsory":"필수","help":"도움말","coAllCompulsory":"전체 필수","coAllOptional":"전체 선택","coSetAll":"전체 설정","coCompulsory":"필수","coOptional":"선택","coTitle":"⚙️ 필수 / 선택","rtTodo":"미착수","rtCurrent":"진행 중","rtDone":"완료","rtApply":"적용","toolName0":"문제 해결 훈련","toolTip0":"Google 검색과 AI 도구를 활용하되, 항상 비판적 사고를 유지할 것.","toolName1":"Google Classroom 제출 방법","toolTip1":"9학년 기본 스킬 — Google Classroom에 작업을 제출하는 방법.","toolName2":"이진 카드 시뮬레이터","toolTip2":"이진 개념을 이해하는 데 가장 중요한 도구.","toolName3":"파일 관리","toolTip3":"체계적인 파일 관리로 명확한 사고를 유지할 것.","poL30":"같은 문제에 대한 여러 알고리즘","poL31":"디지털 기기는 두 가지 상태(비트)로 데이터를 저장한다","poL40":"간단한 알고리즘 및 프로그램 디버그","poL41":"오류 및 수정 설명","poL42":"데이터 저장/전송 중 오류 감지","poL43":"알고리즘 효율성 평가","poL44":"대규모 데이터셋 검색 및 정렬","poL50":"이진 숫자를 사용하는 복합 데이터 유형","poL51":"독립적인 알고리즘 분해","poL52":"변수, 선택 및 반복","batchComplete":"완료","modName_m1":"인공지능","modName_m2":"이미지 조작","modName_m3":"데이터 시각화","modName_m4":"컴퓨터 과학","modName_m5":"프로그래밍","modName_m6":"캐릭터 프로젝트","modBigIdea_m1":"기계는 데이터에서 어떻게 패턴을 학습하여 결정을 내리는가 — 그리고 한계는 무엇인가?","modBigIdea_m2":"디지털 이미지는 그리드 안의 숫자일 뿐 — 픽셀을 이해하면 창의적 통제력이 열린다.","modBigIdea_m3":"올바르게 표현하면 원시 데이터도 이야기를 한다 — 올바른 차트가 올바른 통찰을 보여준다.","modBigIdea_m4":"Mō ngā mea katoa i roto i te rorohiko, he mati tonu: hei rahi pea, he ingoa, he whakaahua — ko te tekau paheka e whakamahia ana hei tuatahi.（컴퓨터의 모든 것은 비트 — 바이너리가 가장 먼저 쓰인다.)","modBigIdea_m5":"프로그래밍은 컴퓨터에게 단계별로 문제를 해결하도록 가르치는 것 — 순서, 선택, 반복을 통해 아이디어를 현실로 만든다.","modBigIdea_m6":"훌륭한 디지털 결과물은 설계 과정에서 시작된다 — 계획, 만들기, 테스트, 개선.","modBigIdeaDesc_m1":"AI 시스템은 지시가 아닌 예시로부터 학습합니다. 인간이 놓칠 수 있는 데이터 패턴을 찾지만, 실수를 하거나 편향을 보이거나 진정한 이해가 부족할 수도 있습니다. 이 모듈에서는 AI의 표면적인 작동 방식과 그 출력에 대해 비판적으로 생각해야 하는 이유를 탐구합니다.","modBigIdeaDesc_m2":"모든 디지털 사진은 작은 정사각형(픽셀)의 그리드이며, 각 픽셀에는 색상 숫자가 있습니다. 이 숫자들을 조작하여 이미지를 향상시키고, 변형하고, 완전히 새로운 이미지를 만들 수 있습니다. 이것은 바이너리 데이터 표현과 직접적으로 연결됩니다.","modBigIdeaDesc_m3":"데이터는 어디에나 있지만, 명확한 시각화 없이는 쓸모가 없습니다. 올바른 차트 유형 선택, 효과적인 색상 사용, 대상에 맞는 디자인이 핵심 기술입니다. 좋은 데이터 시각화는 혼란을 명확함으로 바꿉니다.","modBigIdeaDesc_m4":"이 모듈에서는 바이너리 숫자, 이미지 표현, 텍스트 압축, 분해, 알고리즘 등 디지털 정보의 기본 구성 요소를 탐구합니다. 이러한 개념을 이해하면 컴퓨터가 모든 형태의 데이터를 어떻게 저장, 처리, 전송하는지 알게 됩니다.","modBigIdeaDesc_m5":"이 모듈에서는 Scratch를 사용하여 프로그래밍 기초 — 순서, 이벤트, 루프, 조건문, 변수를 배웁니다. 곱셈 퀴즈와 숫자 맞추기 게임을 만들며, 전문 개발자가 사용하는 것과 같은 계산적 사고를 발달시킵니다. 이 사고 기술은 모든 프로그래밍 언어로 전이됩니다.","modBigIdeaDesc_m6":"이 종합 DDDO(디지털 결과물 설계 및 개발) 프로젝트는 모든 것을 하나로 연결합니다. 구조화된 설계 프로세스를 사용하여 캐릭터 디자인 프로젝트를 계획, 개발, 테스트, 개선합니다. 프로그래밍, 시각 디자인, 데이터 기술, 전 과정에서 발달시킨 창의적 사고를 연결합니다.","subName_m4s0":"바이너리","subName_m4s1":"이미지 표현","subName_m4s2":"텍스트 압축","subName_m4s3":"분해","lesTitle_m1l1":"AI — 디지털 스케치북","lesTitle_m1l2":"머신러닝 입문","lesTitle_m1l3":"대규모 언어 모델 입문","lesTitle_m1l4":"프롬프트 엔지니어링","lesTitle_m1l5":"윤리와 학교에서의 사용","lesTitle_m2l1":"GIMP 학습: 양 튜토리얼","lesTitle_m2l2":"GIMP 학습: 동물 조언 밈","lesTitle_m2l3":"GIMP 학습: 자유 선택","lesTitle_m3l1":"인포그래픽","lesTitle_m4l1":"CS 과제 1.1 — 바이너리 입문","lesTitle_m4l2":"CS 과제 1.3 — 바이너리를 아시나요?","lesTitle_m4l3":"단원 평가: 바이너리","lesTitle_m4l4":"추가: CS 과제 1.4 — 비밀 메시지 보내기","lesTitle_m4l5":"추가: CS 과제 1.5 — 바이너리 메시지 포스터","lesTitle_m4l6":"CS 과제 2.1 — 비트맵과 런렝스 인코딩","lesTitle_m4l7":"단원 평가: 이미지 표현","lesTitle_m4l8":"CS 과제 3.1 — Poi E 텍스트 압축","lesTitle_m4l9":"CS 과제 3.2 — 사전을 활용한 인코딩과 디코딩","lesTitle_m4l10":"단원 평가: 텍스트 압축","lesTitle_m4l11":"CS 과제 4.2 — 물 한 잔 따르기","lesTitle_m4l12":"단원 평가: 분해","lesTitle_m5l1":"과제 1A–1E — Scratch 프로그래밍 기초","lesTitle_m5l2":"과제 2 — Scratch 곱셈 퀴즈","lesTitle_m5l3":"기말 숫자 맞추기 게임 Scratch 평가","lesTitle_m5l4":"추가 — Scratch 디버깅","lesTitle_m5l5":"추가 — Scratch 어휘 트레이너 과제","lesTitle_m6l1":"DDDO 프로젝트 증거","lesDesc_m1l1":"창의적인 스케치북 활동을 통해 AI가 일상생활에서 어떤 의미를 갖는지 브레인스토밍하고 탐구한다.","lesDesc_m1l2":"기계는 예시로부터 어떻게 학습하는가? 훈련 데이터, 패턴, 예측.","lesDesc_m1l3":"ChatGPT 같은 LLM의 작동 원리 이해 — 한 번에 하나의 토큰을 생성한다.","lesDesc_m1l4":"AI 도구를 직접 사용한다. 유용하고 정확한 결과를 얻기 위한 효과적인 프롬프트 작성.","lesDesc_m1l5":"AI 윤리, 편향, 잘못된 정보, 학교에서의 책임 있는 사용.","lesDesc_m2l1":"GIMP 시작 — 양 튜토리얼을 따라 핵심 도구와 인터페이스를 배운다.","lesDesc_m2l2":"GIMP 기술을 사용하여 동물 조언 밈을 만든다 — 레이어, 텍스트, 이미지 합성.","lesDesc_m2l3":"GIMP 기술을 선택한 개인 창의 프로젝트에 적용한다. 추가 제출 기회.","lesDesc_m3l1":"효과적인 디자인 원칙을 사용하여 데이터를 시각적으로 표현하는 인포그래픽을 디자인하고 만든다.","lesDesc_m4l1":"컴퓨터가 바이너리(0과 1)를 사용하여 모든 데이터를 표현하는 방법을 배운다. 십진수와 바이너리 간 변환.","lesDesc_m4l2":"연습 문제와 자기 평가를 통해 바이너리에 대한 이해도를 확인한다.","lesDesc_m4l3":"바이너리 수 표현과 변환에 대한 총괄 평가. 10점 만점.","lesDesc_m4l4":"바이너리를 사용하여 비밀 메시지를 인코딩하고 디코딩한다. 재미있는 확장 활동.","lesDesc_m4l5":"바이너리 메시지의 작동 원리를 보여주는 시각적 포스터를 만든다.","lesDesc_m4l6":"이미지는 어떻게 저장되는가? 비트맵 표현과 런렝스 인코딩 압축을 배운다.","lesDesc_m4l7":"컴퓨터가 바이너리를 사용하여 이미지를 저장하고 표현하는 방법에 대한 퀴즈 평가.","lesDesc_m4l8":"텍스트 압축 기술을 사용하여 Poi E의 가사를 압축한다 — 마오리어 문화적 연결.","lesDesc_m4l9":"사전 기반 인코딩을 사용하여 텍스트를 효율적으로 압축하고 압축 해제한다.","lesDesc_m4l10":"텍스트 압축 방법과 사전 인코딩에 대한 총괄 평가. 3점 만점.","lesDesc_m4l11":"분해 연습: \"물 한 잔 따르기\"를 정확한 단계로 분해한다.","lesDesc_m4l12":"일상적인 작업에 대한 분해 지시문을 작성한다. 3점 만점.","lesDesc_m5l1":"Scratch 핵심 기술: 인터페이스, 스프라이트, 순서, 이벤트, 루프, 조건문, 변수. 5개의 하위 과제.","lesDesc_m5l2":"사용자를 테스트하고 피드백을 제공하는 인터랙티브 곱셈 퀴즈를 만든다.","lesDesc_m5l3":"Scratch로 숫자 맞추기 게임을 설계하고 코딩한다. 기말 평가 — CT 점수에 반영.","lesDesc_m5l4":"고장난 Scratch 프로그램에서 버그를 찾고 수정한다. 디버깅 기술 구축.","lesDesc_m5l5":"어휘 트레이너 도전으로 Scratch 기술을 확장한다.","lesDesc_m6l1":"캐릭터 프로젝트를 계획, 설계, 구축, 테스트, 개선한다. 전체 설계 과정의 증거를 제출. DDDO 평가.","poTitle3":"Progress Outcome 3 — Te Tapa","poTitle4":"Progress Outcome 4 — Te Tapa","poTitle5":"Progress Outcome 5 — Te Tapa","modMaori_m4":"Mō ngā mea katoa i roto i te rorohiko, he mati tonu: hei rahi pea, he ingoa, he whakaahua — ko te tekau paheka e whakamahia ana hei tuatahi."}),
 };
 
+
+// PROGRESS BACKUP
+function exportProgress() {
+  try {
+    const data = localStorage.getItem(STORAGE_KEY);
+    if (!data) { alert('No progress to export yet!'); return; }
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const courseName = (typeof SETTINGS !== 'undefined' && SETTINGS.courseName) ? SETTINGS.courseName.replace(/[^a-z0-9]/gi, '_').toLowerCase() : 'adventure_map';
+    a.href = url;
+    a.download = courseName + '_progress_' + new Date().toISOString().slice(0, 10) + '.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('Progress exported successfully!');
+  } catch(e) { alert('Export failed: ' + e.message); }
+}
+function importProgress(fileInput) {
+  const file = fileInput.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data || !data.lessons) { alert('Invalid progress file.'); return; }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      location.reload();
+    } catch(err) { alert('Import failed: ' + err.message); }
+  };
+  reader.readAsText(file);
+  fileInput.value = '';
+}
 
 function t(key, fallback) { if(i18n[currentLang]&&i18n[currentLang][key]!==undefined)return i18n[currentLang][key]; if(i18n.en[key]!==undefined)return i18n.en[key]; return fallback!==undefined?fallback:key; }
 
@@ -2370,16 +2427,23 @@ function render() {
   const topbarSub = document.querySelectorAll('.topbar-sub')[0];
   if (topbarSub) topbarSub.textContent = t('subtitle');
   // Update topbar buttons
-  const rTexts = document.querySelectorAll('.r-text');
-  if (rTexts[0]) rTexts[0].textContent = t('save').replace('💾 ','').replace('💾','');
-  if (rTexts[1]) rTexts[1].textContent = t('actions');
-  // Update dropdown menu items
-  const dropItems = document.querySelectorAll('.dropdown-item');
-  if (dropItems[0]) dropItems[0].innerHTML = '' + t('reset');
-  if (dropItems[1]) dropItems[1].innerHTML = '📋 ' + t('template');
-  if (dropItems[2]) dropItems[2].innerHTML = '☑️ ' + t('batch');
-  if (dropItems[3]) dropItems[3].innerHTML = '⚙️ ' + t('compulsory');
-  if (dropItems[4]) dropItems[4].innerHTML = '❓ ' + t('help');
+  const topbarBtns = document.querySelectorAll('.topbar-right .btn');
+  if (topbarBtns[0]) topbarBtns[0].innerHTML = '💾 <span class="r-text">' + t('save') + '</span>';
+  const backupRText = document.querySelector('#backup-dropdown .dropdown-btn .r-text');
+  const actionsRText = document.querySelector('#actions-dropdown .dropdown-btn .r-text');
+  if (backupRText) backupRText.textContent = t('backup');
+  if (actionsRText) actionsRText.textContent = t('actions');
+  // Update backup dropdown items
+  const backupItems = document.querySelectorAll('#backup-dropdown .dropdown-item');
+  if (backupItems[0]) backupItems[0].innerHTML = '📤 ' + t('exportProgress');
+  if (backupItems[1]) backupItems[1].innerHTML = '📥 ' + t('importProgress');
+  // Update actions dropdown items
+  const actionItems = document.querySelectorAll('#actions-dropdown .dropdown-item');
+  if (actionItems[0]) actionItems[0].innerHTML = '' + t('reset');
+  if (actionItems[1]) actionItems[1].innerHTML = '📋 ' + t('template');
+  if (actionItems[2]) actionItems[2].innerHTML = '☑️ ' + t('batch');
+  if (actionItems[3]) actionItems[3].innerHTML = '⚙️ ' + t('compulsory');
+  if (actionItems[4]) actionItems[4].innerHTML = '❓ ' + t('help');
 }
 
 function renderStats() {
@@ -2980,10 +3044,12 @@ function closeModal(e) {
 
 function toggleDropdown(e) {
   e.stopPropagation();
-  document.getElementById('actions-dropdown').classList.toggle('open');
+  const clicked = e.currentTarget.closest('.dropdown');
+  document.querySelectorAll('.dropdown.open').forEach(d => { if (d !== clicked) d.classList.remove('open'); });
+  clicked.classList.toggle('open');
 }
 function closeDropdown() {
-  document.getElementById('actions-dropdown').classList.remove('open');
+  document.querySelectorAll('.dropdown.open').forEach(d => d.classList.remove('open'));
 }
 document.addEventListener('click', () => closeDropdown());
 

@@ -355,6 +355,9 @@ body{
 .t-tip{font-size:11px;color:var(--text2);line-height:1.4}
 
 /* ═══════════════════════════════════════════
+   BACKUP SECTION
+   ═══════════════════════════════════════════ */
+/* ═══════════════════════════════════════════
    NZ CURRICULUM ALIGNED SECTION
    ═══════════════════════════════════════════ */
 .curriculum-section{padding:0 24px 20px}
@@ -709,6 +712,14 @@ body{
       <button class="lang-btn" onclick="switchLang('ko')">한</button>
     </div>
     <button class="btn" onclick="saveProgress()">💾 <span class="r-text">Save</span></button>
+    <div class="dropdown" id="backup-dropdown">
+      <button class="dropdown-btn" onclick="toggleDropdown(event)">💾 <span class="r-text">Backup</span></button>
+      <div class="dropdown-menu">
+        <button class="dropdown-item" onclick="exportProgress();closeDropdown()">📤 Export Progress</button>
+        <button class="dropdown-item" onclick="document.getElementById('import-file').click();closeDropdown()">📥 Import Progress</button>
+      </div>
+      <input type="file" id="import-file" accept=".json" style="display:none" onchange="importProgress(this)">
+    </div>
     <div class="dropdown" id="actions-dropdown">
       <button class="dropdown-btn" onclick="toggleDropdown(event)">⚙️ <span class="r-text">Actions</span></button>
       <div class="dropdown-menu">
@@ -1431,6 +1442,9 @@ const i18n = {
     resetTemplateSaved: '🔧 Reset template saved!',
     resetTemplateTitle: '🔧 Reset Template',
     actions: 'Actions',
+    backup: 'Backup',
+    exportProgress: 'Export Progress',
+    importProgress: 'Import Progress',
     topic: 'Topic',
     template: 'Template',
     coTitle: '⚙️ Compulsory / Optional',
@@ -1514,6 +1528,9 @@ const i18n = {
     resetTemplateSaved: '🔧 重置模板已保存！',
     resetTemplateTitle: '🔧 重置模板',
     actions: '操作',
+    backup: '备份',
+    exportProgress: '导出进度',
+    importProgress: '导入进度',
     topic: '专题',
     template: '模板',
     coTitle: '⚙️ 必修 / 选修',
@@ -1597,6 +1614,9 @@ const i18n = {
     resetTemplateSaved: '🔧 リセットテンプレートを保存しました！',
     resetTemplateTitle: '🔧 リセットテンプレート',
     actions: 'アクション',
+    backup: 'バックアップ',
+    exportProgress: '進捗をエクスポート',
+    importProgress: '進捗をインポート',
     topic: 'トピック',
     template: 'テンプレート',
     coTitle: '⚙️ 必修 / 自由',
@@ -1680,6 +1700,9 @@ const i18n = {
     resetTemplateSaved: '🔧 리셋 템플릿이 저장되었습니다!',
     resetTemplateTitle: '🔧 리셋 템플릿',
     actions: '작업',
+    backup: '백업',
+    exportProgress: '진행 상황 내보내기',
+    importProgress: '진행 상황 가져오기',
     topic: '주제',
     template: '템플릿',
     coTitle: '⚙️ 필수 / 선택',
@@ -1690,6 +1713,40 @@ const i18n = {
   }, {"title":"11DTP 모험 지도","subtitle":"Year 11 디지털 기술 · 번사이드 고등학교","modulesDone":"완료 모듈","lessonsDone":"완료 수업","current":"현재","xpEarned":"획득 XP","overallProgress":"전체 여정 진행률","bigIdea":"💡 핵심 아이디어","yourJourney":"🗺️ 디지털 여정 — 5개 모듈 (32개 작업)","module":"모듈","task":"작업","completed":"완료","lessons":"수업","of":"/","lessonsComplete":"수업 완료","done":"완료","now":"진행 중","todo":"미착수","lastCompleted":"✅ 마지막 완료","currentMission":"🎯 현재 미션","comingUp":"🔜 다음 예정","next":"다음","nextModule":"다음 모듈","clickToAdvance":"위 수업을 클릭하여 진행 상태를 표시하세요","allComplete":"모든 모듈이 완료되었습니다!","finalLesson":"이 모듈의 마지막 수업!","batchModeOn":"일괄 해제","batchModeOff":"일괄 선택","selected":"개 선택됨","batchUndo":"취소","batchCancel":"닫기","toolsForThisLesson":"🧰 유용한 링크","nzCurriculum":"📋 NZ NCEA 기준 — 11DTP","reset":"🔄 초기화","save":"💾 저장","howItWorks":"❓","helpTitle":"🗺️ 모험 지도 사용법","helpDesc":"이것은 11DTP를 위한 <span class=\"highlight\">인터랙티브 학습 여정</span>입니다. 각 모듈과 수업의 진행 상황을 추적하세요!","helpGreen":"<strong style=\"color:var(--text)\">🟢 초록 (완료)</strong> — 완료한 수업입니다. 클릭하면 취소됩니다.","helpPurple":"<strong style=\"color:var(--text)\">🟣 보라 (진행 중)</strong> — 현재 위치입니다. 클릭하여 완료 표시 후 다음으로!","helpGrey":"<strong style=\"color:var(--text)\">⬜ 회색 (미착수)</strong> — 아직 시작하지 않았습니다. 클릭하여 완료 표시.","helpXP":"<strong style=\"color:var(--text)\">🎮 XP 시스템:</strong>","helpXPDesc":"각 수업 = <span class=\"highlight\">50 XP</span> · 모듈 완료 = <span class=\"highlight\">200 XP 보너스</span> · 전체 완료 = <span class=\"highlight\">500 XP 보너스</span>","helpSave":"<strong style=\"color:var(--text)\">💾 저장:</strong>","helpSaveDesc":"진행 상황이 브라우저에 자동 저장됩니다. 언제든지 \"저장\"을 클릭하거나 \"초기화\"로 다시 시작.","helpBigIdea":"<strong style=\"color:var(--text)\">💡 핵심 아이디어:</strong>","helpBigIdeaDesc":"상단의 보라색 배너를 클릭하여 현재 모듈의 핵심 질문을 확인하세요.","helpModules":"<strong style=\"color:var(--text)\">📂 모듈 상세:</strong>","helpModulesDesc":"지도에서 모듈 노드를 클릭하여 수업 목록을 펼치고 개별 진행 상황을 확인하세요.","moduleProgress":"모듈 진행률","clickToJump":"→ 클릭하여 다음 작업으로 이동","progressSaved":"💾 진행 상황이 저장되었습니다!","progressReset":"🔄 진행 상황이 초기화되었습니다!","resetTemplateSaved":"🔧 리셋 템플릿이 저장되었습니다!","resetTemplateTitle":"🔧 리셋 템플릿","actions":"작업","confirmReset":"모든 진행 상황을 초기화하시겠습니까? 이 작업은 되돌릴 수 없습니다.","assessment":"평가","extra":"추가","optional":"선택","topic":"주제","template":"템플릿","batch":"일괄","compulsory":"필수","help":"도움말","coAllCompulsory":"전체 필수","coAllOptional":"전체 선택","coSetAll":"전체 설정","coCompulsory":"필수","coOptional":"선택","coTitle":"⚙️ 필수 / 선택","rtTodo":"미착수","rtCurrent":"진행 중","rtDone":"완료","rtApply":"적용","toolName0":"Python Tutor","toolTip0":"Python 코드 실행을 단계별로 시각화 — 프로그램 흐름 이해에 최적.","toolName1":"Diff Checker","toolTip1":"두 파일을 나란히 비교하여 차이점을 빠르고 정확하게 발견.","toolName2":"Grok Learning","toolTip2":"NZ 학생들을 위해 설계된 인터랙티브 Python 및 SQL 과정.","toolName3":"W3Schools","toolTip3":"HTML, CSS 등을 포함한 종합적인 웹 개발 참조.","poL30":"컴퓨터 프로그램 만들기 — 5 크레딧","poL31":"프로그래밍 기초 평가","poL40":"HTML 에디터를 사용하여 웹사이트 만들기 — 레벨 2, 4 크레딧","poL41":"HTML & CSS 기술","poL50":"디지털 결과물 개발 + HCI — 10 크레딧","poL51":"디자인 프로세스 & 사용성","batchComplete":"완료","modName_m1":"Python","modName_m2":"데이터베이스 애플리케이션 개발","modName_m3":"웹사이트 학습","modName_m4":"웹사이트 결과물","modName_m5":"인간 컴퓨터 상호작용","modBigIdea_m1":"코드를 통해 컴퓨터에 단계별로 문제를 해결하도록 가르치는 방법은?","modBigIdea_m2":"실제 문제를 해결하기 위해 데이터를 효율적으로 구성하고 접근하는 방법은?","modBigIdea_m3":"사용자가 쉽게 탐색하고 이해할 수 있는 효과적인 디지털 경험을 만드는 방법은?","modBigIdea_m4":"디지털 결과물을 성공시키는 것 — 기능, 사용성, 디자인이 어떻게 함께 작동하는가?","modBigIdea_m5":"사람들이 쉽게 이해하고 효과적으로 사용할 수 있는 인터페이스를 설계하는 방법은?","modBigIdeaDesc_m1":"Python은 세계에서 가장 인기 있는 프로그래밍 언어 중 하나입니다. Python을 배우면 논리적으로 사고하고, 문제를 분해하며, 지시를 정확하게 전달하는 방법을 배웁니다.","modBigIdeaDesc_m2":"데이터베이스는 현대 애플리케이션의 기반입니다. SQL과 데이터베이스 설계를 배우면 데이터를 효과적으로 구성, 쿼리, 관리하는 방법을 배웁니다.","modBigIdeaDesc_m3":"웹 개발은 기술 기술과 디자인 사고를 결합합니다. HTML과 CSS를 배우면 콘텐츠를 구조화하고 프레젠테이션을 제어하는 방법을 배웁니다.","modBigIdeaDesc_m4":"완전한 웹사이트를 구축하려면 계획, 디자인, 개발, 테스트가 필요합니다. 디자인은 코드만큼 중요합니다.","modBigIdeaDesc_m5":"HCI는 인간이技術と 어떻게相互作用하는지 탐구합니다. 니콜센の启发법, 사용성 원칙, 마오리 세계관을 포함한 문화적 고려 사항을 배웁니다.","lesTitle_m1l1":"작업 1 | Grok Academy에서 Python 배우기","lesTitle_m1l2":"작업 2 | Python 읽기 퀴즈","lesTitle_m1l3":"작업 3&4 | 인간을 위한 코드 체크포인트","lesTitle_m1l4":"작업 5 | NCEA Auto 연습 코스","lesTitle_m1l5":"NCEA-Auto 평가 페이지","lesTitle_m1l6":"NCEA-Auto 평가","lesTitle_m2l1":"작업 1 | Grok Academy SQL 튜토리얼","lesTitle_m2l2":"작업 2 | SQL 지식 테스트","lesTitle_m2l3":"작업 3 | 엔터티 관계도 튜토리얼","lesTitle_m2l4":"작업 4 | 데이터베이스 설계 연습","lesTitle_m2l5":"작업 5&6&7 | Python 및 SQL 연습 평가","lesTitle_m2l6":"작업 8 | 데이터베이스 평가 개발","lesTitle_m3l1":"작업 1 | Grok: Express HTML/CSS","lesTitle_m3l2":"작업 2 | HTML 및 CSS 최고 참고 자료","lesTitle_m3l3":"작업 3 | 지식 테스트","lesTitle_m3l4":"작업 4 | 튜토리얼 시리즈","lesTitle_m3l5":"작업 5 | US29776 — 웹사이트 평가","lesTitle_m4l1":"작업 1 | 무엇을 만들지 결정하기","lesTitle_m4l2":"작업 2 | 디자인 방법 배우기","lesTitle_m4l3":"작업 3 | 스케치 만들기","lesTitle_m4l4":"작업 4 | 고충실도 와이어프레임 만들기","lesTitle_m4l5":"작업 5 | 애자일 프로세스 배우고 설정하기","lesTitle_m4l6":"작업 6 | Trello에서 계획 세우기","lesTitle_m4l7":"작업 7 | 웹사이트 개발하기","lesTitle_m4l8":"작업 8 | 과제 제출하기","lesTitle_m4l9":"피드백 체크리스트","lesTitle_m4l10":"웹사이트 과제 개발","lesTitle_m5l1":"CS Field Guide","lesTitle_m5l2":"작업 1 | 니콜센 휴리스틱 및 HCI 키워드","lesTitle_m5l3":"작업 2 | 예제 수집","lesTitle_m5l4":"작업 3 | 니콜센 휴리스틱과 일관성","lesTitle_m5l5":"작업 4 | 사용자 및 작업","lesTitle_m5l6":"작업 5&6 | Tikanga 및 mātauranga Māori 탐구","lesTitle_m5l7":"작업 7 | 연습 시험","lesTitle_m5l8":"작업 8 | 혼란스러운 용어","lesTitle_m5l9":"작업 9 | 나만의 인터페이스","lesTitle_m5l10":"작업 10 | 비디오 게임의 접근성","lesDesc_m1l1":"Grok Learning에서 NZ NCEA 레벨 1 Python 코스를 완료하세요. 상호작용 연습을 통해 핵심 프로그래밍 기초를 쌓습니다.","lesDesc_m1l2":"Python 이해도를 확인하고 개선이 필요한 영역을 식별하기 위한 자기 평가 활동.","lesDesc_m1l3":"사람이 읽기 쉬운 코드(주석, 문서 문자열, 좋은 변수 이름, 입력 검증, 오류 처리)를 작성하는 방법을 배우고, 형성 평가 체크포인트를 완료하여 이해를 보여줍니다.","lesDesc_m1l4":"NCEA-Auto 플랫폼에서 NCEA 스타일 시험 문제를 연습합니다. 실제 시험과 동일한 코딩 환경을 사용합니다.","lesDesc_m1l5":"프로그래밍 평가가 완료되고 제출될 NCEA-Auto 평가 플랫폼에 접근합니다.","lesDesc_m1l6":"총괄 평가: NCEA-Auto에서 3개의 프로그래밍 문제를 완료합니다. AS92004 — 컴퓨터 프로그램 만들기 — 5 크레딧.","lesDesc_m2l1":"Grok Learning에서 SQL 입문 코스를 완료합니다. SELECT, WHERE, JOIN 및 기타 필수 SQL 문을 배웁니다.","lesDesc_m2l2":"W3Schools SQL 퀴즈를 풀어 핵심 SQL 개념과 데이터베이스 작업에 대한 이해를 확인합니다.","lesDesc_m2l3":"엔터티 관계도(ERD)를 만드는 방법을 배워 데이터베이스 구조(테이블, 속성, 관계, 키)를 시각적으로 모델링합니다.","lesDesc_m3l1":"Grok Learning에서 Express HTML/CSS 입문 코스를 완료합니다. 적절한 구조로 첫 번째 웹 페이지를 만듭니다.","lesDesc_m3l2":"모든 HTML 태그, CSS 속성 및 웹 개발 개념을 위한 필수 참고 자료로 W3Schools를 탐색합니다.","lesDesc_m3l3":"두 가지 지식 확인 퀴즈를 완료합니다: HTML 퀴즈 + CSS 퀴즈. HTML 및 CSS 기초에 대한 이해를 확인합니다.","lesDesc_m3l3a":"W3Schools 인터랙티브 퀴즈로 HTML 지식을 테스트합니다.","lesDesc_m3l3b":"W3Schools 인터랙티브 퀴즈로 CSS 지식을 테스트합니다.","lesDesc_m3l4":"튜토리얼 시리즈를 통해 HTML/CSS 기술, 레이아웃 및 스타일링 방법을 연습합니다.","lesDesc_m3l5":"HTML 편집기를 사용하여 웹사이트를 만듭니다. US29776 — 레벨 2 단위 표준 — 4 학점.","lesDesc_m4l1":"피드백 체크리스트를 사용하여 사용성과 기능 기준에 따라 웹사이트 디자인을 평가합니다.","lesDesc_m4l2":"완전한 웹사이트 결과물을 설계하고 개발합니다. AS92005 — 5 크레딧.","lesDesc_m5l1":"HCI 개념을 tikanga(마오리 관습)와 mātauranga Māori(마오리 지식 체계)와 연결합니다.","lesDesc_m5l2":"사용자를 이해하는 법 — 인터페이스와相互作用할 때의 목표, 능력, 한계를 배웁니다.","lesDesc_m5l3":"야코브 니콜센의 10가지 사용성启发법과 핵심 HCI 용어를 마스터합니다.","lesDesc_m5l4":"실제 인터페이스 사례를 수집하고 분석하여 사용성启发법을 적용합니다.","lesDesc_m5l5":"좋지 않은 디자인 결정을 분석하고 무엇이 인터페이스를 힘들게 만드는지 이해합니다.","lesDesc_m5l6":"HCI 원칙과 사용성启发법을 적용하여 나만의 인터페이스 컨셉을 설계합니다.","lesDesc_m5l7":"사용자 인터페이스에서 혼란스러운 용어를 식별하고 분석하며 더 명확한 대안을 제안합니다.","lesDesc_m5l8":"모든 HCI 주제를 다루는 연습 문제로 외부 평가에 대비합니다.","lesDesc_m5l9":"비디오 게임의 접근성 기능이 어떻게 양호한 HCI 설계를 보여주는지 탐구합니다.","lesDesc_m5l10":"인터페이스 설계에서 AI의 역할과 현대 HCI의 윤리적 고려 사항을 이해합니다.","poTitle3":"Progress Outcome 3 — Te Tapa","poTitle4":"Progress Outcome 4 — Te Tapa","poTitle5":"Progress Outcome 5 — Te Tapa","lesTitle_m3l3a":"Web Link | HTML Quiz","lesTitle_m3l3b":"Web Link | CSS Quiz","subName_m3s0":"Task 3 | Test your knowledge"}),
 };
 
+
+// PROGRESS BACKUP
+function exportProgress() {
+  try {
+    const data = localStorage.getItem(STORAGE_KEY);
+    if (!data) { alert('No progress to export yet!'); return; }
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const courseName = (typeof SETTINGS !== 'undefined' && SETTINGS.courseName) ? SETTINGS.courseName.replace(/[^a-z0-9]/gi, '_').toLowerCase() : 'adventure_map';
+    a.href = url;
+    a.download = courseName + '_progress_' + new Date().toISOString().slice(0, 10) + '.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('Progress exported successfully!');
+  } catch(e) { alert('Export failed: ' + e.message); }
+}
+function importProgress(fileInput) {
+  const file = fileInput.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data || !data.lessons) { alert('Invalid progress file.'); return; }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      location.reload();
+    } catch(err) { alert('Import failed: ' + err.message); }
+  };
+  reader.readAsText(file);
+  fileInput.value = '';
+}
 
 function t(key, fallback) { if(i18n[currentLang]&&i18n[currentLang][key]!==undefined)return i18n[currentLang][key]; if(i18n.en[key]!==undefined)return i18n.en[key]; return fallback!==undefined?fallback:key; }
 
@@ -2422,16 +2479,23 @@ function render() {
   const topbarSub = document.querySelectorAll('.topbar-sub')[0];
   if (topbarSub) topbarSub.textContent = t('subtitle');
   // Update topbar buttons
-  const rTexts = document.querySelectorAll('.r-text');
-  if (rTexts[0]) rTexts[0].textContent = t('save').replace('💾 ','').replace('💾','');
-  if (rTexts[1]) rTexts[1].textContent = t('actions');
-  // Update dropdown menu items
-  const dropItems = document.querySelectorAll('.dropdown-item');
-  if (dropItems[0]) dropItems[0].innerHTML = '' + t('reset');
-  if (dropItems[1]) dropItems[1].innerHTML = '📋 ' + t('template');
-  if (dropItems[2]) dropItems[2].innerHTML = '☑️ ' + t('batch');
-  if (dropItems[3]) dropItems[3].innerHTML = '⚙️ ' + t('compulsory');
-  if (dropItems[4]) dropItems[4].innerHTML = '❓ ' + t('help');
+  const topbarBtns = document.querySelectorAll('.topbar-right .btn');
+  if (topbarBtns[0]) topbarBtns[0].innerHTML = '💾 <span class="r-text">' + t('save') + '</span>';
+  const backupRText = document.querySelector('#backup-dropdown .dropdown-btn .r-text');
+  const actionsRText = document.querySelector('#actions-dropdown .dropdown-btn .r-text');
+  if (backupRText) backupRText.textContent = t('backup');
+  if (actionsRText) actionsRText.textContent = t('actions');
+  // Update backup dropdown items
+  const backupItems = document.querySelectorAll('#backup-dropdown .dropdown-item');
+  if (backupItems[0]) backupItems[0].innerHTML = '📤 ' + t('exportProgress');
+  if (backupItems[1]) backupItems[1].innerHTML = '📥 ' + t('importProgress');
+  // Update actions dropdown items
+  const actionItems = document.querySelectorAll('#actions-dropdown .dropdown-item');
+  if (actionItems[0]) actionItems[0].innerHTML = '' + t('reset');
+  if (actionItems[1]) actionItems[1].innerHTML = '📋 ' + t('template');
+  if (actionItems[2]) actionItems[2].innerHTML = '☑️ ' + t('batch');
+  if (actionItems[3]) actionItems[3].innerHTML = '⚙️ ' + t('compulsory');
+  if (actionItems[4]) actionItems[4].innerHTML = '❓ ' + t('help');
 }
 
 function renderStats() {
@@ -3032,10 +3096,12 @@ function closeModal(e) {
 
 function toggleDropdown(e) {
   e.stopPropagation();
-  document.getElementById('actions-dropdown').classList.toggle('open');
+  const clicked = e.currentTarget.closest('.dropdown');
+  document.querySelectorAll('.dropdown.open').forEach(d => { if (d !== clicked) d.classList.remove('open'); });
+  clicked.classList.toggle('open');
 }
 function closeDropdown() {
-  document.getElementById('actions-dropdown').classList.remove('open');
+  document.querySelectorAll('.dropdown.open').forEach(d => d.classList.remove('open'));
 }
 document.addEventListener('click', () => closeDropdown());
 

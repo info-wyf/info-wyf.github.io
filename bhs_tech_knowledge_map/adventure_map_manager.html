@@ -3435,6 +3435,9 @@ const i18n = {
     resetTemplateSaved: '🔧 Reset template saved!',
     resetTemplateTitle: '🔧 Reset Template',
     actions: 'Actions',
+    backup: 'Backup',
+    exportProgress: 'Export Progress',
+    importProgress: 'Import Progress',
     topic: 'Topic',
     template: 'Template',
     coTitle: '⚙️ Compulsory / Optional',
@@ -3518,6 +3521,9 @@ const i18n = {
     resetTemplateSaved: '🔧 重置模板已保存！',
     resetTemplateTitle: '🔧 重置模板',
     actions: '操作',
+    backup: '备份',
+    exportProgress: '导出进度',
+    importProgress: '导入进度',
     topic: '专题',
     template: '模板',
     coTitle: '⚙️ 必修 / 选修',
@@ -3601,6 +3607,9 @@ const i18n = {
     resetTemplateSaved: '🔧 リセットテンプレートを保存しました！',
     resetTemplateTitle: '🔧 リセットテンプレート',
     actions: 'アクション',
+    backup: 'バックアップ',
+    exportProgress: '進捗をエクスポート',
+    importProgress: '進捗をインポート',
     topic: 'トピック',
     template: 'テンプレート',
     coTitle: '⚙️ 必修 / 自由',
@@ -3684,6 +3693,9 @@ const i18n = {
     resetTemplateSaved: '🔧 리셋 템플릿이 저장되었습니다!',
     resetTemplateTitle: '🔧 리셋 템플릿',
     actions: '작업',
+    backup: '백업',
+    exportProgress: '진행 상황 내보내기',
+    importProgress: '진행 상황 가져오기',
     topic: '주제',
     template: '템플릿',
     coTitle: '⚙️ 필수 / 선택',
@@ -4060,6 +4072,14 @@ ${getCSS()}
       <button class="lang-btn" onclick="switchLang('ko')">한</button>
     </div>
     <button class="btn" onclick="saveProgress()">💾 <span class="r-text">Save</span></button>
+    <div class="dropdown" id="backup-dropdown">
+      <button class="dropdown-btn" onclick="toggleDropdown(event)">💾 <span class="r-text">Backup</span></button>
+      <div class="dropdown-menu">
+        <button class="dropdown-item" onclick="exportProgress();closeDropdown()">📤 Export Progress</button>
+        <button class="dropdown-item" onclick="document.getElementById('import-file').click();closeDropdown()">📥 Import Progress</button>
+      </div>
+      <input type="file" id="import-file" accept=".json" style="display:none" onchange="importProgress(this)">
+    </div>
     <div class="dropdown" id="actions-dropdown">
       <button class="dropdown-btn" onclick="toggleDropdown(event)">⚙️ <span class="r-text">Actions</span></button>
       <div class="dropdown-menu">
@@ -4282,6 +4302,40 @@ let state = loadState();
 // INTERNATIONALIZATION
 // ───────────────────────────────────────
 ${i18nScript}
+
+// PROGRESS BACKUP
+function exportProgress() {
+  try {
+    const data = localStorage.getItem(STORAGE_KEY);
+    if (!data) { alert('No progress to export yet!'); return; }
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const courseName = (typeof SETTINGS !== 'undefined' && SETTINGS.courseName) ? SETTINGS.courseName.replace(/[^a-z0-9]/gi, '_').toLowerCase() : 'adventure_map';
+    a.href = url;
+    a.download = courseName + '_progress_' + new Date().toISOString().slice(0, 10) + '.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('Progress exported successfully!');
+  } catch(e) { alert('Export failed: ' + e.message); }
+}
+function importProgress(fileInput) {
+  const file = fileInput.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data || !data.lessons) { alert('Invalid progress file.'); return; }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      location.reload();
+    } catch(err) { alert('Import failed: ' + err.message); }
+  };
+  reader.readAsText(file);
+  fileInput.value = '';
+}
 
 ${getJS()}
 {{SCRIPT_END}}
@@ -4683,6 +4737,9 @@ body{
 .t-name{font-size:12px;font-weight:600;color:var(--text);margin-bottom:4px}
 .t-tip{font-size:11px;color:var(--text2);line-height:1.4}
 
+/* ═══════════════════════════════════════════
+   BACKUP SECTION
+   ═══════════════════════════════════════════ */
 /* ═══════════════════════════════════════════
    NZ CURRICULUM ALIGNED SECTION
    ═══════════════════════════════════════════ */
@@ -5755,16 +5812,23 @@ function getJS() {
     '  const topbarSub = document.querySelectorAll(\'.topbar-sub\')[0];',
     '  if (topbarSub) topbarSub.textContent = t(\'subtitle\');',
     '  // Update topbar buttons',
-    '  const rTexts = document.querySelectorAll(\'.r-text\');',
-    '  if (rTexts[0]) rTexts[0].textContent = t(\'save\').replace(\'💾 \',\'\').replace(\'💾\',\'\');',
-    '  if (rTexts[1]) rTexts[1].textContent = t(\'actions\');',
-    '  // Update dropdown menu items',
-    '  const dropItems = document.querySelectorAll(\'.dropdown-item\');',
-    '  if (dropItems[0]) dropItems[0].innerHTML = \'\' + t(\'reset\');',
-    '  if (dropItems[1]) dropItems[1].innerHTML = \'📋 \' + t(\'template\');',
-    '  if (dropItems[2]) dropItems[2].innerHTML = \'☑️ \' + t(\'batch\');',
-    '  if (dropItems[3]) dropItems[3].innerHTML = \'⚙️ \' + t(\'compulsory\');',
-    '  if (dropItems[4]) dropItems[4].innerHTML = \'❓ \' + t(\'help\');',
+    '  const topbarBtns = document.querySelectorAll(\'.topbar-right .btn\');',
+    '  if (topbarBtns[0]) topbarBtns[0].innerHTML = \'💾 <span class="r-text">\' + t(\'save\') + \'</span>\';',
+    '  const backupRText = document.querySelector(\'#backup-dropdown .dropdown-btn .r-text\');',
+    '  const actionsRText = document.querySelector(\'#actions-dropdown .dropdown-btn .r-text\');',
+    '  if (backupRText) backupRText.textContent = t(\'backup\');',
+    '  if (actionsRText) actionsRText.textContent = t(\'actions\');',
+    '  // Update backup dropdown items',
+    '  const backupItems = document.querySelectorAll(\'#backup-dropdown .dropdown-item\');',
+    '  if (backupItems[0]) backupItems[0].innerHTML = \'📤 \' + t(\'exportProgress\');',
+    '  if (backupItems[1]) backupItems[1].innerHTML = \'📥 \' + t(\'importProgress\');',
+    '  // Update actions dropdown items',
+    '  const actionItems = document.querySelectorAll(\'#actions-dropdown .dropdown-item\');',
+    '  if (actionItems[0]) actionItems[0].innerHTML = \'\' + t(\'reset\');',
+    '  if (actionItems[1]) actionItems[1].innerHTML = \'📋 \' + t(\'template\');',
+    '  if (actionItems[2]) actionItems[2].innerHTML = \'☑️ \' + t(\'batch\');',
+    '  if (actionItems[3]) actionItems[3].innerHTML = \'⚙️ \' + t(\'compulsory\');',
+    '  if (actionItems[4]) actionItems[4].innerHTML = \'❓ \' + t(\'help\');',
     '}',
     '',
     'function renderStats() {',
@@ -6226,7 +6290,7 @@ function getJS() {
     '        </div>',
     '        <span style="font-size:12px;color:var(--text2)">${progress.done}/${progress.total}</span>',
     '      </div>',
-    '      ${hasTodo ? \`<div style="font-size:11px;color:var(--cyan);margin-top:8px">→ \${t(\'clickToJump\')}</div>\` : \'\'}',
+    '      ${hasTodo ? `<div style="font-size:11px;color:var(--cyan);margin-top:8px">→ \${t(\'clickToJump\')}</div>` : \'\'}',
     '    </div>',
     '  `;',
     '  document.getElementById(\'modal-overlay\').classList.add(\'active\');',
@@ -6365,10 +6429,12 @@ function getJS() {
     '',
     'function toggleDropdown(e) {',
     '  e.stopPropagation();',
-    '  document.getElementById(\'actions-dropdown\').classList.toggle(\'open\');',
+    '  const clicked = e.currentTarget.closest(\'.dropdown\');',
+    '  document.querySelectorAll(\'.dropdown.open\').forEach(d => { if (d !== clicked) d.classList.remove(\'open\'); });',
+    '  clicked.classList.toggle(\'open\');',
     '}',
     'function closeDropdown() {',
-    '  document.getElementById(\'actions-dropdown\').classList.remove(\'open\');',
+    '  document.querySelectorAll(\'.dropdown.open\').forEach(d => d.classList.remove(\'open\'));',
     '}',
     'document.addEventListener(\'click\', () => closeDropdown());',
     '',
