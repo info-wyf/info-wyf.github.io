@@ -21,15 +21,52 @@
   --red:#F85149;--blue:#58A6FF;--cyan:#39D2C0;
   --module-done:#3FB950;--module-current:#A371F7;--module-locked:#6E7681;
   --radius:12px;--radius-sm:8px;
+  --overlay:rgba(0,0,0,0.6);
+  --text-inverse:rgba(255,255,255,0.85);
+  --ghost-hover:rgba(255,255,255,0.06);
+  --ghost-active:rgba(255,255,255,0.1);
+  --dropdown-bg:#1e2130;
+  --dropdown-border:rgba(255,255,255,0.08);
+  --shadow-dropdown:0 8px 32px rgba(0,0,0,.5),0 2px 8px rgba(0,0,0,.3);
+  --btn-white:#fff;
+  --bg-gradient-1:rgba(163,113,247,0.08);
+  --bg-gradient-2:rgba(63,185,80,0.06);
 }
+[data-theme="light"]{
+  --bg:#F6F8FA;--bg2:#FFFFFF;--bg3:#F0F2F5;
+  --border:#D0D7DE;--border2:#AFB8C1;
+  --text:#1F2328;--text2:#656D76;--text3:#8B949E;
+  --green:#1A7F37;--green-dim:#DAFBE1;--green-glow:#1A7F37;
+  --purple:#8250DF;--purple-dim:#FBEFFF;--purple-glow:#8250DF;
+  --amber:#9A6700;--amber-dim:#FFF8C5;--amber-glow:#9A6700;
+  --red:#CF222E;--blue:#0969DA;--cyan:#0550AE;
+  --module-done:#1A7F37;--module-current:#8250DF;--module-locked:#AFB8C1;
+  --overlay:rgba(0,0,0,0.3);
+  --text-inverse:rgba(0,0,0,0.85);
+  --ghost-hover:rgba(0,0,0,0.04);
+  --ghost-active:rgba(0,0,0,0.08);
+  --dropdown-bg:#FFFFFF;
+  --dropdown-border:rgba(0,0,0,0.1);
+  --shadow-dropdown:0 8px 32px rgba(0,0,0,.12),0 2px 8px rgba(0,0,0,.08);
+  --btn-white:#fff;
+  --bg-gradient-1:rgba(130,80,223,0.06);
+  --bg-gradient-2:rgba(26,127,55,0.04);
+}
+.theme-toggle{
+  width:32px;height:32px;border-radius:var(--radius-sm);
+  border:1px solid var(--border);background:var(--bg2);color:var(--text2);
+  cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;
+  transition:all .2s;
+}
+.theme-toggle:hover{border-color:var(--border2);color:var(--text);background:var(--bg3)}
 html{font-size:16px}
 body{
   font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
   background:var(--bg);color:var(--text);
   min-height:100vh;overflow-x:hidden;
   background-image:
-    radial-gradient(ellipse at 20% 0%, rgba(163,113,247,0.08) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 100%, rgba(63,185,80,0.06) 0%, transparent 50%);
+    radial-gradient(ellipse at 20% 0%, var(--bg-gradient-1) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 100%, var(--bg-gradient-2) 0%, transparent 50%);
 }
 
 /* ═══════════════════════════════════════════
@@ -37,7 +74,7 @@ body{
    ═══════════════════════════════════════════ */
 .topbar{
   position:sticky;top:0;z-index:100;
-  background:rgba(13,17,23,0.85);backdrop-filter:blur(12px);
+  background:var(--bg2);
   border-bottom:1px solid var(--border);
   padding:12px 24px;display:flex;align-items:center;justify-content:space-between;
 }
@@ -58,8 +95,8 @@ body{
 .dropdown-btn:hover{border-color:var(--border2);background:var(--bg3)}
 .dropdown-menu{
   position:absolute;top:calc(100% + 6px);right:0;
-  background:#1e2130;border:1px solid rgba(255,255,255,0.08);
-  border-radius:10px;box-shadow:0 8px 32px rgba(0,0,0,.5),0 2px 8px rgba(0,0,0,.3);
+  background:var(--dropdown-bg);border:1px solid var(--dropdown-border);
+  border-radius:10px;box-shadow:var(--shadow-dropdown);
   min-width:180px;z-index:100;padding:6px 0;
   opacity:0;visibility:hidden;transform:translateY(-4px);
   transition:all .15s ease;
@@ -67,12 +104,12 @@ body{
 .dropdown.open .dropdown-menu{opacity:1;visibility:visible;transform:translateY(0)}
 .dropdown-item{
   display:flex;align-items:center;gap:10px;
-  padding:10px 16px;font-size:13px;color:rgba(255,255,255,0.85);
+  padding:10px 16px;font-size:13px;color:var(--text-inverse);
   cursor:pointer;transition:all .15s;border:none;background:none;width:100%;text-align:left;
   letter-spacing:0.01em;
 }
-.dropdown-item:hover{background:rgba(255,255,255,0.06);color:#fff}
-.dropdown-item:active{background:rgba(255,255,255,0.1)}
+.dropdown-item:hover{background:var(--ghost-hover);color:var(--text)}
+.dropdown-item:active{background:var(--ghost-active)}
 .btn{
   padding:6px 14px;border-radius:var(--radius-sm);
   font-size:12px;font-weight:500;cursor:pointer;
@@ -81,7 +118,7 @@ body{
 }
 .btn:hover{border-color:var(--border2);color:var(--text);background:var(--bg3)}
 .btn-purple{border-color:var(--purple);color:var(--purple);background:var(--purple-dim)}
-.btn-purple:hover{background:rgba(163,113,247,0.2)}
+.btn-purple:hover{background:var(--purple);color:var(--btn-white)}
 
 .lang-switch{
   display:flex;gap:0;border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;
@@ -154,7 +191,7 @@ body{
 .bi-tag{
   font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;
   padding:3px 10px;border-radius:20px;
-  background:rgba(163,113,247,0.2);color:var(--purple);
+  background:var(--purple-dim);color:var(--purple);
 }
 .bi-module-tag{font-size:10px;color:var(--text3)}
 .bi-quote{
@@ -227,8 +264,8 @@ body{
 .node-check{
   position:absolute;top:-4px;right:-4px;width:22px;height:22px;border-radius:50%;
   background:var(--green);display:flex;align-items:center;justify-content:center;
-  font-size:12px;color:#fff;font-weight:700;z-index:3;
-  box-shadow:0 2px 6px rgba(0,0,0,.3);
+  font-size:12px;color:var(--btn-white);font-weight:700;z-index:3;
+  box-shadow:0 2px 6px var(--overlay);
 }
 .node-label{margin-top:8px;text-align:center}
 .node-num{font-size:10px;color:var(--text3);font-weight:500}
@@ -290,7 +327,7 @@ body{
   font-size:13px;cursor:pointer;transition:all .2s;
   border:2px solid var(--border);
 }
-.step-checkbox.s-done{background:var(--green);border-color:var(--green);color:#fff}
+.step-checkbox.s-done{background:var(--green);border-color:var(--green);color:var(--btn-white)}
 .step-checkbox.s-current{border-color:var(--purple);background:var(--purple-dim);color:var(--purple)}
 .step-checkbox.s-locked{border-color:var(--border);color:var(--text3)}
 .step-checkbox.s-todo{border-color:var(--border);color:var(--text3)}
@@ -349,7 +386,7 @@ body{
   padding:14px;cursor:pointer;transition:all .25s;
 }
 .tool-card:hover{border-color:var(--purple);transform:translateY(-2px);
-  box-shadow:0 4px 16px rgba(0,0,0,.3)}
+  box-shadow:var(--shadow-dropdown)}
 .t-icon{font-size:20px;margin-bottom:6px}
 .t-name{font-size:12px;font-weight:600;color:var(--text);margin-bottom:4px}
 .t-tip{font-size:11px;color:var(--text2);line-height:1.4}
@@ -388,7 +425,7 @@ body{
   border:1px solid var(--border);
   border-radius:var(--radius-sm);
   overflow:hidden;
-  background:rgba(255,255,255,0.02);
+  background:var(--ghost-hover);
 }
 .submodule-header{
   display:flex;align-items:center;justify-content:space-between;
@@ -397,7 +434,7 @@ body{
   border-bottom:1px solid var(--border);
   transition:background .2s;
 }
-.submodule-header:hover{background:rgba(255,255,255,0.06)}
+.submodule-header:hover{background:var(--ghost-hover)}
 .submodule-header-left{
   display:flex;align-items:center;gap:8px;
 }
@@ -449,7 +486,7 @@ body{
    ═══════════════════════════════════════════ */
 .modal-overlay{
   position:fixed;top:0;left:0;width:100%;height:100%;
-  background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);
+  background:var(--overlay);backdrop-filter:blur(4px);
   z-index:500;display:none;align-items:center;justify-content:center;
 }
 .modal-overlay.active{display:flex}
@@ -493,7 +530,7 @@ body{
    ═══════════════════════════════════════════ */
 .batch-modal-overlay{
   position:fixed;top:0;left:0;width:100%;height:100%;
-  background:rgba(0,0,0,0.7);backdrop-filter:blur(6px);
+  background:var(--overlay);backdrop-filter:blur(6px);
   z-index:500;display:none;align-items:flex-start;justify-content:center;
   padding:80px 20px 120px;overflow-y:auto;
 }
@@ -538,7 +575,7 @@ body{
   display:flex;align-items:center;justify-content:center;
   font-size:11px;cursor:pointer;transition:all .2s;color:transparent;flex-shrink:0;
 }
-.bm-mod-check.checked{background:var(--purple);border-color:var(--purple);color:#fff}
+.bm-mod-check.checked{background:var(--purple);border-color:var(--purple);color:var(--btn-white)}
 .bm-lessons{display:none;padding:0 24px 12px 54px}
 .bm-lessons.open{display:block}
 .bm-lesson{
@@ -548,15 +585,14 @@ body{
 }
 .bm-lesson:hover{background:var(--bg3)}
 .bm-lesson.bm-sel{
-  background:rgba(163,113,247,0.08);
-  border:1px solid rgba(163,113,247,0.3);
+  background:var(--purple-dim);  border:1px solid rgba(163,113,247,0.3);
 }
 .bm-lcheck{
   width:22px;height:22px;border-radius:6px;border:2px solid var(--border);
   display:flex;align-items:center;justify-content:center;
   font-size:12px;cursor:pointer;transition:all .2s;color:transparent;flex-shrink:0;
 }
-.bm-lcheck.checked{background:var(--purple);border-color:var(--purple);color:#fff}
+.bm-lcheck.checked{background:var(--purple);border-color:var(--purple);color:var(--btn-white)}
 .bm-linfo{flex:1;min-width:0}
 .bm-ltitle{font-size:13px;font-weight:500;color:var(--text);line-height:1.3}
 .bm-ldesc{font-size:11px;color:var(--text2);margin-top:2px;line-height:1.4}
@@ -572,7 +608,7 @@ body{
    ═══════════════════════════════════════════ */
 .co-modal-overlay{
   position:fixed;top:0;left:0;width:100%;height:100%;
-  background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);
+  background:var(--overlay);backdrop-filter:blur(4px);
   z-index:501;display:none;align-items:center;justify-content:center;
 }
 .co-modal-overlay.active{display:flex}
@@ -655,10 +691,10 @@ body{
   border:none;transition:all .2s;
 }
 .bm-btn:disabled{opacity:.4;cursor:not-allowed;transform:none !important}
-.bm-btn-done{background:var(--green);color:#fff}
-.bm-btn-done:hover:not(:disabled){background:#2ea043;transform:translateY(-1px)}
+.bm-btn-done{background:var(--green);color:var(--btn-white)}
+.bm-btn-done:hover:not(:disabled){opacity:.9;transform:translateY(-1px)}
 .bm-btn-undo{background:var(--amber);color:#000}
-.bm-btn-undo:hover:not(:disabled){background:#b8860b;transform:translateY(-1px)}
+.bm-btn-undo:hover:not(:disabled){opacity:.9;transform:translateY(-1px)}
 .bm-btn-cancel{background:var(--bg3);color:var(--text2);border:1px solid var(--border)}
 .bm-btn-cancel:hover{color:var(--text);border-color:var(--border2)}
 
@@ -705,6 +741,7 @@ body{
     </div>
   </div>
   <div class="topbar-right">
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme" id="theme-btn">🌙</button>
     <div class="lang-switch" id="lang-switch">
       <button class="lang-btn active" onclick="switchLang('en')">EN</button>
       <button class="lang-btn" onclick="switchLang('zh')">中</button>
@@ -831,14 +868,14 @@ body{
 <div class="tool-card" data-href="https://sites.google.com/burnside.school.nz/bhs-digital-technologies/junior/9dgt/y9-0-start-of-course#h.jlfuuc5t6aua"><div class="t-icon">📁</div><div class="t-name" id="tool-name-3">File Management</div><div class="t-tip" id="tool-tip-3">Clear file management helps you keep a clear mind.</div></div></div></div>
 
 <!-- ═══ CURRICULUM SECTION (Dynamic based on Year Level) ═══ -->
-<div class="curriculum-section"><div class="section-label" id="curriculum-label">📋 NCEA Standards</div><div class="po-grid" id="po-grid"><div class="po-card"><span class="po-level l3">PO3</span><ul class="po-items"><li id="poL30"></li>
+<div class="curriculum-section"><div class="section-label" id="curriculum-label">📋 NZ Curriculum — Progress Outcomes</div><div class="po-grid" id="po-grid"><div class="po-card"><span class="po-level l3" id="poTitle3">PO3</span><ul class="po-items"><li id="poL30"></li>
 <li id="poL31"></li></ul></div>
-<div class="po-card"><span class="po-level l4">PO4</span><ul class="po-items"><li id="poL40"></li>
+<div class="po-card"><span class="po-level l4" id="poTitle4">PO4</span><ul class="po-items"><li id="poL40"></li>
 <li id="poL41"></li>
 <li id="poL42"></li>
 <li id="poL43"></li>
 <li id="poL44"></li></ul></div>
-<div class="po-card"><span class="po-level l5">PO5</span><ul class="po-items"><li id="poL50"></li>
+<div class="po-card"><span class="po-level l5" id="poTitle5">PO5</span><ul class="po-items"><li id="poL50"></li>
 <li id="poL51"></li>
 <li id="poL52"></li></ul></div></div></div>
 
@@ -927,7 +964,7 @@ body{
 // SETTINGS
 // ───────────────────────────────────────
 window.SETTINGS_CODE = '9DGT';
-const SETTINGS = {"code":"9DGT","year":"Year 9","name":"9DGT Adventure Map","school":"Burnside High School","xpLesson":50,"xpAssessment":100,"xpModule":200,"xpAll":500,"storageKey":"9dgt_adventure_progress","curriculumType":"ncea","usefulLinks":[{"emoji":"🔍","name":"Problem Solving Training","tip":"Leverage Google search & AI tools, but always maintain critical thinking.","href":"https://docs.google.com/document/d/14FUnmwh_XHbDmHi0D8yjzabHnF_Hs6BuSlveuc0dBk4/edit?usp=sharing"},{"emoji":"📤","name":"Submit Work to Google Classroom","tip":"Essential Y9 skill — know how to submit your work to Google Classroom.","href":"https://sites.google.com/burnside.school.nz/bhs-digital-technologies/junior/9dgt/y9-5-artificial-intelligence/y9-5-1-ai-image-creation#h.s0a74c7agns7"},{"emoji":"🃏","name":"Binary Card Simulator","tip":"The most important tool for understanding binary concepts.","href":"https://www.csfieldguide.org.nz/en/interactives/binary-cards/"},{"emoji":"📁","name":"File Management","tip":"Clear file management helps you keep a clear mind.","href":"https://sites.google.com/burnside.school.nz/bhs-digital-technologies/junior/9dgt/y9-0-start-of-course#h.jlfuuc5t6aua"}]};
+const SETTINGS = {"code":"9DGT","year":"Year 9","name":"9DGT Adventure Map","school":"Burnside High School","xpLesson":50,"xpAssessment":100,"xpModule":200,"xpAll":500,"storageKey":"9dgt_adventure_progress","curriculumType":"nz-curriculum","usefulLinks":[{"emoji":"🔍","name":"Problem Solving Training","tip":"Leverage Google search & AI tools, but always maintain critical thinking.","href":"https://docs.google.com/document/d/14FUnmwh_XHbDmHi0D8yjzabHnF_Hs6BuSlveuc0dBk4/edit?usp=sharing"},{"emoji":"📤","name":"Submit Work to Google Classroom","tip":"Essential Y9 skill — know how to submit your work to Google Classroom.","href":"https://sites.google.com/burnside.school.nz/bhs-digital-technologies/junior/9dgt/y9-5-artificial-intelligence/y9-5-1-ai-image-creation#h.s0a74c7agns7"},{"emoji":"🃏","name":"Binary Card Simulator","tip":"The most important tool for understanding binary concepts.","href":"https://www.csfieldguide.org.nz/en/interactives/binary-cards/"},{"emoji":"📁","name":"File Management","tip":"Clear file management helps you keep a clear mind.","href":"https://sites.google.com/burnside.school.nz/bhs-digital-technologies/junior/9dgt/y9-0-start-of-course#h.jlfuuc5t6aua"}]};
 const I18N = window.i18n;
 
 // ───────────────────────────────────────
@@ -1307,6 +1344,7 @@ const XP_ALL = 500;
 
 let currentLang = localStorage.getItem(STORAGE_KEY + '_lang') || 'en';
 let state = loadState();
+initTheme();
 
 // ───────────────────────────────────────
 // INTERNATIONALIZATION
@@ -1400,7 +1438,7 @@ const i18n = {
     rtCurrent: 'Current',
     rtDone: 'Done',
     rtReset: 'Reset',
-  }, {"title":"9DGT Adventure Map","subtitle":"Year 9 Digital Technologies · Burnside High School","modulesDone":"Modules Done","lessonsDone":"Lessons Done","current":"Current","xpEarned":"XP Earned","overallProgress":"Overall journey progress","bigIdea":"💡 Big Idea","yourJourney":"🗺️ Your Digital Journey — 6 Modules","module":"Module","completed":"Completed","lessons":"Lessons","of":"of","lessonsComplete":"lessons complete","done":"Done","now":"Now","todo":"Todo","lastCompleted":"✅ Last Completed","currentMission":"🎯 Current Mission","comingUp":"🔜 Coming Up","next":"Next","nextModule":"Next module","clickToAdvance":"Click lessons above to mark progress","allComplete":"All modules completed!","finalLesson":"Final lesson in this module!","batchModeOn":"Exit Batch","batchModeOff":"Batch","selected":"selected","batchUndo":"Undo","batchCancel":"Cancel","toolsForThisLesson":"🧰 Tools for this lesson","nzCurriculum":"📋 NZ Curriculum — Progress Outcomes","reset":"🔄 Reset","save":"Save","howItWorks":"❓","helpTitle":"🗺️ How the Adventure Map Works","helpDesc":"This is your <span class=\"highlight\">interactive learning journey</span> for 9DGT. Track your progress through each module and lesson!","helpGreen":"<strong style=\"color:var(--text)\">🟢 Green (Done)</strong> — Lessons you have completed. Click to undo if needed.","helpPurple":"<strong style=\"color:var(--text)\">🟣 Purple (Current)</strong> — Where you are right now. Click to mark as done and advance!","helpGrey":"<strong style=\"color:var(--text)\">⬜ Grey (Todo)</strong> — Not yet started. Click to mark as done.","helpXP":"<strong style=\"color:var(--text)\">🎮 XP System:</strong>","helpXPDesc":"Each lesson = <span class=\"highlight\">50 XP</span> · Module completion = <span class=\"highlight\">200 XP bonus</span> · All complete = <span class=\"highlight\">500 XP bonus</span>","helpSave":"<strong style=\"color:var(--text)\">💾 Saving:</strong>","helpSaveDesc":"Progress auto-saves to your browser. Click \"Save\" anytime, or use \"Reset\" to start over.","helpBigIdea":"<strong style=\"color:var(--text)\">💡 Big Idea:</strong>","helpBigIdeaDesc":"Click the purple banner at the top to see the driving question for the current module.","helpModules":"<strong style=\"color:var(--text)\">📂 Module Details:</strong>","helpModulesDesc":"Click any module node on the map to expand its lesson list and see individual progress.","moduleProgress":"Module Progress","clickToJump":"→ Click to jump to next task","progressSaved":"💾 Progress saved!","progressReset":"🔄 Progress reset!","resetTemplateSaved":"🔧 Reset template saved!","resetTemplateTitle":"🔧 Reset Template","actions":"Actions","confirmReset":"Reset all progress? This cannot be undone.","assessment":"Assessment","extra":"Extra","optional":"Optional","topic":"Topic","template":"Template","batch":"Batch","compulsory":"Compulsory","help":"Help","coAllCompulsory":"All compulsory","coAllOptional":"All optional","coSetAll":"Set all","coCompulsory":"Compulsory","coOptional":"Optional","coTitle":"⚙️ Compulsory / Optional","rtTodo":"Todo","rtCurrent":"Current","rtDone":"Done","rtApply":"Apply","toolName0":"Problem Solving Training","toolTip0":"Leverage Google search & AI tools, but always maintain critical thinking.","toolName1":"Submit Work to Google Classroom","toolTip1":"Essential Y9 skill — know how to submit your work to Google Classroom.","toolName2":"Binary Card Simulator","toolTip2":"The most important tool for understanding binary concepts.","toolName3":"File Management","toolTip3":"Clear file management helps you keep a clear mind.","poL30":"Multiple algorithms for the same problem","poL31":"Digital devices store data using two states (bits)","poL40":"Debug simple algorithms & programs","poL41":"Explain errors & fixes","poL42":"Detect errors in data storage/transmission","poL43":"Evaluate algorithm efficiency","poL44":"Search & sort large datasets","poL50":"Complex data types using binary digits","poL51":"Independent algorithm decomposition","poL52":"Variables, selection & iteration","batchComplete":"Complete","modName_m1":"Artificial Intelligence","modName_m2":"Image Manipulation","modName_m3":"Data Visualisation","modName_m4":"Computer Science","modName_m5":"Programming","modName_m6":"Character Project","modBigIdea_m1":"How do machines learn patterns from data to make decisions — and what are the limits?","modBigIdea_m2":"Digital images are just numbers in a grid — understanding pixels opens up creative control.","modBigIdea_m3":"Raw data tells a story when you know how to present it — the right chart reveals the right insight.","modBigIdea_m4":"Mō ngā mea katoa i roto i te rorohiko, he mati tonu: hei rahi pea, he ingoa, he whakaahua — ko te tekau paheka e whakamahia ana hei tuatahi. (Everything in a computer is just bits — binary is used first.)","modBigIdea_m5":"Programming is teaching a computer to solve problems step by step — through sequences, selections, and iterations we bring ideas to life.","modBigIdea_m6":"Great digital outcomes start with a design process — plan, create, test, improve.","modBigIdeaDesc_m1":"AI systems learn from examples, not instructions. They find patterns in data that humans might miss. But they can also make mistakes, show bias, and lack true understanding. This module explores how AI works on the surface, and why we need to think critically about its outputs.","modBigIdeaDesc_m2":"Every digital photo is a grid of tiny squares (pixels), each with a colour number. By manipulating these numbers, we can enhance, transform, and create entirely new images. This connects directly to binary data representation.","modBigIdeaDesc_m3":"Data is everywhere, but it is useless without clear visualisation. Choosing the right chart type, using colour effectively, and designing for your audience are key skills. Good data viz turns confusion into clarity.","modBigIdeaDesc_m4":"This module explores the fundamental building blocks of digital information: binary numbers, image representation, text compression, decomposition, and algorithms. Understanding these concepts reveals how computers store, process, and transmit all forms of data.","modBigIdeaDesc_m5":"In this module you will learn programming fundamentals using Scratch — sequences, events, loops, conditionals, and variables. You will build a multiplication quiz and a guessing game, developing the same computational thinking used by professional developers. These thinking skills transfer to any programming language.","modBigIdeaDesc_m6":"This capstone DDDO (Designing and Developing Digital Outcomes) project brings everything together. You will use a structured design process to plan, develop, test, and refine a character design project. It connects programming, visual design, data skills, and the creative thinking developed throughout the course.","subName_m4s0":"Binary","subName_m4s1":"Image Representation","subName_m4s2":"Text Compression","subName_m4s3":"Decomposition","lesTitle_m1l1":"AI — Digital Sketchbook","lesTitle_m1l2":"Introduction to Machine Learning","lesTitle_m1l3":"Introduction to Large Language Models","lesTitle_m1l4":"Prompt Engineering","lesTitle_m1l5":"Ethics and Use at School","lesTitle_m2l1":"Learning Gimp: Sheep Tutorial","lesTitle_m2l2":"Learning Gimp: Animal Advice Meme","lesTitle_m2l3":"Learning Gimp: Personal Choice","lesTitle_m3l1":"Infographic","lesTitle_m4l1":"CS Task 1.1 — Introduction to Binary","lesTitle_m4l2":"CS Task 1.3 — Do you know binary?","lesTitle_m4l3":"End of Topic Assessment: Binary","lesTitle_m4l4":"EXTRA: CS Task 1.4 — Sending Secret Messages","lesTitle_m4l5":"EXTRA: CS Task 1.5 — Binary Message Poster","lesTitle_m4l6":"CS Task 2.1 — Bitmaps & Run Length Encoding","lesTitle_m4l7":"End of Topic Assessment: Image Representation","lesTitle_m4l8":"CS Task 3.1 — Poi E Text Compression","lesTitle_m4l9":"CS Task 3.2 — Decode & Encode using Dictionaries","lesTitle_m4l10":"End of Topic Assessment: Text Compression","lesTitle_m4l11":"CS Task 4.2 — Getting a Glass of Water","lesTitle_m4l12":"End of Topic Assessment: Decomposition","lesTitle_m5l1":"Task 1A–1E — Programming Fundamentals in Scratch","lesTitle_m5l2":"Task 2 — Multiplication Quiz in Scratch","lesTitle_m5l3":"EoT Guessing Game Scratch Assessment","lesTitle_m5l4":"EXTRA — Debugging in Scratch","lesTitle_m5l5":"EXTRA — Scratch Vocabulary Trainer Tasks","lesTitle_m6l1":"DDDO Project Evidence","lesDesc_m1l1":"Brainstorm & explore what AI means in everyday life through a creative sketchbook activity.","lesDesc_m1l2":"How do machines learn from examples? Training data, patterns, and predictions.","lesDesc_m1l3":"Understanding how LLMs like ChatGPT work — generating text one token at a time.","lesDesc_m1l4":"Hands-on with AI tools. Crafting effective prompts to get useful, accurate results.","lesDesc_m1l5":"AI ethics, bias, misinformation, and responsible use in a school context.","lesDesc_m2l1":"Getting started with GIMP — follow the sheep tutorial to learn core tools and interface.","lesDesc_m2l2":"Create an animal advice meme using GIMP skills — layers, text, and image compositing.","lesDesc_m2l3":"Apply GIMP skills to a personal creative project of your choice. Extra submission opportunity.","lesDesc_m3l1":"Design and create an infographic that presents data visually using effective design principles.","lesDesc_m4l1":"Learn how computers use binary (0s and 1s) to represent all data. Convert between denary and binary.","lesDesc_m4l2":"Check how well you understand binary with practice exercises and self-assessment.","lesDesc_m4l3":"Summative assessment on binary number representation and conversion. Worth 10 marks.","lesDesc_m4l4":"Encode and decode secret messages using binary. Fun extension activity.","lesDesc_m4l5":"Create a visual poster demonstrating how binary messages work.","lesDesc_m4l6":"How are images stored? Learn bitmap representation and run-length encoding compression.","lesDesc_m4l7":"Quiz assessment on how computers store and represent images using binary.","lesDesc_m4l8":"Compress the lyrics of Poi E using text compression techniques — a te reo Māori connection.","lesDesc_m4l9":"Use dictionary-based encoding to compress and decompress text efficiently.","lesDesc_m4l10":"Summative assessment on text compression methods and dictionary encoding. Worth 3 marks.","lesDesc_m4l11":"Decomposition practice: break down getting a glass of water into precise steps.","lesDesc_m4l12":"Write decomposition instructions for an everyday task. Worth 3 marks.","lesDesc_m5l1":"Core Scratch skills: interface, sprites, sequences, events, loops, conditionals, and variables. Five sub-tasks.","lesDesc_m5l2":"Build an interactive multiplication quiz that tests the user and gives feedback.","lesDesc_m5l3":"Design and code a number guessing game in Scratch. End-of-topic assessment — worth CT marks.","lesDesc_m5l4":"Find and fix bugs in broken Scratch programs. Build debugging skills.","lesDesc_m5l5":"Extend your Scratch skills with vocabulary trainer challenges.","lesDesc_m6l1":"Plan, design, build, test, and refine a character project. Submit evidence of the full design process. DDDO assessment.","poTitle3":"Progress Outcome 3 — Te Tapa","poTitle4":"Progress Outcome 4 — Te Tapa","poTitle5":"Progress Outcome 5 — Te Tapa","modMaori_m4":"Mō ngā mea katoa i roto i te rorohiko, he mati tonu: hei rahi pea, he ingoa, he whakaahua — ko te tekau paheka e whakamahia ana hei tuatahi."}),
+  }, {"title":"9DGT Adventure Map","subtitle":"Year 9 Digital Technologies · Burnside High School","modulesDone":"Modules Done","lessonsDone":"Lessons Done","current":"Current","xpEarned":"XP Earned","overallProgress":"Overall journey progress","bigIdea":"💡 Big Idea","yourJourney":"🗺️ Your Digital Journey — 6 Modules","module":"Module","completed":"Completed","lessons":"Lessons","of":"of","lessonsComplete":"lessons complete","done":"Done","now":"Now","todo":"Todo","lastCompleted":"✅ Last Completed","currentMission":"🎯 Current Mission","comingUp":"🔜 Coming Up","next":"Next","nextModule":"Next module","clickToAdvance":"Click lessons above to mark progress","allComplete":"All modules completed!","finalLesson":"Final lesson in this module!","batchModeOn":"Exit Batch","batchModeOff":"Batch","selected":"selected","batchUndo":"Undo","batchCancel":"Cancel","toolsForThisLesson":"🧰 Tools for this lesson","nzCurriculum":"📋 NZ Curriculum — Progress Outcomes","reset":"🔄 Reset","save":"Save","howItWorks":"❓","helpTitle":"🗺️ How the Adventure Map Works","helpDesc":"This is your <span class=\"highlight\">interactive learning journey</span> for 9DGT. Track your progress through each module and lesson!","helpGreen":"<strong style=\"color:var(--text)\">🟢 Green (Done)</strong> — Lessons you have completed. Click to undo if needed.","helpPurple":"<strong style=\"color:var(--text)\">🟣 Purple (Current)</strong> — Where you are right now. Click to mark as done and advance!","helpGrey":"<strong style=\"color:var(--text)\">⬜ Grey (Todo)</strong> — Not yet started. Click to mark as done.","helpXP":"<strong style=\"color:var(--text)\">🎮 XP System:</strong>","helpXPDesc":"Each lesson = <span class=\"highlight\">50 XP</span> · Module completion = <span class=\"highlight\">200 XP bonus</span> · All complete = <span class=\"highlight\">500 XP bonus</span>","helpSave":"<strong style=\"color:var(--text)\">💾 Saving:</strong>","helpSaveDesc":"Progress auto-saves to your browser. Click \"Save\" anytime, or use \"Reset\" to start over.","helpBigIdea":"<strong style=\"color:var(--text)\">💡 Big Idea:</strong>","helpBigIdeaDesc":"Click the purple banner at the top to see the driving question for the current module.","helpModules":"<strong style=\"color:var(--text)\">📂 Module Details:</strong>","helpModulesDesc":"Click any module node on the map to expand its lesson list and see individual progress.","moduleProgress":"Module Progress","clickToJump":"→ Click to jump to next task","progressSaved":"💾 Progress saved!","progressReset":"🔄 Progress reset!","resetTemplateSaved":"🔧 Reset template saved!","resetTemplateTitle":"🔧 Reset Template","actions":"Actions","confirmReset":"Reset all progress? This cannot be undone.","assessment":"Assessment","extra":"Extra","optional":"Optional","topic":"Topic","template":"Template","batch":"Batch","compulsory":"Compulsory","help":"Help","coAllCompulsory":"All compulsory","coAllOptional":"All optional","coSetAll":"Set all","coCompulsory":"Compulsory","coOptional":"Optional","coTitle":"⚙️ Compulsory / Optional","rtTodo":"Todo","rtCurrent":"Current","rtDone":"Done","rtApply":"Apply","toolName0":"Problem Solving Training","toolTip0":"Leverage Google search & AI tools, but always maintain critical thinking.","toolName1":"Submit Work to Google Classroom","toolTip1":"Essential Y9 skill — know how to submit your work to Google Classroom.","toolName2":"Binary Card Simulator","toolTip2":"The most important tool for understanding binary concepts.","toolName3":"File Management","toolTip3":"Clear file management helps you keep a clear mind.","poL30":"Multiple algorithms for the same problem","poL31":"Digital devices store data using two states (bits)","poL40":"Debug simple algorithms & programs","poL41":"Explain errors & fixes","poL42":"Detect errors in data storage/transmission","poL43":"Evaluate algorithm efficiency","poL44":"Search & sort large datasets","poL50":"Complex data types using binary digits","poL51":"Independent algorithm decomposition","poL52":"Variables, selection & iteration","batchComplete":"Complete","modName_m1":"Artificial Intelligence","modName_m2":"Image Manipulation","modName_m3":"Data Visualisation","modName_m4":"Computer Science","modName_m5":"Programming","modName_m6":"Character Project","modBigIdea_m1":"How do machines learn patterns from data to make decisions — and what are the limits?","modBigIdea_m2":"Digital images are just numbers in a grid — understanding pixels opens up creative control.","modBigIdea_m3":"Raw data tells a story when you know how to present it — the right chart reveals the right insight.","modBigIdea_m4":"Mō ngā mea katoa i roto i te rorohiko, he mati tonu: hei rahi pea, he ingoa, he whakaahua — ko te tekau paheka e whakamahia ana hei tuatahi. (Everything in a computer is just bits — binary is used first.)","modBigIdea_m5":"Programming is teaching a computer to solve problems step by step — through sequences, selections, and iterations we bring ideas to life.","modBigIdea_m6":"Great digital outcomes start with a design process — plan, create, test, improve.","modBigIdeaDesc_m1":"AI systems learn from examples, not instructions. They find patterns in data that humans might miss. But they can also make mistakes, show bias, and lack true understanding. This module explores how AI works on the surface, and why we need to think critically about its outputs.","modBigIdeaDesc_m2":"Every digital photo is a grid of tiny squares (pixels), each with a colour number. By manipulating these numbers, we can enhance, transform, and create entirely new images. This connects directly to binary data representation.","modBigIdeaDesc_m3":"Data is everywhere, but it is useless without clear visualisation. Choosing the right chart type, using colour effectively, and designing for your audience are key skills. Good data viz turns confusion into clarity.","modBigIdeaDesc_m4":"This module explores the fundamental building blocks of digital information: binary numbers, image representation, text compression, decomposition, and algorithms. Understanding these concepts reveals how computers store, process, and transmit all forms of data.","modBigIdeaDesc_m5":"In this module you will learn programming fundamentals using Scratch — sequences, events, loops, conditionals, and variables. You will build a multiplication quiz and a guessing game, developing the same computational thinking used by professional developers. These thinking skills transfer to any programming language.","modBigIdeaDesc_m6":"This capstone DDDO (Designing and Developing Digital Outcomes) project brings everything together. You will use a structured design process to plan, develop, test, and refine a character design project. It connects programming, visual design, data skills, and the creative thinking developed throughout the course.","subName_m4s0":"Binary","subName_m4s1":"Image Representation","subName_m4s2":"Text Compression","subName_m4s3":"Decomposition","lesTitle_m1l1":"AI — Digital Sketchbook","lesTitle_m1l2":"Introduction to Machine Learning","lesTitle_m1l3":"Introduction to Large Language Models","lesTitle_m1l4":"Prompt Engineering","lesTitle_m1l5":"Ethics and Use at School","lesTitle_m2l1":"Learning Gimp: Sheep Tutorial","lesTitle_m2l2":"Learning Gimp: Animal Advice Meme","lesTitle_m2l3":"Learning Gimp: Personal Choice","lesTitle_m3l1":"Infographic","lesTitle_m4l1":"CS Task 1.1 — Introduction to Binary","lesTitle_m4l2":"CS Task 1.3 — Do you know binary?","lesTitle_m4l3":"End of Topic Assessment: Binary","lesTitle_m4l4":"EXTRA: CS Task 1.4 — Sending Secret Messages","lesTitle_m4l5":"EXTRA: CS Task 1.5 — Binary Message Poster","lesTitle_m4l6":"CS Task 2.1 — Bitmaps & Run Length Encoding","lesTitle_m4l7":"End of Topic Assessment: Image Representation","lesTitle_m4l8":"CS Task 3.1 — Poi E Text Compression","lesTitle_m4l9":"CS Task 3.2 — Decode & Encode using Dictionaries","lesTitle_m4l10":"End of Topic Assessment: Text Compression","lesTitle_m4l11":"CS Task 4.2 — Getting a Glass of Water","lesTitle_m4l12":"End of Topic Assessment: Decomposition","lesTitle_m5l1":"Task 1A–1E — Programming Fundamentals in Scratch","lesTitle_m5l2":"Task 2 — Multiplication Quiz in Scratch","lesTitle_m5l3":"EoT Guessing Game Scratch Assessment","lesTitle_m5l4":"EXTRA — Debugging in Scratch","lesTitle_m5l5":"EXTRA — Scratch Vocabulary Trainer Tasks","lesTitle_m6l1":"DDDO Project Evidence","lesDesc_m1l1":"Brainstorm & explore what AI means in everyday life through a creative sketchbook activity.","lesDesc_m1l2":"How do machines learn from examples? Training data, patterns, and predictions.","lesDesc_m1l3":"Understanding how LLMs like ChatGPT work — generating text one token at a time.","lesDesc_m1l4":"Hands-on with AI tools. Crafting effective prompts to get useful, accurate results.","lesDesc_m1l5":"AI ethics, bias, misinformation, and responsible use in a school context.","lesDesc_m2l1":"Getting started with GIMP — follow the sheep tutorial to learn core tools and interface.","lesDesc_m2l2":"Create an animal advice meme using GIMP skills — layers, text, and image compositing.","lesDesc_m2l3":"Apply GIMP skills to a personal creative project of your choice. Extra submission opportunity.","lesDesc_m3l1":"Design and create an infographic that presents data visually using effective design principles.","lesDesc_m4l1":"Learn how computers use binary (0s and 1s) to represent all data. Convert between denary and binary.","lesDesc_m4l2":"Check how well you understand binary with practice exercises and self-assessment.","lesDesc_m4l3":"Summative assessment on binary number representation and conversion. Worth 10 marks.","lesDesc_m4l4":"Encode and decode secret messages using binary. Fun extension activity.","lesDesc_m4l5":"Create a visual poster demonstrating how binary messages work.","lesDesc_m4l6":"How are images stored? Learn bitmap representation and run-length encoding compression.","lesDesc_m4l7":"Quiz assessment on how computers store and represent images using binary.","lesDesc_m4l8":"Compress the lyrics of Poi E using text compression techniques — a te reo Māori connection.","lesDesc_m4l9":"Use dictionary-based encoding to compress and decompress text efficiently.","lesDesc_m4l10":"Summative assessment on text compression methods and dictionary encoding. Worth 3 marks.","lesDesc_m4l11":"Decomposition practice: break down getting a glass of water into precise steps.","lesDesc_m4l12":"Write decomposition instructions for an everyday task. Worth 3 marks.","lesDesc_m5l1":"Core Scratch skills: interface, sprites, sequences, events, loops, conditionals, and variables. Five sub-tasks.","lesDesc_m5l2":"Build an interactive multiplication quiz that tests the user and gives feedback.","lesDesc_m5l3":"Design and code a number guessing game in Scratch. End-of-topic assessment — worth CT marks.","lesDesc_m5l4":"Find and fix bugs in broken Scratch programs. Build debugging skills.","lesDesc_m5l5":"Extend your Scratch skills with vocabulary trainer challenges.","lesDesc_m6l1":"Plan, design, build, test, and refine a character project. Submit evidence of the full design process. DDDO assessment.","poTitle3":"PO3","poTitle4":"PO4","poTitle5":"PO5","modMaori_m4":"Mō ngā mea katoa i roto i te rorohiko, he mati tonu: hei rahi pea, he ingoa, he whakaahua — ko te tekau paheka e whakamahia ana hei tuatahi."}),
   zh: Object.assign({
     title: '冒险地图',
     subtitle: '数字技术',
@@ -1713,6 +1751,24 @@ function buildToolsSection(settings, i18n) {
   }).join('\n');
   const labelText = (i18n && i18n.en && i18n.en.toolsForThisLesson) || '🧰 Useful Links';
   return '<div class="tools-section"><div class="section-label" id="tools-label">' + labelText + '</div><div class="tools-grid" id="tools-grid">' + cards + '</div></div>';
+}
+
+function toggleTheme() {
+  const html = document.documentElement;
+  const isLight = html.getAttribute('data-theme') === 'light';
+  html.setAttribute('data-theme', isLight ? 'dark' : 'light');
+  localStorage.setItem(STORAGE_KEY + '_theme', isLight ? 'dark' : 'light');
+  const btn = document.getElementById('theme-btn');
+  if (btn) btn.textContent = isLight ? '🌙' : '☀️';
+}
+
+function initTheme() {
+  const saved = localStorage.getItem(STORAGE_KEY + '_theme');
+  if (saved === 'light') {
+    document.documentElement.setAttribute('data-theme', 'light');
+    const btn = document.getElementById('theme-btn');
+    if (btn) btn.textContent = '☀️';
+  }
 }
 
 function switchLang(lang) {
@@ -2406,14 +2462,19 @@ function render() {
     card.addEventListener('click', () => window.open(card.dataset.href, '_blank'));
   });
   // Translate NZ Curriculum section (dynamic — scan i18n for poLNN keys)
-  // Only match single-digit NZ Progress Outcomes: poL3, poL4, poL5... (NOT poL30 which is NCEA)
-  Object.keys(i18n.en || {}).filter(k => /^poL[1-9]$/.test(k)).forEach(key => {
+  // Match both single-digit (poL3) and two-digit (poL30, poL31) NZ Progress Outcomes
+  Object.keys(i18n.en || {}).filter(k => /^poL\d{1,2}$/.test(k)).forEach(key => {
     const el = document.getElementById(key);
     if (el) el.textContent = t(key);
   });
-  // Translate NCEA Standards section (dynamic — scan i18n for ncea-* AND legacy poL30/poL31 format)
-  // Legacy format: poL30, poL31, poL40... = Level 3+ Achievement Standards
-  Object.keys(i18n.en || {}).filter(k => k.startsWith('ncea-') || /^poL[3-9]\d$/.test(k)).forEach(key => {
+  // Translate PO level group labels (poTitle3, poTitle4 etc.)
+  Object.keys(i18n.en || {}).filter(k => /^poTitle\d$/.test(k)).forEach(key => {
+    const el = document.getElementById(key);
+    if (el) el.textContent = t(key);
+  });
+  // Translate NCEA Standards section (dynamic — scan i18n for ncea-* AND legacy poL300+ format)
+  // Legacy format: poL300, poL310... = 3+ digits = Level 3+ Achievement Standards
+  Object.keys(i18n.en || {}).filter(k => k.startsWith('ncea-') || /^poL\d{3,}$/.test(k)).forEach(key => {
     const el = document.getElementById(key);
     if (el) el.textContent = t(key);
   });
@@ -3106,7 +3167,7 @@ function showToast(msg) {
     background:var(--bg2);color:var(--text);border:1px solid var(--border);
     padding:10px 20px;border-radius:var(--radius-sm);font-size:13px;
     z-index:9999;animation:modal-in .3s ease;
-    box-shadow:0 4px 16px rgba(0,0,0,.4);
+    box-shadow:var(--shadow-dropdown);
   `;
   toast.textContent = msg;
   document.body.appendChild(toast);
