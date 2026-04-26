@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Projects | YiFan Wang</title>
+    <meta name="description"
+          content="A complete collection of YiFan Wang's teaching projects, curriculum tools, web tools, and prototypes — organised by category.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="style_index.css">
+    <style>
+        /* ── Projects page specific styles ── */
+        .projects-hero {
+            padding: 7.5rem 1rem 2rem;
+        }
+
+        .projects-body {
+            padding: 0 1rem 5rem;
+        }
+
+        /* Filter bar */
+        .filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 2.5rem;
+            padding: 0.5rem;
+            background: var(--mist, #DCEEF5);
+            border-radius: 999px;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1.25rem;
+            border-radius: 999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--slate, #5F6C7B);
+            background: transparent;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-btn:hover {
+            background: rgba(255,255,255,0.7);
+        }
+
+        .filter-btn.active {
+            background: var(--ocean, #195E83);
+            color: white;
+            border-color: var(--ocean, #195E83);
+        }
+
+        .filter-btn .count {
+            margin-left: 0.375rem;
+            opacity: 0.7;
+            font-weight: 500;
+        }
+
+        .filter-btn[style*="display:none"] {
+            display: none !important;
+        }
+
+        /* Category section */
+        .category-section {
+            margin-bottom: 4rem;
+        }
+
+        .category-section[data-hidden="true"] {
+            display: none !important;
+        }
+
+        .category-divider {
+            height: 1px;
+            background: var(--line, #C9DCE6);
+            margin: 1.5rem 0;
+        }
+
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .category-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--slate, #5F6C7B);
+        }
+
+        .category-title {
+            font-family: 'Fraunces', serif;
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: var(--ink, #14213D);
+            margin: 0.25rem 0 0;
+        }
+
+        .category-count {
+            font-size: 0.875rem;
+            color: var(--slate, #5F6C7B);
+        }
+
+        /* Project grid */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* Project card */
+        .pcard {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+            background: white;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(20,33,61,0.08);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .pcard:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(20,33,61,0.15);
+        }
+
+        .pcard-img-wrap {
+            width: 100%;
+            aspect-ratio: 16/9;
+            overflow: hidden;
+            background: var(--mist, #DCEEF5);
+        }
+
+        .pcard-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .pcard:hover .pcard-img {
+            transform: scale(1.05);
+        }
+
+        .pcard-body {
+            padding: 1.25rem 1.5rem 1.5rem;
+        }
+
+        .pcard-meta {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 0.75rem;
+        }
+
+        .pcard-tag {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            background: var(--mist, #DCEEF5);
+            color: var(--ocean, #195E83);
+        }
+
+        .status-badge {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+        }
+
+        .status-live {
+            background: #E6F7EE;
+            color: #1B7A4C;
+        }
+
+        .status-archive {
+            background: #FFF3E0;
+            color: #E65100;
+        }
+
+        .pcard-title {
+            font-family: 'Fraunces', serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--ink, #14213D);
+            margin: 0 0 0.5rem;
+        }
+
+        .pcard-desc {
+            font-size: 0.875rem;
+            line-height: 1.6;
+            color: var(--slate, #5F6C7B);
+            margin: 0 0 1rem;
+        }
+
+        .pcard-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--ocean, #195E83);
+        }
+
+        .pcard-cta svg {
+            transition: transform 0.2s ease;
+        }
+
+        .pcard:hover .pcard-cta svg {
+            transform: translateX(3px);
+        }
+
+        /* Stats row */
+        .stats-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .stat-chip {
+            display: flex;
+            flex-direction: column;
+            padding: 1rem 1.5rem;
+            background: rgba(255,255,255,0.85);
+            border-radius: 0.75rem;
+            backdrop-filter: blur(8px);
+        }
+
+        .stat-chip strong {
+            font-family: 'Fraunces', serif;
+            font-size: 1.5rem;
+            color: var(--ink, #14213D);
+        }
+
+        .stat-chip span {
+            font-size: 0.75rem;
+            color: var(--slate, #5F6C7B);
+        }
+
+        /* Back link */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--ocean, #195E83);
+            text-decoration: none;
+            margin-bottom: 1.5rem;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .projects-hero {
+                padding: 6rem 1rem 1.5rem;
+            }
+
+            .category-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-bar {
+                gap: 0.375rem;
+                padding: 0.375rem;
+            }
+
+            .filter-btn {
+                padding: 0.375rem 0.875rem;
+                font-size: 0.8125rem;
+            }
+        }
+    </style>
+</head>
+<body class="text-ink">
+
+<!-- ── Navigation (identical to index.html) ── -->
+<nav class="site-nav fixed top-0 z-50 w-full">
+    <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+        <a href="index.html" class="brand-mark" aria-label="YiFan Wang home">
+            <img src="images/logo.png" alt="YiFan Wang logo" class="h-10 w-auto">
+            <span class="brand-text">YiFan Wang</span>
+        </a>
+        <div class="flex items-center gap-3">
+            <div class="hidden items-center gap-2 md:flex">
+                <a href="index.html#home" class="nav-link">Home</a>
+                <a href="index.html#approach" class="nav-link">Approach</a>
+                <a href="projects.html" class="nav-link" style="color: var(--text);">Projects</a>
+                <a href="cv.html" class="nav-link">CV</a>
+                <a href="index.html#contact" class="nav-link nav-link-strong">Contact</a>
+            </div>
+            <button id="menu-toggle" class="menu-button md:hidden" aria-label="Open navigation menu" aria-expanded="false">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 7h16M4 12h16M4 17h16"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+    <div id="mobile-menu" class="mobile-panel hidden md:hidden">
+        <div class="mx-auto flex max-w-6xl flex-col gap-2 px-4 pb-4 sm:px-6">
+            <a href="index.html#home" class="mobile-link">Home</a>
+            <a href="index.html#approach" class="mobile-link">Approach</a>
+            <a href="projects.html" class="mobile-link">Projects</a>
+            <a href="cv.html" class="mobile-link">CV</a>
+            <a href="index.html#contact" class="mobile-link">Contact</a>
+        </div>
+    </div>
+</nav>
+
+<main>
+    <!-- ── Hero ── -->
+    <section class="projects-hero">
+        <div class="section-wrapper">
+            <div class="section-content fade-in" style="padding: 2.5rem 2.5rem 2rem;">
+                <a href="index.html" class="back-link">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M10 12L6 8l4-4"/>
+                    </svg>
+                    Back to home
+                </a>
+                <p class="section-kicker">All projects</p>
+                <h1 class="section-title" style="max-width: 18ch; margin: 0;">Every project, in one place.</h1>
+                <p class="section-intro" style="max-width: 44rem;">
+                    From classroom electronics to web tools and gamified curriculum maps — here's the complete picture of what I've been building across teaching, engineering, and education technology.
+                </p>
+                <div class="stats-row">
+                    <div class="stat-chip">
+                        <strong>13</strong>
+                        <span>Total projects</span>
+                    </div>
+                    <div class="stat-chip">
+                        <strong>4</strong>
+                        <span>Categories</span>
+                    </div>
+                    <div class="stat-chip">
+                        <strong>Y9–Y13</strong>
+                        <span>Year levels covered</span>
+                    </div>
+                    <div class="stat-chip">
+                        <strong>NZ</strong>
+                        <span>Based in</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── Filter + Projects ── -->
+    <section class="projects-body">
+        <div class="section-wrapper">
+
+            <!-- Filter bar -->
+            <div class="filter-bar" role="group" aria-label="Filter projects by category">
+                <button class="filter-btn active" data-filter="all">
+                    All <span class="count">13</span>
+                </button>
+                <button class="filter-btn" data-filter="classroom">
+                    🎓 Classroom Projects <span class="count">5</span>
+                </button>
+                <button class="filter-btn" data-filter="curriculum">
+                    🗺️ Curriculum Tools <span class="count">5</span>
+                </button>
+                <button class="filter-btn" data-filter="experience">
+                    🏅 Student Experience <span class="count">2</span>
+                </button>
+                <button class="filter-btn" data-filter="webtools">
+                    🌐 Web Tools <span class="count">1</span>
+                </button>
+                <button class="filter-btn" data-filter="prototypes" style="display:none;">
+                    🔧 Prototypes <span class="count">3</span>
+                </button>
+            </div>
+
+            <!-- ─────────────────────────────────────────── -->
+            <!-- Category 1: Classroom Projects              -->
+            <!-- ─────────────────────────────────────────── -->
+            <div class="category-section" data-category="classroom">
+                <div class="category-divider"></div>
+                <div class="category-header">
+                    <div>
+                        <p class="category-label">🎓 Category 01</p>
+                        <h2 class="category-title">Classroom Projects</h2>
+                    </div>
+                    <span class="category-count">5 projects · Year 9 – 13</span>
+                </div>
+                <div class="projects-grid">
+
+                    <!-- Y9 Electronics -->
+                    <a href="teaching/project_y9_electronics.html" class="pcard" data-category="classroom">
+                        <div class="pcard-img-wrap">
+                            <img src="teaching/images/Y9project.png" alt="Year 9 Nightlight House project" class="pcard-img" loading="lazy">
+                        </div>
+                        <div class="pcard-body">
+                            <div class="pcard-meta">
+                                <span class="pcard-tag">Year 9</span>
+                                <span class="pcard-tag">Electronics</span>
+                                <span class="status-badge status-live">● Live</span>
+                            </div>
+                            <h3 class="pcard-title">Nightlight House</h3>
+                            <p class="pcard-desc">A beginner-friendly electronics project covering soldering, circuit assembly, troubleshooting, and creative finishing through a working nightlight.</p>
+                            <span class="pcard-cta">See project
+                                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+                            </span>
+                        </div>
+                    </a>
+
+                    <!-- Y10 Bluetooth -->
+                    <a href="teaching/project_y10_bluetooth.html" class="pcard" data-category="classroom">
+                        <div class="pcard-img-wrap">
+                            <img src="teaching/images/Bluetooth_speaker.png" alt="Year 10 Bluetooth Speaker" class="pcard-img" loading="lazy">
+                        </div>
+                        <div class="pcard-body">
+                            <div class="pcard-meta">
+                                <span class="pcard-tag">Year 10</span>
+                                <span class="pcard-tag">Audio build</span>
+                                <span class="status-badge status-live">● Live</span>
+                            </div>
+                            <h3 class="pcard-title">Bluetooth Speaker</h3>
+                            <p class="pcard-desc">Students build a functional speaker system while developing confidence in veroboard assembly, wiring, soldering, and the logic behind portable audio hardware.</p>
+                            <span class="pcard-cta">See project
+                                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+                            </span>
+                        </div>
+                    </a>
+
+                    <!-- Y11 Digital -->
+                    <a href="teaching/project_y11_digital.html" class="pcard" data-category="classroom">
+                        <div class="pcard-img-wrap">
+                            <img src="teaching/images/3_arduino_ide_upload.png" alt="Year 11 Arduino and Robot Movement" class="pcard-img" loading="lazy">
+                        </div>
+                        <div class="pcard-body">
+                            <div class="pcard-meta">
+                                <span class="pcard-tag">Year 11</span>
+                                <span class="pcard-tag">Robotics</span>
+                                <span class="status-badge status-live">● Live</span>
+                            </div>
+                            <h3 class="pcard-title">Arduino and Robot Movement</h3>
+                            <p class="pcard-desc">A robotics unit that blends electronics and code, giving students a practical route into sensors, motion control logic, and iterative problem-solving.</p>
+                            <span class="pcard-cta">See project
+                                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+                            </span>
+                        </div>
+                    </a>
+
+                    <!-- Y12 Programming -->
+                    <a href="teaching/project_y12_programming.html" class="pcard" data-category="classroom">
+                        <div class="pcard-img-wrap">
+                            <img src="teaching/images/12DTP_github.png" alt="Year 12 Flask Web App Project" class="pcard-img" loading="lazy">
+                        </div>
+                        <div class="pcard-body">
+                            <div class="pcard-meta">
+                                <span class="pcard-tag">Year 12</span>
+                                <span class="pcard-tag">Web apps</span>
+                                <span class="status-badge status-live">● Live</span>
+                            </div>
+                            <h3 class="pcard-title">Flask Web App Project</h3>
+                            <p class="pcard-desc">Students design and build database-backed web applications, practicing software engineering workflows from planning through testing and refinement.</p>
+                            <span class="pcard-cta">See project
+                                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+                            </span>
+                        </div>
+                    </a>
+
+                    <!-- Y13 Programming -->
+                    <a href="teaching/project_y13_programming.html" class="pcard" data-category="classroom">
+                        <div class="pcard-img-wrap">
+                            <img src="teaching/images/13DTP_github.png" alt="Year 13 Advanced Flask Project" class="pcard-img" loading="lazy">
+                        </div>
+                        <div class="pcard-body">
+                            <div class="pcard-meta">
+                                <span class="pcard-tag">Year 13</span>
+                                <span class="pcard-tag">Advanced programming</span>
+                                <span class="status-badge status-live">● Live</span>
+                            </div>
+                            <h3 class="pcard-title">Advanced Flask Project</h3>
+                            <p class="pcard-desc">An upgraded full-year programming experience using WTForms and SQLAlchemy to help students build robust, user-centered software with stronger engineering habits.</p>
+                            <span class="pcard-cta">See project
+                                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+                            </span>
+                        </div>
+                    </a>
+
+                </div>
+            </div>
+
+            <!-- ─────────────────────────────────────────── -->
+            <!-- Category 2: Curriculum Tools                -->
+            <!-- ─────────────────────────────────────────── -->
+            <div class="category-section" data-category="curriculum">
+                <div class="category-divider"></div>
+                <div class="category-header">
+                    <div>
+                        <p class="category-label">🗺️ Category 02</p>
+                        <h2 class="category-title">Curriculum Tools</h2>
+                    </div>
+                    <span class="category-count">5 projects · Interactive learning</span>
+                </div>
+                <div class="projects-grid">
+
+                    <!-- Knowledge Graph -->
+                    <a href="./bhs_tech_knowledge_map/knowledge-graph.html" class="pcard" data-category="curriculum">
+                        <div class="pcard-img-wrap">
+                            <img src="./bhs_tech_knowledge_map/images/bhs_tech_km.png" alt="BHS Digital Technologies Knowledge Graph" class="pcard-img" loading="lazy">
+                        </div>
+                        <div class="pcard-body">
+                            <div class="pcard-meta">
+                                <span class="pcard-tag">Teaching tool</span>
+                                <span class="pcard-tag">Knowledge graph</span>
+                                <span class="status-badge status-live">● Live</span>
+                            </div>
+                            <h3 class="pcard-title">BHS Digital Technologies Knowledge Map</h3>
+                            <p class="pcard-desc">An interactive knowledge graph visualising the curriculum structure for Digital Technologies at Burnside High School, built with D3.js to help students understand how concepts connect.</p>
+                            <span class="pcard-cta">Explore knowledge map
+                                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+                            </span>
+                        </div>
+                    </a>
+
+                    <!-- Adventure Map Manager -->
+                    <a href="./bhs_tech_knowledge_map/adventure_map_manager.html" class="pcard" data-category="curriculum">
+                        <div class="pcard-img-wrap">
+                            <img src="./bhs_tech_knowledge_map/images/bhs_adventure_map_generator.png" alt="Adventure Map Manager" class="pcard-img" loading="lazy">
+                        </div>
+                        <div class="pcard-body">
+                            <div class="pcard-meta">
+                                <span class="pcard-tag">Web tool</span>
+                                <span class="pcard-tag">Curriculum builder</span>
+                                <span class="status-badge status-live">● Live</span>
+                            </div>
+                            <h3 class="pcard-title">Adventure Map Manager</h3>
+                            <p class="pcard-desc">A web-based management tool that allows teachers to edit courses, manage student progress, and export standalone adventure maps for classroom use — making gamified learning accessible to any teacher.</p>
+                            <span class="pcard-cta">Explore manager tool
+                                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+                            </span>
+                        </div>
+                    </a>
+
+                    <!-- 9DGT Adventure Map -->
+                    <a href="./bhs_tech_knowledge_map/curriculum/JuniorY9Y10/9dgt_adventure_map.html" class="pcard" data-category="curriculum">
+                        <div class="pcard-img-wrap">
+                            <img src="./bhs_tech_knowledge_map/images/9dgt_adventure_map.png" alt="9DGT Adventure Map" class="pcard-img" loading="lazy">
+                        </div>
+                        <div class="pcard-body">
+                            <div class="pcard-meta">
+                                <span class="pcard-tag">Year 9</span>
+                                <span class="pcard-tag">Learning map</span>
+                                <span class="status-badge status-live">● Live</span>
+                            </div>
+                            <h3 class="pcard-title">Year 9 DGT Adventure Map</h3>
+                            <p class="pcard-desc">A gamified learning interface helping Y9 students navigate the Digital Technologies curriculum through adventure-style progress tracking.</p>
+                            <span class="pcard-cta">Explore map
+                                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+                            </span>
+                        </div>
+                    </a>
+
+                    <!-- 10DGT Adventure Map -->
+                    <a href="./bhs_tech_knowledge_map/curriculum/JuniorY9Y10/10dgt_adventure_map.html" class="pcard" data-category="curriculum">
+                        <div class="pcard-img-wrap">
+                            <img src="./bhs_tech_knowledge_map/images/10dgt_adventure_map.png" alt="10DGT Adventure Map" class="pcard-img" loading="lazy">
+                        </div>
+                        <div class="pcard-body">
+                            <div class="pcard-meta">
+                                <span class="pcard-tag">Year 10</span>
+                                <span class="pcard-tag">Learning map</span>
+                                <span class="status-badge status-live">● Live</span>
+                            </div>
+                            <h3 class="pcard-title">Year 10 DGT Adventure Map</h3>
+                            <p class="pcard-desc">A gamified interface for Y10 Digital Technologies — students navigate the curriculum through modules and milestones in an adventure-style format.</p>
+                            <span class="pcard-cta">Explore map
+                                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+                            </span>
+                        </div>
+                    </a>
+
+                    <!-- 11DTP Adventure Map -->
+                    <a href="./bhs_tech_knowledge_map/curriculum/Year11/11dtp_adventure_map.html" class="pcard" data-category="curriculum">
+                        <div class="pcard-img-wrap">
+                            <img src="./bhs_tech_knowledge_map/images/11dtp_adventure_map.png" alt="11DTP Adventure Map" class="pcard-img" loading="lazy">
+                        </div>
+                        <div class="pcard-body">
+                            <div class="pcard-meta">
+                                <span class="pcard-tag">Year 11</span>
+                                <span class="pcard-tag">Learning map</span>
+                                <span class="status-badge status-live">● Live</span>
+                            </div>
+                            <h3 class="pcard-title">Year 11 DTP Adventure Map</h3>
+                            <p class="pcard-desc">A gamified interface for Y11 Digital Technologies — students track progress through an adventure map that connects theory, practice, and assessment.</p>
+                            <span class="pcard-cta">Explore map
+                                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+                            </span>
+                        </div>
+                    </a>
+
+                </div>
+            </div>
+
+            <!-- ─────────────────────────────────────────── -->
+            <!-- Category 3: Student Experience               -->
+            <!-- ─────────────────────────────────────────── -->
+            <div class="category-section" data-category="experience">
+                <div class="category-divider"></div>
+                <div class="category-header">
+                    <div>
+                        <p class="category-label">🏅 Category 03</p>
+                        <h2 class="category-title">Student Experience</h2>
+                    </div>
+                    <span class="category-count">2 projects · Feedback &amp; recognition</span>
+                </div>
+                <div class="projects-grid">
+
+                    <!-- 9DGT Certificate Generator -->
+                    <a href="./bhs_tech_knowledge_map/9dgt_certificate_web.html" class="pcard" data-category="experience">
+                        <div class="pcard-img-wrap">
+                            <img src="./bhs_tech_knowledge_map/images/9dgt_certificate_web.png" alt="9DGT Certificate Generator" class="pcard-img" loading="lazy">
+                        </div>
+                        <div class="pcard-body">
+                            <div class="pcard-meta">
+                                <span class="pcard-tag">9DGT</span>
+                                <span class="pcard-tag">Certificate</span>
+                                <span class="status-badge status-live">● Live</span>
+                            </div>
+                            <h3 class="pcard-title">9DGT Certificate Generator</h3>
+                            <p class="pcard-desc">A dynamic certificate generator for the 9DGT course, supporting 9 rank tiers (Iron → Challenger) with Canvas rendering, rank badges, and PNG export.</p>
+                            <span class="pcard-cta">Open generator
+                                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+                            </span>
+                        </div>
+                    </a>
+
+                    <!-- Teaching Feedback -->
+                    <a href="teaching/teachers_feedback.html" class="pcard" data-category="experience">
+                        <div class="pcard-img-wrap">
+                            <img src="teaching/images2/student_feedback2.png" alt="Teaching Feedback" class="pcard-img" loading="lazy">
+                        </div>
+                        <div class="pcard-body">
+                            <div class="pcard-meta">
+                                <span class="pcard-tag">Teaching</span>
+                                <span class="pcard-tag">Feedback</span>
+                                <span class="status-badge status-live">● Live</span>
+                            </div>
+                            <h3 class="pcard-title">Teaching Feedback</h3>
+                            <p class="pcard-desc">Reflections and feedback from associate teachers, relievers, and students that show how my classroom presence and lesson planning are being received in real settings.</p>
+                            <span class="pcard-cta">Read feedback
+                                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+                            </span>
+                        </div>
+                    </a>
+
+                </div>
+            </div>
+
+            <!-- ─────────────────────────────────────────── -->
+            <!-- Category 4: Web Tools                      -->
+            <!-- ─────────────────────────────────────────── -->
+            <div class="category-section" data-category="webtools">
+                <div class="category-divider"></div>
+                <div class="category-header">
+                    <div>
+                        <p class="category-label">🌐 Category 04</p>
+                        <h2 class="category-title">Web Tools</h2>
+                    </div>
+                    <span class="category-count">1 project · Public tools</span>
+                </div>
+                <div class="projects-grid">
+
+                    <!-- NZ School Map -->
+                    <a href="schools_map/index.html" class="pcard" data-category="webtools">
+                        <div class="pcard-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1516546453174-5e1098a4b4af?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=80" alt="NZ Accredited School Map" class="pcard-img" loading="lazy">
+                        </div>
+                        <div class="pcard-body">
+                            <div class="pcard-meta">
+                                <span class="pcard-tag">Web tool</span>
+                                <span class="pcard-tag">Data + search</span>
+                                <span class="status-badge status-live">● Live</span>
+                            </div>
+                            <h3 class="pcard-title">NZ Accredited School Map</h3>
+                            <p class="pcard-desc">An interactive map to help international teachers quickly understand accredited employer schools in New Zealand, with regional filtering and school search for visa-planning decisions.</p>
+                            <span class="pcard-cta">Open web tool
+                                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+                            </span>
+                        </div>
+                    </a>
+
+                </div>
+            </div>
+
+            <!-- ─────────────────────────────────────────── -->
+            <!-- Category 5: Prototypes (HIDDEN)           -->
+            <!-- ─────────────────────────────────────────── -->
+            <div class="category-section" data-category="prototypes" data-hidden="true" style="display:none;">
+                <div class="category-divider"></div>
+                <div class="category-header">
+                    <div>
+                        <p class="category-label">🔧 Category 05</p>
+                        <h2 class="category-title">Prototypes</h2>
+                    </div>
+                    <span class="category-count">3 projects · IoT + Early work</span>
+                </div>
+                <div class="projects-grid">
+
+                    <!-- Smart Clothes Rack (IoT) -->
+                    <a href="memory/index.html" class="pcard" data-category="prototypes">
+                        <div class="pcard-img-wrap">
+                            <img src="memory/images/home/2.png" alt="Smart Clothes Rack" class="pcard-img" loading="lazy">
+                        </div>
+                        <div class="pcard-body">
+                            <div class="pcard-meta">
+                                <span class="pcard-tag">IoT</span>
+                                <span class="pcard-tag">Prototype</span>
+                                <span class="status-badge status-archive">● Archived</span>
+                            </div>
+                            <h3 class="pcard-title">Smart Clothes Rack</h3>
+                            <p class="pcard-desc">An earlier IoT prototype that used sensors, Bluetooth, and motor control to automate a retractable clothes rack based on environmental conditions.</p>
+                            <span class="pcard-cta">View archive
+                                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+                            </span>
+                        </div>
+                    </a>
+
+                    <!-- Shumo Early Projects -->
+                    <a href="shumo/index.html" class="pcard" data-category="prototypes">
+                        <div class="pcard-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1515879218367-8466d9102d7b?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=80" alt="Shumo Early Projects" class="pcard-img" loading="lazy">
+                        </div>
+                        <div class="pcard-body">
+                            <div class="pcard-meta">
+                                <span class="pcard-tag">Early work</span>
+                                <span class="pcard-tag">Shumo</span>
+                                <span class="status-badge status-archive">● Archived</span>
+                            </div>
+                            <h3 class="pcard-title">Shumo Early Projects</h3>
+                            <p class="pcard-desc">Early-stage projects and experiments from my learning journey, including mathematical modeling competition entries and prototype explorations.</p>
+                            <span class="pcard-cta">View archive
+                                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+                            </span>
+                        </div>
+                    </a>
+
+                    <!-- Y9 3D Design -->
+                    <a href="teaching/project_y9_3d_desigin.html" class="pcard" data-category="prototypes">
+                        <div class="pcard-img-wrap">
+                            <img src="teaching/images/Y9project.png" alt="Year 9 3D Design" class="pcard-img" loading="lazy">
+                        </div>
+                        <div class="pcard-body">
+                            <div class="pcard-meta">
+                                <span class="pcard-tag">Year 9</span>
+                                <span class="pcard-tag">3D Design</span>
+                                <span class="status-badge status-archive">● Archived</span>
+                            </div>
+                            <h3 class="pcard-title">Nightlight House 3D Design</h3>
+                            <p class="pcard-desc">A 3D design iteration of the Nightlight House project — exploring CAD modeling and 3D printing for classroom electronics projects.</p>
+                            <span class="pcard-cta">View archive
+                                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+                            </span>
+                        </div>
+                    </a>
+
+                </div>
+            </div>
+
+        </div>
+    </section>
+</main>
+
+<!-- ── Footer (identical to index.html) ── -->
+<footer class="site-footer">
+    <div class="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+        <div class="flex flex-col items-center gap-4 md:flex-row md:justify-between">
+            <div class="flex items-center gap-2">
+                <img src="images/logo.png" alt="YiFan Wang" class="h-8 w-auto opacity-70">
+                <span class="text-sm text-slate">© 2024 YiFan Wang</span>
+            </div>
+            <div class="flex gap-4 text-sm text-slate">
+                <a href="index.html#home" class="hover:text-ink">Home</a>
+                <a href="index.html#approach" class="hover:text-ink">Approach</a>
+                <a href="projects.html" class="hover:text-ink">Projects</a>
+                <a href="cv.html" class="hover:text-ink">CV</a>
+                <a href="index.html#contact" class="hover:text-ink">Contact</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- ── Scripts ── -->
+<script>
+    // ── Mobile menu toggle (identical to index.html)
+    const menuToggle = document.getElementById('menu-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    if (menuToggle && mobileMenu) {
+        menuToggle.addEventListener('click', () => {
+            const isOpen = !mobileMenu.classList.contains('hidden');
+            mobileMenu.classList.toggle('hidden');
+            menuToggle.setAttribute('aria-expanded', !isOpen);
+        });
+    }
+
+    // ── Filter functionality
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const categories = document.querySelectorAll('.category-section');
+
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Update active state
+            filterBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const filter = btn.dataset.filter;
+
+            // Show/hide categories
+            categories.forEach(cat => {
+                if (filter === 'all') {
+                    // Show all non-hidden categories
+                    if (cat.dataset.hidden !== 'true') {
+                        cat.style.display = '';
+                    }
+                } else {
+                    // Show only matching category
+                    if (cat.dataset.category === filter) {
+                        cat.style.display = '';
+                    } else {
+                        cat.style.display = 'none';
+                    }
+                }
+            });
+        });
+    });
+
+    // ── Scroll-triggered fade-in (IntersectionObserver)
+    const fadeEls = document.querySelectorAll('.fade-in');
+    if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        fadeEls.forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+    } else {
+        // Fallback: show all immediately
+        fadeEls.forEach(el => {
+            el.style.opacity = '1';
+        });
+    }
+</script>
+
+</body>
+</html>
