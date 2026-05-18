@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>八字十神组合查询系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .query-section {
+            padding: 40px;
+            background: #f8f9fa;
+        }
+        
+        .query-form {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group label {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+            font-size: 14px;
+        }
+        
+        .form-group select {
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background: white;
+            cursor: pointer;
+        }
+        
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            padding: 12px 40px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+        
+        .results-section {
+            padding: 40px;
+        }
+        
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .results-header h2 {
+            color: #333;
+            font-size: 24px;
+        }
+        
+        .results-count {
+            background: #667eea;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+        
+        .result-card {
+            background: white;
+            border: 2px solid #eee;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .result-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .result-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-color: #667eea;
+        }
+        
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .result-name {
+            font-size: 20px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .result-level {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .level-极高 {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .level-高 {
+            background: #cce5ff;
+            color: #004085;
+        }
+        
+        .level-中 {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .result-gods {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .god-tag {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .result-traits {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .result-traits strong {
+            color: #667eea;
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .result-directions {
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .result-directions strong {
+            color: #333;
+        }
+        
+        .result-note {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+        
+        .no-results-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+        
+        .category-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #e9ecef;
+            color: #495057;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .query-form {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .results-header {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔮 八字十神组合查询系统</h1>
+            <p>输入十神组合，查询命理特征与职业方向</p>
+        </div>
+        
+        <div class="query-section">
+            <div class="query-form">
+                <div class="form-group">
+                    <label>第一神（必选）</label>
+                    <select id="god1">
+                        <option value="">请选择十神</option>
+                        <option value="正印">正印（温和谦虚）</option>
+                        <option value="偏印">偏印（小众怪异）</option>
+                        <option value="正官">正官（严肃认真）</option>
+                        <option value="七杀">七杀（霸道果断）</option>
+                        <option value="正财">正财（世故保守）</option>
+                        <option value="偏财">偏财（豪放慷慨）</option>
+                        <option value="食神">食神（厚道随性）</option>
+                        <option value="伤官">伤官（尖锐高傲）</option>
+                        <option value="比肩">比肩（自信性刚）</option>
+                        <option value="劫财">劫财（性急爱争）</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>第二神（可选）</label>
+                    <select id="god2">
+                        <option value="">不限</option>
+                        <option value="正印">正印（温和谦虚）</option>
+                        <option value="偏印">偏印（小众怪异）</option>
+                        <option value="正官">正官（严肃认真）</option>
+                        <option value="七杀">七杀（霸道果断）</option>
+                        <option value="正财">正财（世故保守）</option>
+                        <option value="偏财">偏财（豪放慷慨）</option>
+                        <option value="食神">食神（厚道随性）</option>
+                        <option value="伤官">伤官（尖锐高傲）</option>
+                        <option value="比肩">比肩（自信性刚）</option>
+                        <option value="劫财">劫财（性急爱争）</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>第三神（可选）</label>
+                    <select id="god3">
+                        <option value="">不限</option>
+                        <option value="正印">正印（温和谦虚）</option>
+                        <option value="偏印">偏印（小众怪异）</option>
+                        <option value="正官">正官（严肃认真）</option>
+                        <option value="七杀">七杀（霸道果断）</option>
+                        <option value="正财">正财（世故保守）</option>
+                        <option value="偏财">偏财（豪放慷慨）</option>
+                        <option value="食神">食神（厚道随性）</option>
+                        <option value="伤官">伤官（尖锐高傲）</option>
+                        <option value="比肩">比肩（自信性刚）</option>
+                        <option value="劫财">劫财（性急爱争）</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>第四神（可选）</label>
+                    <select id="god4">
+                        <option value="">不限</option>
+                        <option value="正印">正印（温和谦虚）</option>
+                        <option value="偏印">偏印（小众怪异）</option>
+                        <option value="正官">正官（严肃认真）</option>
+                        <option value="七杀">七杀（霸道果断）</option>
+                        <option value="正财">正财（世故保守）</option>
+                        <option value="偏财">偏财（豪放慷慨）</option>
+                        <option value="食神">食神（厚道随性）</option>
+                        <option value="伤官">伤官（尖锐高傲）</option>
+                        <option value="比肩">比肩（自信性刚）</option>
+                        <option value="劫财">劫财（性急爱争）</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="queryCombinations()">🔍 查询组合</button>
+                <button class="btn btn-secondary" onclick="resetForm()">🔄 重置</button>
+            </div>
+        </div>
+        
+        <div class="results-section">
+            <div class="results-header">
+                <h2>查询结果</h2>
+                <div class="results-count" id="resultsCount">请选择十神进行查询</div>
+            </div>
+            <div id="resultsContainer"></div>
+        </div>
+    </div>
+    
+    <script>
+        let database = null;
+        
+        // 加载数据库
+        async function loadDatabase() {
+            try {
+                const response = await fetch('shishen-database.json');
+                database = await response.json();
+                console.log('数据库加载成功', database);
+            } catch (error) {
+                console.error('加载数据库失败:', error);
+                alert('加载数据库失败，请确保shishen-database.json文件存在');
+            }
+        }
+        
+        // 查询组合
+        function queryCombinations() {
+            if (!database) {
+                alert('数据库未加载');
+                return;
+            }
+            
+            const god1 = document.getElementById('god1').value;
+            const god2 = document.getElementById('god2').value;
+            const god3 = document.getElementById('god3').value;
+            const god4 = document.getElementById('god4').value;
+            
+            if (!god1) {
+                alert('请至少选择第一个十神');
+                return;
+            }
+            
+            // 获取用户选择的所有十神（去除空值）
+            const selectedGods = [god1, god2, god3, god4].filter(g => g !== '');
+            
+            console.log('选择的十神:', selectedGods);
+            
+            // 查询匹配的组合
+            const results = database.combinations.filter(combo => {
+                // 检查用户选择的每个十神是否都在组合中
+                return selectedGods.every(god => combo.gods.includes(god));
+            });
+            
+            console.log('查询结果:', results);
+            
+            // 显示结果
+            displayResults(results);
+        }
+        
+        // 显示结果
+        function displayResults(results) {
+            const container = document.getElementById('resultsContainer');
+            const countEl = document.getElementById('resultsCount');
+            
+            countEl.textContent = `找到 ${results.length} 个匹配组合`;
+            
+            if (results.length === 0) {
+                container.innerHTML = `
+                    <div class="no-results">
+                        <div class="no-results-icon">🔍</div>
+                        <h3>未找到匹配的组合</h3>
+                        <p>请尝试调整选择条件</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // 按等级排序
+            const levelOrder = {'极高': 0, '高': 1, '中': 2};
+            results.sort((a, b) => {
+                return (levelOrder[a.level] || 3) - (levelOrder[b.level] || 3);
+            });
+            
+            container.innerHTML = results.map(combo => {
+                const godsHtml = combo.gods
+                    .filter(g => g !== '日主' && g !== '制化')
+                    .map(g => `<span class="god-tag">${g}</span>`)
+                    .join('');
+                
+                const levelClass = combo.level || '中';
+                const levelText = combo.level || '中';
+                
+                return `
+                    <div class="result-card">
+                        <div class="result-header">
+                            <div>
+                                <span class="result-name">${combo.name}</span>
+                                <span class="category-badge">${combo.category}</span>
+                            </div>
+                            <span class="result-level level-${levelClass}">${levelText}等级</span>
+                        </div>
+                        
+                        <div class="result-gods">
+                            ${godsHtml}
+                        </div>
+                        
+                        <div class="result-traits">
+                            <strong>核心特质：</strong>
+                            ${combo.core_traits}
+                        </div>
+                        
+                        <div class="result-directions">
+                            <strong>典型职业/方向：</strong>
+                            ${combo.directions}
+                        </div>
+                        
+                        ${combo.note ? `<div class="result-note"><strong>备注：</strong>${combo.note}</div>` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // 重置表单
+        function resetForm() {
+            document.getElementById('god1').value = '';
+            document.getElementById('god2').value = '';
+            document.getElementById('god3').value = '';
+            document.getElementById('god4').value = '';
+            document.getElementById('resultsContainer').innerHTML = '';
+            document.getElementById('resultsCount').textContent = '请选择十神进行查询';
+        }
+        
+        // 页面加载时加载数据库
+        window.addEventListener('DOMContentLoaded', loadDatabase);
+    </script>
+</body>
+</html>
