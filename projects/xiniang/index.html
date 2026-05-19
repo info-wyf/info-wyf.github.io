@@ -1,0 +1,3246 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>喜娘上上牵 · 单身资料管理系统</title>
+<link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="/static/favicon.ico">
+<link rel="icon" href="/static/favicon.png" type="image/png" sizes="64x64">
+<script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+<script>
+// ===== 鉴权辅助 =====
+function getAuthHeader() {
+    const token = localStorage.getItem(CONFIG.TOKEN_KEY || 'xiniang_admin_token');
+    if (!token) return {'Content-Type': 'application/json'};
+    return {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token};
+}
+function apiUrl(path) {
+    // 写操作走 API_BASE，读操作由调用方决定
+    return CONFIG.API_BASE.replace(/\/$/, '') + path;
+}
+// 状态循环切换：待审核 → 已通过 → 已过期 → 待审核
+function cycleStatus(recordId, currentStatus) {
+    const next = {
+        'pending': 'approved',
+        'approved': 'expired',
+        'expired': 'pending'
+    };
+    const labels = {'pending':'待审核', 'approved':'已通过', 'expired':'已过期'};
+    const newStatus = next[currentStatus] || 'pending';
+    if (!confirm(`确定将状态改为「${labels[newStatus]}」？`)) return;
+    
+    // 调用 update_record API（JWT 鉴权）
+    fetch(apiUrl(`/api/record/${recordId}`), {
+        method: 'PUT',
+        headers: getAuthHeader(),
+        body: JSON.stringify({
+            record: {status: newStatus}
+        })
+    })
+    .then(r => r.json())
+    .then(res => {
+        if (res.success) {
+            alert('状态已更新为：' + labels[newStatus]);
+            loadData();
+        } else {
+            alert('更新失败：' + res.message);
+        }
+    })
+    .catch(err => {
+        alert('请求失败：' + err);
+    });
+}
+</script>
+<script src="config.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+    color-scheme: light;
+    --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    --font-brand: "Songti SC", "STSong", "Noto Serif CJK SC", serif;
+    --bg: oklch(98.4% 0.008 355);
+    --surface: oklch(99.6% 0.004 355);
+    --surface-soft: oklch(97.2% 0.014 355);
+    --surface-strong: oklch(93.8% 0.018 355);
+    --text: oklch(30% 0.023 355);
+    --text-muted: oklch(52% 0.028 355);
+    --text-subtle: oklch(66% 0.026 355);
+    --border: oklch(90.5% 0.023 355);
+    --border-strong: oklch(80.5% 0.04 355);
+    --primary: oklch(61% 0.145 355);
+    --primary-hover: oklch(55% 0.16 355);
+    --primary-soft: oklch(95.5% 0.035 355);
+    --primary-ring: oklch(76% 0.105 355);
+    --male: oklch(62% 0.115 235);
+    --male-soft: oklch(95.2% 0.032 235);
+    --female: oklch(64% 0.125 355);
+    --female-soft: oklch(95.7% 0.034 355);
+    --success: oklch(58% 0.095 152);
+    --success-soft: oklch(94.5% 0.045 152);
+    --danger: oklch(56% 0.18 25);
+    --danger-soft: oklch(94% 0.045 25);
+    --warning: oklch(67% 0.14 70);
+    --warning-soft: oklch(95% 0.05 70);
+    --info: oklch(56% 0.13 235);
+    --info-soft: oklch(94% 0.045 235);
+    --shadow-sm: 0 1px 2px oklch(35% 0.03 355 / 0.06), 0 8px 24px oklch(35% 0.03 355 / 0.05);
+    --shadow-md: 0 14px 36px oklch(35% 0.03 355 / 0.12);
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --ease: cubic-bezier(.16, 1, .3, 1);
+}
+
+html {
+    background: var(--bg);
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    min-height: 100vh;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    font-family: var(--font-ui);
+    background:
+        linear-gradient(180deg, oklch(99.1% 0.011 355), var(--bg) 360px),
+        var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+button, input, select, textarea {
+    font: inherit;
+}
+
+button {
+    min-height: 38px;
+}
+
+button, select, input, textarea {
+    transition: border-color 180ms var(--ease), background-color 180ms var(--ease), color 180ms var(--ease), box-shadow 180ms var(--ease), transform 180ms var(--ease);
+}
+
+button:focus-visible,
+select:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+    outline: 3px solid oklch(71% 0.13 355 / 0.36);
+    outline-offset: 2px;
+}
+
+/* 顶部导航 */
+.navbar {
+    min-height: 64px;
+    padding: 10px clamp(14px, 3vw, 30px);
+    background: oklch(99% 0.006 355 / 0.94);
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
+    box-shadow: 0 1px 0 oklch(100% 0.004 355 / 0.8);
+    backdrop-filter: blur(14px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+.navbar h1 {
+    font-size: 18px;
+    font-family: var(--font-brand);
+    font-weight: 750;
+    letter-spacing: 0;
+    white-space: nowrap;
+}
+.navbar .nav-btns {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+.navbar button {
+    background: var(--surface);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    padding: 7px 12px;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 650;
+    box-shadow: 0 1px 1px oklch(35% 0.03 355 / 0.04);
+}
+.navbar button:hover {
+    color: var(--primary);
+    border-color: var(--primary-ring);
+    background: var(--primary-soft);
+}
+.navbar button:active { transform: translateY(1px); }
+
+/* 主容器 */
+.container { max-width: 1440px; margin: 0 auto; padding: 24px clamp(14px, 2.4vw, 28px) 40px; }
+
+/* 统计卡片 */
+.stats-row { display: grid; grid-template-columns: repeat(5, minmax(140px, 1fr)); gap: 12px; margin-bottom: 18px; }
+.stat-card {
+    min-height: 116px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 16px 18px;
+    background: var(--surface);
+    box-shadow: var(--shadow-sm);
+    display: grid;
+    align-content: space-between;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+}
+.stat-card::before {
+    content: "";
+    width: 4px;
+    position: absolute;
+    inset: 14px auto 14px 0;
+    border-radius: 0 999px 999px 0;
+    background: var(--primary);
+}
+.stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.stat-card .num { font-size: 30px; line-height: 1; font-weight: 780; color: var(--text); letter-spacing: 0; }
+.stat-card .label { font-size: 12px; color: var(--text-muted); margin-top: 8px; font-weight: 650; }
+.stat-card .icon { width: 34px; height: 34px; border-radius: var(--radius-md); display: grid; place-items: center; background: var(--primary-soft); color: var(--primary); font-size: 18px; margin-bottom: 12px; }
+.stat-card-total::before  { background: var(--primary); }
+.stat-card-male::before   { background: var(--male); }
+.stat-card-female::before { background: var(--female); }
+.stat-card-region::before { background: var(--success); }
+.stat-card-avg::before    { background: var(--warning); }
+.stat-card-male .icon { background: var(--male-soft); color: var(--male); }
+.stat-card-female .icon { background: var(--female-soft); color: var(--female); }
+.stat-card-region .icon { background: var(--success-soft); color: var(--success); }
+.stat-card-avg .icon { background: var(--warning-soft); color: var(--warning); }
+
+/* 图表区 */
+.charts-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-bottom: 16px; }
+.charts-row-full { display: grid; grid-template-columns: 1fr; gap: 16px; margin-bottom: 16px; }
+.chart-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 18px;
+    box-shadow: 0 1px 2px oklch(35% 0.03 355 / 0.04), 0 8px 20px oklch(35% 0.03 355 / 0.035);
+}
+.chart-box:hover { box-shadow: var(--shadow-md); }
+.chart-box h3 {
+    font-size: 14px; font-weight: 730; color: var(--text); margin-bottom: 14px;
+    padding-bottom: 12px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 8px;
+}
+.chart-box h3 .chart-badge {
+    background: var(--primary-soft);
+    color: var(--primary);
+    border: 1px solid oklch(84% 0.075 355);
+    font-size: 11px; padding: 2px 7px; border-radius: 999px; font-weight: 700;
+}
+.chart-container { width: 100%; height: 300px; }
+.chart-container-tall { width: 100%; height: 380px; }
+.chart-container-md { width: 100%; height: 260px; }
+
+/* 操作栏 */
+.toolbar { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px; margin-bottom: 16px; box-shadow: var(--shadow-sm); display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.toolbar select, .toolbar input { min-height: 40px; padding: 8px 11px; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface); color: var(--text); font-size: 14px; }
+.toolbar select:hover, .toolbar input:hover { border-color: var(--border-strong); }
+.toolbar input[type=text] { width: min(240px, 100%); }
+.toolbar button { padding: 8px 14px; border: 1px solid transparent; border-radius: var(--radius-md); cursor: pointer; font-size: 14px; font-weight: 700; }
+.btn-primary { background: var(--primary); color: oklch(99% 0.006 355); border-color: var(--primary); }
+.btn-primary:hover { background: var(--primary-hover); transform: translateY(-1px); }
+.btn-secondary { background: var(--surface-soft); color: var(--text-muted); border: 1px solid var(--border); }
+.btn-secondary:hover { background: var(--surface-strong); color: var(--text); }
+.btn-success { background: var(--success); color: oklch(99% 0.006 152); border: 1px solid var(--success); }
+.btn-danger { background: var(--danger); color: oklch(99% 0.006 25); border: 1px solid var(--danger); }
+
+/* 数据表格 */
+.data-table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px; box-shadow: var(--shadow-sm); overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+thead { background: var(--surface-soft); }
+th { padding: 11px 10px; text-align: left; font-weight: 750; color: var(--text-muted); border-bottom: 1px solid var(--border); white-space: nowrap; }
+td { padding: 10px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: top; }
+tr:hover { background: var(--primary-soft); }
+.tag { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 12px; margin: 2px; font-weight: 650; }
+.tag-male { background: var(--male-soft); color: var(--male); }
+.tag-female { background: var(--female-soft); color: var(--female); }
+.action-btn { min-height: 32px; padding: 5px 10px; border: 1px solid transparent; border-radius: var(--radius-sm); cursor: pointer; font-size: 12px; font-weight: 700; margin: 2px; }
+
+/* 视图切换 */
+.view-toggle { display: flex; gap: 4px; align-items: center; padding: 3px; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface-soft); }
+.view-toggle button { min-height: 34px; padding: 6px 12px; border: 1px solid transparent; border-radius: var(--radius-sm); background: transparent; color: var(--text-muted); cursor: pointer; font-size: 13px; font-weight: 700; }
+.view-toggle button.active { background: var(--surface); color: var(--primary); border-color: var(--border); box-shadow: 0 1px 2px oklch(35% 0.03 355 / 0.06); }
+
+/* 卡片网格 */
+.card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 14px; padding: 2px 0; }
+.person-card {
+    background: var(--surface); border-radius: var(--radius-lg); padding: 0;
+    box-shadow: var(--shadow-sm); transition: transform 180ms var(--ease), box-shadow 180ms var(--ease), border-color 180ms var(--ease);
+    display: flex; flex-direction: column; overflow: hidden; position: relative;
+    border: 1px solid var(--border);
+}
+.person-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--border-strong); }
+.person-card.selected { border-color: var(--primary-ring); box-shadow: 0 0 0 3px oklch(71% 0.13 355 / 0.22), var(--shadow-sm); }
+
+/* 卡片顶部彩条 */
+.card-top-bar { height: 3px; width: 100%; }
+.card-top-bar-male   { background: var(--male); }
+.card-top-bar-female { background: var(--female); }
+.card-top-bar-other  { background: var(--text-subtle); }
+
+.card-body { padding: 16px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+.card-header { display: flex; align-items: center; gap: 12px; }
+.card-avatar {
+    width: 52px; height: 52px; border-radius: var(--radius-md); display: flex; align-items: center;
+    justify-content: center; font-size: 25px; flex-shrink: 0;
+    border: 1px solid var(--border);
+}
+.card-avatar-male   { background: var(--male-soft); }
+.card-avatar-female { background: var(--female-soft); }
+.card-avatar-other  { background: var(--surface-soft); }
+.card-meta { flex: 1; min-width: 0; }
+.card-meta .card-id { font-size: 11px; color: var(--text-subtle); margin-bottom: 2px; font-weight: 650; }
+.card-meta .card-region { font-size: 14px; font-weight: 800; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.card-meta .card-gender-badge {
+    display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 11px; margin-top: 5px; font-weight: 750;
+}
+.badge-male   { background: var(--male-soft); color: var(--male); }
+.badge-female { background: var(--female-soft); color: var(--female); }
+
+/* 高度进度条 */
+.card-height-bar { margin: 0 0 2px; }
+.card-height-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-subtle); margin-bottom: 4px; font-weight: 650; }
+.height-track { height: 6px; background: var(--surface-strong); border-radius: 999px; overflow: hidden; }
+.height-fill { height: 100%; border-radius: 3px; }
+.height-fill-male   { background: var(--male); }
+.height-fill-female { background: var(--female); }
+
+.card-stats { display: flex; gap: 5px; flex-wrap: wrap; }
+.card-chip {
+    padding: 3px 9px; border-radius: 999px; font-size: 11px; font-weight: 700;
+    background: var(--surface-soft); color: var(--text-muted); white-space: nowrap;
+}
+.chip-age    { background: var(--success-soft); color: var(--success); }
+.chip-height { background: var(--male-soft); color: var(--male); }
+.chip-edu    { background: var(--primary-soft); color: var(--primary); }
+.chip-job    { background: var(--warning-soft); color: oklch(46% 0.12 70); max-width: 120px; overflow: hidden; text-overflow: ellipsis; }
+.card-info-row { font-size: 12px; color: var(--text-muted); line-height: 1.55; border-top: 1px solid var(--border); padding-top: 8px; }
+.card-info-row strong { color: var(--text); }
+
+.card-actions { display: flex; gap: 6px; padding: 10px 16px; background: var(--surface-soft); border-top: 1px solid var(--border); }
+.card-actions button { flex: 1; padding: 7px 8px; border: 1px solid transparent; border-radius: var(--radius-md); cursor: pointer; font-size: 12px; font-weight: 750; min-width: 44px; }
+.btn-view    { background: var(--info-soft); color: var(--info); }
+.btn-edit    { background: var(--warning-soft); color: oklch(46% 0.12 70); }
+.btn-del     { background: var(--danger-soft); color: var(--danger); }
+.btn-compare { background: var(--primary); color: oklch(99% 0.006 355); }
+.btn-compare.in-compare { background: var(--success); color: oklch(99% 0.006 152); }
+.card-actions button:hover { transform: translateY(-1px); filter: saturate(1.06); }
+
+/* 对比浮动条 */
+.compare-bar {
+    position: fixed; bottom: max(20px, env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%);
+    background: var(--surface); border-radius: var(--radius-lg); padding: 12px;
+    box-shadow: var(--shadow-md); display: flex; align-items: center; gap: 10px;
+    z-index: 150; border: 1px solid var(--primary-ring); min-width: min(620px, calc(100vw - 24px));
+    transition: opacity 180ms var(--ease), transform 180ms var(--ease); opacity: 0; pointer-events: none;
+}
+.compare-bar.visible { opacity: 1; pointer-events: all; }
+.compare-slot {
+    display: flex; align-items: center; gap: 8px; padding: 7px 12px;
+    border: 1px dashed var(--border-strong); border-radius: var(--radius-md); min-width: 128px;
+    font-size: 13px; color: var(--text-subtle); cursor: default;
+}
+.compare-slot.filled { border-color: var(--primary-ring); color: var(--text); font-weight: 700; background: var(--primary-soft); }
+.compare-bar-btn {
+    padding: 8px 14px; border: 1px solid transparent; border-radius: var(--radius-md); cursor: pointer;
+    font-size: 13px; font-weight: 700; transition: 0.2s;
+}
+.btn-do-compare { background: var(--primary); color: oklch(99% 0.006 355); }
+.btn-do-compare:disabled { background: var(--surface-strong); color: var(--text-subtle); cursor: default; }
+.btn-clear-compare { background: var(--surface-soft); color: var(--text-muted); border-color: var(--border); }
+
+/* 对比弹窗 */
+#compareModal .modal { width: 760px; max-width: 95vw; }
+.compare-radar-wrap { display: flex; gap: 20px; align-items: flex-start; }
+.compare-radar-chart { flex: 1; height: 360px; }
+.compare-info-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+.compare-col { padding: 14px; border-radius: var(--radius-md); }
+.compare-col-a { background: var(--male-soft); border: 1px solid oklch(84% 0.055 235); }
+.compare-col-b { background: var(--female-soft); border: 1px solid oklch(84% 0.055 355); }
+.compare-col h4 { font-size: 14px; font-weight: 700; margin-bottom: 8px; }
+.compare-col .ci { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
+.compare-score-bar { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.compare-score-bar span:first-child { font-size: 12px; color: var(--text-muted); width: 60px; flex-shrink: 0; }
+.score-track { flex: 1; height: 8px; background: var(--surface-strong); border-radius: 4px; overflow: hidden; }
+.score-fill-a { height: 100%; background: var(--male); border-radius: 4px; }
+.score-fill-b { height: 100%; background: var(--female); border-radius: 4px; }
+.compare-score-bar span:last-child { font-size: 12px; font-weight: 700; width: 28px; text-align: right; }
+
+/* 弹窗 */
+.modal-overlay { display: none; position: fixed; inset: 0; width: 100%; height: 100%; background: oklch(22% 0.03 355 / 0.48); z-index: 200; justify-content: center; align-items: center; padding: 18px; }
+.modal-overlay.active { display: flex; }
+/* 编辑弹窗在管理员中心之上 */
+#editModal { z-index: 300; }
+#userSubmitModal { z-index: 300; }
+.modal { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); width: 600px; max-width: min(100%, 760px); max-height: calc(100vh - 36px); overflow-y: auto; box-shadow: 0 22px 70px oklch(22% 0.03 355 / 0.28); }
+.modal-header { padding: 18px 22px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; gap: 16px; position: sticky; top: 0; background: var(--surface); z-index: 1; }
+.modal-header h3 { font-size: 17px; color: var(--text); font-weight: 800; }
+.modal-close { width: 38px; min-height: 38px; background: var(--surface-soft); border: 1px solid var(--border); border-radius: var(--radius-md); font-size: 22px; cursor: pointer; color: var(--text-muted); line-height: 1; }
+.modal-close:hover { color: var(--danger); border-color: oklch(82% 0.075 25); background: var(--danger-soft); }
+.modal-body { padding: 22px; }
+.modal-footer { padding: 14px 22px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; position: sticky; bottom: 0; background: var(--surface); }
+
+/* 表单 */
+.form-group { margin-bottom: 14px; }
+.form-group label { display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 6px; font-weight: 750; }
+.form-group input, .form-group select, .form-group textarea { width: 100%; min-height: 42px; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface); color: var(--text); font-size: 14px; font-family: inherit; }
+.form-group input::placeholder, .form-group textarea::placeholder { color: oklch(55% 0.034 355); }
+.form-group input:hover, .form-group select:hover, .form-group textarea:hover { border-color: var(--border-strong); }
+.form-group textarea { resize: vertical; min-height: 60px; }
+.form-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+
+/* 分页 */
+.pagination { display: flex; justify-content: center; align-items: center; gap: 5px; margin-top: 16px; flex-wrap: wrap; }
+.pagination button { min-height: 36px; padding: 6px 11px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); color: var(--text-muted); cursor: pointer; font-size: 13px; font-weight: 700; }
+.pagination button:hover:not(:disabled) { background: var(--primary-soft); color: var(--primary); border-color: var(--primary-ring); }
+.pagination button:disabled { border-color: var(--border); background: var(--surface-soft); color: var(--text-subtle); cursor: default; }
+.pagination button.active-page { background: var(--primary); color: oklch(99% 0.006 355); border-color: var(--primary); font-weight: 750; }
+.pagination .ellipsis { margin: 0 3px; color: var(--text-subtle); font-size: 13px; }
+.pagination .page-info { margin-left: 12px; font-size: 12px; color: var(--text-subtle); }
+
+/* 密码弹窗 */
+.pwd-modal .modal { width: 400px; }
+.pwd-modal input[type=password] { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius-md); font-size: 16px; text-align: center; letter-spacing: 3px; }
+.pwd-modal input[type=password]:focus { border-color: var(--primary-ring); }
+
+/* 管理员中心 */
+#adminCenterModal .modal {
+    width: min(1120px, calc(100vw - 36px));
+    max-width: min(1120px, calc(100vw - 36px));
+    background: var(--surface-soft);
+}
+#adminCenterModal .modal-header {
+    background: var(--surface);
+}
+#adminCenterModal .modal-body {
+    padding: 0;
+}
+.admin-shell {
+    display: grid;
+    grid-template-columns: 220px minmax(0, 1fr);
+    min-height: min(680px, calc(100vh - 126px));
+}
+.tab-header {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 14px;
+    border-right: 1px solid var(--border);
+    background: oklch(98.7% 0.009 355);
+    overflow: auto;
+}
+.tab-btn {
+    min-height: 44px;
+    padding: 10px 12px;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    cursor: pointer;
+    color: var(--text-muted);
+    text-align: left;
+    white-space: nowrap;
+    font-weight: 720;
+}
+.tab-btn:hover {
+    color: var(--text);
+    background: var(--surface);
+    border-color: var(--border);
+}
+.tab-btn.active {
+    color: var(--primary);
+    background: var(--surface);
+    border-color: oklch(86% 0.055 355);
+    box-shadow: 0 1px 2px oklch(35% 0.03 355 / 0.04);
+}
+.admin-workspace {
+    min-width: 0;
+    padding: 18px;
+    background: var(--surface);
+}
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+.admin-action-row {
+    display: grid;
+    grid-template-columns: minmax(220px, 1fr) auto;
+    gap: 12px;
+    align-items: end;
+    padding: 14px;
+    margin-bottom: 14px;
+    background: var(--surface-soft);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+}
+.admin-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    padding: 14px;
+    margin-bottom: 14px;
+    background: var(--surface-soft);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+}
+.admin-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin: -2px 0 14px;
+}
+.admin-table-wrap {
+    overflow: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+}
+.admin-table-wrap table {
+    min-width: 680px;
+}
+.admin-table-wrap thead {
+    background: oklch(97.5% 0.012 355);
+}
+.admin-table-wrap th {
+    font-size: 12px;
+    text-transform: none;
+}
+.admin-badge {
+    display: inline-flex;
+    min-width: 18px;
+    height: 18px;
+    align-items: center;
+    justify-content: center;
+    margin-left: 6px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: var(--danger);
+    color: oklch(99% 0.006 25);
+    font-size: 11px;
+    font-weight: 800;
+}
+.nav-badge {
+    display: inline-flex;
+    min-width: 18px;
+    height: 18px;
+    align-items: center;
+    justify-content: center;
+    margin-left: 5px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: var(--danger);
+    color: oklch(99% 0.006 25);
+    font-size: 11px;
+    font-weight: 800;
+}
+
+/* 审核记录卡片 */
+.review-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 15px; margin-bottom: 10px; box-shadow: 0 1px 2px oklch(35% 0.03 355 / 0.035); }
+.review-card h4 { font-size: 14px; color: var(--text); margin-bottom: 8px; font-weight: 780; }
+.review-card p { font-size: 13px; color: var(--text-muted); margin: 3px 0; }
+.review-actions { margin-top: 10px; display: flex; gap: 8px; }
+
+.compare-label {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--primary);
+    white-space: nowrap;
+}
+
+.empty-state {
+    color: var(--text-muted);
+    text-align: center;
+    padding: 40px 16px;
+}
+
+.text-muted { color: var(--text-muted); }
+.text-danger { color: var(--danger); }
+.status-badge { font-weight: 750; }
+.status-pending { color: oklch(50% 0.13 70); }
+.status-approved { color: var(--success); }
+.status-rejected { color: var(--danger); }
+.error-message {
+    color: var(--danger);
+    font-size: 13px;
+    margin-top: 10px;
+}
+.expired-warning {
+    color: var(--danger);
+    margin-bottom: 15px;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+/* 响应式 */
+@media (max-width: 1180px) {
+    .stats-row { grid-template-columns: repeat(3, minmax(150px, 1fr)); }
+}
+
+@media (max-width: 920px) {
+    .navbar { align-items: flex-start; flex-direction: column; }
+    .navbar h1 { white-space: normal; }
+    .navbar .nav-btns { justify-content: flex-start; width: 100%; }
+    .charts-row { grid-template-columns: 1fr; }
+    .charts-row-full { grid-template-columns: 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+    .admin-shell {
+        grid-template-columns: 1fr;
+        min-height: auto;
+    }
+    .tab-header {
+        flex-direction: row;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        overflow-x: auto;
+        padding: 10px;
+        background: var(--surface);
+    }
+    .tab-btn { flex: 0 0 auto; }
+    .admin-workspace { padding: 14px; }
+    .admin-form-grid, .admin-action-row { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 700px) {
+    body { font-size: 14px; }
+    .container { padding: 16px 12px 34px; }
+    .stats-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .stat-card { min-height: 104px; padding: 14px; }
+    .stat-card .num { font-size: 25px; }
+    .toolbar { display: grid; grid-template-columns: 1fr; }
+    .toolbar input[type=text], .toolbar select, .toolbar button, .view-toggle { width: 100%; }
+    .view-toggle { grid-template-columns: 1fr 1fr; display: grid; }
+    .card-grid { grid-template-columns: 1fr; }
+    .chart-container { height: 280px; }
+    .chart-container-tall { height: 330px; }
+    .compare-bar { align-items: stretch; flex-direction: column; }
+    .compare-slot { width: 100%; }
+    .compare-info-cols { grid-template-columns: 1fr; }
+    .modal-overlay { padding: 10px; align-items: flex-end; }
+    .modal { width: 100%; max-height: calc(100vh - 20px); border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
+    #adminCenterModal .modal {
+        width: 100%;
+        max-width: 100%;
+    }
+    .modal-body, .modal-header, .modal-footer { padding-left: 16px; padding-right: 16px; }
+    #adminCenterModal .modal-body { padding: 0; }
+    .admin-workspace { padding: 12px; }
+    .data-table-wrap { padding: 8px; }
+    table { font-size: 13px; }
+    th, td { padding: 9px 8px; }
+}
+
+@media (pointer: coarse) {
+    button, .action-btn, .navbar button, .pagination button { min-height: 44px; }
+}
+
+@media (hover: none) {
+    .stat-card:hover,
+    .chart-box:hover,
+    .person-card:hover,
+    .card-actions button:hover,
+    .btn-primary:hover { transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+</style>
+</head>
+<body>
+
+<!-- 顶部导航 -->
+<div class="navbar">
+    <h1>💕 喜娘上上牵 · 单身资料管理</h1>
+    <div class="nav-btns">
+        <button onclick="showTab('dashboard')">📊 数据看板</button>
+        <button onclick="showTab('data')">📋 资料管理</button>
+        <button id="btnExportExcel" style="display:none;" onclick="exportExcel()">📥 导出Excel</button>
+        <button id="btnReimport" style="display:none;" onclick="document.getElementById('reimportFile').click()">📤 重新导入</button>
+        <input type="file" id="reimportFile" accept=".xlsx,.xls" style="display:none" onchange="reimportExcel(this)">
+        <!-- 权限管理按钮（JS控制显示/隐藏） -->
+        <button id="btnUserSubmit" onclick="openUserSubmitModal()">💌 我想上传资料</button>
+        <button id="btnAdminLogin" onclick="openAdminLoginModal()">🔐 管理员登录</button>
+        <button id="btnAdminCenter" style="display:none;" onclick="openAdminCenterModal()">⚙️ 管理员中心<span id="expiredBadge" class="nav-badge" style="display:none;"></span></button>
+        <button id="btnAdminLogout" style="display:none;" onclick="adminLogout()">🚪 退出登录</button>
+    </div>
+</div>
+
+<div class="container">
+    <!-- 看板页 -->
+    <div id="tab-dashboard">
+        <div class="stats-row" id="statsCards"></div>
+
+        <!-- Row 1: 性别 + 属相玫瑰图 -->
+        <div class="charts-row">
+            <div class="chart-box">
+                <h3>🚻 性别比例 <span class="chart-badge">实时</span></h3>
+                <div class="chart-container" id="chartGender"></div>
+            </div>
+            <div class="chart-box">
+                <h3>🐉 十二属相分布 <span class="chart-badge">玫瑰图</span></h3>
+                <div class="chart-container" id="chartZodiac"></div>
+            </div>
+        </div>
+
+        <!-- Row 2: 地区分布（全宽横向条） -->
+        <div class="charts-row-full">
+            <div class="chart-box">
+                <h3>📍 各地区人数分布 <span class="chart-badge">可点击筛选</span></h3>
+                <div class="chart-container" id="chartRegion"></div>
+            </div>
+        </div>
+
+        <!-- Row 3: 年龄 + 学历 -->
+        <div class="charts-row">
+            <div class="chart-box">
+                <h3>🎂 年龄段分布</h3>
+                <div class="chart-container" id="chartAge"></div>
+            </div>
+            <div class="chart-box">
+                <h3>🎓 学历分布</h3>
+                <div class="chart-container" id="chartEdu"></div>
+            </div>
+        </div>
+
+        <!-- Row 4: 身高对比 + 年龄身高散点 -->
+        <div class="charts-row">
+            <div class="chart-box">
+                <h3>📏 男女身高分布对比 <span class="chart-badge">双向条形</span></h3>
+                <div class="chart-container-tall" id="chartHeight"></div>
+            </div>
+            <div class="chart-box">
+                <h3>✨ 年龄 × 身高散点 <span class="chart-badge">男蓝女粉</span></h3>
+                <div class="chart-container-tall" id="chartScatter"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 数据管理页 -->
+    <div id="tab-data" style="display:none;">
+        <div class="toolbar">
+            <select id="filterRegion" onchange="loadData()">
+                <option value="">全部地区</option>
+            </select>
+            <select id="filterGender" onchange="loadData()">
+                <option value="">全部性别</option>
+                <option value="男">男</option>
+                <option value="女">女</option>
+            </select>
+            <select id="filterZodiac" onchange="loadData()">
+                <option value="">全部生肖</option>
+                <option value="鼠">鼠</option>
+                <option value="牛">牛</option>
+                <option value="虎">虎</option>
+                <option value="兔">兔</option>
+                <option value="龙">龙</option>
+                <option value="蛇">蛇</option>
+                <option value="马">马</option>
+                <option value="羊">羊</option>
+                <option value="猴">猴</option>
+                <option value="鸡">鸡</option>
+                <option value="狗">狗</option>
+                <option value="猪">猪</option>
+            </select>
+            <select id="filterEducation" onchange="loadData()">
+                <option value="">全部学历</option>
+                <option value="博士">博士</option>
+                <option value="硕士">硕士</option>
+                <option value="本科">本科</option>
+                <option value="大专">大专</option>
+                <option value="其他/未知">其他/未知</option>
+            </select>
+            <select id="filterAgeRange" onchange="loadData()">
+                <option value="">全部年龄</option>
+                <option value="20-25">20-25岁</option>
+                <option value="26-30">26-30岁</option>
+                <option value="31-35">31-35岁</option>
+                <option value="36-40">36-40岁</option>
+                <option value="40+">40岁以上</option>
+                <option value="未知">未知</option>
+            </select>
+            <select id="filterHeightRange" onchange="loadData()">
+                <option value="">全部身高</option>
+                <option value="<150">150以下</option>
+                <option value="150-159">150-159cm</option>
+                <option value="160-169">160-169cm</option>
+                <option value="170-179">170-179cm</option>
+                <option value="180+">180及以上</option>
+                <option value="未知">未知</option>
+            </select>
+            <select id="filterWeightRange" onchange="loadData()">
+                <option value="">全部体重</option>
+                <option value="<100">100kg以下</option>
+                <option value="100-119">100-119kg</option>
+                <option value="120-139">120-139kg</option>
+                <option value="140-159">140-159kg</option>
+                <option value="160-179">160-179kg</option>
+                <option value="180+">180kg及以上</option>
+                <option value="未知">未知</option>
+            </select>
+            <select id="filterStatus" onchange="loadData()">
+                <option value="">全部状态</option>
+                <option value="pending">待审核</option>
+                <option value="approved">已通过</option>
+                <option value="expired">已过期</option>
+            </select>
+            <input type="text" id="searchInput" placeholder="搜索关键词..." onkeyup="if(event.key==='Enter')loadData()">
+            <input type="hidden" id="filterHeightMin">
+            <input type="hidden" id="filterHeightMax">
+            <button class="btn-primary" onclick="loadData()">🔍 搜索</button>
+            <button class="btn-secondary" onclick="clearFilters()">清空</button>
+            <div style="flex:1"></div>
+            <div class="view-toggle">
+                <button id="btnCardView" class="active" onclick="setViewMode('card')">🃏 卡片</button>
+                <button id="btnTableView" onclick="setViewMode('table')">📋 表格</button>
+            </div>
+            <button id="btnAddData" class="btn-success" style="display:none;" onclick="openAddModal()">➕ 添加资料</button>
+        </div>
+
+        <!-- 卡片视图 -->
+        <div id="viewCard">
+            <div class="card-grid" id="cardGrid"></div>
+            <div class="pagination" id="paginationCard"></div>
+        </div>
+
+        <!-- 表格视图（保留原始） -->
+        <div id="viewTable" style="display:none;">
+            <div class="data-table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th><th>地区分组</th><th>性别</th><th>属相</th><th>出生年</th><th>年龄</th><th>身高</th><th>体重</th>
+                            <th>学历</th><th>工作</th><th>家庭情况</th><th>择偶要求</th><th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataBody"></tbody>
+                </table>
+                <div class="pagination" id="pagination"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 对比浮动条 -->
+<div class="compare-bar" id="compareBar">
+    <span class="compare-label">💕 配对对比</span>
+    <div class="compare-slot" id="compareSlot1">＋ 选择第一位</div>
+    <div class="compare-slot" id="compareSlot2">＋ 选择第二位</div>
+    <button class="compare-bar-btn btn-do-compare" id="btnDoCompare" disabled onclick="openCompareModal()">查看雷达图</button>
+    <button class="compare-bar-btn btn-clear-compare" onclick="clearCompare()">清空</button>
+</div>
+
+<!-- 对比雷达弹窗 -->
+<div class="modal-overlay" id="compareModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>💕 配对条件对比</h3>
+            <button class="modal-close" onclick="closeModal('compareModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div id="compareRadarChart" style="width:100%;height:340px;"></div>
+            <div class="compare-info-cols" id="compareInfoCols"></div>
+            <div id="compareScoreBars" style="margin-top:16px;padding:16px;background:#f9f9f9;border-radius:12px;"></div>
+        </div>
+    </div>
+</div>
+
+<!-- 添加/编辑弹窗 -->
+<div class="modal-overlay" id="editModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 id="editModalTitle">添加资料</h3>
+            <button class="modal-close" onclick="closeModal('editModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>地区分组 *</label>
+                    <select id="formRegion"></select>
+                </div>
+                <div class="form-group">
+                    <label>性别</label>
+                    <select id="formGender">
+                        <option value="">未知</option>
+                        <option value="男">男</option>
+                        <option value="女">女</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>属相</label>
+                    <select id="formZodiac">
+                        <option value="">未知</option>
+                        <option value="鼠">鼠</option>
+                        <option value="牛">牛</option>
+                        <option value="虎">虎</option>
+                        <option value="兔">兔</option>
+                        <option value="龙">龙</option>
+                        <option value="蛇">蛇</option>
+                        <option value="马">马</option>
+                        <option value="羊">羊</option>
+                        <option value="猴">猴</option>
+                        <option value="鸡">鸡</option>
+                        <option value="狗">狗</option>
+                        <option value="猪">猪</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>出生年份</label>
+                    <input type="number" id="formBirthYear" placeholder="如：1998" min="1940" max="2020">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>年龄（原始格式）</label>
+                    <input type="text" id="formAge" placeholder="如：94年狗 / 32 / 2000年">
+                </div>
+	                <div class="form-group">
+	                    <label>身高 (cm)</label>
+	                    <input type="text" id="formHeight" placeholder="如：175">
+	                </div>
+	            </div>
+            <div class="form-group">
+                <label>体重 (kg)</label>
+                <input type="text" id="formWeight" placeholder="如：70">
+            </div>
+            <div class="form-group">
+                <label>学历</label>
+                <input type="text" id="formEdu" placeholder="如：本科 / 硕士">
+            </div>
+            <div class="form-group">
+                <label>工作</label>
+                <input type="text" id="formJob" placeholder="如：公务员 / IT工程师">
+            </div>
+            <div class="form-group">
+                <label>家庭情况</label>
+                <textarea id="formFamily" placeholder="家庭基本情况..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>择偶要求</label>
+                <textarea id="formMate" placeholder="对另一半的要求..."></textarea>
+            </div>
+            <div class="form-group" id="passwordGroup">
+                <label>操作密码 *</label>
+                <input type="password" id="formPassword" placeholder="请输入操作密码">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary" onclick="closeModal('editModal')">取消</button>
+            <button class="btn-primary" onclick="saveRecord()">保存</button>
+        </div>
+    </div>
+</div>
+
+<!-- 用户上传资料弹窗 -->
+<div class="modal-overlay" id="userSubmitModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>💌 上传资料</h3>
+            <button class="modal-close" onclick="closeModal('userSubmitModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>地区分组 *</label>
+                <select id="submitRegion"></select>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>性别 *</label>
+                    <select id="submitGender">
+                        <option value="">请选择性别</option>
+                        <option value="男">男</option>
+                        <option value="女">女</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>属相</label>
+                    <select id="submitZodiac">
+                        <option value="">请选择属相</option>
+                        <option value="鼠">鼠</option>
+                        <option value="牛">牛</option>
+                        <option value="虎">虎</option>
+                        <option value="兔">兔</option>
+                        <option value="龙">龙</option>
+                        <option value="蛇">蛇</option>
+                        <option value="马">马</option>
+                        <option value="羊">羊</option>
+                        <option value="猴">猴</option>
+                        <option value="鸡">鸡</option>
+                        <option value="狗">狗</option>
+                        <option value="猪">猪</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>出生年份</label>
+                    <input type="number" id="submitBirthYear" placeholder="如：1998" min="1940" max="2010" oninput="onSubmitBirthYearChange()">
+                </div>
+                <div class="form-group">
+                    <label>年龄</label>
+                    <input type="number" id="submitAgeNum" placeholder="如：28" min="18" max="80" oninput="onSubmitAgeChange()">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>身高 (cm)</label>
+                    <input type="text" id="submitHeight" placeholder="如：165">
+                </div>
+                <div class="form-group">
+                    <label>体重 (kg)</label>
+                    <input type="text" id="submitWeight" placeholder="如：52">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>学历</label>
+                <input type="text" id="submitEdu" placeholder="如：本科">
+            </div>
+            <div class="form-group">
+                <label>工作</label>
+                <input type="text" id="submitJob" placeholder="如：教师">
+            </div>
+            <div class="form-group">
+                <label>家庭情况</label>
+                <textarea id="submitFamily" placeholder="家庭基本情况..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>择偶要求</label>
+                <textarea id="submitMate" placeholder="对另一半的要求..."></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary" onclick="closeModal('userSubmitModal')">取消</button>
+            <button class="btn-primary" onclick="submitUserRecord()">提交资料</button>
+        </div>
+    </div>
+</div>
+
+<!-- 管理员登录弹窗 -->
+<div class="modal-overlay" id="adminLoginModal">
+    <div class="modal" style="width:400px;">
+        <div class="modal-header">
+            <h3>🔐 管理员登录</h3>
+            <button class="modal-close" onclick="closeModal('adminLoginModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>用户名 *</label>
+                <input type="text" id="loginUsername" placeholder="请输入用户名">
+            </div>
+            <div class="form-group">
+                <label>密码 *</label>
+                <input type="password" id="loginPassword" placeholder="请输入密码" onkeyup="if(event.key==='Enter')adminLogin()">
+            </div>
+            <div id="loginError" class="error-message" style="display:none;"></div>
+        </div>
+        <div class="modal-footer" style="justify-content:center;">
+            <button class="btn-secondary" onclick="closeModal('adminLoginModal')">取消</button>
+            <button class="btn-primary" onclick="adminLogin()">登录</button>
+        </div>
+    </div>
+</div>
+
+<!-- 管理员中心弹窗 -->
+<div class="modal-overlay" id="adminCenterModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>⚙️ 管理员中心</h3>
+            <button class="modal-close" onclick="closeModal('adminCenterModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="admin-shell">
+            <div class="tab-header">
+                <button class="tab-btn active" onclick="switchTab('tabReview')">📋 资料审核</button>
+                <button class="tab-btn" onclick="switchTab('tabDataManage')">📊 资料管理</button>
+                <button class="tab-btn" id="tabExpiredBtn" onclick="switchTab('tabExpired')">⏰ 过期资料<span id="expiredTabBadge" class="admin-badge" style="display:none;"></span></button>
+                <button class="tab-btn" id="tabRegionManageBtn" onclick="switchTab('tabRegionManage')">📍 地区管理</button>
+                <button class="tab-btn" id="tabAdminManageBtn" onclick="switchTab('tabAdminManage')">👥 管理员管理</button>
+            </div>
+            <div class="admin-workspace">
+            
+            <!-- 标签1：资料审核 -->
+            <div class="tab-content active" id="tabReviewContent">
+                <div id="pendingList"></div>
+            </div>
+            
+            <!-- 标签2：资料管理 -->
+            <div class="tab-content" id="tabDataManageContent">
+                <div class="toolbar" style="margin-top:8px;">
+                    <select id="adminFilterRegion" onchange="loadAdminData()">
+                        <option value="">全部地区</option>
+                    </select>
+                    <select id="adminFilterAgeRange" onchange="loadAdminData()">
+                        <option value="">全部年龄</option>
+                        <option value="20-25">20-25岁</option>
+                        <option value="26-30">26-30岁</option>
+                        <option value="31-35">31-35岁</option>
+                        <option value="36-40">36-40岁</option>
+                        <option value="40+">40岁以上</option>
+                        <option value="未知">未知</option>
+                    </select>
+                    <select id="adminFilterHeightRange" onchange="loadAdminData()">
+                        <option value="">全部身高</option>
+                        <option value="<150">150以下</option>
+                        <option value="150-159">150-159cm</option>
+                        <option value="160-169">160-169cm</option>
+                        <option value="170-179">170-179cm</option>
+                        <option value="180+">180及以上</option>
+                        <option value="未知">未知</option>
+                    </select>
+                    <select id="adminFilterWeightRange" onchange="loadAdminData()">
+                        <option value="">全部体重</option>
+                        <option value="<100">100kg以下</option>
+                        <option value="100-119">100-119kg</option>
+                        <option value="120-139">120-139kg</option>
+                        <option value="140-159">140-159kg</option>
+                        <option value="160-179">160-179kg</option>
+                        <option value="180+">180kg及以上</option>
+                        <option value="未知">未知</option>
+                    </select>
+                    <select id="adminFilterEducation" onchange="loadAdminData()">
+                        <option value="">全部学历</option>
+                        <option value="博士">博士</option>
+                        <option value="硕士">硕士</option>
+                        <option value="本科">本科</option>
+                        <option value="大专">大专</option>
+                        <option value="其他/未知">其他/未知</option>
+                    </select>
+                    <select id="adminFilterStatus" onchange="loadAdminData()">
+                        <option value="">全部状态</option>
+                        <option value="pending">待审核</option>
+                        <option value="approved">已通过</option>
+                        <option value="expired">已过期</option>
+                    </select>
+                    <input type="text" id="adminSearchInput" placeholder="搜索关键词..." onkeyup="if(event.key==='Enter')loadAdminData()">
+                    <button class="btn-primary" onclick="loadAdminData()">🔍 搜索</button>
+                    <button class="btn-secondary" onclick="clearAdminFilters()">清空</button>
+                </div>
+                <div id="adminDataTable"></div>
+            </div>
+            
+            <!-- 标签3：地区管理 -->
+            <div class="tab-content" id="tabRegionManageContent">
+                <div class="admin-action-row">
+                    <div class="form-group">
+                        <label>地区名称</label>
+                        <input type="text" id="newRegionName" placeholder="请输入地区名称">
+                    </div>
+                    <div class="form-group">
+                        <button class="btn-primary" onclick="addRegion()">添加地区</button>
+                    </div>
+                </div>
+                <div id="regionTable"></div>
+            </div>
+            
+            <!-- 标签：过期资料管理 -->
+            <div class="tab-content" id="tabExpiredContent">
+                <div id="expiredList"></div>
+            </div>
+            
+            <!-- 标签4：管理员管理 -->
+            <div class="tab-content" id="tabAdminManageContent">
+                <div class="admin-form-grid">
+                    <div class="form-group">
+                        <label>用户名</label>
+                        <input type="text" id="newAdminUsername" placeholder="请输入用户名">
+                    </div>
+                    <div class="form-group">
+                        <label>密码</label>
+                        <input type="password" id="newAdminPassword" placeholder="请输入密码">
+                    </div>
+                    <div class="form-group">
+                        <label>角色</label>
+                        <select id="newAdminRole">
+                            <option value="region_admin">地区管理员</option>
+                            <option value="super_admin">主管理员</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>负责地区（多选，Ctrl/Cmd + 点击）</label>
+                        <select id="newAdminRegions" multiple style="height:100px;">
+                        </select>
+                    </div>
+                </div>
+                <div class="admin-form-actions">
+                    <button class="btn-primary" onclick="addAdmin()">添加管理员</button>
+                </div>
+                <div id="adminTable"></div>
+            </div>
+            </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 拒绝理由弹窗 -->
+<div class="modal-overlay" id="rejectModal">
+    <div class="modal" style="width:500px;">
+        <div class="modal-header">
+            <h3>❌ 填写拒绝理由</h3>
+            <button class="modal-close" onclick="closeModal('rejectModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>拒绝理由 *</label>
+                <textarea id="rejectReason" placeholder="请填写拒绝理由..."></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary" onclick="closeModal('rejectModal')">取消</button>
+            <button class="btn-danger" onclick="confirmReject()">确认拒绝</button>
+        </div>
+    </div>
+</div>
+
+<!-- 密码验证弹窗（独立） -->
+<div class="modal-overlay pwd-modal" id="pwdModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>🔐 权限验证</h3>
+        </div>
+        <div class="modal-body" style="text-align:center;">
+            <p class="text-muted" style="margin-bottom:15px;" id="pwdHint">增删改操作需要密码，请输入：</p>
+            <input type="password" id="pwdInput" placeholder="请输入密码" onkeyup="if(event.key==='Enter')confirmPwd()">
+            <p class="error-message" style="display:none;" id="pwdError">密码错误，请重试！</p>
+        </div>
+        <div class="modal-footer" style="justify-content:center;">
+            <button class="btn-secondary" onclick="closeModal('pwdModal')">取消</button>
+            <button class="btn-primary" onclick="confirmPwd()">确认</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// ===== 全局变量 =====
+let allData = [];
+let currentPage = 1;
+const pageSize = 20;
+let pendingAction = null;  // 待执行的受保护操作
+let editingId = null;
+let currentAdminInfo = null;  // 当前登录管理员信息
+let currentRejectId = null;  // 当前拒绝的记录ID
+let pendingFilter = null;     // 从看板跳转来的筛选条件
+
+const UI_COLORS = {
+    text: '#2d3436',
+    muted: '#636e72',
+    subtle: '#b2bec3',
+    border: '#f0e4eb',
+    grid: '#f7f0f4',
+    surface: '#fffafd',
+    primary: '#e84393',
+    primarySoft: '#fce4f0',
+    male: '#0984e3',
+    maleSoft: '#e3f2fd',
+    female: '#fd79a8',
+    femaleSoft: '#fce4f0',
+    success: '#00b894',
+    warning: '#fdcb6',
+    danger: '#d63031'
+};
+const CHART_PALETTE = ['#e84393', '#0984e3', '#00b894', '#fdcb6', '#a29bfe', '#fd79a8', '#55efc4', '#74b9ff', '#ffeaa7', '#dfe6e9', '#b2bec3', '#636e72'];
+
+
+// ===== 用户上传表单：自动计算逻辑 =====
+const SUBMIT_CURRENT_YEAR = new Date().getFullYear();
+const SUBMIT_ZODIAC_LIST = ['猴','鸡','狗','猪','鼠','牛','虎','兔','龙','蛇','马','羊'];
+
+function submitYearToZodiac(y) {
+    if (!y || isNaN(y)) return '';
+    return SUBMIT_ZODIAC_LIST[parseInt(y) % 12];
+}
+
+function onSubmitBirthYearChange() {
+    const by = document.getElementById('submitBirthYear').value;
+    if (!by) return;
+    document.getElementById('submitAgeNum').value = SUBMIT_CURRENT_YEAR - parseInt(by);
+    const z = submitYearToZodiac(parseInt(by));
+    if (z) document.getElementById('submitZodiac').value = z;
+}
+
+function onSubmitAgeChange() {
+    const age = document.getElementById('submitAgeNum').value;
+    if (!age) return;
+    document.getElementById('submitBirthYear').value = SUBMIT_CURRENT_YEAR - parseInt(age);
+    const z = submitYearToZodiac(SUBMIT_CURRENT_YEAR - parseInt(age));
+    if (z) document.getElementById('submitZodiac').value = z;
+}
+
+// ===== 初始化 =====
+window.onload = function() {
+    loadStats();
+    loadRegionOptions();
+    loadData();
+    initCharts();
+    checkLoginStatus();
+    loadRegionOptionsForSubmit();
+};
+
+// ===== 检查登录状态 =====
+function checkLoginStatus() {
+    fetch(apiUrl('/api/admin/current'))
+        .then(r => r.json())
+        .then(res => {
+            if (res.success && res.logged_in) {
+                currentAdminInfo = res.data;
+                showAdminUI();
+            } else {
+                hideAdminUI();
+            }
+        });
+}
+
+function showAdminUI() {
+    document.getElementById('btnAdminLogin').style.display = 'none';
+    document.getElementById('btnAdminCenter').style.display = 'inline-block';
+    document.getElementById('btnAdminLogout').style.display = 'inline-block';
+    document.getElementById('btnAddData').style.display = 'inline-block';  // 显示添加按钮
+    document.getElementById('btnExportExcel').style.display = 'inline-block';  // 显示导出
+    document.getElementById('btnReimport').style.display = 'inline-block';    // 显示重新导入
+    
+    // 根据角色显示/隐藏标签
+    if (currentAdminInfo.role === 'super_admin') {
+        document.getElementById('tabRegionManageBtn').style.display = 'inline-block';
+        document.getElementById('tabAdminManageBtn').style.display = 'inline-block';
+    } else {
+        document.getElementById('tabRegionManageBtn').style.display = 'none';
+        document.getElementById('tabAdminManageBtn').style.display = 'none';
+    }
+}
+
+function hideAdminUI() {
+    currentAdminInfo = null;
+    document.getElementById('btnAdminLogin').style.display = 'inline-block';
+    document.getElementById('btnAdminCenter').style.display = 'none';
+    document.getElementById('btnAdminLogout').style.display = 'none';
+    document.getElementById('btnAddData').style.display = 'none';  // 隐藏添加按钮
+    document.getElementById('btnExportExcel').style.display = 'none'; // 隐藏导出
+    document.getElementById('btnReimport').style.display = 'none';  // 隐藏重新导入
+}
+
+// ===== 管理员登录 =====
+function openAdminLoginModal() {
+    document.getElementById('loginUsername').value = '';
+    document.getElementById('loginPassword').value = '';
+    document.getElementById('loginError').style.display = 'none';
+    document.getElementById('adminLoginModal').classList.add('active');
+    setTimeout(() => document.getElementById('loginUsername').focus(), 100);
+}
+
+function adminLogin() {
+    const username = document.getElementById('loginUsername').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    
+    if (!username || !password) {
+        document.getElementById('loginError').textContent = '用户名和密码不能为空';
+        document.getElementById('loginError').style.display = 'block';
+        return;
+    }
+    
+    fetch(apiUrl('/api/admin/login'), {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({username, password})
+    })
+    .then(r => r.json())
+    .then(res => {
+        if (res.success) {
+            currentAdminInfo = res.data;
+            showAdminUI();
+            closeModal('adminLoginModal');
+            alert('登录成功！');
+        } else {
+            document.getElementById('loginError').textContent = res.message || '登录失败';
+            document.getElementById('loginError').style.display = 'block';
+        }
+    });
+}
+
+// ===== 管理员登出 =====
+function adminLogout() {
+    fetch(apiUrl('/api/admin/logout'), {method: 'POST'})
+        .then(r => r.json())
+        .then(res => {
+            hideAdminUI();
+            alert('已退出登录');
+        });
+}
+
+// ===== 管理员中心 =====
+function openAdminCenterModal() {
+    document.getElementById('adminCenterModal').classList.add('active');
+    // 加载过期资料数量
+    loadExpiredCount();
+    // 默认加载资料审核标签
+    switchTab('tabReview');
+    // 加载管理员中心资料管理的地区选项
+    loadAdminRegionOptions();
+}
+
+function switchTab(tabName) {
+    // 更新标签按钮状态
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    const clickEvent = typeof event !== 'undefined' ? event : null;
+    const activeBtn = clickEvent && clickEvent.target ? clickEvent.target.closest('.tab-btn') : document.querySelector(`.tab-btn[onclick*="${tabName}"]`);
+    if (activeBtn) activeBtn.classList.add('active');
+    
+    // 更新内容显示
+    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+    
+    if (tabName === 'tabReview') {
+        document.getElementById('tabReviewContent').classList.add('active');
+        loadPendingList();
+    } else if (tabName === 'tabExpired') {
+        document.getElementById('tabExpiredContent').classList.add('active');
+        loadExpiredList();
+    } else if (tabName === 'tabDataManage') {
+        document.getElementById('tabDataManageContent').classList.add('active');
+        loadAdminData();
+    } else if (tabName === 'tabRegionManage') {
+        document.getElementById('tabRegionManageContent').classList.add('active');
+        loadRegionManage();
+    } else if (tabName === 'tabAdminManage') {
+        document.getElementById('tabAdminManageContent').classList.add('active');
+        loadAdminManage();
+    }
+}
+
+// ===== 资料审核功能 =====
+function loadPendingList() {
+    fetch(apiUrl('/api/admin/pending'))
+        .then(r => r.json())
+        .then(res => {
+            if (!res.success) {
+                document.getElementById('pendingList').innerHTML = '<p class="error-message">加载失败：' + res.message + '</p>';
+                return;
+            }
+            
+            const pending = res.data;
+            if (pending.length === 0) {
+                document.getElementById('pendingList').innerHTML = '<p class="empty-state">暂无待审核记录</p>';
+                return;
+            }
+            
+            let html = '';
+            pending.forEach(r => {
+                html += `
+                <div class="review-card">
+                    <h4>ID: ${r.id} | ${r.region_group || '-'}</h4>
+                    <p>年龄：${r.age_raw || '-'} ${r.age_normalized ? '(' + r.age_normalized + '岁)' : ''}</p>
+                    <p>身高：${r.height || '-'} cm | 体重：${r.weight || '-'} kg</p>
+                    <p>学历：${r.education || '-'} | 工作：${r.job || '-'}</p>
+                    <p>家庭情况：${r.family_info || '-'}</p>
+                    <p>择偶要求：${r.mate_requirement || '-'}</p>
+                    <p>提交时间：${r.submit_time || '-'}</p>
+                    <div class="review-actions">
+                        <button class="btn-success" style="padding:6px 16px;font-size:13px;" onclick="approveRecord(${r.id})">✅ 通过</button>
+                        <button class="btn-danger" style="padding:6px 16px;font-size:13px;" onclick="openRejectModal(${r.id})">❌ 拒绝</button>
+                    </div>
+                </div>
+                `;
+            });
+            
+            document.getElementById('pendingList').innerHTML = html;
+        });
+}
+
+function approveRecord(id) {
+    if (!confirm('确定要通过这条记录吗？')) return;
+    
+    fetch(apiUrl('/api/admin/review'), {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({id: id, action: 'approve'})
+    })
+    .then(r => r.json())
+    .then(res => {
+        if (res.success) {
+            alert('审核通过！');
+            loadPendingList();
+            loadStats();
+        } else {
+            alert('操作失败：' + res.message);
+        }
+    });
+}
+
+function openRejectModal(id) {
+    currentRejectId = id;
+    document.getElementById('rejectReason').value = '';
+    document.getElementById('rejectModal').classList.add('active');
+}
+
+function confirmReject() {
+    const reason = document.getElementById('rejectReason').value.trim();
+    if (!reason) {
+        alert('请填写拒绝理由！');
+        return;
+    }
+    
+    fetch(apiUrl('/api/admin/review'), {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({id: currentRejectId, action: 'reject', reject_reason: reason})
+    })
+    .then(r => r.json())
+    .then(res => {
+        if (res.success) {
+            alert('已拒绝！');
+            closeModal('rejectModal');
+            loadPendingList();
+        } else {
+            alert('操作失败：' + res.message);
+        }
+    });
+}
+
+// ===== 资料管理功能（管理员）=====
+function loadAdminData() {
+    // 构建筛选参数
+    const region = document.getElementById('adminFilterRegion') ? document.getElementById('adminFilterRegion').value : '';
+    const ageRange = document.getElementById('adminFilterAgeRange') ? document.getElementById('adminFilterAgeRange').value : '';
+    const heightRange = document.getElementById('adminFilterHeightRange') ? document.getElementById('adminFilterHeightRange').value : '';
+    const weightRange = document.getElementById('adminFilterWeightRange') ? document.getElementById('adminFilterWeightRange').value : '';
+    const education = document.getElementById('adminFilterEducation') ? document.getElementById('adminFilterEducation').value : '';
+    const statusFilter = document.getElementById('adminFilterStatus') ? document.getElementById('adminFilterStatus').value : '';
+    const keyword = document.getElementById('adminSearchInput') ? document.getElementById('adminSearchInput').value : '';
+    
+    let url = '/api/data?include_pending=true';
+    const params = [];
+    if (region) params.push(`region=${encodeURIComponent(region)}`);
+    if (ageRange) params.push(`age_range=${encodeURIComponent(ageRange)}`);
+    if (heightRange) params.push(`height_range=${encodeURIComponent(heightRange)}`);
+    if (weightRange) params.push(`weight_range=${encodeURIComponent(weightRange)}`);
+    if (education) params.push(`education=${encodeURIComponent(education)}`);
+    if (statusFilter) params.push(`status=${encodeURIComponent(statusFilter)}`);
+    if (keyword) params.push(`keyword=${encodeURIComponent(keyword)}`);
+    if (params.length) url += '&' + params.join('&');
+    
+    fetch(url)
+        .then(r => r.json())
+        .then(res => {
+            if (!res.success) {
+                document.getElementById('adminDataTable').innerHTML = '<p class="error-message">加载失败：' + res.message + '</p>';
+                return;
+            }
+            
+            const data = res.data;
+            if (data.length === 0) {
+                document.getElementById('adminDataTable').innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:40px;">暂无数据</p>';
+                return;
+            }
+            
+            let html = '<div class="admin-table-wrap"><table><thead><tr>';
+            html += '<th>ID</th><th>地区</th><th>年龄</th><th>身高</th><th>体重</th><th>学历</th><th>状态</th><th>操作</th>';
+            html += '</tr></thead><tbody>';
+            
+            data.forEach(r => {
+                const statusText = r.status === 'pending' ? '待审核' : r.status === 'approved' ? '已通过' : '已过期';
+                const statusClass = r.status === 'pending' ? 'status-pending' : r.status === 'approved' ? 'status-approved' : 'status-rejected';
+                
+                html += `<tr>`;
+                html += `<td>${r.id}</td>`;
+                html += `<td>${r.region_group || '-'}</td>`;
+                html += `<td>${r.age_raw || ''} ${r.age_normalized ? '(' + r.age_normalized + ')' : ''}</td>`;
+                html += `<td>${r.height || '-'}</td>`;
+                html += `<td>${r.weight || '-'}</td>`;
+                html += `<td>${r.education || '-'}</td>`;
+                html += `<td><span class="status-badge ${statusClass}" style="cursor:pointer" onclick="cycleStatus(${r.id}, '${r.status||'approved'}')">${statusText}</span></td>`;
+                html += `<td>
+                    <button class="action-btn btn-edit" onclick="openEditModal(${r.id})">编辑</button>
+                    <button class="action-btn btn-del" onclick="deleteRecord(${r.id})">删除</button>
+                </td>`;
+                html += `</tr>`;
+            });
+            
+            html += '</tbody></table></div>';
+            document.getElementById('adminDataTable').innerHTML = html;
+        });
+}
+
+function clearAdminFilters() {
+    const els = ['adminFilterRegion', 'adminFilterAgeRange', 'adminFilterHeightRange', 'adminFilterWeightRange', 'adminFilterEducation', 'adminFilterStatus'];
+    els.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+    });
+    const search = document.getElementById('adminSearchInput');
+    if (search) search.value = '';
+    loadAdminData();
+}
+
+function loadAdminRegionOptions() {
+    fetch(apiUrl('/api/regions'))
+        .then(r => r.json())
+        .then(res => {
+            if (!res.success) return;
+            const sel = document.getElementById('adminFilterRegion');
+            if (!sel) return;
+            const current = sel.value;
+            sel.innerHTML = '<option value="">全部地区</option>';
+            // 按 dashboard 顺序排序
+            const regionOrder = ['扬中男','扬中女','镇江男','镇江女','南京','常州','苏州','上海','无锡杭州北京','扬中男再婚','扬中女再婚','镇江男再婚','镇江女再婚','其他'];
+            const sorted = [...res.regions].sort((a, b) => {
+                const ia = regionOrder.indexOf(a.name);
+                const ib = regionOrder.indexOf(b.name);
+                if (ia === -1 && ib === -1) return a.name.localeCompare(b.name);
+                if (ia === -1) return 1;
+                if (ib === -1) return -1;
+                return ia - ib;
+            });
+            sorted.forEach(r => {
+                const opt = document.createElement('option');
+                opt.value = r.name;
+                opt.textContent = r.name;
+                sel.appendChild(opt);
+            });
+            sel.value = current;
+        });
+}
+
+
+// ===== 地区管理功能 =====
+function loadRegionManage() {
+    fetch(apiUrl('/api/regions'))
+        .then(r => r.json())
+        .then(res => {
+            if (!res.success) {
+                document.getElementById('regionTable').innerHTML = '<p class="error-message">加载失败</p>';
+                return;
+            }
+            
+            // 更新管理员管理中的地区多选
+            const select = document.getElementById('newAdminRegions');
+            select.innerHTML = '';
+            res.regions.forEach(r => {
+                const opt = document.createElement('option');
+                opt.value = r.name;
+                opt.textContent = r.name;
+                select.appendChild(opt);
+            });
+            
+            // 显示地区列表
+            let html = '<div class="admin-table-wrap"><table><thead><tr>';
+            html += '<th>ID</th><th>名称</th><th>操作</th>';
+            html += '</tr></thead><tbody>';
+            
+            res.regions.forEach(r => {
+                html += `<tr>`;
+                html += `<td>${r.id}</td>`;
+                html += `<td>${r.name}</td>`;
+                html += `<td><button class="btn-danger" style="padding:4px 12px;font-size:12px;" onclick="deleteRegion(${r.id}, '${r.name}')">删除</button></td>`;
+                html += `</tr>`;
+            });
+            
+            html += '</tbody></table></div>';
+            document.getElementById('regionTable').innerHTML = html;
+        });
+}
+
+function addRegion() {
+    const name = document.getElementById('newRegionName').value.trim();
+    if (!name) {
+        alert('请输入地区名称！');
+        return;
+    }
+    
+    fetch(apiUrl('/api/region/add'), {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({name})
+    })
+    .then(r => r.json())
+    .then(res => {
+        if (res.success) {
+            alert('添加成功！');
+            document.getElementById('newRegionName').value = '';
+            loadRegionManage();
+        } else {
+            alert('添加失败：' + res.message);
+        }
+    });
+}
+
+function deleteRegion(id, name) {
+    if (!confirm(`确定要删除地区"${name}"吗？`)) return;
+    
+    fetch(apiUrl('/api/region/delete'), {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({id})
+    })
+    .then(r => r.json())
+    .then(res => {
+        if (res.success) {
+            alert('删除成功！');
+            loadRegionManage();
+        } else {
+            alert('删除失败：' + res.message);
+        }
+    });
+}
+
+// ===== 管理员管理功能 =====
+function loadAdminManage() {
+    // 先加载地区列表到newAdminRegions选择框
+    fetch(apiUrl('/api/regions'))
+        .then(r => r.json())
+        .then(res => {
+            if (res.success) {
+                const select = document.getElementById('newAdminRegions');
+                select.innerHTML = '';
+                res.regions.forEach(r => {
+                    const opt = document.createElement('option');
+                    opt.value = r.name;
+                    opt.textContent = r.name;
+                    select.appendChild(opt);
+                });
+            }
+        });
+    
+    // 加载管理员列表
+    fetch(apiUrl('/api/admin/list'))
+        .then(r => r.json())
+        .then(res => {
+            if (!res.success) {
+                document.getElementById('adminTable').innerHTML = '<p class="error-message">加载失败</p>';
+                return;
+            }
+            
+            const admins = res.data;
+            let html = '<div class="admin-table-wrap"><table><thead><tr>';
+            html += '<th>ID</th><th>用户名</th><th>角色</th><th>负责地区</th><th>最后登录</th><th>操作</th>';
+            html += '</tr></thead><tbody>';
+            
+            admins.forEach(a => {
+                const roleText = a.role === 'super_admin' ? '主管理员' : '地区管理员';
+                const regionsText = a.regions.includes('全部') ? '全部' : a.regions.join(', ');
+                
+                html += `<tr>`;
+                html += `<td>${a.id}</td>`;
+                html += `<td>${a.username}</td>`;
+                html += `<td>${roleText}</td>`;
+                html += `<td>${regionsText}</td>`;
+                html += `<td>${a.last_login || '-'}</td>`;
+                html += `<td>
+                    <button class="action-btn btn-view" onclick="editAdmin(${a.id})">编辑</button>
+                    <button class="action-btn btn-del" onclick="deleteAdmin(${a.id}, '${a.username}')">删除</button>
+                </td>`;
+                html += `</tr>`;
+            });
+            
+            html += '</tbody></table></div>';
+            document.getElementById('adminTable').innerHTML = html;
+        });
+}
+
+function addAdmin() {
+    const username = document.getElementById('newAdminUsername').value.trim();
+    const password = document.getElementById('newAdminPassword').value;
+    const role = document.getElementById('newAdminRole').value;
+    
+    if (!username || !password) {
+        alert('请填写用户名和密码！');
+        return;
+    }
+    
+    const select = document.getElementById('newAdminRegions');
+    const regions = Array.from(select.selectedOptions).map(opt => opt.value);
+    
+    if (role === 'region_admin' && regions.length === 0) {
+        alert('请选择负责地区！');
+        return;
+    }
+    
+    fetch(apiUrl('/api/admin/add'), {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            username,
+            password,
+            role,
+            regions: role === 'super_admin' ? ['全部'] : regions
+        })
+    })
+    .then(r => r.json())
+    .then(res => {
+        if (res.success) {
+            alert('添加成功！');
+            document.getElementById('newAdminUsername').value = '';
+            document.getElementById('newAdminPassword').value = '';
+            loadAdminManage();
+        } else {
+            alert('添加失败：' + res.message);
+        }
+    });
+}
+
+function editAdmin(id) {
+    // 简化版：提示用户输入新密码（可选）和地区
+    const password = prompt('请输入新密码（留空则不修改）：');
+    const regionsStr = prompt('请输入负责地区（逗号分隔，主管理员请输入"全部"）：');
+    
+    if (regionsStr === null) return;
+    
+    const regions = regionsStr.split(',').map(r => r.trim()).filter(r => r);
+    
+    fetch(apiUrl(`/api/admin/${id}`), {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            password: password || undefined,
+            regions
+        })
+    })
+    .then(r => r.json())
+    .then(res => {
+        if (res.success) {
+            alert('修改成功！');
+            loadAdminManage();
+        } else {
+            alert('修改失败：' + res.message);
+        }
+    });
+}
+
+function deleteAdmin(id, username) {
+    if (!confirm(`确定要删除管理员"${username}"吗？`)) return;
+    
+    fetch(apiUrl(`/api/admin/${id}`), {
+        method: 'DELETE',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({})
+    })
+    .then(r => r.json())
+    .then(res => {
+        if (res.success) {
+            alert('删除成功！');
+            loadAdminManage();
+        } else {
+            alert('删除失败：' + res.message);
+        }
+    });
+}
+
+// ===== 用户资料提交功能 =====
+function loadRegionOptionsForSubmit() {
+    fetch(apiUrl('/api/region-groups'))
+        .then(r => r.json())
+        .then(res => {
+            if (!res.success) return;
+            const sel = document.getElementById('submitRegion');
+            sel.innerHTML = '';
+            // 添加默认提示选项
+            const defaultOpt = document.createElement('option');
+            defaultOpt.value = '';
+            defaultOpt.textContent = '请选择地区';
+            sel.appendChild(defaultOpt);
+            // 添加地区选项
+            res.groups.forEach(g => {
+                const opt = document.createElement('option');
+                opt.value = g;
+                opt.textContent = g;
+                sel.appendChild(opt);
+            });
+        });
+}
+
+function openUserSubmitModal() {
+    ['submitHeight','submitWeight','submitEdu','submitJob','submitFamily','submitMate'].forEach(id => {
+        document.getElementById(id).value = '';
+    });
+    document.getElementById('submitRegion').value = '';
+    document.getElementById('submitGender').value = '';
+    document.getElementById('submitZodiac').value = '';
+    document.getElementById('submitBirthYear').value = '';
+    document.getElementById('submitAgeNum').value = '';
+    document.getElementById('userSubmitModal').classList.add('active');
+}
+
+function submitUserRecord() {
+    const region_group = document.getElementById('submitRegion').value;
+    const gender = document.getElementById('submitGender').value;
+    const birth_year = document.getElementById('submitBirthYear').value.trim();
+    const age = document.getElementById('submitAgeNum').value.trim();
+    const age_raw = '';
+
+    if (!region_group) {
+        alert('请选择地区分组！');
+        return;
+    }
+    if (!gender) {
+        alert('请选择性别！');
+        return;
+    }
+    if (!birth_year && !age) {
+        alert('请填写年龄或出生年份！');
+        return;
+    }
+
+    const record = {
+        region_group,
+        gender,
+        birth_year: birth_year ? parseInt(birth_year) : null,
+        age_raw,
+        zodiac: document.getElementById('submitZodiac').value,
+        height: document.getElementById('submitHeight').value.trim(),
+        weight: document.getElementById('submitWeight').value.trim(),
+        education: document.getElementById('submitEdu').value.trim(),
+        job: document.getElementById('submitJob').value.trim(),
+        family_info: document.getElementById('submitFamily').value.trim(),
+        mate_requirement: document.getElementById('submitMate').value.trim()
+    };
+
+    fetch(apiUrl('/api/user/submit'), {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(record)
+    })
+    .then(r => r.json())
+    .then(res => {
+        if (res.success) {
+            alert('资料已提交，请联系微信：xiniang2026');
+            closeModal('userSubmitModal');
+        } else {
+            alert('提交失败：' + res.message);
+        }
+    });
+}
+
+// ===== 标签页切换 =====
+function clearDataFilters() {
+    // 清空资料管理里的所有筛选条件
+    const els = ['filterRegion', 'filterGender', 'filterZodiac', 'filterEducation', 'filterAgeRange', 'filterHeightRange', 'filterHeightMin', 'filterHeightMax', 'filterWeightRange', 'filterStatus'];
+    els.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+    });
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) searchInput.value = '';
+    pendingFilter = null;  // 同时清空看板跳转来的待处理筛选
+}
+
+function clearFilters() {
+    clearDataFilters();
+    loadData();
+}
+
+function showTab(tab) {
+    document.getElementById('tab-dashboard').style.display = tab === 'dashboard' ? 'block' : 'none';
+    document.getElementById('tab-data').style.display = tab === 'data' ? 'block' : 'none';
+    
+    if (tab === 'dashboard') {
+        clearDataFilters();  // 清空资料管理的筛选条件
+        loadStats();
+    } else if (tab === 'data') {
+        // 应用从看板跳转来的筛选条件
+        if (pendingFilter) {
+            if (pendingFilter.gender) {
+                let g = pendingFilter.gender;
+                document.getElementById('filterGender').value = g;
+            }
+            if (pendingFilter.region) {
+                document.getElementById('filterRegion').value = pendingFilter.region;
+            }
+            if (pendingFilter.education) {
+                let sel = document.getElementById('filterStatus');
+                if (sel && pendingFilter.status) { sel.value = pendingFilter.status; }
+                sel = document.getElementById('filterEducation');
+                if (sel) sel.value = pendingFilter.education;
+            }
+            if (pendingFilter.ageRange) {
+                let sel = document.getElementById('filterAgeRange');
+                if (sel) sel.value = pendingFilter.ageRange;
+            }
+            if (pendingFilter.zodiac) {
+                let sel = document.getElementById('filterZodiac');
+                if (sel) sel.value = pendingFilter.zodiac;
+            }
+            if (pendingFilter.heightMin !== undefined && pendingFilter.heightMin !== null) {
+                document.getElementById('filterHeightMin').value = pendingFilter.heightMin;
+            }
+            if (pendingFilter.heightMax !== undefined && pendingFilter.heightMax !== null) {
+                document.getElementById('filterHeightMax').value = pendingFilter.heightMax;
+            }
+            pendingFilter = null;  // 用完即清
+        }
+        loadData();
+    }
+}
+
+// ===== 加载统计数据 =====
+function animateCount(el, target) {
+    let start = 0;
+    const duration = 1200;
+    const step = Math.ceil(target / (duration / 16));
+    const timer = setInterval(() => {
+        start = Math.min(start + step, target);
+        el.textContent = start.toLocaleString();
+        if (start >= target) clearInterval(timer);
+    }, 16);
+}
+
+function loadStats() {
+    if (CONFIG.STATIC_MODE) {
+        // 静态模式：直接读 data.json，本地计算统计
+        fetch(CONFIG.DATA_URL)
+            .then(r => r.json())
+            .then(allData => {
+                if (!Array.isArray(allData)) return;
+                // 只统计已审核或待审核（前端自行过滤）
+                const approved = allData.filter(r => (r.status || 'approved') !== 'expired');
+                // 性别统计
+                const genderStats = {};
+                approved.forEach(r => {
+                    const g = r.gender || '未知';
+                    genderStats[g] = (genderStats[g]||0) + 1;
+                });
+                // 地区统计
+                const regionStats = {};
+                approved.forEach(r => {
+                    const reg = r.region_group || '其他';
+                    regionStats[reg] = (regionStats[reg]||0) + 1;
+                });
+                // 年龄统计
+                const ageMap = {'20-25':0,'26-30':0,'31-35':0,'36-40':0,'40+':0,'未知':0};
+                approved.forEach(r => {
+                    const a = r.age_normalized;
+                    if (!a) { ageMap['未知']++; return; }
+                    if (a <= 25) ageMap['20-25']++;
+                    else if (a <= 30) ageMap['26-30']++;
+                    else if (a <= 35) ageMap['31-35']++;
+                    else if (a <= 40) ageMap['36-40']++;
+                    else ageMap['40+']++;
+                });
+                // 学历统计
+                const eduStats = {};
+                approved.forEach(r => {
+                    const e = r.education || '其他/未知';
+                    eduStats[e] = (eduStats[e]||0) + 1;
+                });
+                const s = { total: approved.length, gender: genderStats, region: regionStats, age: ageMap, education: eduStats };
+                // 渲染（复用原来逻辑）
+                const avgAge = (() => {
+                    let total = 0, count = 0;
+                    const w = {'20-25':22,'26-30':28,'31-35':33,'36-40':38,'40+':43};
+                    Object.entries(s.age).forEach(([k,v]) => { if (w[k]) { total += w[k]*v; count += v; } });
+                    return count ? Math.round(total/count) : '--';
+                })();
+                document.getElementById('statsCards').innerHTML = `
+                    <div class="stat-card stat-card-total"><div class="icon">💝</div><div class="num" id="sc-total">0</div><div class="label">总资料数</div></div>
+                    <div class="stat-card stat-card-male"><div class="icon">👨</div><div class="num" id="sc-male">0</div><div class="label">男生</div></div>
+                    <div class="stat-card stat-card-female"><div class="icon">👩</div><div class="num" id="sc-female">0</div><div class="label">女生</div></div>
+                    <div class="stat-card stat-card-region"><div class="icon">📍</div><div class="num" id="sc-region">0</div><div class="label">地区分组</div></div>
+                    <div class="stat-card stat-card-avg"><div class="icon">🎂</div><div class="num">${avgAge}</div><div class="label">平均年龄</div></div>
+                `;
+                animateCount(document.getElementById('sc-total'), s.total);
+                animateCount(document.getElementById('sc-male'), s.gender['男']||0);
+                animateCount(document.getElementById('sc-female'), s.gender['女']||0);
+                animateCount(document.getElementById('sc-region'), Object.keys(s.region).length);
+                renderGenderChart(s.gender);
+                renderRegionChart(s.region);
+                renderAgeChart(s.age);
+                renderEduChart(s.education);
+                // 扩展统计也本地算
+                const maleH = [], femaleH = [];
+                const scatterM = [], scatterF = [];
+                const zodiacStats = {};
+                approved.forEach(r => {
+                    if (r.height) {
+                        const h = parseInt(r.height);
+                        if (r.gender === '男') maleH.push(h);
+                        else if (r.gender === '女') femaleH.push(h);
+                    }
+                    if (r.birth_year) {
+                        const by = parseInt(r.birth_year);
+                        if (by) {
+                            const z = (by - 4) % 12;
+                            const names = ['鼠','牛','虎','兔','龙','蛇','马','羊','猴','鸡','狗','猪'];
+                            zodiacStats[names[z]] = (zodiacStats[names[z]]||0) + 1;
+                        }
+                    }
+                    if (r.age_normalized && r.height) {
+                        const pt = [r.age_normalized, parseInt(r.height)];
+                        if (r.gender === '男') scatterM.push(pt);
+                        else if (r.gender === '女') scatterF.push(pt);
+                    }
+                });
+                renderZodiacChart(zodiacStats);
+                renderHeightChart(maleH, femaleH);
+                renderScatterChart(scatterM, scatterF);
+            });
+        return;
+    }
+    // 非静态模式：走 API
+    fetch(apiUrl('/api/stats'))
+        .then(r => r.json())
+        .then(res => {
+            if (!res.success) return;
+            const s = res.stats;
+            const avgAge = (() => {
+                let total = 0, count = 0;
+                const w = {'20-25': 22, '26-30': 28, '31-35': 33, '36-40': 38, '40+': 43};
+                Object.entries(s.age).forEach(([k, v]) => { if (w[k]) { total += w[k]*v; count += v; }});
+                return count ? Math.round(total/count) : '--';
+            })();
+            document.getElementById('statsCards').innerHTML = `
+                <div class="stat-card stat-card-total"><div class="icon">💝</div><div class="num" id="sc-total">0</div><div class="label">总资料数</div></div>
+                <div class="stat-card stat-card-male"><div class="icon">👨</div><div class="num" id="sc-male">0</div><div class="label">男生</div></div>
+                <div class="stat-card stat-card-female"><div class="icon">👩</div><div class="num" id="sc-female">0</div><div class="label">女生</div></div>
+                <div class="stat-card stat-card-region"><div class="icon">📍</div><div class="num" id="sc-region">0</div><div class="label">地区分组</div></div>
+                <div class="stat-card stat-card-avg"><div class="icon">🎂</div><div class="num">${avgAge}</div><div class="label">平均年龄</div></div>
+            `;
+            animateCount(document.getElementById('sc-total'), s.total);
+            animateCount(document.getElementById('sc-male'), s.gender.男||0);
+            animateCount(document.getElementById('sc-female'), s.gender.女||0);
+            animateCount(document.getElementById('sc-region'), Object.keys(s.region).length);
+            renderGenderChart(s.gender);
+            renderRegionChart(s.region);
+            renderAgeChart(s.age);
+            renderEduChart(s.education);
+        });
+
+    fetch(apiUrl('/api/stats/extended'))
+        .then(r => r.json())
+        .then(res => {
+            if (!res.success) return;
+            renderZodiacChart(res.zodiac);
+            renderHeightChart(res.height_male, res.height_female);
+            renderScatterChart(res.scatter_male, res.scatter_female);
+        });
+}
+
+// ===== 图表初始化 =====
+let chartGender, chartRegion, chartAge, chartEdu, chartZodiac, chartHeight, chartScatter;
+function initCharts() {
+    chartGender  = echarts.init(document.getElementById('chartGender'));
+    chartRegion  = echarts.init(document.getElementById('chartRegion'));
+    chartAge     = echarts.init(document.getElementById('chartAge'));
+    chartEdu     = echarts.init(document.getElementById('chartEdu'));
+    chartZodiac  = echarts.init(document.getElementById('chartZodiac'));
+    chartHeight  = echarts.init(document.getElementById('chartHeight'));
+    chartScatter = echarts.init(document.getElementById('chartScatter'));
+
+    chartGender.on('click', params => {
+        if (params.name === '未知') return;
+        pendingFilter = { gender: params.name === '男生' ? '男' : '女' };
+        showTab('data');
+    });
+    chartRegion.on('click', params => { pendingFilter = { region: params.name }; showTab('data'); });
+    chartAge.on('click', params => {
+        let ageVal = params.name.replace(/^年龄/, '').replace(/岁$/, '');
+        pendingFilter = { ageRange: ageVal }; showTab('data');
+    });
+    chartEdu.on('click', params => { pendingFilter = { education: params.name }; showTab('data'); });
+}
+
+function renderGenderChart(data) {
+    const unknown = (data['未知'] || 0);
+    const total = (data.男||0) + (data.女||0) + unknown;
+    const pieData = [
+        { value: data.男||0, name: '男生', itemStyle: { color: UI_COLORS.male } },
+        { value: data.女||0, name: '女生', itemStyle: { color: UI_COLORS.female } }
+    ];
+    if (unknown > 0) {
+        pieData.push({ value: unknown, name: '未知', itemStyle: { color: UI_COLORS.muted } });
+    }
+    chartGender.setOption({
+        tooltip: { trigger: 'item', formatter: '{b}: {c}人 ({d}%)' },
+        legend: { bottom: 0 },
+        series: [{
+            type: 'pie', radius: ['45%', '72%'],
+            avoidLabelOverlap: false,
+            label: { show: true, position: 'center', formatter: () => `总计\n${total}人`, fontSize: 16, fontWeight: 'bold', color: UI_COLORS.text },
+            emphasis: { label: { show: true, fontSize: 18 } },
+            data: pieData,
+            itemStyle: { borderRadius: 8, borderColor: UI_COLORS.surface, borderWidth: 3 }
+        }]
+    });
+}
+
+function renderZodiacChart(data) {
+    const zodiacEmoji = {'鼠':'🐭','牛':'🐮','虎':'🐯','兔':'🐰','龙':'🐲','蛇':'🐍','马':'🐴','羊':'🐑','猴':'🐵','鸡':'🐔','狗':'🐶','猪':'🐷'};
+    const colors = CHART_PALETTE;
+    const entries = Object.entries(data).sort((a,b) => b[1]-a[1]);
+    chartZodiac.setOption({
+        tooltip: { trigger: 'item', formatter: p => `${zodiacEmoji[p.name]||''} ${p.name}：${p.value}人 (${p.percent}%)` },
+        series: [{
+            type: 'pie',
+            radius: ['20%', '75%'],
+            roseType: 'area',
+            center: ['50%', '52%'],
+            data: entries.map(([name, value], i) => ({
+                name, value,
+                label: { formatter: `{a|${zodiacEmoji[name]||name}}\n{b|${value}}`, rich: { a: { fontSize: 14 }, b: { fontSize: 11, color: UI_COLORS.muted } } },
+                itemStyle: { color: colors[i % colors.length], borderRadius: 4, borderColor: UI_COLORS.surface, borderWidth: 2 }
+            })),
+            emphasis: { itemStyle: { shadowBlur: 14, shadowColor: 'rgba(70,38,52,0.18)' } },
+            animationType: 'scale',
+            animationEasing: 'quarticOut'
+        }]
+    });
+    // 点击生肖跳转到资料管理
+    chartZodiac.off('click');
+    chartZodiac.on('click', function(params) {
+        pendingFilter = { zodiac: params.name };
+        showTab('data');
+    });
+}
+
+function renderRegionChart(data) {
+    const order = ['扬中男','扬中女','镇江男','镇江女','南京','常州','苏州','上海','无锡杭州北京','扬中男再婚','扬中女再婚','镇江男再婚','镇江女再婚','其他'];
+    const keys = Object.keys(data).sort((a,b) => { const ia=order.indexOf(a), ib=order.indexOf(b); if(ia===-1&&ib===-1) return a.localeCompare(b); if(ia===-1) return 1; if(ib===-1) return -1; return ia-ib; });
+    const vals = keys.map(k => data[k]);
+    chartRegion.setOption({
+        tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: p => `${p[0].name}：${p[0].value}人` },
+        grid: { left: 120, right: 60, top: 20, bottom: 20 },
+        xAxis: { type: 'value', name: '人数', splitLine: { lineStyle: { type: 'dashed', color: UI_COLORS.grid } } },
+        yAxis: { type: 'category', data: [...keys].reverse(), axisLabel: { fontSize: 12, color: UI_COLORS.muted } },
+        series: [{
+            type: 'bar',
+            data: [...vals].reverse().map((v,i) => ({
+                value: v,
+                itemStyle: {
+                    color: CHART_PALETTE[i % CHART_PALETTE.length],
+                    opacity: 0.86,
+                    borderRadius: [0, 8, 8, 0]
+                }
+            })),
+            barWidth: 22,
+            label: { show: true, position: 'right', formatter: '{c}人', fontSize: 12, color: UI_COLORS.muted }
+        }]
+    });
+}
+
+function renderAgeChart(data) {
+    const ageColors = ['#00b894','#0984e3','#fdcb6','#e84393','#fd79a8','#6c5ce7'];
+    const keys = Object.keys(data);
+    const vals = Object.values(data);
+    chartAge.setOption({
+        tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+        grid: { left: 40, right: 20, top: 20, bottom: 30 },
+        xAxis: { type: 'category', data: keys, axisLabel: { color: UI_COLORS.muted } },
+        yAxis: { type: 'value', splitLine: { lineStyle: { type: 'dashed', color: UI_COLORS.grid } } },
+        series: [{
+            type: 'bar',
+            data: vals.map((v,i) => ({
+                value: v,
+                itemStyle: { color: ageColors[i % ageColors.length], opacity: 0.86, borderRadius: [8, 8, 0, 0] }
+            })),
+            barWidth: '55%',
+            label: { show: true, position: 'top', fontSize: 12, color: UI_COLORS.muted }
+        }]
+    });
+}
+
+function renderEduChart(data) {
+    const order = ['其他/未知','大专','本科','硕士','博士'];
+    const keys = Object.keys(data).sort((a,b) => { const ia=order.indexOf(a), ib=order.indexOf(b); if(ia===-1&&ib===-1) return a.localeCompare(b); if(ia===-1) return 1; if(ib===-1) return -1; return ia-ib; });
+    const vals = keys.map(k => data[k]);
+    chartEdu.setOption({
+        tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+        grid: { left: 60, right: 20, top: 20, bottom: 30 },
+        xAxis: { type: 'value', splitLine: { lineStyle: { type: 'dashed', color: UI_COLORS.grid } } },
+        yAxis: { type: 'category', data: keys, axisLabel: { color: UI_COLORS.muted } },
+        series: [{
+            type: 'bar',
+            data: vals.map((v,i) => ({
+                value: v,
+                itemStyle: {
+                    color: CHART_PALETTE[(i + 4) % CHART_PALETTE.length],
+                    opacity: 0.86,
+                    borderRadius: [0, 8, 8, 0]
+                }
+            })),
+            barWidth: '55%',
+            label: { show: true, position: 'right', formatter: '{c}人', fontSize: 12, color: UI_COLORS.muted }
+        }]
+    });
+}
+
+function renderHeightChart(maleData, femaleData) {
+    const buckets = ['<160','160-164','165-169','170-174','175-179','180-184','185+'];
+    chartHeight.setOption({
+        tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' },
+            formatter: p => p.map(s => `${s.marker}${s.seriesName}: ${Math.abs(s.value)}人`).join('<br>') },
+        legend: { data: ['男生','女生'], top: 5 },
+        grid: { left: 70, right: 40, top: 40, bottom: 20 },
+        xAxis: {
+            type: 'value',
+            axisLabel: { formatter: v => Math.abs(v) },
+            splitLine: { lineStyle: { type: 'dashed', color: UI_COLORS.grid } }
+        },
+        yAxis: { type: 'category', data: buckets, axisLabel: { color: UI_COLORS.muted, fontSize: 12 } },
+        series: [
+            {
+                name: '男生', type: 'bar', stack: 'total',
+                data: buckets.map(b => -(maleData[b]||0)),
+                itemStyle: { color: UI_COLORS.male, opacity: 0.88, borderRadius: [4,0,0,4] },
+                label: { show: true, formatter: p => p.value === 0 ? '' : Math.abs(p.value), color: UI_COLORS.surface, fontSize: 11 }
+            },
+            {
+                name: '女生', type: 'bar', stack: 'total',
+                data: buckets.map(b => femaleData[b]||0),
+                itemStyle: { color: UI_COLORS.female, opacity: 0.88, borderRadius: [0,4,4,0] },
+                label: { show: true, formatter: p => p.value === 0 ? '' : p.value, color: UI_COLORS.surface, fontSize: 11 }
+            }
+        ]
+    });
+
+    // 点击身高跳转到资料管理
+    chartHeight.off('click');
+    chartHeight.on('click', function(params) {
+        const buckets = ['<160','160-164','165-169','170-174','175-179','180-184','185+'];
+        const bucket = buckets[params.dataIndex];
+        if (!bucket) return;
+        let min=0, max=999;
+        if (bucket.startsWith('<')) {
+            max = parseInt(bucket.substring(1)) - 1;
+        } else if (bucket.endsWith('+')) {
+            min = parseInt(bucket);
+        } else {
+            const parts = bucket.split('-');
+            min = parseInt(parts[0]);
+            max = parseInt(parts[1]);
+        }
+        pendingFilter = { heightMin: min, heightMax: max };
+        showTab('data');
+    });
+}
+
+function renderScatterChart(maleData, femaleData) {
+    chartScatter.setOption({
+        tooltip: {
+            trigger: 'item',
+            formatter: p => `${p.seriesName}<br>年龄: ${p.value[0]}岁 &nbsp; 身高: ${p.value[1]}cm`
+        },
+        legend: { data: ['男生','女生'], top: 5 },
+        grid: { left: 50, right: 20, top: 40, bottom: 40 },
+        xAxis: { type: 'value', name: '年龄', min: 18, max: 55, splitLine: { lineStyle: { type: 'dashed', color: UI_COLORS.grid } } },
+        yAxis: { type: 'value', name: '身高(cm)', min: 145, max: 200, splitLine: { lineStyle: { type: 'dashed', color: UI_COLORS.grid } } },
+        series: [
+            {
+                name: '男生', type: 'scatter', data: maleData,
+                symbolSize: 7, opacity: 0.5,
+                itemStyle: { color: UI_COLORS.male, borderColor: UI_COLORS.surface, borderWidth: 1 }
+            },
+            {
+                name: '女生', type: 'scatter', data: femaleData,
+                symbolSize: 7, opacity: 0.5,
+                itemStyle: { color: UI_COLORS.female, borderColor: UI_COLORS.surface, borderWidth: 1 }
+            }
+        ]
+    });
+}
+
+// ===== 加载地区选项 =====
+function loadRegionOptions() {
+    // 资料管理筛选下拉框的选项顺序（与数据看板图表顺序一致）
+    const regionOrder = ['扬中男', '扬中女', '镇江男', '镇江女', '南京', '常州', '苏州', '上海', '无锡杭州北京', '扬中男再婚', '扬中女再婚', '镇江男再婚', '镇江女再婚', '其他'];
+    fetch(apiUrl('/api/region-groups')).then(r=>r.json()).then(res=>{
+        if(!res.success) return;
+        const sel1 = document.getElementById('filterRegion');
+        const sel2 = document.getElementById('formRegion');
+        sel1.innerHTML = '<option value="">全部地区</option>';
+        sel2.innerHTML = '';
+        // 按指定顺序排序后添加
+        const sorted = [...res.groups].sort((a, b) => {
+            const ia = regionOrder.indexOf(a);
+            const ib = regionOrder.indexOf(b);
+            if (ia === -1) return ib === -1 ? 0 : 1;
+            if (ib === -1) return -1;
+            return ia - ib;
+        });
+        sorted.forEach(g => {
+            sel1.add(new Option(g, g));
+            sel2.add(new Option(g, g));
+        });
+    });
+}
+
+// ===== 加载数据 =====
+function loadData() {
+    const region = document.getElementById('filterRegion').value;
+    const gender = document.getElementById('filterGender').value;
+    const zodiac = document.getElementById('filterZodiac') ? document.getElementById('filterZodiac').value : '';
+    const education = document.getElementById('filterEducation') ? document.getElementById('filterEducation').value : '';
+    const ageRange = document.getElementById('filterAgeRange') ? document.getElementById('filterAgeRange').value : '';
+    const heightRange = document.getElementById('filterHeightRange') ? document.getElementById('filterHeightRange').value : '';
+    const heightMin = document.getElementById('filterHeightMin') ? document.getElementById('filterHeightMin').value : '';
+    const heightMax = document.getElementById('filterHeightMax') ? document.getElementById('filterHeightMax').value : '';
+    const weightRange = document.getElementById('filterWeightRange') ? document.getElementById('filterWeightRange').value : '';
+    const statusFilter = document.getElementById('filterStatus') ? document.getElementById('filterStatus').value : '';
+    const keyword = document.getElementById('searchInput').value;
+
+    if (CONFIG.STATIC_MODE) {
+        // 静态模式：读 data.json 本地过滤
+        fetch(CONFIG.DATA_URL)
+            .then(r => r.json())
+            .then(allRecords => {
+                if (!Array.isArray(allRecords)) return;
+                let filtered = allRecords.filter(r => (r.status || 'approved') !== 'expired');
+                if (region) filtered = filtered.filter(r => r.region_group === region);
+                if (gender) filtered = filtered.filter(r => r.gender === gender);
+                if (zodiac) filtered = filtered.filter(r => r.zodiac === zodiac);
+                if (education) filtered = filtered.filter(r => r.education === education);
+                if (ageRange) filtered = filtered.filter(r => {
+                    const a = r.age_normalized;
+                    if (!a) return ageRange === '未知';
+                    if (ageRange === '20-25') return a >= 20 && a <= 25;
+                    if (ageRange === '26-30') return a >= 26 && a <= 30;
+                    if (ageRange === '31-35') return a >= 31 && a <= 35;
+                    if (ageRange === '36-40') return a >= 36 && a <= 40;
+                    if (ageRange === '40+') return a >= 40;
+                    return true;
+                });
+                if (heightRange) filtered = filtered.filter(r => {
+                    const h = parseInt(r.height);
+                    if (!h) return heightRange === '未知';
+                    if (heightRange === '<150') return h < 150;
+                    if (heightRange === '150-159') return h >= 150 && h <= 159;
+                    if (heightRange === '160-169') return h >= 160 && h <= 169;
+                    if (heightRange === '170-179') return h >= 170 && h <= 179;
+                    if (heightRange === '180+') return h >= 180;
+                    return true;
+                });
+                if (weightRange) filtered = filtered.filter(r => {
+                    const w = parseInt(r.weight);
+                    if (!w) return weightRange === '未知';
+                    if (weightRange === '<100') return w < 100;
+                    if (weightRange === '100-119') return w >= 100 && w <= 119;
+                    if (weightRange === '120-139') return w >= 120 && w <= 139;
+                    if (weightRange === '140-159') return w >= 140 && w <= 159;
+                    if (weightRange === '160-179') return w >= 160 && w <= 179;
+                    if (weightRange === '180+') return w >= 180;
+                    return true;
+                });
+                if (statusFilter) filtered = filtered.filter(r => (r.status || 'approved') === statusFilter);
+                if (keyword) {
+                    const kw = keyword.toLowerCase();
+                    filtered = filtered.filter(r =>
+                        (r.family_info||'').toLowerCase().includes(kw) ||
+                        (r.mate_requirement||'').toLowerCase().includes(kw) ||
+                        (r.job||'').toLowerCase().includes(kw) ||
+                        (r.education||'').toLowerCase().includes(kw)
+                    );
+                }
+                allData = filtered;
+                currentPage = 1;
+                if (viewMode === 'card') renderCards();
+                else renderTable();
+            });
+        return;
+    }
+    // 非静态模式：走 API
+    let url = '/api/data?';
+    const params = [];
+    if (region) params.push(`region=${encodeURIComponent(region)}`);
+    if (gender) params.push(`gender=${encodeURIComponent(gender)}`);
+    if (zodiac) params.push(`zodiac=${encodeURIComponent(zodiac)}`);
+    if (education) params.push(`education=${encodeURIComponent(education)}`);
+    if (ageRange) params.push(`age_range=${encodeURIComponent(ageRange)}`);
+    if (heightRange) params.push(`height_range=${encodeURIComponent(heightRange)}`);
+    if (heightMin) params.push(`height_min=${heightMin}`);
+    if (heightMax) params.push(`height_max=${heightMax}`);
+    if (weightRange) params.push(`weight_range=${encodeURIComponent(weightRange)}`);
+    if (statusFilter) params.push(`status=${encodeURIComponent(statusFilter)}`);
+    if (keyword) params.push(`keyword=${encodeURIComponent(keyword)}`);
+    url += params.join('&');
+    fetch(apiUrl(url)).then(r=>r.json()).then(res=>{
+        if(!res.success) return;
+        allData = res.data;
+        currentPage = 1;
+        if (viewMode === 'card') renderCards();
+        else renderTable();
+    });
+}
+
+// ===== 视图模式 =====
+let viewMode = 'card';
+function setViewMode(mode) {
+    viewMode = mode;
+    document.getElementById('viewCard').style.display  = mode === 'card'  ? 'block' : 'none';
+    document.getElementById('viewTable').style.display = mode === 'table' ? 'block' : 'none';
+    document.getElementById('btnCardView').className  = mode === 'card'  ? 'active' : '';
+    document.getElementById('btnTableView').className = mode === 'table' ? 'active' : '';
+    if (mode === 'card')  renderCards();
+    if (mode === 'table') renderTable();
+}
+
+// ===== 属相 Emoji =====
+const ZODIAC_EMOJI = {'鼠':'🐭','牛':'🐮','虎':'🐯','兔':'🐰','龙':'🐲','蛇':'🐍','马':'🐴','羊':'🐑','猴':'🐵','鸡':'🐔','狗':'🐶','猪':'🐷'};
+
+// 身高百分比（可视化用）
+function heightPct(h, gender) {
+    const hNum = parseInt(h) || 0;
+    if (!hNum) return 0;
+    if (gender === '男') return Math.min(100, Math.max(0, Math.round((hNum - 155) / (195 - 155) * 100)));
+    if (gender === '女') return Math.min(100, Math.max(0, Math.round((hNum - 148) / (180 - 148) * 100)));
+    return Math.min(100, Math.max(0, Math.round((hNum - 150) / 40 * 100)));
+}
+
+// ===== 卡片渲染 =====
+function renderCards() {
+    const start = (currentPage-1)*pageSize;
+    const pageData = allData.slice(start, start+pageSize);
+    const grid = document.getElementById('cardGrid');
+    grid.innerHTML = '';
+    if (allData.length === 0) {
+        grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;">没有符合条件的资料</div>';
+        document.getElementById('paginationCard').innerHTML = '';
+        return;
+    }
+    pageData.forEach(r => {
+        const isMale   = r.gender === '男';
+        const isFemale = r.gender === '女';
+        const genderKey  = isMale ? 'male' : isFemale ? 'female' : 'other';
+        const zodiacIcon = ZODIAC_EMOJI[r.zodiac] || '👤';
+        const isSelected = compareList.some(c => c.id === r.id);
+        const hPct = heightPct(r.height, r.gender);
+
+        const familyShort = (r.family_info||'').substring(0,32) + ((r.family_info||'').length > 32 ? '…' : '');
+        const mateShort   = (r.mate_requirement||'').substring(0,32) + ((r.mate_requirement||'').length > 32 ? '…' : '');
+
+        let adminBtns = '';
+        if (currentAdminInfo) {
+            adminBtns = `<button class="btn-edit" onclick="openEditModal(${r.id})">✏️ 编辑</button>
+                         <button class="btn-del"  onclick="deleteRecord(${r.id})">🗑️</button>`;
+        }
+
+        const heightBar = r.height ? `
+            <div class="card-height-bar">
+                <div class="card-height-label"><span>📏 身高</span><span>${r.height}cm</span></div>
+                <div class="height-track"><div class="height-fill height-fill-${genderKey}" style="width:${hPct}%"></div></div>
+            </div>` : '';
+
+        const card = document.createElement('div');
+        card.className = 'person-card' + (isSelected ? ' selected' : '');
+        card.id = `card-${r.id}`;
+        card.innerHTML = `
+            <div class="card-top-bar card-top-bar-${genderKey}"></div>
+            <div class="card-body">
+                <div class="card-header">
+                    <div class="card-avatar card-avatar-${genderKey}">${zodiacIcon}</div>
+                    <div class="card-meta">
+                        <div class="card-id">#${r.id} · ${r.region_group||'未分组'}</div>
+                        <div class="card-region">${r.birth_year||'?'}年生 · ${r.age_normalized||'?'}岁</div>
+                        <span class="card-gender-badge badge-${genderKey === 'other' ? 'male' : genderKey}">${r.gender||'未知'} · ${r.zodiac||'?'}</span>
+                    </div>
+                </div>
+                ${heightBar}
+                <div class="card-stats">
+                    ${r.weight ? `<span class="card-chip">⚖️ ${r.weight}kg</span>` : ''}${r.status && r.status !== 'approved' ? `<span class="card-chip status-badge ${r.status === 'pending' ? 'status-pending' : 'status-rejected'}" style="cursor:pointer" onclick="cycleStatus(${r.id}, '${r.status}')">${r.status === 'pending' ? '待审核' : '已过期'}</span>` : ''}
+                    ${r.education ? `<span class="card-chip chip-edu">🎓 ${r.education}</span>` : ''}
+                    ${r.job ? `<span class="card-chip chip-job" title="${r.job}">💼 ${r.job.substring(0,9)}${r.job.length>9?'…':''}</span>` : ''}
+                </div>
+                ${familyShort ? `<div class="card-info-row"><strong>家庭：</strong>${familyShort}</div>` : ''}
+                ${mateShort   ? `<div class="card-info-row"><strong>要求：</strong>${mateShort}</div>` : ''}
+            </div>
+            <div class="card-actions">
+                <button class="btn-view" onclick="viewRecord(${r.id})">👁 详情</button>
+                ${adminBtns}
+                <button class="btn-compare ${isSelected?'in-compare':''}" onclick="toggleCompare(${r.id})">${isSelected?'✓ 对比中':'💕 对比'}</button>
+            </div>
+        `;
+        grid.appendChild(card);
+    });
+    renderPaginationCard();
+}
+
+function renderPaginationCard() {
+    const totalPages = Math.ceil(allData.length / pageSize);
+    const pg = document.getElementById('paginationCard');
+    pg.innerHTML = '';
+    if (totalPages <= 1) return;
+    const addBtn = (text, disabled, cls, onClick) => {
+        const btn = document.createElement('button');
+        btn.textContent = text; if (cls) btn.className = cls;
+        btn.disabled = disabled;
+        if (!disabled && onClick) btn.onclick = onClick;
+        pg.appendChild(btn);
+    };
+    addBtn('« 首页', currentPage===1, '', () => { currentPage=1; renderCards(); });
+    addBtn('‹ 上页', currentPage===1, '', () => { currentPage--; renderCards(); });
+    let s=Math.max(1,currentPage-2), e=Math.min(totalPages,s+4); s=Math.max(1,e-4);
+    for (let i=s;i<=e;i++) {
+        if (i===currentPage) addBtn(String(i), false, 'active-page', null);
+        else addBtn(String(i), false, '', ((p)=>()=>{currentPage=p;renderCards();})(i));
+    }
+    addBtn('下页 ›', currentPage===totalPages, '', () => { currentPage++; renderCards(); });
+    addBtn('末页 »', currentPage===totalPages, '', () => { currentPage=totalPages; renderCards(); });
+    const info = document.createElement('span');
+    info.className = 'page-info';
+    info.textContent = `共 ${allData.length} 条，第 ${currentPage}/${totalPages} 页`;
+    pg.appendChild(info);
+}
+
+function renderTable() {
+    const start = (currentPage-1)*pageSize;
+    const pageData = allData.slice(start, start+pageSize);
+    const tbody = document.getElementById('dataBody');
+    tbody.innerHTML = '';
+    if (allData.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="13" class="empty-state">没有符合条件的资料</td></tr>';
+        document.getElementById('pagination').innerHTML = '';
+        return;
+    }
+    pageData.forEach(r => {
+        const genderClass = (r.gender === '男') ? 'tag-male' : (r.gender === '女') ? 'tag-female' : '';
+        const tr = document.createElement('tr');
+        let actionButtons = `<button class="action-btn btn-view" onclick="viewRecord(${r.id})">查看</button>`;
+        if (currentAdminInfo) {
+            actionButtons += ` <button class="action-btn btn-edit" onclick="openEditModal(${r.id})">编辑</button>`;
+            actionButtons += ` <button class="action-btn btn-del" onclick="deleteRecord(${r.id})">删除</button>`;
+        }
+        tr.innerHTML = `
+            <td>${r.id}</td>
+            <td><span class="tag ${genderClass}">${r.region_group||''}</span></td>
+            <td>${r.gender||''}</td>
+            <td>${r.zodiac||''}</td>
+            <td>${r.birth_year||''}</td>
+            <td>${r.age_normalized?r.age_normalized+'岁':''} ${r.age_raw?'<small class="text-muted">'+r.age_raw+'</small>':''}</td>
+            <td>${r.height||''}</td>
+            <td>${r.weight||''}</td>
+            <td>${r.education||''}</td>
+            <td title="${r.job||''}">${(r.job||'').substring(0,10)}${(r.job||'').length>10?'...':''}</td>
+            <td title="${r.family_info||''}">${(r.family_info||'').substring(0,8)}${(r.family_info||'').length>8?'...':''}</td>
+            <td title="${r.mate_requirement||''}">${(r.mate_requirement||'').substring(0,8)}${(r.mate_requirement||'').length>8?'...':''}</td>
+            <td>${actionButtons}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+    renderPagination();
+}
+
+function renderPagination() {
+    const totalPages = Math.ceil(allData.length / pageSize);
+    const pg = document.getElementById('pagination');
+    pg.innerHTML = '';
+    if (totalPages <= 1) return;
+
+    const addBtn = (text, disabled, cls, onClick) => {
+        const btn = document.createElement('button');
+        btn.textContent = text;
+        if (cls) btn.className = cls;
+        btn.disabled = disabled;
+        if (!disabled && onClick) btn.onclick = onClick;
+        pg.appendChild(btn);
+    };
+
+    const addEllipsis = () => {
+        const span = document.createElement('span');
+        span.className = 'ellipsis';
+        span.textContent = '…';
+        pg.appendChild(span);
+    };
+
+    // 首页 + 上一页
+    addBtn('« 首页', currentPage === 1, '', () => { currentPage = 1; renderTable(); });
+    addBtn('‹ 上一页', currentPage === 1, '', () => { currentPage--; renderTable(); });
+
+    // 页码：最多显示5页，当前页居中
+    let start = Math.max(1, currentPage - 2);
+    let end = Math.min(totalPages, start + 4);
+    start = Math.max(1, end - 4);
+
+    if (start > 1) {
+        addBtn('1', false, '', () => { currentPage = 1; renderTable(); });
+        if (start > 2) addEllipsis();
+    }
+    for (let i = start; i <= end; i++) {
+        if (i === currentPage) {
+            addBtn(String(i), false, 'active-page', null);
+        } else {
+            addBtn(String(i), false, '', ((p) => () => { currentPage = p; renderTable(); })(i));
+        }
+    }
+    if (end < totalPages) {
+        if (end < totalPages - 1) addEllipsis();
+        addBtn(String(totalPages), false, '', () => { currentPage = totalPages; renderTable(); });
+    }
+
+    // 下一页 + 末页
+    addBtn('下一页 ›', currentPage === totalPages, '', () => { currentPage++; renderTable(); });
+    addBtn('末页 »', currentPage === totalPages, '', () => { currentPage = totalPages; renderTable(); });
+
+    // 总条数/页数信息
+    const info = document.createElement('span');
+    info.className = 'page-info';
+    info.textContent = `共 ${allData.length} 条，第 ${currentPage}/${totalPages} 页`;
+    pg.appendChild(info);
+}
+
+// ===== 查看记录 =====
+function viewRecord(id) {
+    fetch(apiUrl(`/api/record/${id}`)).then(r=>r.json()).then(res=>{
+        if(!res.success) return;
+        const r = res.data;
+        alert(`【详细信息】
+地区分组：${r.region_group||'-'}
+性别：${r.gender||'-'}
+属相：${r.zodiac||'-'}
+出生年：${r.birth_year||'-'}
+年龄：${r.age_raw||'-'} ${r.age_normalized?'('+r.age_normalized+'岁)':''}
+身高：${r.height||'-'} cm
+体重：${r.weight||'-'} kg
+学历：${r.education||'-'}
+工作：${r.job||'-'}
+家庭情况：${r.family_info||'-'}
+择偶要求：${r.mate_requirement||'-'}`);
+    });
+}
+
+// ===== 添加弹窗 =====
+function openAddModal() {
+    editingId = null;
+    document.getElementById('editModalTitle').textContent = '添加资料';
+    // 如果已登录，隐藏密码字段
+    if (currentAdminInfo) {
+        document.getElementById('passwordGroup').style.display = 'none';
+    } else {
+        document.getElementById('passwordGroup').style.display = 'block';
+        document.getElementById('formPassword').value = '';
+    }
+    ['formAge','formHeight','formWeight','formEdu','formJob','formFamily','formMate'].forEach(id=>{
+        document.getElementById(id).value = '';
+    });
+    document.getElementById('formGender').value = '';
+    document.getElementById('formZodiac').value = '';
+    document.getElementById('formBirthYear').value = '';
+    document.getElementById('formRegion').value = '';
+    document.getElementById('editModal').classList.add('active');
+}
+
+// ===== 编辑弹窗 =====
+function openEditModal(id) {
+    fetch(apiUrl(`/api/record/${id}`)).then(r=>r.json()).then(res=>{
+        if(!res.success) return;
+        editingId = id;
+        const r = res.data;
+        document.getElementById('editModalTitle').textContent = '编辑资料';
+        // 如果已登录，隐藏密码字段
+        if (currentAdminInfo) {
+            document.getElementById('passwordGroup').style.display = 'none';
+        } else {
+            document.getElementById('passwordGroup').style.display = 'block';
+            document.getElementById('formPassword').value = '';
+        }
+        document.getElementById('formRegion').value = r.region_group||'';
+        document.getElementById('formGender').value = r.gender||'';
+        document.getElementById('formZodiac').value = r.zodiac||'';
+        document.getElementById('formBirthYear').value = r.birth_year||'';
+        document.getElementById('formAge').value = r.age_raw||'';
+        document.getElementById('formHeight').value = r.height||'';
+        document.getElementById('formWeight').value = r.weight||'';
+        document.getElementById('formEdu').value = r.education||'';
+        document.getElementById('formJob').value = r.job||'';
+        document.getElementById('formFamily').value = r.family_info||'';
+        document.getElementById('formMate').value = r.mate_requirement||'';
+        document.getElementById('editModal').classList.add('active');
+    });
+}
+
+// ===== 保存记录（需要密码）=====
+function saveRecord() {
+    // 如果已登录，不需要密码
+    const password = currentAdminInfo ? 'logged_in' : document.getElementById('formPassword').value;
+    if (!currentAdminInfo && !password) { alert('请输入操作密码！'); return; }
+    const record = {
+        region_group: document.getElementById('formRegion').value,
+        gender: document.getElementById('formGender').value,
+        zodiac: document.getElementById('formZodiac').value,
+        birth_year: document.getElementById('formBirthYear').value,
+        age_raw: document.getElementById('formAge').value,
+        height: document.getElementById('formHeight').value,
+        weight: document.getElementById('formWeight').value,
+        education: document.getElementById('formEdu').value,
+        job: document.getElementById('formJob').value,
+        family_info: document.getElementById('formFamily').value,
+        mate_requirement: document.getElementById('formMate').value,
+    };
+    const url = editingId ? `/api/record/${editingId}` : '/api/record';
+    const method = editingId ? 'PUT' : 'POST';
+    const payload = { password, record };
+    fetch(url, { method, headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) })
+        .then(r=>r.json()).then(res=>{
+            if(res.success) {
+                closeModal('editModal');
+                loadData(); loadStats();
+                alert(editingId ? '修改成功！' : '添加成功！');
+            } else {
+                alert('操作失败：' + (res.message||'未知错误'));
+            }
+        });
+}
+
+// ===== 删除记录 =====
+function deleteRecord(id) {
+    if(!confirm('确定要删除这条记录吗？')) return;
+    // 如果已登录，直接删除，不需要密码
+    if (currentAdminInfo) {
+        fetch(apiUrl(`/api/record/${id}`), {
+            method: 'DELETE',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({ password: 'logged_in' })
+        }).then(r=>r.json()).then(res=>{
+            if(res.success) { loadData(); loadStats(); alert('删除成功！'); }
+            else alert('删除失败：' + (res.message||''));
+        });
+    } else {
+        openPwdModal(() => {
+            fetch(apiUrl(`/api/record/${id}`), {
+                method: 'DELETE',
+                headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({ password: document.getElementById('pwdInput').value })
+            }).then(r=>r.json()).then(res=>{
+                if(res.success) { loadData(); loadStats(); alert('删除成功！'); }
+                else alert('删除失败：' + (res.message||''));
+                closeModal('pwdModal');
+            });
+        });
+    }
+}
+
+// ===== 密码弹窗 =====
+function openPwdModal(callback) {
+    pendingAction = callback;
+    document.getElementById('pwdInput').value = '';
+    document.getElementById('pwdError').style.display = 'none';
+    document.getElementById('pwdModal').classList.add('active');
+    setTimeout(()=>document.getElementById('pwdInput').focus(), 100);
+}
+function confirmPwd() {
+    const pwd = document.getElementById('pwdInput').value;
+    if (!pwd) return;
+    if (pendingAction) {
+        pendingAction();
+        pendingAction = null;
+    }
+}
+function closeModal(id) {
+    document.getElementById(id).classList.remove('active');
+}
+
+// ===== 配对对比功能 =====
+let compareList = [];  // 最多2人
+let chartCompareRadar = null;
+
+function toggleCompare(id) {
+    const record = allData.find(r => r.id === id);
+    if (!record) return;
+
+    const idx = compareList.findIndex(c => c.id === id);
+    if (idx !== -1) {
+        // 取消选择
+        compareList.splice(idx, 1);
+    } else {
+        if (compareList.length >= 2) {
+            // 替换第二个
+            compareList[1] = record;
+        } else {
+            compareList.push(record);
+        }
+    }
+
+    updateCompareBar();
+    renderCards(); // 刷新选中状态
+}
+
+function updateCompareBar() {
+    const bar  = document.getElementById('compareBar');
+    const s1   = document.getElementById('compareSlot1');
+    const s2   = document.getElementById('compareSlot2');
+    const btn  = document.getElementById('btnDoCompare');
+
+    const fmtSlot = (r) => `${r.gender||'?'} · ${r.zodiac||'?'} · ${r.age_normalized||'?'}岁 · ${r.height||'?'}cm`;
+
+    if (compareList.length === 0) {
+        bar.classList.remove('visible');
+        s1.className = 'compare-slot'; s1.textContent = '＋ 选择第一位';
+        s2.className = 'compare-slot'; s2.textContent = '＋ 选择第二位';
+        btn.disabled = true;
+    } else if (compareList.length === 1) {
+        bar.classList.add('visible');
+        s1.className = 'compare-slot filled'; s1.textContent = fmtSlot(compareList[0]);
+        s2.className = 'compare-slot'; s2.textContent = '＋ 选择第二位';
+        btn.disabled = true;
+    } else {
+        bar.classList.add('visible');
+        s1.className = 'compare-slot filled'; s1.textContent = fmtSlot(compareList[0]);
+        s2.className = 'compare-slot filled'; s2.textContent = fmtSlot(compareList[1]);
+        btn.disabled = false;
+    }
+}
+
+function clearCompare() {
+    compareList = [];
+    updateCompareBar();
+    renderCards();
+}
+
+// ===== 评分算法 =====
+function scoreRecord(r) {
+    // 年龄（25岁100分，每超1岁减3分，最低20）
+    const age = r.age_normalized || 30;
+    const ageScore = Math.max(20, Math.min(100, 100 - Math.max(0, age - 25) * 3));
+
+    // 身高（男：180=100，女：165=100，分别线性）
+    const h = parseInt(r.height) || 0;
+    let heightScore = 50;
+    if (h) {
+        if (r.gender === '男') heightScore = Math.min(100, Math.max(30, (h - 155) / (188 - 155) * 100));
+        else if (r.gender === '女') heightScore = Math.min(100, Math.max(30, (h - 150) / (172 - 150) * 100));
+        else heightScore = Math.min(100, Math.max(30, (h - 152) / 38 * 100));
+    }
+
+    // 学历
+    const eduMap = {'博士':100,'博士后':100,'硕士':90,'研究生':85,'本科':75,'大专':60,'专科':55,'高中':40,'中专':35,'初中':20};
+    const edu = r.education || '';
+    let eduScore = 50;
+    for (const [k, v] of Object.entries(eduMap)) {
+        if (edu.includes(k)) { eduScore = v; break; }
+    }
+
+    // 家庭条件（关键词打分）
+    const family = (r.family_info || '').toLowerCase();
+    let familyScore = 40;
+    if (family.includes('别墅') || family.includes('海归') || family.includes('千万')) familyScore = 100;
+    else if (family.includes('公务员') || family.includes('医生') || family.includes('教师')) familyScore = 85;
+    else if (family.includes('有房') && family.includes('有车')) familyScore = 80;
+    else if (family.includes('有房') || family.includes('自建')) familyScore = 70;
+    else if (family.includes('w') || family.includes('万')) {
+        const m = family.match(/(\d+)[w万]/);
+        if (m) {
+            const amt = parseInt(m[1]);
+            familyScore = amt >= 50 ? 95 : amt >= 20 ? 85 : amt >= 10 ? 75 : 65;
+        } else familyScore = 65;
+    }
+
+    // 资料完整度
+    const fields = [r.age_normalized, r.height, r.weight, r.education, r.job, r.family_info, r.mate_requirement];
+    const filled = fields.filter(v => v && String(v).trim()).length;
+    const completeness = Math.round(filled / fields.length * 100);
+
+    return {
+        age:        Math.round(ageScore),
+        height:     Math.round(heightScore),
+        education:  Math.round(eduScore),
+        family:     Math.round(familyScore),
+        completeness: Math.round(completeness),
+        raw: { ageScore, heightScore, eduScore, familyScore, completeness }
+    };
+}
+
+function openCompareModal() {
+    if (compareList.length < 2) return;
+    document.getElementById('compareModal').classList.add('active');
+
+    const [a, b] = compareList;
+    const sa = scoreRecord(a);
+    const sb = scoreRecord(b);
+
+    // 渲染雷达图
+    if (!chartCompareRadar) {
+        chartCompareRadar = echarts.init(document.getElementById('compareRadarChart'));
+    }
+    const dims = [
+        { name: '年龄优势', max: 100 },
+        { name: '身高', max: 100 },
+        { name: '学历', max: 100 },
+        { name: '家庭条件', max: 100 },
+        { name: '资料完整', max: 100 }
+    ];
+    const labelA = `${ZODIAC_EMOJI[a.zodiac]||''}${a.gender||'?'} ${a.age_normalized||'?'}岁`;
+    const labelB = `${ZODIAC_EMOJI[b.zodiac]||''}${b.gender||'?'} ${b.age_normalized||'?'}岁`;
+
+    chartCompareRadar.setOption({
+        tooltip: { trigger: 'item' },
+        legend: { data: [labelA, labelB], bottom: 0 },
+        radar: {
+            indicator: dims,
+            center: ['50%', '48%'], radius: '62%',
+            axisName: { color: UI_COLORS.muted, fontSize: 12, fontWeight: 650 },
+            splitArea: { areaStyle: { color: ['#fffafd', '#fdf1f6', '#fae8f0', '#f7dfe9', '#f4d6e2'] } },
+            splitLine: { lineStyle: { color: UI_COLORS.border } },
+            axisLine: { lineStyle: { color: '#dfb7c7' } }
+        },
+        series: [{
+            type: 'radar',
+            data: [
+                {
+                    name: labelA,
+                    value: [sa.age, sa.height, sa.education, sa.family, sa.completeness],
+                    symbol: 'circle', symbolSize: 6,
+                    lineStyle: { color: UI_COLORS.male, width: 2.5 },
+                    areaStyle: { color: 'rgba(47,127,203,0.16)' },
+                    itemStyle: { color: UI_COLORS.male }
+                },
+                {
+                    name: labelB,
+                    value: [sb.age, sb.height, sb.education, sb.family, sb.completeness],
+                    symbol: 'circle', symbolSize: 6,
+                    lineStyle: { color: UI_COLORS.female, width: 2.5 },
+                    areaStyle: { color: 'rgba(199,53,116,0.16)' },
+                    itemStyle: { color: UI_COLORS.female }
+                }
+            ]
+        }]
+    });
+
+    // 渲染信息面板
+    const infoHtml = (r, s, colorClass) => `
+        <div class="compare-col ${colorClass}">
+            <h4>${ZODIAC_EMOJI[r.zodiac]||'👤'} ${r.gender||'?'} · ${r.zodiac||'?'}
+                <small class="text-muted" style="font-weight:500;margin-left:6px;">#${r.id}</small>
+            </h4>
+            <div class="ci">🗺️ ${r.region_group||'-'}</div>
+            <div class="ci">🎂 ${r.birth_year||'?'}年生 · ${r.age_normalized||'?'}岁</div>
+            <div class="ci">📏 ${r.height||'-'}cm &nbsp; ⚖️ ${r.weight||'-'}kg</div>
+            <div class="ci">🎓 ${r.education||'-'}</div>
+            <div class="ci">💼 ${r.job||'-'}</div>
+            ${r.family_info ? `<div class="ci" style="margin-top:6px;border-top:1px solid var(--border);padding-top:6px;">🏠 ${(r.family_info).substring(0,50)}${r.family_info.length>50?'…':''}</div>` : ''}
+            ${r.mate_requirement ? `<div class="ci">💌 要求：${(r.mate_requirement).substring(0,40)}${r.mate_requirement.length>40?'…':''}</div>` : ''}
+        </div>
+    `;
+    document.getElementById('compareInfoCols').innerHTML =
+        infoHtml(a, sa, 'compare-col-a') + infoHtml(b, sb, 'compare-col-b');
+
+    // 渲染分项条形评分
+    const dims2 = [
+        { key: 'age',        label: '年龄优势' },
+        { key: 'height',     label: '身高' },
+        { key: 'education',  label: '学历' },
+        { key: 'family',     label: '家庭条件' },
+        { key: 'completeness', label: '资料完整' }
+    ];
+    let barsHtml = `<div style="font-size:13px;font-weight:800;color:var(--primary);margin-bottom:10px;">📊 分项对比评分</div>`;
+    dims2.forEach(d => {
+        const va = sa[d.key], vb = sb[d.key];
+        barsHtml += `
+        <div class="compare-score-bar">
+            <span>${d.label}</span>
+            <div style="flex:1;">
+                <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+                    <span style="font-size:11px;color:var(--male);width:28px;text-align:right;">${va}</span>
+                    <div class="score-track" style="flex:1;"><div class="score-fill-a" style="width:${va}%"></div></div>
+                </div>
+                <div style="display:flex;align-items:center;gap:6px;">
+                    <span style="font-size:11px;color:var(--female);width:28px;text-align:right;">${vb}</span>
+                    <div class="score-track" style="flex:1;"><div class="score-fill-b" style="width:${vb}%"></div></div>
+                </div>
+            </div>
+        </div>`;
+    });
+    // 综合得分
+    const totalA = Math.round(Object.values(sa.raw).reduce((a,b)=>a+b,0) / Object.values(sa.raw).length);
+    const totalB = Math.round(Object.values(sb.raw).reduce((a,b)=>a+b,0) / Object.values(sb.raw).length);
+    barsHtml += `<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);display:flex;gap:16px;">
+        <div style="flex:1;text-align:center;background:var(--male-soft);border:1px solid var(--border);border-radius:10px;padding:10px;">
+            <div class="text-muted" style="font-size:11px;">综合得分</div>
+            <div style="font-size:26px;font-weight:800;color:var(--male);">${totalA}</div>
+            <div class="text-muted" style="font-size:11px;">${labelA}</div>
+        </div>
+        <div style="flex:1;text-align:center;background:var(--female-soft);border:1px solid var(--border);border-radius:10px;padding:10px;">
+            <div class="text-muted" style="font-size:11px;">综合得分</div>
+            <div style="font-size:26px;font-weight:800;color:var(--female);">${totalB}</div>
+            <div class="text-muted" style="font-size:11px;">${labelB}</div>
+        </div>
+    </div>`;
+    document.getElementById('compareScoreBars').innerHTML = barsHtml;
+
+    setTimeout(() => chartCompareRadar && chartCompareRadar.resize(), 50);
+}
+
+window.addEventListener('resize', () => {
+    chartCompareRadar && chartCompareRadar.resize();
+});
+
+// ===== 导出/导入 =====
+function exportExcel() {
+    window.open('/api/export/excel', '_blank');
+}
+function reimportExcel(input) {
+    const file = input.files[0];
+    if (!file) return;
+    if (!confirm('重新导入会覆盖当前JSON数据，确定继续？')) {
+        input.value = '';
+        return;
+    }
+    const fd = new FormData();
+    fd.append('file', file);
+    fetch(apiUrl('/api/import/excel'), { method:'POST', body: fd })
+        .then(r=>r.json()).then(res=>{
+            if (res.success) {
+                alert('导入完成，共 ' + res.total + ' 条记录');
+                loadData(); loadStats();
+            } else {
+                alert('导入失败：' + (res.message || '未知错误'));
+            }
+            input.value = '';
+        })
+        .catch(err => {
+            alert('导入失败：' + err);
+            input.value = '';
+        });
+}
+
+// ===== 窗口自适应 =====
+window.addEventListener('resize', () => {
+    chartGender  && chartGender.resize();
+    chartRegion  && chartRegion.resize();
+    chartAge     && chartAge.resize();
+    chartEdu     && chartEdu.resize();
+    chartZodiac  && chartZodiac.resize();
+    chartHeight  && chartHeight.resize();
+    chartScatter && chartScatter.resize();
+});
+
+
+// ===== 过期资料管理功能 =====
+function loadExpiredCount() {
+    fetch(apiUrl('/api/admin/expired'))
+        .then(r => r.json())
+        .then(res => {
+            if (res.success && res.total > 0) {
+                document.getElementById('expiredBadge').style.display = 'inline-block';
+                document.getElementById('expiredBadge').textContent = res.total;
+                document.getElementById('expiredTabBadge').style.display = 'inline-block';
+                document.getElementById('expiredTabBadge').textContent = res.total;
+            } else {
+                document.getElementById('expiredBadge').style.display = 'none';
+                document.getElementById('expiredTabBadge').style.display = 'none';
+            }
+        })
+        .catch(err => console.error('加载过期资料数量失败:', err));
+}
+
+function loadExpiredList() {
+    fetch(apiUrl('/api/admin/expired'))
+        .then(r => r.json())
+        .then(res => {
+            if (!res.success) {
+                document.getElementById('expiredList').innerHTML = '<p class="error-message">加载失败：' + res.message + '</p>';
+                return;
+            }
+            
+            const expired = res.data;
+            if (expired.length === 0) {
+                document.getElementById('expiredList').innerHTML = '<p class="empty-state">暂无过期资料</p>';
+                return;
+            }
+            
+            let html = '<p class="expired-warning">⚠️ 共有 ' + expired.length + ' 条资料已超过1年，请及时处理：</p>';
+            html += '<div class="admin-table-wrap"><table><thead><tr>';
+            html += '<th>ID</th><th>地区</th><th>性别</th><th>年龄</th><th>上传日期</th><th>操作</th>';
+            html += '</tr></thead><tbody>';
+            
+            expired.forEach(r => {
+                const uploadDate = r.upload_date || '-';
+                html += '<tr>';
+                html += '<td>' + r.id + '</td>';
+                html += '<td>' + (r.region_group || '-') + '</td>';
+                html += '<td>' + (r.gender || '-') + '</td>';
+                html += '<td>' + (r.age_normalized || '-') + '</td>';
+                html += '<td>' + uploadDate + '</td>';
+                html += '<td>';
+                html += '<button class="action-btn btn-success" onclick="renewRecord(' + r.id + ')">🔄 重新上架</button> ';
+                html += '<button class="action-btn btn-del" onclick="deleteExpiredRecord(' + r.id + ')">🗑️ 删除</button>';
+                html += '</td>';
+                html += '</tr>';
+            });
+            
+            html += '</tbody></table></div>';
+            document.getElementById('expiredList').innerHTML = html;
+        })
+        .catch(err => {
+            document.getElementById('expiredList').innerHTML = '<p class="error-message">加载失败</p>';
+            console.error('加载过期资料列表失败:', err);
+        });
+}
+
+function renewRecord(id) {
+    if (!confirm('确定要重新上架这条资料吗？\n（上传日期将更新为今天，有效期延长1年）')) return;
+    
+    fetch(apiUrl('/api/admin/renew'), {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({id: id})
+    })
+    .then(r => r.json())
+    .then(res => {
+        if (res.success) {
+            alert('重新上架成功！');
+            loadExpiredList();
+            loadExpiredCount();
+            loadStats();
+        } else {
+            alert('操作失败：' + res.message);
+        }
+    })
+    .catch(err => {
+        alert('操作失败，请检查网络');
+        console.error('重新上架失败:', err);
+    });
+}
+
+function deleteExpiredRecord(id) {
+    if (!confirm('确定要删除这条过期资料吗？\n此操作不可恢复！')) return;
+    
+    fetch(apiUrl('/api/admin/delete-expired'), {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({id: id})
+    })
+    .then(r => r.json())
+    .then(res => {
+        if (res.success) {
+            alert('删除成功！');
+            loadExpiredList();
+            loadExpiredCount();
+            loadStats();
+        } else {
+            alert('操作失败：' + res.message);
+        }
+    })
+    .catch(err => {
+        alert('操作失败，请检查网络');
+        console.error('删除过期资料失败:', err);
+    });
+}
+
+// 页面加载时也检查过期资料数量（如果已登录）
+function checkExpiredOnLoad() {
+    fetch(apiUrl('/api/admin/current'))
+        .then(r => r.json())
+        .then(res => {
+            if (res.success && res.logged_in) {
+                loadExpiredCount();
+            }
+        })
+        .catch(err => console.log('未登录或检查过期资料失败'));
+}
+
+// 在页面加载完成后检查
+window.addEventListener('load', function() {
+    setTimeout(checkExpiredOnLoad, 1000);
+});
+
+</script>
+</body>
+</html>
