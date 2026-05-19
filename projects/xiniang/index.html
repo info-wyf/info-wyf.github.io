@@ -1521,7 +1521,7 @@ function loadAdminData() {
     const statusFilter = document.getElementById('adminFilterStatus') ? document.getElementById('adminFilterStatus').value : '';
     const keyword = document.getElementById('adminSearchInput') ? document.getElementById('adminSearchInput').value : '';
     
-    let url = '/api/data?include_pending=true';
+    let url = apiUrl('/api/data?include_pending=true');
     const params = [];
     if (region) params.push(`region=${encodeURIComponent(region)}`);
     if (ageRange) params.push(`age_range=${encodeURIComponent(ageRange)}`);
@@ -2774,7 +2774,7 @@ function saveRecord() {
         family_info: document.getElementById('formFamily').value,
         mate_requirement: document.getElementById('formMate').value,
     };
-    const url = editingId ? `/api/record/${editingId}` : '/api/record';
+    const url = apiUrl(editingId ? `/api/record/${editingId}` : '/api/record');
     const method = editingId ? 'PUT' : 'POST';
     const payload = { password, record };
     fetch(url, { method, headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) })
