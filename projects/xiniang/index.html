@@ -1512,6 +1512,18 @@ function confirmReject() {
 
 // ===== 资料管理功能（管理员）=====
 function loadAdminData() {
+    // 静态模式：直接从 allData 读取
+    if (CONFIG.STATIC_MODE) {
+        let data = allData || [];
+        const region = document.getElementById('adminFilterRegion') ? document.getElementById('adminFilterRegion').value : '';
+        const statusFilter = document.getElementById('adminFilterStatus') ? document.getElementById('adminFilterStatus').value : '';
+        const keyword = document.getElementById('adminSearchInput') ? document.getElementById('adminSearchInput').value : '';
+        if (region) data = data.filter(r => r.region_group === region);
+        if (statusFilter) data = data.filter(r => r.status === statusFilter);
+        if (keyword) data = data.filter(r => JSON.stringify(r).includes(keyword));
+        renderAdminTable(data);
+        return;
+    }
     // 构建筛选参数
     const region = document.getElementById('adminFilterRegion') ? document.getElementById('adminFilterRegion').value : '';
     const ageRange = document.getElementById('adminFilterAgeRange') ? document.getElementById('adminFilterAgeRange').value : '';
@@ -1586,71 +1598,80 @@ function clearAdminFilters() {
 }
 
 function loadAdminRegionOptions() {
-    fetch(apiUrl('/api/regions'))
-        .then(r => r.json())
-        .then(res => {
-            if (!res.success) return;
-            const sel = document.getElementById('adminFilterRegion');
-            if (!sel) return;
-            const current = sel.value;
-            sel.innerHTML = '<option value="">全部地区</option>';
-            // 按 dashboard 顺序排序
-            const regionOrder = ['扬中男','扬中女','镇江男','镇江女','南京','常州','苏州','上海','无锡杭州北京','扬中男再婚','扬中女再婚','镇江男再婚','镇江女再婚','其他'];
-            const sorted = [...res.regions].sort((a, b) => {
-                const ia = regionOrder.indexOf(a.name);
-                const ib = regionOrder.indexOf(b.name);
-                if (ia === -1 && ib === -1) return a.name.localeCompare(b.name);
-                if (ia === -1) return 1;
-                if (ib === -1) return -1;
-                return ia - ib;
-            });
-            sorted.forEach(r => {
-                const opt = document.createElement('option');
-                opt.value = r.name;
-                opt.textContent = r.name;
-                sel.appendChild(opt);
-            });
-            sel.value = current;
-        });
+    const sel = document.getElementById('adminFilterRegion');
+    if (!sel) return;
+    const current = sel.value;
+    sel.innerHTML = '<option value="">全部地区</option>';
+    // 从本地数据提取唯一地区
+    const regionSet = new Set();
+    if (allData && allData.length > 0) {
+        allData.forEach(r => { if (r.region_group) regionSet.add(r.region_group); });
+    }
+    const regionOrder = ['扬中男','扬中女','镇江男','镇江女','南京','常州','苏州','上海','无锡杭州北京','扬中男再婚','扬中女再婚','镇江男再婚','镇江女再婚','其他'];
+    const sorted = [...regionSet].sort((a, b) => {
+        const ia = regionOrder.indexOf(a);
+        const ib = regionOrder.indexOf(b);
+        if (ia === -1 && ib === -1) return a.localeCompare(b);
+        if (ia === -1) return 1;
+        if (ib === -1) return -1;
+        return ia - ib;
+    });
+    sorted.forEach(name => {
+        const opt = document.createElement('option');
+        opt.value = name;
+        opt.textContent = name;
+        sel.appendChild(opt);
+    });
+    sel.value = current;
 }
 
 
 // ===== 地区管理功能 =====
 function loadRegionManage() {
-    fetch(apiUrl('/api/regions'))
-        .then(r => r.json())
-        .then(res => {
-            if (!res.success) {
-                document.getElementById('regionTable').innerHTML = '<p class="error-message">加载失败</p>';
-                return;
-            }
-            
-            // 更新管理员管理中的地区多选
-            const select = document.getElementById('newAdminRegions');
-            select.innerHTML = '';
-            res.regions.forEach(r => {
-                const opt = document.createElement('option');
-                opt.value = r.name;
-                opt.textContent = r.name;
-                select.appendChild(opt);
-            });
-            
-            // 显示地区列表
-            let html = '<div class="admin-table-wrap"><table><thead><tr>';
-            html += '<th>ID</th><th>名称</th><th>操作</th>';
-            html += '</tr></thead><tbody>';
-            
-            res.regions.forEach(r => {
-                html += `<tr>`;
-                html += `<td>${r.id}</td>`;
-                html += `<td>${r.name}</td>`;
-                html += `<td><button class="btn-danger" style="padding:4px 12px;font-size:12px;" onclick="deleteRegion(${r.id}, '${r.name}')">删除</button></td>`;
-                html += `</tr>`;
-            });
-            
-            html += '</tbody></table></div>';
-            document.getElementById('regionTable').innerHTML = html;
+    // 从本地数据提取唯一地区
+    const regionSet = new Set();
+    if (allData && allData.length > 0) {
+        allData.forEach(r => { if (r.region_group) regionSet.add(r.region_group); });
+    }
+    const regionOrder = ['扬中男','扬中女','镇江男','镇江女','南京','常州','苏州','上海','无锡杭州北京','扬中男再婚','扬中女再婚','镇江男再婚','镇江女再婚','其他'];
+    const sorted = [...regionSet].sort((a, b) => {
+        const ia = regionOrder.indexOf(a);
+        const ib = regionOrder.indexOf(b);
+        if (ia === -1 && ib === -1) return a.localeCompare(b);
+        if (ia === -1) return 1;
+        if (ib === -1) return -1;
+        return ia - ib;
+    });
+    
+    // 更新管理员管理中的地区多选
+    const select = document.getElementById('newAdminRegions');
+    if (select) {
+        select.innerHTML = '';
+        sorted.forEach(name => {
+            const opt = document.createElement('option');
+            opt.value = name;
+            opt.textContent = name;
+            select.appendChild(opt);
         });
+    }
+    
+    // 显示地区列表（只读）
+    let html = '<div class="admin-table-wrap"><table><thead><tr>';
+    html += '<th>名称</th>';
+    if (!CONFIG.STATIC_MODE) html += '<th>操作</th>';
+    html += '</tr></thead><tbody>';
+    
+    sorted.forEach(name => {
+        html += `<tr><td>${name}</td>`;
+        if (!CONFIG.STATIC_MODE) {
+            html += `<td><button class="btn-danger" style="padding:4px 12px;font-size:12px;" onclick="alert('请在非静态模式下管理地区')">删除</button></td>`;
+        }
+        html += `</tr>`;
+    });
+    
+    html += '</tbody></table></div>';
+    const tableEl = document.getElementById('regionTable');
+    if (tableEl) tableEl.innerHTML = html;
 }
 
 function addRegion() {
@@ -2688,6 +2709,31 @@ function renderPagination() {
 
 // ===== 查看记录 =====
 function viewRecord(id) {
+    // 先从本地数据查找
+    if (allData && allData.length > 0) {
+        const r = allData.find(item => item.id == id);
+        if (r) {
+            alert(`【详细信息】
+地区分组：${r.region_group||'-'}
+性别：${r.gender||'-'}
+属相：${r.zodiac||'-'}
+出生年：${r.birth_year||'-'}
+年龄：${r.age_raw||'-'} ${r.age_normalized?'('+r.age_normalized+'岁)':''}
+身高：${r.height||'-'} cm
+体重：${r.weight||'-'} kg
+学历：${r.education||'-'}
+工作：${r.job||'-'}
+家庭情况：${r.family_info||'-'}
+择偶要求：${r.mate_requirement||'-'}`);
+            return;
+        }
+    }
+    // 静态模式下找不到就提示
+    if (CONFIG.STATIC_MODE) {
+        alert('本地数据中未找到该记录（ID: ' + id + '）');
+        return;
+    }
+    // 非静态模式，调 API
     fetch(apiUrl(`/api/record/${id}`)).then(r=>r.json()).then(res=>{
         if(!res.success) return;
         const r = res.data;
@@ -2703,6 +2749,9 @@ function viewRecord(id) {
 工作：${r.job||'-'}
 家庭情况：${r.family_info||'-'}
 择偶要求：${r.mate_requirement||'-'}`);
+    }).catch(err => {
+        alert('加载失败，请检查网络');
+        console.error('查看记录失败:', err);
     });
 }
 
