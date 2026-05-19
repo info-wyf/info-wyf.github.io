@@ -1361,7 +1361,7 @@ function adminLogin() {
     .then(r => r.json())
     .then(res => {
         if (res.success) {
-            currentAdminInfo = res.data;
+            currentAdminInfo = {username: res.username || username, role: res.role || 'super_admin'};
             showAdminUI();
             closeModal('adminLoginModal');
             alert('登录成功！');
