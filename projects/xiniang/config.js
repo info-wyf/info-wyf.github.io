@@ -5,7 +5,7 @@
 
 const CONFIG = {
     // API 基础地址（阿里云函数计算 URL，部署后填入）
-    API_BASE: 'https://your-account-id.cn-shanghai.fc.aliyuncs.com/2023-06-06/proxy/xiniang-service/xiniang-api',
+    API_BASE: 'https://xiniang-api-brvwnemkgf.cn-shanghai.fcapp.run',
 
     // 静态数据地址（相对于 index.html 同目录）
     DATA_URL: 'data.json',
