@@ -1297,7 +1297,7 @@ function checkLoginStatus() {
     fetch(apiUrl('/api/admin/current'))
         .then(r => r.json())
         .then(res => {
-            if (res.success && res.logged_in) {
+            if (res.success) {
                 currentAdminInfo = res.data;
                 showAdminUI();
             } else {
@@ -3229,7 +3229,7 @@ function checkExpiredOnLoad() {
     fetch(apiUrl('/api/admin/current'))
         .then(r => r.json())
         .then(res => {
-            if (res.success && res.logged_in) {
+            if (res.success) {
                 loadExpiredCount();
             }
         })
