@@ -2563,6 +2563,40 @@ function loadData() {
     const statusFilter = document.getElementById('filterStatus') ? document.getElementById('filterStatus').value : '';
     const keyword = document.getElementById('searchInput').value;
 
+    // 静态模式：直接从 data.json 加载
+    if (!CONFIG.USE_API) {
+        fetch(CONFIG.DATA_URL || 'data.json')
+            .then(r => r.json())
+            .then(res => {
+                if (!res.success) return;
+                allData = res.data || res;  // 兼容两种格式
+                // 客户端过滤
+                allData = allData.filter(r => {
+                    if (region && r.region_group !== region) return false;
+                    if (gender && r.gender !== gender) return false;
+                    if (zodiac && r.zodiac !== zodiac) return false;
+                    if (education && r.education !== education) return false;
+                    if (statusFilter && (r.status || 'approved') !== statusFilter) return false;
+                    if (keyword) {
+                        const kw = keyword.toLowerCase();
+                        const searchText = `${r.region_group} ${r.gender} ${r.zodiac} ${r.education} ${r.job} ${r.family_info} ${r.mate_requirement}`.toLowerCase();
+                        if (!searchText.includes(kw)) return false;
+                    }
+                    return true;
+                });
+                currentPage = 1;
+                if (viewMode === 'card') renderCards();
+                else renderTable();
+            })
+            .catch(() => {
+                // 如果 data.json 不存在，使用 allData（可能从其他来源加载）
+                currentPage = 1;
+                if (viewMode === 'card') renderCards();
+                else renderTable();
+            });
+        return;
+    }
+
     // 非静态模式：走 API
     let url = '/api/data?';
     const params = [];
