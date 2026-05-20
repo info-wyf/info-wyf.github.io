@@ -2003,7 +2003,7 @@ function loadRegionOptionsForSubmit() {
         return;
     }
     // allData 为空，调 API
-    apiFetch('/api/regions',
+    apiFetch('/api/regions')
     .then(r => r.json())
     .then(res => {
         if (!res.success) return;
@@ -2243,7 +2243,7 @@ function loadStats() {
         return;
     }
     // allData 为空，调 API
-    apiFetch('/api/stats',
+    apiFetch('/api/stats')
         .then(r => r.json())
         .then(res => {
             if (!res.success) return;
@@ -2270,7 +2270,7 @@ function loadStats() {
             renderAgeChart(s.age);
             renderEduChart(s.education);
         });
-    apiFetch('/api/stats/extended',
+    apiFetch('/api/stats/extended')
         .then(r => r.json())
         .then(res => {
             if (!res.success) return;
@@ -2529,7 +2529,7 @@ function loadRegionOptions() {
         return;
     }
     // allData 为空，调 API
-    apiFetch('/api/regions',.then(r=>r.json()).then(res=>{
+    apiFetch('/api/regions').then(r=>r.json()).then(res=>{
         if(!res.success) return;
         const sel1 = document.getElementById('filterRegion');
         const sel2 = document.getElementById('formRegion');
