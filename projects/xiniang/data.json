@@ -15492,11 +15492,11 @@
     "family_info": "",
     "mate_requirement": "",
     "notes": "",
-    "status": "pending",
+    "status": "rejected",
     "submit_time": "2026-05-20 10:12:56",
     "upload_date": "2026-05-20",
-    "review_time": null,
-    "reviewer": null,
-    "reject_reason": null
+    "review_time": "2026-05-20 10:15:28",
+    "reviewer": "admin",
+    "reject_reason": "无"
   }
 ]
