@@ -7,79 +7,10 @@
 <link rel="icon" href="favicon.ico" type="image/x-icon">
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="icon" href="favicon.png" type="image/png" sizes="64x64">
-<script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js">
-
-// ===== 定时批量同步到 GitHub =====
+<script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+<script>
 let syncIntervalId = null;  // 定时同步的定时器 ID
 
-/**
- * 批量同步待同步文件到 GitHub
- * 前端定时调用此函数，避免频繁调用 GitHub API
- */
-async function syncToGithub() {
-    try {
-        const res = await apiFetch('/api/sync_github', { method: 'POST' });
-        const data = await res.json();
-        if (data.success && data.synced > 0) {
-            console.log(`✅ 批量同步完成：成功 ${data.synced} 个文件`);
-        } else if (data.pending === 0) {
-            console.log('ℹ️ 没有待同步的文件');
-        } else if (data.failed && data.failed.length > 0) {
-            console.warn(`⚠️ 部分文件同步失败：${data.failed.join(', ')}`);
-        }
-    } catch (err) {
-        console.error('❌ 同步到 GitHub 失败：', err);
-    }
-}
-
-/**
- * 启动定时同步（每 5 分钟同步一次）
- */
-function startAutoSync() {
-    if (syncIntervalId) {
-        clearInterval(syncIntervalId);
-    }
-    
-    // 每 5 分钟同步一次
-    syncIntervalId = setInterval(syncToGithub, 5 * 60 * 1000);
-    console.log('🔄 已启动定时同步（每 5 分钟）');
-    
-    // 立即同步一次（如果有待同步的文件）
-    syncToGithub();
-}
-
-/**
- * 停止定时同步
- */
-function stopAutoSync() {
-    if (syncIntervalId) {
-        clearInterval(syncIntervalId);
-        syncIntervalId = null;
-        console.log('⏹️ 已停止定时同步');
-    }
-}
-
-// 页面加载时，检查是否已登录，如果已登录则启动定时同步
-document.addEventListener('DOMContentLoaded', () => {
-    const token = localStorage.getItem(CONFIG.TOKEN_KEY || 'xiniang_admin_token');
-    if (token) {
-        // 验证 token 是否有效
-        apiFetch('/api/admin/current')
-            .then(r => r.json())
-            .then(res => {
-                if (res.success && res.logged_in) {
-                    startAutoSync();
-                }
-            })
-            .catch(() => {});
-    }
-});
-
-// 在 adminLogin() 成功时启动定时同步（需要在 adminLogin() 函数中调用 startAutoSync()）
-// 在 logoutAdmin() 函数中停止定时同步，并在退出前同步一次
-
-</script>
-<script>
 // ===== 鉴权辅助 =====
 function getAuthHeader() {
     const token = localStorage.getItem(CONFIG.TOKEN_KEY || 'xiniang_admin_token');
@@ -129,7 +60,6 @@ function cycleStatus(recordId, currentStatus) {
         if (res.success) {
             alert('状态已更新为：' + labels[newStatus]);
             loadData();
-            loadAdminData();
         } else {
             alert('更新失败：' + res.message);
         }
@@ -138,150 +68,8 @@ function cycleStatus(recordId, currentStatus) {
         alert('请求失败：' + err);
     });
 }
-
-
-// ===== 定时批量同步到 GitHub =====
-let syncIntervalId = null;  // 定时同步的定时器 ID
-
-/**
- * 批量同步待同步文件到 GitHub
- * 前端定时调用此函数，避免频繁调用 GitHub API
- */
-async function syncToGithub() {
-    try {
-        const res = await apiFetch('/api/sync_github', { method: 'POST' });
-        const data = await res.json();
-        if (data.success && data.synced > 0) {
-            console.log(`✅ 批量同步完成：成功 ${data.synced} 个文件`);
-        } else if (data.pending === 0) {
-            console.log('ℹ️ 没有待同步的文件');
-        } else if (data.failed && data.failed.length > 0) {
-            console.warn(`⚠️ 部分文件同步失败：${data.failed.join(', ')}`);
-        }
-    } catch (err) {
-        console.error('❌ 同步到 GitHub 失败：', err);
-    }
-}
-
-/**
- * 启动定时同步（每 5 分钟同步一次）
- */
-function startAutoSync() {
-    if (syncIntervalId) {
-        clearInterval(syncIntervalId);
-    }
-    
-    // 每 5 分钟同步一次
-    syncIntervalId = setInterval(syncToGithub, 5 * 60 * 1000);
-    console.log('🔄 已启动定时同步（每 5 分钟）');
-    
-    // 立即同步一次（如果有待同步的文件）
-    syncToGithub();
-}
-
-/**
- * 停止定时同步
- */
-function stopAutoSync() {
-    if (syncIntervalId) {
-        clearInterval(syncIntervalId);
-        syncIntervalId = null;
-        console.log('⏹️ 已停止定时同步');
-    }
-}
-
-// 页面加载时，检查是否已登录，如果已登录则启动定时同步
-document.addEventListener('DOMContentLoaded', () => {
-    const token = localStorage.getItem(CONFIG.TOKEN_KEY || 'xiniang_admin_token');
-    if (token) {
-        // 验证 token 是否有效
-        apiFetch('/api/admin/current')
-            .then(r => r.json())
-            .then(res => {
-                if (res.success && res.logged_in) {
-                    startAutoSync();
-                }
-            })
-            .catch(() => {});
-    }
-});
-
-// 在 adminLogin() 成功时启动定时同步（需要在 adminLogin() 函数中调用 startAutoSync()）
-// 在 logoutAdmin() 函数中停止定时同步，并在退出前同步一次
-
 </script>
-<script src="config.js?v=2">
-
-// ===== 定时批量同步到 GitHub =====
-let syncIntervalId = null;  // 定时同步的定时器 ID
-
-/**
- * 批量同步待同步文件到 GitHub
- * 前端定时调用此函数，避免频繁调用 GitHub API
- */
-async function syncToGithub() {
-    try {
-        const res = await apiFetch('/api/sync_github', { method: 'POST' });
-        const data = await res.json();
-        if (data.success && data.synced > 0) {
-            console.log(`✅ 批量同步完成：成功 ${data.synced} 个文件`);
-        } else if (data.pending === 0) {
-            console.log('ℹ️ 没有待同步的文件');
-        } else if (data.failed && data.failed.length > 0) {
-            console.warn(`⚠️ 部分文件同步失败：${data.failed.join(', ')}`);
-        }
-    } catch (err) {
-        console.error('❌ 同步到 GitHub 失败：', err);
-    }
-}
-
-/**
- * 启动定时同步（每 5 分钟同步一次）
- */
-function startAutoSync() {
-    if (syncIntervalId) {
-        clearInterval(syncIntervalId);
-    }
-    
-    // 每 5 分钟同步一次
-    syncIntervalId = setInterval(syncToGithub, 5 * 60 * 1000);
-    console.log('🔄 已启动定时同步（每 5 分钟）');
-    
-    // 立即同步一次（如果有待同步的文件）
-    syncToGithub();
-}
-
-/**
- * 停止定时同步
- */
-function stopAutoSync() {
-    if (syncIntervalId) {
-        clearInterval(syncIntervalId);
-        syncIntervalId = null;
-        console.log('⏹️ 已停止定时同步');
-    }
-}
-
-// 页面加载时，检查是否已登录，如果已登录则启动定时同步
-document.addEventListener('DOMContentLoaded', () => {
-    const token = localStorage.getItem(CONFIG.TOKEN_KEY || 'xiniang_admin_token');
-    if (token) {
-        // 验证 token 是否有效
-        apiFetch('/api/admin/current')
-            .then(r => r.json())
-            .then(res => {
-                if (res.success && res.logged_in) {
-                    startAutoSync();
-                }
-            })
-            .catch(() => {});
-    }
-});
-
-// 在 adminLogin() 成功时启动定时同步（需要在 adminLogin() 函数中调用 startAutoSync()）
-// 在 logoutAdmin() 函数中停止定时同步，并在退出前同步一次
-
-</script>
+<script src="config.js"></script>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 :root {
@@ -319,33 +107,6 @@ document.addEventListener('DOMContentLoaded', () => {
     --radius-md: 8px;
     --radius-lg: 12px;
     --ease: cubic-bezier(.16, 1, .3, 1);
-}
-
-/* ===== 加载动画 ===== */
-.spinner {
-    display: inline-block;
-    width: 18px;
-    height: 18px;
-    border: 2px solid rgba(255,255,255,0.3);
-    border-top-color: white;
-    border-radius: 50%;
-    animation: spin 0.6s linear infinite;
-    vertical-align: middle;
-    margin-right: 6px;
-}
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
-
-.btn-loading {
-    opacity: 0.8;
-    cursor: not-allowed;
-    pointer-events: none;
-}
-
-#loginSpin {
-    display: none;
 }
 
 html {
@@ -641,18 +402,6 @@ tr:hover { background: var(--primary-soft); }
 /* 编辑弹窗在管理员中心之上 */
 #editModal { z-index: 300; }
 #userSubmitModal { z-index: 300; }
-#wechatCardModal { z-index: 350; }
-#wechatCardModal .modal { width: 380px; max-width: 95vw; overflow: visible; }
-.wechat-card { text-align: center; padding: 28px 24px 20px; }
-.wechat-card-avatar { width: 72px; height: 72px; border-radius: 50%; border: 3px solid #e8f5e9; margin: 0 auto 14px; object-fit: cover; background: #f5f5f5; }
-.wechat-card-name { font-size: 20px; font-weight: 800; color: var(--text); margin-bottom: 4px; }
-.wechat-card-id { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
-.wechat-card-qr { width: 200px; height: 200px; margin: 0 auto 16px; border-radius: 12px; border: 1px solid var(--border); background: #fff; padding: 8px; box-shadow: 0 4px 16px oklch(22% 0.03 355 / 0.12); }
-.wechat-card-qr img { width: 100%; height: 100%; object-fit: contain; border-radius: 6px; }
-.wechat-card-qr-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 13px; border: 2px dashed var(--border); border-radius: 6px; }
-.wechat-card-tip { font-size: 13px; color: var(--text-muted); margin-bottom: 8px; line-height: 1.6; }
-.wechat-card-btn { background: #07C160; color: #fff; border: none; border-radius: var(--radius-md); padding: 12px 36px; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 8px; }
-.wechat-card-btn:hover { background: #06ad56; }
 .modal { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); width: 600px; max-width: min(100%, 760px); max-height: calc(100vh - 36px); overflow-y: auto; box-shadow: 0 22px 70px oklch(22% 0.03 355 / 0.28); }
 .modal-header { padding: 18px 22px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; gap: 16px; position: sticky; top: 0; background: var(--surface); z-index: 1; }
 .modal-header h3 { font-size: 17px; color: var(--text); font-weight: 800; }
@@ -938,8 +687,34 @@ tr:hover { background: var(--primary-soft); }
         transition-duration: 0.01ms !important;
     }
 }
+
+/* ===== 加载动画 ===== */
+.spinner {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    vertical-align: middle;
+    margin-right: 6px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.btn-loading {
+    opacity: 0.8;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+#loginSpin {
+    display: none;
+}
 </style>
-<!-- VERSION: 20260520-v6 - IF YOU SEE THIS, YOU HAVE THE LATEST VERSION -->
 </head>
 <body>
 
@@ -1388,28 +1163,6 @@ tr:hover { background: var(--primary-soft); }
     </div>
 </div>
 
-<!-- 微信名片弹窗（提交成功展示） -->
-<div class="modal-overlay" id="wechatCardModal">
-    <div class="modal">
-        <div class="modal-header">
-            <h3>💬 添加微信联系</h3>
-            <button class="modal-close" onclick="closeModal('wechatCardModal')">&times;</button>
-        </div>
-        <div class="modal-body" style="padding: 0;">
-            <div class="wechat-card">
-                <img src="wechat-avatar.png" alt="头像" class="wechat-card-avatar" onerror="this.style.display='none'">
-                <div class="wechat-card-name">喜娘上上牵</div>
-                <div class="wechat-card-id">微信号：xiniang2026</div>
-                <div class="wechat-card-qr">
-                    <img src="wechat-qr.png" alt="微信二维码" onerror="this.parentElement.innerHTML='<div class=\'wechat-card-qr-placeholder\'>请替换 wechat-qr.png 图片</div>'">
-                </div>
-                <div class="wechat-card-tip">资料已提交成功！<br>长按二维码识别，或搜索微信号添加</div>
-                <button class="wechat-card-btn" onclick="closeModal('wechatCardModal')">知道了</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 <!-- 管理员登录弹窗 -->
 <div class="modal-overlay" id="adminLoginModal">
     <div class="modal" style="width:400px;">
@@ -1666,15 +1419,10 @@ function onSubmitAgeChange() {
 
 // ===== 初始化 =====
 window.onload = function() {
-    console.log('%c喜娘上上牵 v8 (20260520-fix)', 'color: #4A90D9; font-weight: bold; font-size: 14px;');
-    console.log('USE_API:', CONFIG.USE_API);
-    console.log('DATA_URL:', CONFIG.DATA_URL);
-    // 先初始化图表，再加载数据
-    initCharts();
-    // loadStats() 不在此处调用：loadData() 完成时会自动调用它，
-    // 避免 allData 尚未加载时进入 API 分支导致后续覆盖正确数据
+    loadStats();
     loadRegionOptions();
     loadData();
+    initCharts();
     checkLoginStatus();
     loadRegionOptionsForSubmit();
 };
@@ -1736,14 +1484,6 @@ function adminLogin() {
     const username = document.getElementById('loginUsername').value.trim();
     const password = document.getElementById('loginPassword').value;
     
-    // 显示加载动画
-    const loginBtn = document.getElementById('loginBtn');
-    const loginSpin = document.getElementById('loginSpin');
-    if (loginBtn && loginSpin) {
-        loginBtn.classList.add('btn-loading');
-        loginSpin.style.display = 'inline-block';
-    }
-    
     if (!username || !password) {
         document.getElementById('loginError').textContent = '用户名和密码不能为空';
         document.getElementById('loginError').style.display = 'block';
@@ -1759,6 +1499,7 @@ function adminLogin() {
         .then(res => {
             if (res.success) {
                 currentAdminInfo = res.data;
+                // 存储 token 到 localStorage（关键！）
                 if (res.token) {
                     localStorage.setItem(CONFIG.TOKEN_KEY || 'xiniang_admin_token', res.token);
                 }
@@ -1768,7 +1509,8 @@ function adminLogin() {
                 
                 // 启动定时同步（每 5 分钟批量同步到 GitHub）
                 startAutoSync();
-                // 隐藏加载动画
+                
+                // 隐藏登录按钮加载动画
                 const loginBtn = document.getElementById('loginBtn');
                 const loginSpin = document.getElementById('loginSpin');
                 if (loginBtn && loginSpin) {
@@ -1776,37 +1518,23 @@ function adminLogin() {
                     loginSpin.style.display = 'none';
                 }
             } else {
-                document.getElementById('loginError').textContent = res.message || '登录失败';
-                document.getElementById('loginError').style.display = 'block';
-                // 隐藏加载动画
-                const loginBtn = document.getElementById('loginBtn');
-                const loginSpin = document.getElementById('loginSpin');
-                if (loginBtn && loginSpin) {
-                    loginBtn.classList.remove('btn-loading');
-                    loginSpin.style.display = 'none';
-                }
-            }
-        })
-        .catch(err => {
-            document.getElementById('loginError').textContent = '请求失败：' + err;
+            document.getElementById('loginError').textContent = res.message || '登录失败';
             document.getElementById('loginError').style.display = 'block';
-            // 隐藏加载动画
-            const loginBtn = document.getElementById('loginBtn');
-            const loginSpin = document.getElementById('loginSpin');
-            if (loginBtn && loginSpin) {
-                loginBtn.classList.remove('btn-loading');
-                loginSpin.style.display = 'none';
-            }
-        });
+        }
+    });
 }
 
 // ===== 管理员登出 =====
 function adminLogout() {
-    // JWT 无需服务器端清除，仅清除本地存储
-    localStorage.removeItem(CONFIG.TOKEN_KEY || 'xiniang_admin_token');
-    currentAdminInfo = null;
-    hideAdminUI();
-    alert('已退出登录');
+    const token = localStorage.getItem(CONFIG.TOKEN_KEY || 'xiniang_admin_token');
+    apiFetch('/api/admin/logout', { method: 'POST' })
+        .then(r => r.json())
+        .then(res => {
+            localStorage.removeItem(CONFIG.TOKEN_KEY || 'xiniang_admin_token');
+            currentAdminInfo = null;
+            hideAdminUI();
+            alert('已退出登录');
+        });
 }
 
 // ===== 管理员中心 =====
@@ -1851,37 +1579,6 @@ function switchTab(tabName) {
 // ===== 资料审核功能 =====
 function loadPendingList() {
     // 静态模式：从 allData 过滤待审核记录
-    if (allData && allData.length > 0) {
-        const pending = allData.filter(r => r.status === 'pending');
-        if (pending.length === 0) {
-            document.getElementById('pendingList').innerHTML = '<p class="empty-state">暂无待审核记录</p>';
-            return;
-        }
-        
-        let html = '';
-        pending.forEach(r => {
-            html += `
-                <div class="review-card">
-                    <h4>ID: ${r.id} | ${r.region_group || '-'}</h4>
-                    <p>年龄：${r.age_raw || '-'} ${r.age_normalized ? '(' + r.age_normalized + '岁)' : ''}</p>
-                    <p>身高：${r.height || '-'} cm | 体重：${r.weight || '-'} kg</p>
-                    <p>学历：${r.education || '-'} | 工作：${r.job || '-'}</p>
-                    <p>家庭情况：${r.family_info || '-'}</p>
-                    <p>择偶要求：${r.mate_requirement || '-'}</p>
-                    <p>提交时间：${r.submit_time || '-'}</p>
-                    <div class="review-actions">
-                        <button class="btn-success" style="padding:6px 16px;font-size:13px;" onclick="approveRecord(${r.id})">✅ 通过</button>
-                        <button class="btn-danger" style="padding:6px 16px;font-size:13px;" onclick="openRejectModal(${r.id})">❌ 拒绝</button>
-                    </div>
-                </div>
-                `;
-        });
-        
-        document.getElementById('pendingList').innerHTML = html;
-        return;
-    }
-    
-    // allData 为空，调用 API
     apiFetch('/api/admin/pending')
         .then(r => r.json())
         .then(res => {
@@ -1931,16 +1628,7 @@ function approveRecord(id) {
         if (res.success) {
             alert('审核通过！');
             loadPendingList();
-            // 更新 allData 中对应记录的状态
-            const idx = allData.findIndex(r => r.id === id);
-            if (idx > -1) {
-                allData[idx].status = 'approved';
-                allData[idx].review_time = new Date().toISOString().slice(0, 10);
-                allData[idx].reviewer = currentAdminInfo ? currentAdminInfo.username : '';
-                allData[idx].reject_reason = '';
-            }
             loadStats();
-            loadAdminData();
         } else {
             alert('操作失败：' + res.message);
         }
@@ -1970,25 +1658,6 @@ function confirmReject() {
             alert('已拒绝！');
             closeModal('rejectModal');
             loadPendingList();
-            // 拒绝成功后刷新 allData，确保资料管理显示最新数据
-            if (CONFIG.USE_API) {
-                // API 模式：重新从服务器加载数据
-                apiFetch('/api/data?include_pending=true')
-                    .then(r => r.json())
-                    .then(res2 => {
-                        if (res2.success) allData = res2.data;
-                    })
-                    .catch(() => {});
-            } else {
-                // 静态模式：手动更新 allData 中对应记录的状态
-                const idx = allData.findIndex(r => r.id === currentRejectId);
-                if (idx > -1) {
-                    allData[idx].status = 'rejected';
-                    allData[idx].reject_reason = reason;
-                    allData[idx].review_time = new Date().toISOString().slice(0, 10);
-                    allData[idx].reviewer = currentAdminInfo ? currentAdminInfo.username : '';
-                }
-            }
         } else {
             alert('操作失败：' + res.message);
         }
@@ -2024,33 +1693,10 @@ function renderAdminTable(data) {
 }
 
 // ===== 资料管理功能（管理员）=====
-function renderAdminTable(data) {
-    if (!data || data.length === 0) {
-        document.getElementById('adminDataTable').innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:40px;">暂无数据</p>';
-        return;
-    }
-    let html = '<div class="admin-table-wrap"><table><thead><tr>';
-    html += '<th>ID</th><th>地区</th><th>年龄</th><th>身高</th><th>体重</th><th>学历</th><th>状态</th><th>操作</th>';
-    html += '</tr></thead><tbody>';
-    data.forEach(r => {
-        const statusText = r.status === 'pending' ? '待审核' : r.status === 'approved' ? '已通过' : '已过期';
-        const statusClass = r.status === 'pending' ? 'status-pending' : r.status === 'approved' ? 'status-approved' : 'status-rejected';
-        html += `<tr>`;
-        html += `<td>${r.id}</td>`;
-        html += `<td>${r.region_group || '-'}</td>`;
-        html += `<td>${r.age_raw || ''} ${r.age_normalized ? '(' + r.age_normalized + '岁)' : ''}</td>`;
-        html += `<td>${r.height || '-'}</td>`;
-        html += `<td>${r.weight || '-'}</td>`;
-        html += `<td>${r.education || '-'}</td>`;
-        html += `<td><span class="status-badge ${statusClass}" style="cursor:pointer" onclick="cycleStatus(${r.id}, '${r.status||'approved'}')">${statusText}</span></td>`;
-        html += `<td><button class="action-btn btn-edit" onclick="openEditModal(${r.id})">编辑</button><button class="action-btn btn-del" onclick="deleteRecord(${r.id})">删除</button></td>`;
-        html += `</tr>`;
-    });
-    html += '</tbody></table></div>';
-    document.getElementById('adminDataTable').innerHTML = html;
-}
-
 function loadAdminData() {
+    // 静态模式：直接从 allData 读取
+
+    // 构建筛选参数
     const region = document.getElementById('adminFilterRegion') ? document.getElementById('adminFilterRegion').value : '';
     const ageRange = document.getElementById('adminFilterAgeRange') ? document.getElementById('adminFilterAgeRange').value : '';
     const heightRange = document.getElementById('adminFilterHeightRange') ? document.getElementById('adminFilterHeightRange').value : '';
@@ -2058,24 +1704,8 @@ function loadAdminData() {
     const education = document.getElementById('adminFilterEducation') ? document.getElementById('adminFilterEducation').value : '';
     const statusFilter = document.getElementById('adminFilterStatus') ? document.getElementById('adminFilterStatus').value : '';
     const keyword = document.getElementById('adminSearchInput') ? document.getElementById('adminSearchInput').value : '';
-
-    if (!CONFIG.USE_API) {
-        let data = allData.filter(r => statusFilter ? (r.status || 'approved') === statusFilter : true);
-        if (region) data = data.filter(r => (r.region_group || '') === region);
-        if (keyword) {
-            const kw = keyword.toLowerCase();
-            data = data.filter(r =>
-                (r.region_group || '').toLowerCase().includes(kw) ||
-                (r.job || '').toLowerCase().includes(kw) ||
-                (r.education || '').toLowerCase().includes(kw)
-            );
-        }
-        renderAdminTable(data);
-        return;
-    }
-
-    // API 模式：带筛选参数
-    let url = '/api/data?include_pending=true';
+    
+    let url = apiUrl('/api/data?include_pending=true');
     const params = [];
     if (region) params.push(`region=${encodeURIComponent(region)}`);
     if (ageRange) params.push(`age_range=${encodeURIComponent(ageRange)}`);
@@ -2085,47 +1715,48 @@ function loadAdminData() {
     if (statusFilter) params.push(`status=${encodeURIComponent(statusFilter)}`);
     if (keyword) params.push(`keyword=${encodeURIComponent(keyword)}`);
     if (params.length) url += '&' + params.join('&');
-
-    apiFetch(url)
+    
+    fetch(url)
         .then(r => r.json())
         .then(res => {
             if (!res.success) {
                 document.getElementById('adminDataTable').innerHTML = '<p class="error-message">加载失败：' + res.message + '</p>';
                 return;
             }
-            renderAdminTable(res.data);
-        })
-        .catch(err => {
-            document.getElementById('adminDataTable').innerHTML = '<p class="error-message">加载失败：' + err + '</p>';
+            
+            const data = res.data;
+            if (data.length === 0) {
+                document.getElementById('adminDataTable').innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:40px;">暂无数据</p>';
+                return;
+            }
+            
+            let html = '<div class="admin-table-wrap"><table><thead><tr>';
+            html += '<th>ID</th><th>地区</th><th>年龄</th><th>身高</th><th>体重</th><th>学历</th><th>状态</th><th>操作</th>';
+            html += '</tr></thead><tbody>';
+            
+            data.forEach(r => {
+                const statusText = r.status === 'pending' ? '待审核' : r.status === 'approved' ? '已通过' : '已过期';
+                const statusClass = r.status === 'pending' ? 'status-pending' : r.status === 'approved' ? 'status-approved' : 'status-rejected';
+                
+                html += `<tr>`;
+                html += `<td>${r.id}</td>`;
+                html += `<td>${r.region_group || '-'}</td>`;
+                html += `<td>${r.age_raw || ''} ${r.age_normalized ? '(' + r.age_normalized + ')' : ''}</td>`;
+                html += `<td>${r.height || '-'}</td>`;
+                html += `<td>${r.weight || '-'}</td>`;
+                html += `<td>${r.education || '-'}</td>`;
+                html += `<td><span class="status-badge ${statusClass}" style="cursor:pointer" onclick="cycleStatus(${r.id}, '${r.status||'approved'}')">${statusText}</span></td>`;
+                html += `<td>
+                    <button class="action-btn btn-edit" onclick="openEditModal(${r.id})">编辑</button>
+                    <button class="action-btn btn-del" onclick="deleteRecord(${r.id})">删除</button>
+                </td>`;
+                html += `</tr>`;
+            });
+            
+            html += '</tbody></table></div>';
+            document.getElementById('adminDataTable').innerHTML = html;
         });
 }
-
-function renderAdminTable(data) {
-    if (!data || data.length === 0) {
-        document.getElementById('adminDataTable').innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:40px;">暂无数据</p>';
-        return;
-    }
-    let html = '<div class="admin-table-wrap"><table><thead><tr>';
-    html += '<th>ID</th><th>地区</th><th>年龄</th><th>身高</th><th>体重</th><th>学历</th><th>状态</th><th>操作</th>';
-    html += '</tr></thead><tbody>';
-    data.forEach(r => {
-        const statusText = r.status === 'pending' ? '待审核' : r.status === 'approved' ? '已通过' : '已过期';
-        const statusClass = r.status === 'pending' ? 'status-pending' : r.status === 'approved' ? 'status-approved' : 'status-rejected';
-        html += `<tr>`;
-        html += `<td>${r.id}</td>`;
-        html += `<td>${r.region_group || '-'}</td>`;
-        html += `<td>${r.age_raw || ''} ${r.age_normalized ? '(' + r.age_normalized + '岁)' : ''}</td>`;
-        html += `<td>${r.height || '-'}</td>`;
-        html += `<td>${r.weight || '-'}</td>`;
-        html += `<td>${r.education || '-'}</td>`;
-        html += `<td><span class="status-badge ${statusClass}" style="cursor:pointer" onclick="cycleStatus(${r.id}, '${r.status||'approved'}')">${statusText}</span></td>`;
-        html += `<td><button class="action-btn btn-edit" onclick="openEditModal(${r.id})">编辑</button><button class="action-btn btn-del" onclick="deleteRecord(${r.id})">删除</button></td>`;
-        html += `</tr>`;
-    });
-    html += '</tbody></table></div>';
-    document.getElementById('adminDataTable').innerHTML = html;
-}
-
 
 function clearAdminFilters() {
     const els = ['adminFilterRegion', 'adminFilterAgeRange', 'adminFilterHeightRange', 'adminFilterWeightRange', 'adminFilterEducation', 'adminFilterStatus'];
@@ -2204,10 +1835,7 @@ function loadRegionManage() {
                 html += `<tr>`;
                 html += `<td>${r.id}</td>`;
                 html += `<td>${r.name}</td>`;
-                html += `<td>
-                    <button class="btn-secondary" style="padding:4px 12px;font-size:12px;margin-right:4px;" onclick="openEditRegionModal(${r.id}, '${r.name}')">修改</button>
-                    <button class="btn-danger" style="padding:4px 12px;font-size:12px;" onclick="deleteRegion(${r.id}, '${r.name}')">删除</button>
-                </td>`;
+                html += `<td><button class="btn-danger" style="padding:4px 12px;font-size:12px;" onclick="deleteRegion(${r.id}, '${r.name}')">删除</button></td>`;
                 html += `</tr>`;
             });
             
@@ -2257,89 +1885,43 @@ function deleteRegion(id, name) {
     });
 }
 
-// 打开修改地区模态框
-let currentEditRegionId = null;
-function openEditRegionModal(id, name) {
-    currentEditRegionId = id;
-    document.getElementById('editRegionName').value = name;
-    document.getElementById('editRegionModal').style.display = 'flex';
-}
-
-// 提交修改地区
-function submitEditRegion() {
-    const name = document.getElementById('editRegionName').value.trim();
-    if (!name) {
-        alert('请输入地区名称！');
-        return;
-    }
-    
-    apiFetch('/api/regions/edit', {
-        method: 'POST',
-        body: JSON.stringify({
-            id: currentEditRegionId,
-            name: name
-        })
-    })
-    .then(r => r.json())
-    .then(res => {
-        if (res.success) {
-            alert('修改成功！');
-            closeEditRegionModal();
-            loadRegionManage();  // 重新加载地区列表
-            loadRegionOptions();  // 更新筛选下拉框
-            loadRegionOptionsForSubmit();  // 更新提交表单下拉框
-            if (currentAdminInfo && currentAdminInfo.role === 'super_admin') {
-                loadAdminManage();  // 重新加载管理员管理（地区列表）
-            }
-        } else {
-            alert('修改失败：' + res.message);
-        }
-    });
-}
-
-// 关闭修改地区模态框
-function closeEditRegionModal() {
-    document.getElementById('editRegionModal').style.display = 'none';
-    currentEditRegionId = null;
-}
-
 // ===== 管理员管理功能 =====
 function loadAdminManage() {
-    // 加载地区列表
+    // 静态模式：不支持管理员管理
+    // 先加载地区列表到newAdminRegions选择框
     apiFetch('/api/regions')
         .then(r => r.json())
         .then(res => {
             if (res.success) {
                 const select = document.getElementById('newAdminRegions');
                 select.innerHTML = '';
-                (res.data || []).forEach(r => {
+                res.regions.forEach(r => {
                     const opt = document.createElement('option');
                     opt.value = r.name;
                     opt.textContent = r.name;
                     select.appendChild(opt);
                 });
             }
-        })
-        .catch(() => {});
-
+        });
+    
     // 加载管理员列表
-    apiFetch('/api/admin/list')
+    apiFetch('/api/admin/list').catch(()=>({json:()=>(Promise.resolve({success:false}))})).then(r=>r.json())
         .then(r => r.json())
         .then(res => {
             if (!res.success) {
                 document.getElementById('adminTable').innerHTML = '<p class="error-message">加载失败</p>';
                 return;
             }
-
-            const admins = res.data || [];
+            
+            const admins = res.data;
             let html = '<div class="admin-table-wrap"><table><thead><tr>';
             html += '<th>ID</th><th>用户名</th><th>角色</th><th>负责地区</th><th>最后登录</th><th>操作</th>';
             html += '</tr></thead><tbody>';
-
+            
             admins.forEach(a => {
                 const roleText = a.role === 'super_admin' ? '主管理员' : '地区管理员';
-                const regionsText = (a.regions || []).includes('全部') ? '全部' : (a.regions || []).join(', ');
-
+                const regionsText = a.regions.includes('全部') ? '全部' : a.regions.join(', ');
+                
                 html += `<tr>`;
                 html += `<td>${a.id}</td>`;
                 html += `<td>${a.username}</td>`;
@@ -2347,71 +1929,16 @@ function loadAdminManage() {
                 html += `<td>${regionsText}</td>`;
                 html += `<td>${a.last_login || '-'}</td>`;
                 html += `<td>
-                    <button class="action-btn btn-edit" onclick="openChangePwdModal(${a.id}, '${a.username}', ${a.role === 'super_admin'})">改密</button>
+                    <button class="action-btn btn-view" onclick="editAdmin(${a.id})">编辑</button>
                     <button class="action-btn btn-del" onclick="deleteAdmin(${a.id}, '${a.username}')">删除</button>
                 </td>`;
                 html += `</tr>`;
             });
-
+            
             html += '</tbody></table></div>';
             document.getElementById('adminTable').innerHTML = html;
-        })
-        .catch(err => {
-            document.getElementById('adminTable').innerHTML = '<p class="error-message">加载失败：' + err + '</p>';
         });
 }
-
-// ===== 修改密码弹窗 =====
-function openChangePwdModal(adminId, username, isSuperAdmin) {
-    document.getElementById('cpAdminId').value = adminId;
-    document.getElementById('cpUsername').textContent = username;
-    document.getElementById('cpOldPwdGroup').style.display = isSuperAdmin ? 'none' : 'flex';
-    document.getElementById('cpNewPwd').value = '';
-    document.getElementById('cpOldPwd').value = '';
-    document.getElementById('changePwdError').style.display = 'none';
-    document.getElementById('changePwdModal').classList.add('active');
-}
-
-function changePassword() {
-    const adminId = document.getElementById('cpAdminId').value;
-    const oldPwd = document.getElementById('cpOldPwd').value;
-    const newPwd = document.getElementById('cpNewPwd').value;
-    const isSuper = document.getElementById('cpOldPwdGroup').style.display === 'none';
-
-    if (!newPwd) {
-        document.getElementById('changePwdError').textContent = '请输入新密码';
-        document.getElementById('changePwdError').style.display = 'block';
-        return;
-    }
-    if (!isSuper && !oldPwd) {
-        document.getElementById('changePwdError').textContent = '请输入原密码';
-        document.getElementById('changePwdError').style.display = 'block';
-        return;
-    }
-
-    const body = { password: newPwd };
-    if (!isSuper) body.old_password = oldPwd;
-
-    apiFetch(`/api/admin/${adminId}/change_password`, {
-        method: 'PUT',
-        body: JSON.stringify(body)
-    })
-    .then(r => r.json())
-    .then(res => {
-        if (res.success) {
-            alert('密码修改成功！');
-            closeModal('changePwdModal');
-        } else {
-            document.getElementById('changePwdError').textContent = res.message || '修改失败';
-            document.getElementById('changePwdError').style.display = 'block';
-        }
-    })
-    .catch(err => {
-        document.getElementById('changePwdError').textContent = '请求失败：' + err;
-        document.getElementById('changePwdError').style.display = 'block';
-    });
-}
-
 
 function addAdmin() {
     const username = document.getElementById('newAdminUsername').value.trim();
@@ -2500,31 +2027,7 @@ function deleteAdmin(id, username) {
 
 // ===== 用户资料提交功能 =====
 function loadRegionOptionsForSubmit() {
-    // 静态模式：直接从 regions.json 加载
-    if (!CONFIG.USE_API) {
-        fetch(CONFIG.REGIONS_URL || 'regions.json')
-            .then(r => r.json())
-            .then(res => {
-                const regions = res.success ? (res.regions || res.data || []) : (res || []);
-                const sel = document.getElementById('submitRegion');
-                sel.innerHTML = '';
-                const defaultOpt = document.createElement('option');
-                defaultOpt.value = '';
-                defaultOpt.textContent = '请选择地区';
-                sel.appendChild(defaultOpt);
-                regions.forEach(r => {
-                    const name = r.name || r;
-                    const opt = document.createElement('option');
-                    opt.value = name;
-                    opt.textContent = name;
-                    sel.appendChild(opt);
-                });
-            })
-            .catch(() => {});
-        return;
-    }
-    
-    // 优先用 allData 提取地区列表（API 模式）
+    // 优先用 allData 提取地区列表（静态模式）
     const regionSet = new Set();
     if (allData && allData.length > 0) {
         allData.forEach(r => { if(r.region_group) regionSet.add(r.region_group); });
@@ -2608,11 +2111,6 @@ function submitUserRecord() {
         mate_requirement: document.getElementById('submitMate').value.trim()
     };
 
-    // 立即显示微信卡片（乐观 UI）
-    closeModal('userSubmitModal');
-    document.getElementById('wechatCardModal').classList.add('active');
-    
-    // 后台发送 API 请求
     apiFetch('/api/user/submit', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
@@ -2620,12 +2118,12 @@ function submitUserRecord() {
     })
     .then(r => r.json())
     .then(res => {
-        if (!res.success) {
-            alert('提交失败：' + (res.message || res.Message || '未知错误'));
+        if (res.success) {
+            alert('资料已提交，请联系微信：xiniang2026');
+            closeModal('userSubmitModal');
+        } else {
+            alert('提交失败：' + res.message);
         }
-    })
-    .catch(err => {
-        alert('提交失败：' + err.message);
     });
 }
 
@@ -2702,27 +2200,10 @@ function animateCount(el, target) {
     }, 16);
 }
 
-// 标准化学历统计数据
-function standardizeEduStats(eduStats) {
-    const standard = {'其他/未知':0, '大专':0, '本科':0, '硕士':0, '博士':0};
-    if (!eduStats || typeof eduStats !== 'object') return standard;
-    Object.entries(eduStats).forEach(([key, val]) => {
-        let e = key.trim();
-        if (!e || e === '未知' || e === '其他') standard['其他/未知'] += val;
-        else if (e.includes('大专') || e.includes('专科')) standard['大专'] += val;
-        else if (e.includes('本科')) standard['本科'] += val;
-        else if (e.includes('硕士') || e.includes('研究生')) standard['硕士'] += val;
-        else if (e.includes('博士')) standard['博士'] += val;
-        else standard['其他/未知'] += val;
-    });
-    return standard;
-}
-
 function loadStats() {
     // 优先用 allData 本地计算统计
     if (allData && allData.length > 0) {
-        // 只统计已通过的资料（待审核、拒绝、过期的不计入统计）
-        const approved = allData.filter(r => r.status === 'approved');
+        const approved = allData.filter(r => (r.status || 'approved') !== 'expired');
         // 性别统计
         const genderStats = {};
         approved.forEach(r => {
@@ -2746,17 +2227,10 @@ function loadStats() {
             else if (a <= 40) ageMap['36-40']++;
             else ageMap['40+']++;
         });
-        // 学历统计（标准化）
+        // 学历统计
         const eduStats = {};
         approved.forEach(r => {
-            let e = (r.education || '').trim();
-            // 标准化学历值
-            if (!e || e === '未知' || e === '其他') e = '其他/未知';
-            else if (e.includes('大专') || e.includes('专科')) e = '大专';
-            else if (e.includes('本科')) e = '本科';
-            else if (e.includes('硕士') || e.includes('研究生')) e = '硕士';
-            else if (e.includes('博士')) e = '博士';
-            else e = '其他/未知';
+            const e = r.education || '其他/未知';
             eduStats[e] = (eduStats[e]||0) + 1;
         });
         const s = { total: approved.length, gender: genderStats, region: regionStats, age: ageMap, education: eduStats };
@@ -2807,38 +2281,11 @@ function loadStats() {
             }
         });
         renderZodiacChart(zodiacStats);
-
-        // 将身高数组转换为 bucket 分类对象
-        const maleHBuckets = {'<160':0,'160-164':0,'165-169':0,'170-174':0,'175-179':0,'180-184':0,'185+':0};
-        const femaleHBuckets = {'<160':0,'160-164':0,'165-169':0,'170-174':0,'175-179':0,'180-184':0,'185+':0};
-        maleH.forEach(h => {
-            if (h < 160) maleHBuckets['<160']++;
-            else if (h <= 164) maleHBuckets['160-164']++;
-            else if (h <= 169) maleHBuckets['165-169']++;
-            else if (h <= 174) maleHBuckets['170-174']++;
-            else if (h <= 179) maleHBuckets['175-179']++;
-            else if (h <= 184) maleHBuckets['180-184']++;
-            else maleHBuckets['185+']++;
-        });
-        femaleH.forEach(h => {
-            if (h < 160) femaleHBuckets['<160']++;
-            else if (h <= 164) femaleHBuckets['160-164']++;
-            else if (h <= 169) femaleHBuckets['165-169']++;
-            else if (h <= 174) femaleHBuckets['170-174']++;
-            else if (h <= 179) femaleHBuckets['175-179']++;
-            else if (h <= 184) femaleHBuckets['180-184']++;
-            else femaleHBuckets['185+']++;
-        });
-        renderHeightChart(maleHBuckets, femaleHBuckets);
+        renderHeightChart(maleH, femaleH);
         renderScatterChart(scatterM, scatterF);
         return;
     }
-    // allData 为空，调 API（仅在 API 模式下）
-    if (!CONFIG.USE_API) {
-        // 静态模式下 allData 为空说明数据尚未加载完成，
-        // 等 loadData() 完成后会自动调用 loadStats()，此处直接返回
-        return;
-    }
+    // allData 为空，调 API
     apiFetch('/api/stats')
         .then(r => r.json())
         .then(res => {
@@ -2864,9 +2311,7 @@ function loadStats() {
             renderGenderChart(s.gender);
             renderRegionChart(s.region);
             renderAgeChart(s.age);
-            // 标准化学历数据
-            const eduStandard = standardizeEduStats(s.education);
-            renderEduChart(eduStandard);
+            renderEduChart(s.education);
         });
     apiFetch('/api/stats/extended')
         .then(r => r.json())
@@ -2903,8 +2348,6 @@ function initCharts() {
 }
 
 function renderGenderChart(data) {
-    // 安全检查：确保图表已初始化
-    if (!chartGender) {{ console.warn("{chart_var} not initialized"); return; }}
     const unknown = (data['未知'] || 0);
     const total = (data.男||0) + (data.女||0) + unknown;
     const pieData = [
@@ -2929,8 +2372,6 @@ function renderGenderChart(data) {
 }
 
 function renderZodiacChart(data) {
-    // 安全检查：确保图表已初始化
-    if (!chartZodiac) {{ console.warn("{chart_var} not initialized"); return; }}
     if (!data || typeof data !== 'object') data = {};
     const zodiacEmoji = {'鼠':'🐭','牛':'🐮','虎':'🐯','兔':'🐰','龙':'🐲','蛇':'🐍','马':'🐴','羊':'🐑','猴':'🐵','鸡':'🐔','狗':'🐶','猪':'🐷'};
     const colors = CHART_PALETTE;
@@ -2961,8 +2402,6 @@ function renderZodiacChart(data) {
 }
 
 function renderRegionChart(data) {
-    // 安全检查：确保图表已初始化
-    if (!chartRegion) {{ console.warn("{chart_var} not initialized"); return; }}
     const order = ['扬中男','扬中女','镇江男','镇江女','南京','常州','苏州','上海','无锡杭州北京','扬中男再婚','扬中女再婚','镇江男再婚','镇江女再婚','其他'];
     const keys = Object.keys(data).sort((a,b) => { const ia=order.indexOf(a), ib=order.indexOf(b); if(ia===-1&&ib===-1) return a.localeCompare(b); if(ia===-1) return 1; if(ib===-1) return -1; return ia-ib; });
     const vals = keys.map(k => data[k]);
@@ -2988,8 +2427,6 @@ function renderRegionChart(data) {
 }
 
 function renderAgeChart(data) {
-    // 安全检查：确保图表已初始化
-    if (!chartAge) {{ console.warn("{chart_var} not initialized"); return; }}
     const ageColors = ['#00b894','#0984e3','#fdcb6','#e84393','#fd79a8','#6c5ce7'];
     const keys = Object.keys(data);
     const vals = Object.values(data);
@@ -3011,8 +2448,6 @@ function renderAgeChart(data) {
 }
 
 function renderEduChart(data) {
-    // 安全检查：确保图表已初始化
-    if (!chartEdu) {{ console.warn("{chart_var} not initialized"); return; }}
     const order = ['其他/未知','大专','本科','硕士','博士'];
     const keys = Object.keys(data).sort((a,b) => { const ia=order.indexOf(a), ib=order.indexOf(b); if(ia===-1&&ib===-1) return a.localeCompare(b); if(ia===-1) return 1; if(ib===-1) return -1; return ia-ib; });
     const vals = keys.map(k => data[k]);
@@ -3136,34 +2571,7 @@ function loadRegionOptions() {
         });
         return;
     }
-    // allData 为空时：静态模式读 regions.json，API 模式调接口
-    if (!CONFIG.USE_API) {
-        fetch(CONFIG.REGIONS_URL || 'regions.json')
-            .then(r => r.json())
-            .then(res => {
-                const regions = res.success ? (res.regions || res.data || []) : (res || []);
-                const sel1 = document.getElementById('filterRegion');
-                const sel2 = document.getElementById('formRegion');
-                sel1.innerHTML = '<option value="">全部地区</option>';
-                sel2.innerHTML = '';
-                const sorted = regions.sort((a, b) => {
-                    const na = a.name || a;
-                    const nb = b.name || b;
-                    const ia = regionOrder.indexOf(na);
-                    const ib = regionOrder.indexOf(nb);
-                    if (ia === -1) return ib === -1 ? na.localeCompare(nb) : 1;
-                    if (ib === -1) return -1;
-                    return ia - ib;
-                });
-                sorted.forEach(r => {
-                    const name = r.name || r;
-                    sel1.add(new Option(name, name));
-                    sel2.add(new Option(name, name));
-                });
-            })
-            .catch(() => {});
-        return;
-    }
+    // allData 为空，调 API
     apiFetch('/api/regions').then(r=>r.json()).then(res=>{
         if(!res.success) return;
         const sel1 = document.getElementById('filterRegion');
@@ -3197,43 +2605,6 @@ function loadData() {
     const weightRange = document.getElementById('filterWeightRange') ? document.getElementById('filterWeightRange').value : '';
     const statusFilter = document.getElementById('filterStatus') ? document.getElementById('filterStatus').value : '';
     const keyword = document.getElementById('searchInput').value;
-
-    // 静态模式：直接从 data.json 加载
-    if (!CONFIG.USE_API) {
-        fetch(CONFIG.DATA_URL || 'data.json')
-            .then(r => r.json())
-            .then(res => {
-                // 兼容两种格式：{success: true, data: [...]} 或 [...]
-                if (res.success === false) return;
-                allData = res.data || res;
-                // 客户端过滤
-                allData = allData.filter(r => {
-                    if (region && r.region_group !== region) return false;
-                    if (gender && r.gender !== gender) return false;
-                    if (zodiac && r.zodiac !== zodiac) return false;
-                    if (education && r.education !== education) return false;
-                    if (statusFilter && (r.status || 'approved') !== statusFilter) return false;
-                    if (keyword) {
-                        const kw = keyword.toLowerCase();
-                        const searchText = `${r.region_group} ${r.gender} ${r.zodiac} ${r.education} ${r.job} ${r.family_info} ${r.mate_requirement}`.toLowerCase();
-                        if (!searchText.includes(kw)) return false;
-                    }
-                    return true;
-                });
-                currentPage = 1;
-                if (viewMode === 'card') renderCards();
-                else renderTable();
-                // 刷新统计图表
-                loadStats();
-            })
-            .catch(() => {
-                // 如果 data.json 不存在，使用 allData（可能从其他来源加载）
-                currentPage = 1;
-                if (viewMode === 'card') renderCards();
-                else renderTable();
-            });
-        return;
-    }
 
     // 非静态模式：走 API
     let url = '/api/data?';
@@ -3620,64 +2991,6 @@ function saveRecord() {
 }
 
 // ===== 删除记录 =====
-
-// ===== 修改密码功能 =====
-function openChangePwdModal(adminId, username, isSuperAdmin) {
-    document.getElementById('cpAdminId').value = adminId;
-    document.getElementById('cpUsername').textContent = username;
-    document.getElementById('cpOldPwd').value = '';
-    document.getElementById('cpNewPwd').value = '';
-    document.getElementById('cpConfirmPwd').value = '';
-    document.getElementById('changePwdError').style.display = 'none';
-    // super_admin 不需要原密码
-    document.getElementById('cpOldPwdGroup').style.display = isSuperAdmin ? 'none' : 'block';
-    document.getElementById('changePwdModal').classList.add('active');
-}
-
-function submitChangePwd() {
-    const adminId = document.getElementById('cpAdminId').value;
-    const oldPwd = document.getElementById('cpOldPwd').value;
-    const newPwd = document.getElementById('cpNewPwd').value;
-    const confirmPwd = document.getElementById('cpConfirmPwd').value;
-    const errorEl = document.getElementById('changePwdError');
-    
-    if (!newPwd) {
-        errorEl.textContent = '请输入新密码';
-        errorEl.style.display = 'block';
-        return;
-    }
-    if (newPwd !== confirmPwd) {
-        errorEl.textContent = '两次输入的新密码不一致';
-        errorEl.style.display = 'block';
-        return;
-    }
-    
-    const body = { password: newPwd };
-    if (!document.getElementById('cpOldPwdGroup').style.display === 'none') {
-        body.old_password = oldPwd;
-    }
-    
-    apiFetch('/api/admin/' + adminId + '/change_password', {
-        method: 'PUT',
-        body: JSON.stringify(body)
-    })
-    .then(r => r.json())
-    .then(res => {
-        if (res.success) {
-            alert('密码修改成功！');
-            closeModal('changePwdModal');
-        } else {
-            errorEl.textContent = res.message || '修改失败';
-            errorEl.style.display = 'block';
-        }
-    })
-    .catch(err => {
-        errorEl.textContent = '请求失败：' + err;
-        errorEl.style.display = 'block';
-    });
-}
-
-
 function deleteRecord(id) {
     if(!confirm('确定要删除这条记录吗？')) return;
     // 如果已登录，直接删除，不需要密码
@@ -3687,13 +3000,7 @@ function deleteRecord(id) {
             headers: {'Content-Type':'application/json'},
             body: JSON.stringify({ password: 'logged_in' })
         }).then(r=>r.json()).then(res=>{
-            if(res.success) {
-                // 无论什么模式，都直接从 allData 移除该记录
-                allData = allData.filter(r => r.id !== id);
-                loadStats();
-                loadAdminData();
-                alert('删除成功！');
-            }
+            if(res.success) { loadData(); loadStats(); alert('删除成功！'); }
             else alert('删除失败：' + (res.message||''));
         });
     } else {
@@ -3703,12 +3010,7 @@ function deleteRecord(id) {
                 headers: {'Content-Type':'application/json'},
                 body: JSON.stringify({ password: document.getElementById('pwdInput').value })
             }).then(r=>r.json()).then(res=>{
-                if(res.success) {
-                    allData = allData.filter(r => r.id !== id);
-                    loadStats();
-                    loadAdminData();
-                    alert('删除成功！');
-                }
+                if(res.success) { loadData(); loadStats(); alert('删除成功！'); }
                 else alert('删除失败：' + (res.message||''));
                 closeModal('pwdModal');
             });
@@ -4145,13 +3447,10 @@ window.addEventListener('load', function() {
 });
 
 
-
 // ===== 定时批量同步到 GitHub =====
-let syncIntervalId = null;  // 定时同步的定时器 ID
 
 /**
  * 批量同步待同步文件到 GitHub
- * 前端定时调用此函数，避免频繁调用 GitHub API
  */
 async function syncToGithub() {
     try {
@@ -4196,81 +3495,6 @@ function stopAutoSync() {
     }
 }
 
-// 页面加载时，检查是否已登录，如果已登录则启动定时同步
-document.addEventListener('DOMContentLoaded', () => {
-    const token = localStorage.getItem(CONFIG.TOKEN_KEY || 'xiniang_admin_token');
-    if (token) {
-        // 验证 token 是否有效
-        apiFetch('/api/admin/current')
-            .then(r => r.json())
-            .then(res => {
-                if (res.success && res.logged_in) {
-                    startAutoSync();
-                }
-            })
-            .catch(() => {});
-    }
-});
-
-// 在 adminLogin() 成功时启动定时同步（需要在 adminLogin() 函数中调用 startAutoSync()）
-// 在 logoutAdmin() 函数中停止定时同步，并在退出前同步一次
-
 </script>
-
-<!-- 修改密码弹窗 -->
-<div class="modal-overlay" id="changePwdModal">
-    <div class="modal">
-        <div class="modal-header">
-            <h3>修改密码</h3>
-            <button class="modal-close" onclick="closeModal('changePwdModal')">&times;</button>
-        </div>
-        <div class="modal-body">
-            <input type="hidden" id="cpAdminId">
-            <div class="form-group">
-                <label class="form-label">管理员</label>
-                <div id="cpUsername" style="padding:8px 0;font-weight:600;"></div>
-            </div>
-            <div class="form-group" id="cpOldPwdGroup">
-                <label class="form-label">原密码</label>
-                <input type="password" id="cpOldPwd" class="form-input" placeholder="请输入原密码">
-            </div>
-            <div class="form-group">
-                <label class="form-label">新密码</label>
-                <input type="password" id="cpNewPwd" class="form-input" placeholder="请输入新密码">
-            </div>
-            <div class="form-group">
-                <label class="form-label">确认新密码</label>
-                <input type="password" id="cpConfirmPwd" class="form-input" placeholder="请再次输入新密码">
-            </div>
-            <p id="changePwdError" class="error-message" style="display:none;"></p>
-        </div>
-        <div class="modal-footer">
-            <button class="btn-secondary" onclick="closeModal('changePwdModal')">取消</button>
-            <button class="btn-primary" onclick="submitChangePwd()">确认修改</button>
-        </div>
-    </div>
-</div>
-
-<!-- 修改地区模态框 -->
-<div class="modal-overlay" id="editRegionModal">
-    <div class="modal" style="max-width:420px;">
-        <div class="modal-header">
-            <h3>修改地区</h3>
-            <button class="modal-close" onclick="closeEditRegionModal()">&times;</button>
-        </div>
-        <div class="modal-body">
-            <div class="form-group">
-                <label class="form-label">地区名称</label>
-                <input type="text" id="editRegionName" class="form-input" placeholder="请输入地区名称">
-            </div>
-            <p id="editRegionError" class="error-message" style="display:none;"></p>
-        </div>
-        <div class="modal-footer">
-            <button class="btn-secondary" onclick="closeEditRegionModal()">取消</button>
-            <button class="btn-primary" onclick="submitEditRegion()">确认修改</button>
-        </div>
-    </div>
-</div>
-
 </body>
 </html>
