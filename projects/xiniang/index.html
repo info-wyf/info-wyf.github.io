@@ -1900,7 +1900,10 @@ function loadRegionManage() {
                 html += `<tr>`;
                 html += `<td>${r.id}</td>`;
                 html += `<td>${r.name}</td>`;
-                html += `<td><button class="btn-danger" style="padding:4px 12px;font-size:12px;" onclick="deleteRegion(${r.id}, '${r.name}')">删除</button></td>`;
+                html += `<td>
+                    <button class="btn-secondary" style="padding:4px 12px;font-size:12px;margin-right:4px;" onclick="openEditRegionModal(${r.id}, '${r.name}')">修改</button>
+                    <button class="btn-danger" style="padding:4px 12px;font-size:12px;" onclick="deleteRegion(${r.id}, '${r.name}')">删除</button>
+                </td>`;
                 html += `</tr>`;
             });
             
@@ -1948,6 +1951,52 @@ function deleteRegion(id, name) {
             alert('删除失败：' + res.message);
         }
     });
+}
+
+// 打开修改地区模态框
+let currentEditRegionId = null;
+function openEditRegionModal(id, name) {
+    currentEditRegionId = id;
+    document.getElementById('editRegionName').value = name;
+    document.getElementById('editRegionModal').style.display = 'flex';
+}
+
+// 提交修改地区
+function submitEditRegion() {
+    const name = document.getElementById('editRegionName').value.trim();
+    if (!name) {
+        alert('请输入地区名称！');
+        return;
+    }
+    
+    apiFetch('/api/regions/edit', {
+        method: 'POST',
+        body: JSON.stringify({
+            id: currentEditRegionId,
+            name: name
+        })
+    })
+    .then(r => r.json())
+    .then(res => {
+        if (res.success) {
+            alert('修改成功！');
+            closeEditRegionModal();
+            loadRegionManage();  // 重新加载地区列表
+            loadRegionOptions();  // 更新筛选下拉框
+            loadRegionOptionsForSubmit();  // 更新提交表单下拉框
+            if (currentAdminInfo && currentAdminInfo.role === 'super_admin') {
+                loadAdminManage();  // 重新加载管理员管理（地区列表）
+            }
+        } else {
+            alert('修改失败：' + res.message);
+        }
+    });
+}
+
+// 关闭修改地区模态框
+function closeEditRegionModal() {
+    document.getElementById('editRegionModal').style.display = 'none';
+    currentEditRegionId = null;
 }
 
 // ===== 管理员管理功能 =====
@@ -3809,5 +3858,27 @@ window.addEventListener('load', function() {
         </div>
     </div>
 </div>
+
+<!-- 修改地区模态框 -->
+<div class="modal-overlay" id="editRegionModal">
+    <div class="modal" style="max-width:420px;">
+        <div class="modal-header">
+            <h3>修改地区</h3>
+            <button class="modal-close" onclick="closeEditRegionModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label class="form-label">地区名称</label>
+                <input type="text" id="editRegionName" class="form-input" placeholder="请输入地区名称">
+            </div>
+            <p id="editRegionError" class="error-message" style="display:none;"></p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary" onclick="closeEditRegionModal()">取消</button>
+            <button class="btn-primary" onclick="submitEditRegion()">确认修改</button>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>
