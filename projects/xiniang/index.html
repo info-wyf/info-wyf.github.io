@@ -47,9 +47,8 @@ function cycleStatus(recordId, currentStatus) {
     if (!confirm(`确定将状态改为「${labels[newStatus]}」？`)) return;
     
     // 调用 update_record API（JWT 鉴权）
-    fetch(apiUrl(`/api/record/${recordId}`), {
+    apiFetch(`/api/record/${recordId}`, {
         method: 'PUT',
-        headers: getAuthHeader(),
         body: JSON.stringify({
             record: {status: newStatus}
         })
@@ -1398,7 +1397,7 @@ window.onload = function() {
 
 // ===== 检查登录状态 =====
 function checkLoginStatus() {
-    fetch(apiUrl('/api/admin/current'), { headers: getAuthHeader() })
+    apiFetch('/api/admin/current', { headers: getAuthHeader() })
         .then(r => r.json())
         .then(res => {
             if (res.success && res.logged_in) {
@@ -1459,7 +1458,7 @@ function adminLogin() {
         return;
     }
     
-    fetch(apiUrl('/api/admin/login'), {
+    apiFetch('/api/admin/login', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({username, password})
@@ -1537,7 +1536,7 @@ function switchTab(tabName) {
 // ===== 资料审核功能 =====
 function loadPendingList() {
     // 静态模式：从 allData 过滤待审核记录
-    fetch(apiUrl('/api/admin/pending'), { headers: getAuthHeader() })
+    apiFetch('/api/admin/pending')
         .then(r => r.json())
         .then(res => {
             if (!res.success) {
@@ -1577,9 +1576,8 @@ function loadPendingList() {
 function approveRecord(id) {
     if (!confirm('确定要通过这条记录吗？')) return;
     
-    fetch(apiUrl('/api/admin/review'), {
+    apiFetch('/api/admin/review', {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({id: id, action: 'approve'})
     })
     .then(r => r.json())
@@ -1607,9 +1605,8 @@ function confirmReject() {
         return;
     }
     
-    fetch(apiUrl('/api/admin/review'), {
+    apiFetch('/api/admin/review', {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({id: currentRejectId, action: 'reject', reject_reason: reason})
     })
     .then(r => r.json())
@@ -1747,7 +1744,7 @@ function loadAdminRegionOptions() {
         return;
     }
     // allData 为空，调 API
-    fetch(apiUrl('/api/regions'))
+    apiFetch('/api/regions')
         .then(r => r.json())
         .then(res => {
             if (!res.success) return;
@@ -1768,7 +1765,7 @@ function loadAdminRegionOptions() {
 // ===== 地区管理功能 =====
 function loadRegionManage() {
     // 静态模式：不支持地区管理
-    fetch(apiUrl('/api/regions'))
+    apiFetch('/api/regions')
         .then(r => r.json())
         .then(res => {
             if (!res.success) {
@@ -1811,9 +1808,8 @@ function addRegion() {
         return;
     }
     
-    fetch(apiUrl('/api/region/add'), {
+    apiFetch('/api/region/add', {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({name})
     })
     .then(r => r.json())
@@ -1831,9 +1827,8 @@ function addRegion() {
 function deleteRegion(id, name) {
     if (!confirm(`确定要删除地区"${name}"吗？`)) return;
     
-    fetch(apiUrl('/api/region/delete'), {
+    apiFetch('/api/region/delete', {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({id})
     })
     .then(r => r.json())
@@ -1851,7 +1846,7 @@ function deleteRegion(id, name) {
 function loadAdminManage() {
     // 静态模式：不支持管理员管理
     // 先加载地区列表到newAdminRegions选择框
-    fetch(apiUrl('/api/regions'))
+    apiFetch('/api/regions')
         .then(r => r.json())
         .then(res => {
             if (res.success) {
@@ -1867,7 +1862,7 @@ function loadAdminManage() {
         });
     
     // 加载管理员列表
-    fetch(apiUrl('/api/admin/list')).catch(()=>({json:()=>(Promise.resolve({success:false}))})).then(r=>r.json())
+    apiFetch('/api/admin/list').catch(()=>({json:()=>(Promise.resolve({success:false}))})).then(r=>r.json())
         .then(r => r.json())
         .then(res => {
             if (!res.success) {
@@ -1920,9 +1915,8 @@ function addAdmin() {
         return;
     }
     
-    fetch(apiUrl('/api/admin/add'), {
+    apiFetch('/api/admin/add', {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
             username,
             password,
@@ -1952,9 +1946,8 @@ function editAdmin(id) {
     
     const regions = regionsStr.split(',').map(r => r.trim()).filter(r => r);
     
-    fetch(apiUrl(`/api/admin/${id}`), {
+    apiFetch(`/api/admin/${id}`, {
         method: 'PUT',
-        headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
             password: password || undefined,
             regions
@@ -1974,9 +1967,8 @@ function editAdmin(id) {
 function deleteAdmin(id, username) {
     if (!confirm(`确定要删除管理员"${username}"吗？`)) return;
     
-    fetch(apiUrl(`/api/admin/${id}`), {
+    apiFetch(`/api/admin/${id}`, {
         method: 'DELETE',
-        headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({})
     })
     .then(r => r.json())
@@ -2011,7 +2003,7 @@ function loadRegionOptionsForSubmit() {
         return;
     }
     // allData 为空，调 API
-    fetch(apiUrl('/api/regions'))
+    apiFetch('/api/regions',
     .then(r => r.json())
     .then(res => {
         if (!res.success) return;
@@ -2076,7 +2068,7 @@ function submitUserRecord() {
         mate_requirement: document.getElementById('submitMate').value.trim()
     };
 
-    fetch(apiUrl('/api/user/submit'), {
+    apiFetch('/api/user/submit', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(record)
@@ -2251,7 +2243,7 @@ function loadStats() {
         return;
     }
     // allData 为空，调 API
-    fetch(apiUrl('/api/stats'))
+    apiFetch('/api/stats',
         .then(r => r.json())
         .then(res => {
             if (!res.success) return;
@@ -2278,7 +2270,7 @@ function loadStats() {
             renderAgeChart(s.age);
             renderEduChart(s.education);
         });
-    fetch(apiUrl('/api/stats/extended'))
+    apiFetch('/api/stats/extended',
         .then(r => r.json())
         .then(res => {
             if (!res.success) return;
@@ -2537,7 +2529,7 @@ function loadRegionOptions() {
         return;
     }
     // allData 为空，调 API
-    fetch(apiUrl('/api/regions')).then(r=>r.json()).then(res=>{
+    apiFetch('/api/regions',.then(r=>r.json()).then(res=>{
         if(!res.success) return;
         const sel1 = document.getElementById('filterRegion');
         const sel2 = document.getElementById('formRegion');
@@ -2586,7 +2578,7 @@ function loadData() {
     if (statusFilter) params.push(`status=${encodeURIComponent(statusFilter)}`);
     if (keyword) params.push(`keyword=${encodeURIComponent(keyword)}`);
     url += params.join('&');
-    fetch(apiUrl(url)).then(r=>r.json()).then(res=>{
+    apiFetch(url).then(r=>r.json()).then(res=>{
         if(!res.success) return;
         allData = res.data;
         currentPage = 1;
@@ -2821,7 +2813,7 @@ function viewRecord(id) {
         }
     }
     // 如果 allData 没有，再尝试调 API
-    fetch(apiUrl(`/api/record/${id}`)).then(r=>r.json()).then(res=>{
+    apiFetch(`/api/record/${id}`).then(r=>r.json()).then(res=>{
         if(!res.success) { alert('记录不存在'); return; }
         showViewModal(res.data);
     }).catch(()=>{
@@ -2895,7 +2887,7 @@ function openEditModal(id) {
         }
         return;
     }
-    fetch(apiUrl(`/api/record/${id}`)).then(r=>r.json()).then(res=>{
+    apiFetch(`/api/record/${id}`,.then(r=>r.json()).then(res=>{
         if(!res.success) return;
         editingId = id;
         const r = res.data;
@@ -2960,7 +2952,7 @@ function deleteRecord(id) {
     if(!confirm('确定要删除这条记录吗？')) return;
     // 如果已登录，直接删除，不需要密码
     if (currentAdminInfo) {
-        fetch(apiUrl(`/api/record/${id}`), {
+        apiFetch(`/api/record/${id}`, {
             method: 'DELETE',
             headers: {'Content-Type':'application/json'},
             body: JSON.stringify({ password: 'logged_in' })
@@ -2970,7 +2962,7 @@ function deleteRecord(id) {
         });
     } else {
         openPwdModal(() => {
-            fetch(apiUrl(`/api/record/${id}`), {
+            apiFetch(`/api/record/${id}`, {
                 method: 'DELETE',
                 headers: {'Content-Type':'application/json'},
                 body: JSON.stringify({ password: document.getElementById('pwdInput').value })
@@ -3250,7 +3242,7 @@ function reimportExcel(input) {
     }
     const fd = new FormData();
     fd.append('file', file);
-    fetch(apiUrl('/api/import/excel'), { method:'POST', body: fd })
+    apiFetch('/api/import/excel', { method:'POST', body: fd })
         .then(r=>r.json()).then(res=>{
             if (res.success) {
                 alert('导入完成，共 ' + res.total + ' 条记录');
@@ -3281,7 +3273,7 @@ window.addEventListener('resize', () => {
 // ===== 过期资料管理功能 =====
 function loadExpiredCount() {
     // 静态模式：从 allData 统计过期数量
-    fetch(apiUrl('/api/admin/expired'), { headers: getAuthHeader() })
+    apiFetch('/api/admin/expired')
         .then(r => r.json())
         .then(res => {
             if (res.success && res.total > 0) {
@@ -3299,7 +3291,7 @@ function loadExpiredCount() {
 
 function loadExpiredList() {
     // 静态模式：从 allData 过滤过期记录
-    fetch(apiUrl('/api/admin/expired'), { headers: getAuthHeader() })
+    apiFetch('/api/admin/expired')
         .then(r => r.json())
         .then(res => {
             if (!res.success) {
@@ -3345,7 +3337,7 @@ function loadExpiredList() {
 function renewRecord(id) {
     if (!confirm('确定要重新上架这条资料吗？\n（上传日期将更新为今天，有效期延长1年）')) return;
     
-    fetch(apiUrl('/api/admin/renew'), {
+    apiFetch('/api/admin/renew', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({id: id})
@@ -3370,7 +3362,7 @@ function renewRecord(id) {
 function deleteExpiredRecord(id) {
     if (!confirm('确定要删除这条过期资料吗？\n此操作不可恢复！')) return;
     
-    fetch(apiUrl('/api/admin/delete-expired'), {
+    apiFetch('/api/admin/delete-expired', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({id: id})
@@ -3396,7 +3388,7 @@ function deleteExpiredRecord(id) {
 function checkExpiredOnLoad() {
     const token = localStorage.getItem(CONFIG.TOKEN_KEY || 'xiniang_admin_token');
     if (!token) return;
-    fetch(apiUrl('/api/admin/current'), { headers: getAuthHeader() })
+    apiFetch('/api/admin/current', { headers: getAuthHeader() })
         .then(r => r.json())
         .then(res => {
             if (res.success) {
