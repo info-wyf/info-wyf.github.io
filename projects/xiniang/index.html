@@ -1294,6 +1294,8 @@ window.onload = function() {
 
 // ===== 检查登录状态 =====
 function checkLoginStatus() {
+    // 静态模式：不调用API，直接返回
+    if (CONFIG.STATIC_MODE) return;
     fetch(apiUrl('/api/admin/current'), { headers: getAuthHeader() })
         .then(r => r.json())
         .then(res => {
@@ -3171,7 +3173,7 @@ window.addEventListener('resize', () => {
 
 // ===== 过期资料管理功能 =====
 function loadExpiredCount() {
-    fetch(apiUrl('/api/admin/expired')), { headers: getAuthHeader() })
+    fetch(apiUrl('/api/admin/expired'), { headers: getAuthHeader() })
         .then(r => r.json())
         .then(res => {
             if (res.success && res.total > 0) {
@@ -3188,7 +3190,7 @@ function loadExpiredCount() {
 }
 
 function loadExpiredList() {
-    fetch(apiUrl('/api/admin/expired')), { headers: getAuthHeader() })
+    fetch(apiUrl('/api/admin/expired'), { headers: getAuthHeader() })
         .then(r => r.json())
         .then(res => {
             if (!res.success) {
