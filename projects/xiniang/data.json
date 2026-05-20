@@ -15470,12 +15470,12 @@
     "family_info": "",
     "mate_requirement": "",
     "notes": "",
-    "status": "pending",
+    "status": "approved",
     "submit_time": "2026-05-19 22:06:53",
     "upload_date": "2026-05-19",
-    "review_time": null,
-    "reviewer": null,
-    "reject_reason": null
+    "review_time": "2026-05-20 21:06:54",
+    "reviewer": "admin",
+    "reject_reason": ""
   },
   {
     "id": 676,
