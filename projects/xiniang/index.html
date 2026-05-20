@@ -400,6 +400,18 @@ tr:hover { background: var(--primary-soft); }
 /* 编辑弹窗在管理员中心之上 */
 #editModal { z-index: 300; }
 #userSubmitModal { z-index: 300; }
+#wechatCardModal { z-index: 350; }
+#wechatCardModal .modal { width: 380px; max-width: 95vw; overflow: visible; }
+.wechat-card { text-align: center; padding: 28px 24px 20px; }
+.wechat-card-avatar { width: 72px; height: 72px; border-radius: 50%; border: 3px solid #e8f5e9; margin: 0 auto 14px; object-fit: cover; background: #f5f5f5; }
+.wechat-card-name { font-size: 20px; font-weight: 800; color: var(--text); margin-bottom: 4px; }
+.wechat-card-id { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
+.wechat-card-qr { width: 200px; height: 200px; margin: 0 auto 16px; border-radius: 12px; border: 1px solid var(--border); background: #fff; padding: 8px; box-shadow: 0 4px 16px oklch(22% 0.03 355 / 0.12); }
+.wechat-card-qr img { width: 100%; height: 100%; object-fit: contain; border-radius: 6px; }
+.wechat-card-qr-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 13px; border: 2px dashed var(--border); border-radius: 6px; }
+.wechat-card-tip { font-size: 13px; color: var(--text-muted); margin-bottom: 8px; line-height: 1.6; }
+.wechat-card-btn { background: #07C160; color: #fff; border: none; border-radius: var(--radius-md); padding: 12px 36px; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 8px; }
+.wechat-card-btn:hover { background: #06ad56; }
 .modal { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); width: 600px; max-width: min(100%, 760px); max-height: calc(100vh - 36px); overflow-y: auto; box-shadow: 0 22px 70px oklch(22% 0.03 355 / 0.28); }
 .modal-header { padding: 18px 22px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; gap: 16px; position: sticky; top: 0; background: var(--surface); z-index: 1; }
 .modal-header h3 { font-size: 17px; color: var(--text); font-weight: 800; }
@@ -1135,6 +1147,28 @@ tr:hover { background: var(--primary-soft); }
     </div>
 </div>
 
+<!-- 微信名片弹窗（提交成功展示） -->
+<div class="modal-overlay" id="wechatCardModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>💬 添加微信联系</h3>
+            <button class="modal-close" onclick="closeModal('wechatCardModal')">&times;</button>
+        </div>
+        <div class="modal-body" style="padding: 0;">
+            <div class="wechat-card">
+                <img src="wechat-avatar.png" alt="头像" class="wechat-card-avatar" onerror="this.style.display='none'">
+                <div class="wechat-card-name">喜娘上上牵</div>
+                <div class="wechat-card-id">微信号：xiniang2026</div>
+                <div class="wechat-card-qr">
+                    <img src="wechat-qr.png" alt="微信二维码" onerror="this.parentElement.innerHTML='<div class=\'wechat-card-qr-placeholder\'>请替换 wechat-qr.png 图片</div>'">
+                </div>
+                <div class="wechat-card-tip">资料已提交成功！<br>长按二维码识别，或搜索微信号添加</div>
+                <button class="wechat-card-btn" onclick="closeModal('wechatCardModal')">知道了</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- 管理员登录弹窗 -->
 <div class="modal-overlay" id="adminLoginModal">
     <div class="modal" style="width:400px;">
@@ -1388,28 +1422,21 @@ function onSubmitAgeChange() {
 
 // ===== 初始化 =====
 window.onload = function() {
-    console.log('%c喜娘上上牵 v6 (20260520)', 'color: #4A90D9; font-weight: bold; font-size: 14px;');
+    console.log('%c喜娘上上牵 v8 (20260520-fix)', 'color: #4A90D9; font-weight: bold; font-size: 14px;');
     console.log('USE_API:', CONFIG.USE_API);
     console.log('DATA_URL:', CONFIG.DATA_URL);
     // 先初始化图表，再加载数据
     initCharts();
-    loadStats();
+    // loadStats() 不在此处调用：loadData() 完成时会自动调用它，
+    // 避免 allData 尚未加载时进入 API 分支导致后续覆盖正确数据
     loadRegionOptions();
     loadData();
-    if (CONFIG.USE_API) {
-        checkLoginStatus();
-    }
+    checkLoginStatus();
     loadRegionOptionsForSubmit();
 };
 
 // ===== 检查登录状态 =====
 function checkLoginStatus() {
-    // 静态模式不支持登录状态检查
-    if (!CONFIG.USE_API) {
-        hideAdminUI();
-        return;
-    }
-
     apiFetch('/api/admin/current', { headers: getAuthHeader() })
         .then(r => r.json())
         .then(res => {
@@ -1462,12 +1489,6 @@ function openAdminLoginModal() {
 }
 
 function adminLogin() {
-    // 静态模式不支持登录
-    if (!CONFIG.USE_API) {
-        alert('静态模式不支持管理员登录。\n\n如需管理功能，请部署完整版（带后端 API）。');
-        return;
-    }
-
     const username = document.getElementById('loginUsername').value.trim();
     const password = document.getElementById('loginPassword').value;
     
@@ -1502,18 +1523,10 @@ function adminLogin() {
 
 // ===== 管理员登出 =====
 function adminLogout() {
-    // 静态模式：直接清除本地状态
-    if (!CONFIG.USE_API) {
-        currentAdminInfo = null;
-        hideAdminUI();
-        alert('已退出（静态模式）');
-        return;
-    }
-
-    const token = localStorage.getItem(CONFIG.TOKEN_KEY || 'xiniang_admin_token');
+    // 无论是否静态模式，都尝试调用 API 登出并清除本地状态
     apiFetch('/api/admin/logout', { method: 'POST' })
-        .then(r => r.json())
-        .then(res => {
+        .catch(() => {})
+        .finally(() => {
             localStorage.removeItem(CONFIG.TOKEN_KEY || 'xiniang_admin_token');
             currentAdminInfo = null;
             hideAdminUI();
@@ -2127,8 +2140,8 @@ function submitUserRecord() {
     .then(r => r.json())
     .then(res => {
         if (res.success) {
-            alert('资料已提交，请联系微信：xiniang2026');
             closeModal('userSubmitModal');
+            document.getElementById('wechatCardModal').classList.add('active');
         } else {
             alert('提交失败：' + res.message);
         }
@@ -2293,7 +2306,12 @@ function loadStats() {
         renderScatterChart(scatterM, scatterF);
         return;
     }
-    // allData 为空，调 API
+    // allData 为空，调 API（仅在 API 模式下）
+    if (!CONFIG.USE_API) {
+        // 静态模式下 allData 为空说明数据尚未加载完成，
+        // 等 loadData() 完成后会自动调用 loadStats()，此处直接返回
+        return;
+    }
     apiFetch('/api/stats')
         .then(r => r.json())
         .then(res => {
@@ -2589,7 +2607,34 @@ function loadRegionOptions() {
         });
         return;
     }
-    // allData 为空，调 API
+    // allData 为空时：静态模式读 regions.json，API 模式调接口
+    if (!CONFIG.USE_API) {
+        fetch(CONFIG.REGIONS_URL || 'regions.json')
+            .then(r => r.json())
+            .then(res => {
+                const regions = res.success ? (res.regions || res.data || []) : (res || []);
+                const sel1 = document.getElementById('filterRegion');
+                const sel2 = document.getElementById('formRegion');
+                sel1.innerHTML = '<option value="">全部地区</option>';
+                sel2.innerHTML = '';
+                const sorted = regions.sort((a, b) => {
+                    const na = a.name || a;
+                    const nb = b.name || b;
+                    const ia = regionOrder.indexOf(na);
+                    const ib = regionOrder.indexOf(nb);
+                    if (ia === -1) return ib === -1 ? na.localeCompare(nb) : 1;
+                    if (ib === -1) return -1;
+                    return ia - ib;
+                });
+                sorted.forEach(r => {
+                    const name = r.name || r;
+                    sel1.add(new Option(name, name));
+                    sel2.add(new Option(name, name));
+                });
+            })
+            .catch(() => {});
+        return;
+    }
     apiFetch('/api/regions').then(r=>r.json()).then(res=>{
         if(!res.success) return;
         const sel1 = document.getElementById('filterRegion');
