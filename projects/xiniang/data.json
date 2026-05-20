@@ -15476,27 +15476,5 @@
     "review_time": null,
     "reviewer": null,
     "reject_reason": null
-  },
-  {
-    "id": 676,
-    "region_group": "其他",
-    "gender": "男",
-    "birth_year": 1996,
-    "age_normalized": 30,
-    "zodiac": "鼠",
-    "age_raw": "",
-    "height": "",
-    "weight": "",
-    "education": "",
-    "job": "",
-    "family_info": "",
-    "mate_requirement": "",
-    "notes": "",
-    "status": "rejected",
-    "submit_time": "2026-05-20 10:12:56",
-    "upload_date": "2026-05-20",
-    "review_time": "2026-05-20 10:15:28",
-    "reviewer": "admin",
-    "reject_reason": "无"
   }
 ]
