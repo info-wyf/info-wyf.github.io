@@ -67,7 +67,7 @@ function cycleStatus(recordId, currentStatus) {
     });
 }
 </script>
-<script src="config.js"></script>
+<script src="config.js?v=2"></script>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 :root {
@@ -1387,16 +1387,32 @@ function onSubmitAgeChange() {
 
 // ===== 初始化 =====
 window.onload = function() {
+    // 静态模式：隐藏管理员功能
+    if (!CONFIG.USE_API) {
+        const adminBtns = ['btnAdminLogin', 'btnAdminCenter', 'btnAdminLogout', 'btnAddData', 'btnExportExcel', 'btnReimport', 'tabRegionManageBtn', 'tabAdminManageBtn'];
+        adminBtns.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = 'none';
+        });
+    }
+
     loadStats();
     loadRegionOptions();
     loadData();
-    initCharts();
-    checkLoginStatus();
+    if (CONFIG.USE_API) {
+        checkLoginStatus();
+    }
     loadRegionOptionsForSubmit();
 };
 
 // ===== 检查登录状态 =====
 function checkLoginStatus() {
+    // 静态模式不支持登录状态检查
+    if (!CONFIG.USE_API) {
+        hideAdminUI();
+        return;
+    }
+
     apiFetch('/api/admin/current', { headers: getAuthHeader() })
         .then(r => r.json())
         .then(res => {
@@ -1449,6 +1465,12 @@ function openAdminLoginModal() {
 }
 
 function adminLogin() {
+    // 静态模式不支持登录
+    if (!CONFIG.USE_API) {
+        alert('静态模式不支持管理员登录。\n\n如需管理功能，请部署完整版（带后端 API）。');
+        return;
+    }
+
     const username = document.getElementById('loginUsername').value.trim();
     const password = document.getElementById('loginPassword').value;
     
@@ -1483,6 +1505,14 @@ function adminLogin() {
 
 // ===== 管理员登出 =====
 function adminLogout() {
+    // 静态模式：直接清除本地状态
+    if (!CONFIG.USE_API) {
+        currentAdminInfo = null;
+        hideAdminUI();
+        alert('已退出（静态模式）');
+        return;
+    }
+
     const token = localStorage.getItem(CONFIG.TOKEN_KEY || 'xiniang_admin_token');
     apiFetch('/api/admin/logout', { method: 'POST' })
         .then(r => r.json())
@@ -2568,8 +2598,9 @@ function loadData() {
         fetch(CONFIG.DATA_URL || 'data.json')
             .then(r => r.json())
             .then(res => {
-                if (!res.success) return;
-                allData = res.data || res;  // 兼容两种格式
+                // 兼容两种格式：{success: true, data: [...]} 或 [...]
+                if (res.success === false) return;
+                allData = res.data || res;
                 // 客户端过滤
                 allData = allData.filter(r => {
                     if (region && r.region_group !== region) return false;
@@ -2587,6 +2618,8 @@ function loadData() {
                 currentPage = 1;
                 if (viewMode === 'card') renderCards();
                 else renderTable();
+                // 刷新统计图表
+                loadStats();
             })
             .catch(() => {
                 // 如果 data.json 不存在，使用 allData（可能从其他来源加载）
