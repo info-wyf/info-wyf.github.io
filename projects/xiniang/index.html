@@ -686,6 +686,7 @@ tr:hover { background: var(--primary-soft); }
     }
 }
 </style>
+<!-- VERSION: 20260520-v6 - IF YOU SEE THIS, YOU HAVE THE LATEST VERSION -->
 </head>
 <body>
 
@@ -1387,6 +1388,9 @@ function onSubmitAgeChange() {
 
 // ===== 初始化 =====
 window.onload = function() {
+    console.log('%c喜娘上上牵 v6 (20260520)', 'color: #4A90D9; font-weight: bold; font-size: 14px;');
+    console.log('USE_API:', CONFIG.USE_API);
+    console.log('DATA_URL:', CONFIG.DATA_URL);
     // 静态模式：隐藏管理员功能
     if (!CONFIG.USE_API) {
         const adminBtns = ['btnAdminLogin', 'btnAdminCenter', 'btnAdminLogout', 'btnAddData', 'btnExportExcel', 'btnReimport', 'tabRegionManageBtn', 'tabAdminManageBtn'];
@@ -1396,6 +1400,8 @@ window.onload = function() {
         });
     }
 
+    // 先初始化图表，再加载数据
+    initCharts();
     loadStats();
     loadRegionOptions();
     loadData();
@@ -2335,6 +2341,8 @@ function initCharts() {
 }
 
 function renderGenderChart(data) {
+    // 安全检查：确保图表已初始化
+    if (!chartGender) {{ console.warn("{chart_var} not initialized"); return; }}
     const unknown = (data['未知'] || 0);
     const total = (data.男||0) + (data.女||0) + unknown;
     const pieData = [
@@ -2359,6 +2367,8 @@ function renderGenderChart(data) {
 }
 
 function renderZodiacChart(data) {
+    // 安全检查：确保图表已初始化
+    if (!chartZodiac) {{ console.warn("{chart_var} not initialized"); return; }}
     if (!data || typeof data !== 'object') data = {};
     const zodiacEmoji = {'鼠':'🐭','牛':'🐮','虎':'🐯','兔':'🐰','龙':'🐲','蛇':'🐍','马':'🐴','羊':'🐑','猴':'🐵','鸡':'🐔','狗':'🐶','猪':'🐷'};
     const colors = CHART_PALETTE;
@@ -2389,6 +2399,8 @@ function renderZodiacChart(data) {
 }
 
 function renderRegionChart(data) {
+    // 安全检查：确保图表已初始化
+    if (!chartRegion) {{ console.warn("{chart_var} not initialized"); return; }}
     const order = ['扬中男','扬中女','镇江男','镇江女','南京','常州','苏州','上海','无锡杭州北京','扬中男再婚','扬中女再婚','镇江男再婚','镇江女再婚','其他'];
     const keys = Object.keys(data).sort((a,b) => { const ia=order.indexOf(a), ib=order.indexOf(b); if(ia===-1&&ib===-1) return a.localeCompare(b); if(ia===-1) return 1; if(ib===-1) return -1; return ia-ib; });
     const vals = keys.map(k => data[k]);
@@ -2414,6 +2426,8 @@ function renderRegionChart(data) {
 }
 
 function renderAgeChart(data) {
+    // 安全检查：确保图表已初始化
+    if (!chartAge) {{ console.warn("{chart_var} not initialized"); return; }}
     const ageColors = ['#00b894','#0984e3','#fdcb6','#e84393','#fd79a8','#6c5ce7'];
     const keys = Object.keys(data);
     const vals = Object.values(data);
@@ -2435,6 +2449,8 @@ function renderAgeChart(data) {
 }
 
 function renderEduChart(data) {
+    // 安全检查：确保图表已初始化
+    if (!chartEdu) {{ console.warn("{chart_var} not initialized"); return; }}
     const order = ['其他/未知','大专','本科','硕士','博士'];
     const keys = Object.keys(data).sort((a,b) => { const ia=order.indexOf(a), ib=order.indexOf(b); if(ia===-1&&ib===-1) return a.localeCompare(b); if(ia===-1) return 1; if(ib===-1) return -1; return ia-ib; });
     const vals = keys.map(k => data[k]);
