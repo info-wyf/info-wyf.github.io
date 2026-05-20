@@ -2121,7 +2121,91 @@ function animateCount(el, target) {
 }
 
 function loadStats() {
-    // 非静态模式：走 API
+    // 优先用 allData 本地计算统计
+    if (allData && allData.length > 0) {
+        const approved = allData.filter(r => (r.status || 'approved') !== 'expired');
+        // 性别统计
+        const genderStats = {};
+        approved.forEach(r => {
+            const g = r.gender || '未知';
+            genderStats[g] = (genderStats[g]||0) + 1;
+        });
+        // 地区统计
+        const regionStats = {};
+        approved.forEach(r => {
+            const reg = r.region_group || '其他';
+            regionStats[reg] = (regionStats[reg]||0) + 1;
+        });
+        // 年龄统计
+        const ageMap = {'20-25':0,'26-30':0,'31-35':0,'36-40':0,'40+':0,'未知':0};
+        approved.forEach(r => {
+            const a = r.age_normalized;
+            if (!a) { ageMap['未知']++; return; }
+            if (a <= 25) ageMap['20-25']++;
+            else if (a <= 30) ageMap['26-30']++;
+            else if (a <= 35) ageMap['31-35']++;
+            else if (a <= 40) ageMap['36-40']++;
+            else ageMap['40+']++;
+        });
+        // 学历统计
+        const eduStats = {};
+        approved.forEach(r => {
+            const e = r.education || '其他/未知';
+            eduStats[e] = (eduStats[e]||0) + 1;
+        });
+        const s = { total: approved.length, gender: genderStats, region: regionStats, age: ageMap, education: eduStats };
+        // 渲染统计卡片
+        const avgAge = (() => {
+            let total = 0, count = 0;
+            const w = {'20-25':22,'26-30':28,'31-35':33,'36-40':38,'40+':43};
+            Object.entries(s.age).forEach(([k,v]) => { if (w[k]) { total += w[k]*v; count += v; } });
+            return count ? Math.round(total/count) : '--';
+        })();
+        document.getElementById('statsCards').innerHTML = `
+            <div class="stat-card stat-card-total"><div class="icon">💝</div><div class="num" id="sc-total">0</div><div class="label">总资料数</div></div>
+            <div class="stat-card stat-card-male"><div class="icon">👨</div><div class="num" id="sc-male">0</div><div class="label">男生</div></div>
+            <div class="stat-card stat-card-female"><div class="icon">👩</div><div class="num" id="sc-female">0</div><div class="label">女生</div></div>
+            <div class="stat-card stat-card-region"><div class="icon">📍</div><div class="num" id="sc-region">0</div><div class="label">地区分组</div></div>
+            <div class="stat-card stat-card-avg"><div class="icon">🎂</div><div class="num">${avgAge}</div><div class="label">平均年龄</div></div>
+        `;
+        animateCount(document.getElementById('sc-total'), s.total);
+        animateCount(document.getElementById('sc-male'), s.gender['男']||0);
+        animateCount(document.getElementById('sc-female'), s.gender['女']||0);
+        animateCount(document.getElementById('sc-region'), Object.keys(s.region).length);
+        renderGenderChart(s.gender);
+        renderRegionChart(s.region);
+        renderAgeChart(s.age);
+        renderEduChart(s.education);
+        // 扩展统计也本地算
+        const maleH = [], femaleH = [];
+        const scatterM = [], scatterF = [];
+        const zodiacStats = {};
+        approved.forEach(r => {
+            if (r.height) {
+                const h = parseInt(r.height);
+                if (r.gender === '男') maleH.push(h);
+                else if (r.gender === '女') femaleH.push(h);
+            }
+            if (r.birth_year) {
+                const by = parseInt(r.birth_year);
+                if (by) {
+                    const z = (by - 4) % 12;
+                    const names = ['鼠','牛','虎','兔','龙','蛇','马','羊','猴','鸡','狗','猪'];
+                    zodiacStats[names[z]] = (zodiacStats[names[z]]||0) + 1;
+                }
+            }
+            if (r.age_normalized && r.height) {
+                const pt = [r.age_normalized, parseInt(r.height)];
+                if (r.gender === '男') scatterM.push(pt);
+                else if (r.gender === '女') scatterF.push(pt);
+            }
+        });
+        renderZodiacChart(zodiacStats);
+        renderHeightChart(maleH, femaleH);
+        renderScatterChart(scatterM, scatterF);
+        return;
+    }
+    // allData 为空，调 API
     fetch(apiUrl('/api/stats'))
         .then(r => r.json())
         .then(res => {
@@ -2129,8 +2213,8 @@ function loadStats() {
             const s = res.stats;
             const avgAge = (() => {
                 let total = 0, count = 0;
-                const w = {'20-25': 22, '26-30': 28, '31-35': 33, '36-40': 38, '40+': 43};
-                Object.entries(s.age).forEach(([k, v]) => { if (w[k]) { total += w[k]*v; count += v; }});
+                const w = {'20-25':22,'26-30':28,'31-35':33,'36-40':38,'40+':43};
+                Object.entries(s.age).forEach(([k, v]) => { if (w[k]) { total += w[k]*v; count += v; } });
                 return count ? Math.round(total/count) : '--';
             })();
             document.getElementById('statsCards').innerHTML = `
@@ -2149,7 +2233,6 @@ function loadStats() {
             renderAgeChart(s.age);
             renderEduChart(s.education);
         });
-
     fetch(apiUrl('/api/stats/extended'))
         .then(r => r.json())
         .then(res => {
