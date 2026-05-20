@@ -2887,7 +2887,7 @@ function openEditModal(id) {
         }
         return;
     }
-    apiFetch(`/api/record/${id}`,.then(r=>r.json()).then(res=>{
+    apiFetch(`/api/record/${id}`).then(r=>r.json()).then(res=>{
         if(!res.success) return;
         editingId = id;
         const r = res.data;
