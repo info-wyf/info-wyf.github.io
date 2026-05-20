@@ -1391,15 +1391,6 @@ window.onload = function() {
     console.log('%c喜娘上上牵 v6 (20260520)', 'color: #4A90D9; font-weight: bold; font-size: 14px;');
     console.log('USE_API:', CONFIG.USE_API);
     console.log('DATA_URL:', CONFIG.DATA_URL);
-    // 静态模式：隐藏管理员功能
-    if (!CONFIG.USE_API) {
-        const adminBtns = ['btnAdminLogin', 'btnAdminCenter', 'btnAdminLogout', 'btnAddData', 'btnExportExcel', 'btnReimport', 'tabRegionManageBtn', 'tabAdminManageBtn'];
-        adminBtns.forEach(id => {
-            const el = document.getElementById(id);
-            if (el) el.style.display = 'none';
-        });
-    }
-
     // 先初始化图表，再加载数据
     initCharts();
     loadStats();
@@ -2020,7 +2011,31 @@ function deleteAdmin(id, username) {
 
 // ===== 用户资料提交功能 =====
 function loadRegionOptionsForSubmit() {
-    // 优先用 allData 提取地区列表（静态模式）
+    // 静态模式：直接从 regions.json 加载
+    if (!CONFIG.USE_API) {
+        fetch(CONFIG.REGIONS_URL || 'regions.json')
+            .then(r => r.json())
+            .then(res => {
+                const regions = res.success ? (res.regions || res.data || []) : (res || []);
+                const sel = document.getElementById('submitRegion');
+                sel.innerHTML = '';
+                const defaultOpt = document.createElement('option');
+                defaultOpt.value = '';
+                defaultOpt.textContent = '请选择地区';
+                sel.appendChild(defaultOpt);
+                regions.forEach(r => {
+                    const name = r.name || r;
+                    const opt = document.createElement('option');
+                    opt.value = name;
+                    opt.textContent = name;
+                    sel.appendChild(opt);
+                });
+            })
+            .catch(() => {});
+        return;
+    }
+    
+    // 优先用 allData 提取地区列表（API 模式）
     const regionSet = new Set();
     if (allData && allData.length > 0) {
         allData.forEach(r => { if(r.region_group) regionSet.add(r.region_group); });
