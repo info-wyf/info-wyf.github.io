@@ -1297,7 +1297,7 @@ function checkLoginStatus() {
     fetch(apiUrl('/api/admin/current'), { headers: getAuthHeader() })
         .then(r => r.json())
         .then(res => {
-            if (res.success) {
+            if (res.success && res.logged_in) {
                 currentAdminInfo = res.data;
                 showAdminUI();
             } else {
@@ -1361,7 +1361,7 @@ function adminLogin() {
     .then(r => r.json())
     .then(res => {
         if (res.success) {
-            currentAdminInfo = {username: res.username || username, role: res.role || 'super_admin'};
+            currentAdminInfo = res.data;
             showAdminUI();
             closeModal('adminLoginModal');
             alert('登录成功！');
@@ -1530,7 +1530,7 @@ function renderAdminTable(data) {
         html += '<td>' + (r.height || '-') + '</td>';
         html += '<td>' + (r.weight || '-') + '</td>';
         html += '<td>' + (r.education || '-') + '</td>';
-        html += '<td><span class="status-badge ' + statusClass + '" style="cursor:pointer" onclick="cycleStatus(' + r.id + ', \'' + (r.status||'approved') + '\')">' + statusText + '</span></td>';
+        html += '<td><span class="status-badge ' + statusClass + '" style="cursor:pointer" onclick="cycleStatus(' + r.id + ', \'' + (r.status||'approved') + '\'")>' + statusText + '</span></td>';
         html += '<td><button class="action-btn btn-edit" onclick="openEditModal(' + r.id + ')">编辑</button> <button class="action-btn btn-del" onclick="deleteRecord(' + r.id + ')">删除</button></td>';
         html += '</tr>';
     });
@@ -1552,6 +1552,7 @@ function loadAdminData() {
         renderAdminTable(data);
         return;
     }
+
     // 构建筛选参数
     const region = document.getElementById('adminFilterRegion') ? document.getElementById('adminFilterRegion').value : '';
     const ageRange = document.getElementById('adminFilterAgeRange') ? document.getElementById('adminFilterAgeRange').value : '';
@@ -1561,7 +1562,7 @@ function loadAdminData() {
     const statusFilter = document.getElementById('adminFilterStatus') ? document.getElementById('adminFilterStatus').value : '';
     const keyword = document.getElementById('adminSearchInput') ? document.getElementById('adminSearchInput').value : '';
     
-    let url = apiUrl('/api/data?include_pending=true');
+    let url = '/api/data?include_pending=true';
     const params = [];
     if (region) params.push(`region=${encodeURIComponent(region)}`);
     if (ageRange) params.push(`age_range=${encodeURIComponent(ageRange)}`);
@@ -1586,7 +1587,31 @@ function loadAdminData() {
                 return;
             }
             
-            renderAdminTable(data);
+            let html = '<div class="admin-table-wrap"><table><thead><tr>';
+            html += '<th>ID</th><th>地区</th><th>年龄</th><th>身高</th><th>体重</th><th>学历</th><th>状态</th><th>操作</th>';
+            html += '</tr></thead><tbody>';
+            
+            data.forEach(r => {
+                const statusText = r.status === 'pending' ? '待审核' : r.status === 'approved' ? '已通过' : '已过期';
+                const statusClass = r.status === 'pending' ? 'status-pending' : r.status === 'approved' ? 'status-approved' : 'status-rejected';
+                
+                html += `<tr>`;
+                html += `<td>${r.id}</td>`;
+                html += `<td>${r.region_group || '-'}</td>`;
+                html += `<td>${r.age_raw || ''} ${r.age_normalized ? '(' + r.age_normalized + ')' : ''}</td>`;
+                html += `<td>${r.height || '-'}</td>`;
+                html += `<td>${r.weight || '-'}</td>`;
+                html += `<td>${r.education || '-'}</td>`;
+                html += `<td><span class="status-badge ${statusClass}" style="cursor:pointer" onclick="cycleStatus(${r.id}, '${r.status||'approved'}')">${statusText}</span></td>`;
+                html += `<td>
+                    <button class="action-btn btn-edit" onclick="openEditModal(${r.id})">编辑</button>
+                    <button class="action-btn btn-del" onclick="deleteRecord(${r.id})">删除</button>
+                </td>`;
+                html += `</tr>`;
+            });
+            
+            html += '</tbody></table></div>';
+            document.getElementById('adminDataTable').innerHTML = html;
         });
 }
 
@@ -1602,80 +1627,71 @@ function clearAdminFilters() {
 }
 
 function loadAdminRegionOptions() {
-    const sel = document.getElementById('adminFilterRegion');
-    if (!sel) return;
-    const current = sel.value;
-    sel.innerHTML = '<option value="">全部地区</option>';
-    // 从本地数据提取唯一地区
-    const regionSet = new Set();
-    if (allData && allData.length > 0) {
-        allData.forEach(r => { if (r.region_group) regionSet.add(r.region_group); });
-    }
-    const regionOrder = ['扬中男','扬中女','镇江男','镇江女','南京','常州','苏州','上海','无锡杭州北京','扬中男再婚','扬中女再婚','镇江男再婚','镇江女再婚','其他'];
-    const sorted = [...regionSet].sort((a, b) => {
-        const ia = regionOrder.indexOf(a);
-        const ib = regionOrder.indexOf(b);
-        if (ia === -1 && ib === -1) return a.localeCompare(b);
-        if (ia === -1) return 1;
-        if (ib === -1) return -1;
-        return ia - ib;
-    });
-    sorted.forEach(name => {
-        const opt = document.createElement('option');
-        opt.value = name;
-        opt.textContent = name;
-        sel.appendChild(opt);
-    });
-    sel.value = current;
+    fetch(apiUrl('/api/regions'))
+        .then(r => r.json())
+        .then(res => {
+            if (!res.success) return;
+            const sel = document.getElementById('adminFilterRegion');
+            if (!sel) return;
+            const current = sel.value;
+            sel.innerHTML = '<option value="">全部地区</option>';
+            // 按 dashboard 顺序排序
+            const regionOrder = ['扬中男','扬中女','镇江男','镇江女','南京','常州','苏州','上海','无锡杭州北京','扬中男再婚','扬中女再婚','镇江男再婚','镇江女再婚','其他'];
+            const sorted = [...res.regions].sort((a, b) => {
+                const ia = regionOrder.indexOf(a.name);
+                const ib = regionOrder.indexOf(b.name);
+                if (ia === -1 && ib === -1) return a.name.localeCompare(b.name);
+                if (ia === -1) return 1;
+                if (ib === -1) return -1;
+                return ia - ib;
+            });
+            sorted.forEach(r => {
+                const opt = document.createElement('option');
+                opt.value = r.name;
+                opt.textContent = r.name;
+                sel.appendChild(opt);
+            });
+            sel.value = current;
+        });
 }
 
 
 // ===== 地区管理功能 =====
 function loadRegionManage() {
-    // 从本地数据提取唯一地区
-    const regionSet = new Set();
-    if (allData && allData.length > 0) {
-        allData.forEach(r => { if (r.region_group) regionSet.add(r.region_group); });
-    }
-    const regionOrder = ['扬中男','扬中女','镇江男','镇江女','南京','常州','苏州','上海','无锡杭州北京','扬中男再婚','扬中女再婚','镇江男再婚','镇江女再婚','其他'];
-    const sorted = [...regionSet].sort((a, b) => {
-        const ia = regionOrder.indexOf(a);
-        const ib = regionOrder.indexOf(b);
-        if (ia === -1 && ib === -1) return a.localeCompare(b);
-        if (ia === -1) return 1;
-        if (ib === -1) return -1;
-        return ia - ib;
-    });
-    
-    // 更新管理员管理中的地区多选
-    const select = document.getElementById('newAdminRegions');
-    if (select) {
-        select.innerHTML = '';
-        sorted.forEach(name => {
-            const opt = document.createElement('option');
-            opt.value = name;
-            opt.textContent = name;
-            select.appendChild(opt);
+    fetch(apiUrl('/api/regions'))
+        .then(r => r.json())
+        .then(res => {
+            if (!res.success) {
+                document.getElementById('regionTable').innerHTML = '<p class="error-message">加载失败</p>';
+                return;
+            }
+            
+            // 更新管理员管理中的地区多选
+            const select = document.getElementById('newAdminRegions');
+            select.innerHTML = '';
+            res.regions.forEach(r => {
+                const opt = document.createElement('option');
+                opt.value = r.name;
+                opt.textContent = r.name;
+                select.appendChild(opt);
+            });
+            
+            // 显示地区列表
+            let html = '<div class="admin-table-wrap"><table><thead><tr>';
+            html += '<th>ID</th><th>名称</th><th>操作</th>';
+            html += '</tr></thead><tbody>';
+            
+            res.regions.forEach(r => {
+                html += `<tr>`;
+                html += `<td>${r.id}</td>`;
+                html += `<td>${r.name}</td>`;
+                html += `<td><button class="btn-danger" style="padding:4px 12px;font-size:12px;" onclick="deleteRegion(${r.id}, '${r.name}')">删除</button></td>`;
+                html += `</tr>`;
+            });
+            
+            html += '</tbody></table></div>';
+            document.getElementById('regionTable').innerHTML = html;
         });
-    }
-    
-    // 显示地区列表（只读）
-    let html = '<div class="admin-table-wrap"><table><thead><tr>';
-    html += '<th>名称</th>';
-    if (!CONFIG.STATIC_MODE) html += '<th>操作</th>';
-    html += '</tr></thead><tbody>';
-    
-    sorted.forEach(name => {
-        html += `<tr><td>${name}</td>`;
-        if (!CONFIG.STATIC_MODE) {
-            html += `<td><button class="btn-danger" style="padding:4px 12px;font-size:12px;" onclick="alert('请在非静态模式下管理地区')">删除</button></td>`;
-        }
-        html += `</tr>`;
-    });
-    
-    html += '</tbody></table></div>';
-    const tableEl = document.getElementById('regionTable');
-    if (tableEl) tableEl.innerHTML = html;
 }
 
 function addRegion() {
@@ -1723,72 +1739,57 @@ function deleteRegion(id, name) {
 
 // ===== 管理员管理功能 =====
 function loadAdminManage() {
-    // 静态模式：从 allData 提取地区选项，不调用管理员 API
-    if (CONFIG.STATIC_MODE) {
-        const regionSet = new Set();
-        if (allData && allData.length > 0) {
-            allData.forEach(r => { if (r.region_group) regionSet.add(r.region_group); });
-        }
-        const regionOrder = ['Auckland 奥克兰','Wellington 惠灵顿','Christchurch 基督城','Hamilton 汉密尔顿','Tauranga 陶朗加','Dunedin 达尼丁','Palmerston North 北帕默斯顿','其他地区'];
-        const sorted = regionOrder.filter(x => regionSet.has(x));
-        regionOrder.forEach(x => regionSet.delete(x));
-        sorted.push(...[...regionSet].sort());
-        const select = document.getElementById('newAdminRegions');
-        if (select) {
-            select.innerHTML = '';
-            sorted.forEach(rname => {
-                const opt = document.createElement('option');
-                opt.value = rname; opt.textContent = rname;
-                select.appendChild(opt);
-            });
-        }
-        document.getElementById('adminTable').innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:40px;">静态模式下无法管理管理员，请连接服务器</p>';
-        return;
-    }
-    // 非静态模式：调用 API
+    // 先加载地区列表到newAdminRegions选择框
     fetch(apiUrl('/api/regions'))
         .then(r => r.json())
         .then(res => {
             if (res.success) {
                 const select = document.getElementById('newAdminRegions');
                 select.innerHTML = '';
-                (res.data||[]).forEach(r => {
+                res.regions.forEach(r => {
                     const opt = document.createElement('option');
-                    opt.value = r.name; opt.textContent = r.name;
+                    opt.value = r.name;
+                    opt.textContent = r.name;
                     select.appendChild(opt);
                 });
             }
         });
+    
+    // 加载管理员列表
     fetch(apiUrl('/api/admin/list'))
         .then(r => r.json())
         .then(res => {
             if (!res.success) {
-                document.getElementById('adminTable').innerHTML = '<p class="error-message">加载失败：' + (res.message||'未知错误') + '</p>';
+                document.getElementById('adminTable').innerHTML = '<p class="error-message">加载失败</p>';
                 return;
             }
-            const admins = res.data || [];
+            
+            const admins = res.data;
             let html = '<div class="admin-table-wrap"><table><thead><tr>';
-            html += '<th>ID</th><th>用户名</th><th>角色</th><th>负责地区</th><th>操作</th>';
+            html += '<th>ID</th><th>用户名</th><th>角色</th><th>负责地区</th><th>最后登录</th><th>操作</th>';
             html += '</tr></thead><tbody>';
+            
             admins.forEach(a => {
                 const roleText = a.role === 'super_admin' ? '主管理员' : '地区管理员';
-                const regionsText = (a.regions && a.regions.includes('全部')) ? '全部' : (a.regions||[]).join(', ');
-                html += '<tr>';
-                html += '<td>' + (a.id||'') + '</td>';
-                html += '<td>' + (a.username||'') + '</td>';
-                html += '<td>' + roleText + '</td>';
-                html += '<td>' + regionsText + '</td>';
-                html += '<td><button class="action-btn btn-view" onclick="editAdmin(' + (a.id||0) + ')">编辑</button> <button class="action-btn btn-del" onclick="deleteAdmin(' + (a.id||0) + ', \'' + (a.username||'') + '\')">删除</button></td>';
-                html += '</tr>';
+                const regionsText = a.regions.includes('全部') ? '全部' : a.regions.join(', ');
+                
+                html += `<tr>`;
+                html += `<td>${a.id}</td>`;
+                html += `<td>${a.username}</td>`;
+                html += `<td>${roleText}</td>`;
+                html += `<td>${regionsText}</td>`;
+                html += `<td>${a.last_login || '-'}</td>`;
+                html += `<td>
+                    <button class="action-btn btn-view" onclick="editAdmin(${a.id})">编辑</button>
+                    <button class="action-btn btn-del" onclick="deleteAdmin(${a.id}, '${a.username}')">删除</button>
+                </td>`;
+                html += `</tr>`;
             });
+            
             html += '</tbody></table></div>';
             document.getElementById('adminTable').innerHTML = html;
-        })
-        .catch(err => {
-            document.getElementById('adminTable').innerHTML = '<p class="error-message">加载失败，请检查登录状态</p>';
         });
 }
-
 
 function addAdmin() {
     const username = document.getElementById('newAdminUsername').value.trim();
@@ -1810,7 +1811,7 @@ function addAdmin() {
     
     fetch(apiUrl('/api/admin/add'), {
         method: 'POST',
-        headers: getAuthHeader(),
+        headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
             username,
             password,
@@ -1842,7 +1843,7 @@ function editAdmin(id) {
     
     fetch(apiUrl(`/api/admin/${id}`), {
         method: 'PUT',
-        headers: getAuthHeader(),
+        headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
             password: password || undefined,
             regions
@@ -1864,7 +1865,7 @@ function deleteAdmin(id, username) {
     
     fetch(apiUrl(`/api/admin/${id}`), {
         method: 'DELETE',
-        headers: getAuthHeader(),
+        headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({})
     })
     .then(r => r.json())
@@ -2728,31 +2729,22 @@ function renderPagination() {
 
 // ===== 查看记录 =====
 function viewRecord(id) {
-    // 先从本地数据查找
-    if (allData && allData.length > 0) {
+    // 静态模式：先从 allData 查找
+    if (CONFIG.STATIC_MODE && allData && allData.length > 0) {
         const r = allData.find(item => item.id == id);
         if (r) {
-            alert(`【详细信息】
-地区分组：${r.region_group||'-'}
-性别：${r.gender||'-'}
-属相：${r.zodiac||'-'}
-出生年：${r.birth_year||'-'}
-年龄：${r.age_raw||'-'} ${r.age_normalized?'('+r.age_normalized+'岁)':''}
-身高：${r.height||'-'} cm
-体重：${r.weight||'-'} kg
-学历：${r.education||'-'}
-工作：${r.job||'-'}
-家庭情况：${r.family_info||'-'}
-择偶要求：${r.mate_requirement||'-'}`);
+            alert('=== 资料详情 ===\nID: ' + r.id
+                + '\n地区：' + (r.region_group || '-')
+                + '\n年龄：' + (r.age_raw || '-') + ' ' + (r.age_normalized ? '(' + r.age_normalized + '岁)' : '')
+                + '\n身高：' + (r.height || '-') + ' cm'
+                + '\n体重：' + (r.weight || '-') + ' kg'
+                + '\n学历：' + (r.education || '-') + '\n工作：' + (r.job || '-')
+                + '\n家庭情况：' + (r.family_info || '-')
+                + '\n择偶要求：' + (r.mate_requirement || '-'));
             return;
         }
     }
-    // 静态模式下找不到就提示
-    if (CONFIG.STATIC_MODE) {
-        alert('本地数据中未找到该记录（ID: ' + id + '）');
-        return;
-    }
-    // 非静态模式，调 API
+
     fetch(apiUrl(`/api/record/${id}`)).then(r=>r.json()).then(res=>{
         if(!res.success) return;
         const r = res.data;
@@ -2768,9 +2760,6 @@ function viewRecord(id) {
 工作：${r.job||'-'}
 家庭情况：${r.family_info||'-'}
 择偶要求：${r.mate_requirement||'-'}`);
-    }).catch(err => {
-        alert('加载失败，请检查网络');
-        console.error('查看记录失败:', err);
     });
 }
 
@@ -2842,7 +2831,7 @@ function saveRecord() {
         family_info: document.getElementById('formFamily').value,
         mate_requirement: document.getElementById('formMate').value,
     };
-    const url = apiUrl(editingId ? `/api/record/${editingId}` : '/api/record');
+    const url = editingId ? `/api/record/${editingId}` : '/api/record';
     const method = editingId ? 'PUT' : 'POST';
     const payload = { password, record };
     fetch(url, { method, headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) })
@@ -3182,7 +3171,7 @@ window.addEventListener('resize', () => {
 
 // ===== 过期资料管理功能 =====
 function loadExpiredCount() {
-    fetch(apiUrl('/api/admin/expired'), { headers: getAuthHeader() })
+    fetch(apiUrl('/api/admin/expired')), { headers: getAuthHeader() })
         .then(r => r.json())
         .then(res => {
             if (res.success && res.total > 0) {
@@ -3199,7 +3188,7 @@ function loadExpiredCount() {
 }
 
 function loadExpiredList() {
-    fetch(apiUrl('/api/admin/expired'), { headers: getAuthHeader() })
+    fetch(apiUrl('/api/admin/expired')), { headers: getAuthHeader() })
         .then(r => r.json())
         .then(res => {
             if (!res.success) {
@@ -3272,7 +3261,7 @@ function deleteExpiredRecord(id) {
     
     fetch(apiUrl('/api/admin/delete-expired'), {
         method: 'POST',
-        headers: getAuthHeader(),
+        headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({id: id})
     })
     .then(r => r.json())
@@ -3294,9 +3283,9 @@ function deleteExpiredRecord(id) {
 
 // 页面加载时也检查过期资料数量（如果已登录）
 function checkExpiredOnLoad() {
-    if (CONFIG.STATIC_MODE) return;  // 静态模式不检查
+    if (CONFIG.STATIC_MODE) return;
     const token = localStorage.getItem(CONFIG.TOKEN_KEY || 'xiniang_admin_token');
-    if (!token) return;  // 未登录不检查
+    if (!token) return;
     fetch(apiUrl('/api/admin/current'), { headers: getAuthHeader() })
         .then(r => r.json())
         .then(res => {
