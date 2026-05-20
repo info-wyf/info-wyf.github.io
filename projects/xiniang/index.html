@@ -1382,7 +1382,6 @@ window.onload = function() {
 
 // ===== 检查登录状态 =====
 function checkLoginStatus() {
-    // 静态模式：不调用API，直接返回
     fetch(apiUrl('/api/admin/current'), { headers: getAuthHeader() })
         .then(r => r.json())
         .then(res => {
@@ -1392,11 +1391,12 @@ function checkLoginStatus() {
             } else {
                 hideAdminUI();
             }
-        });
+        })
+        .catch(() => hideAdminUI());
 }
 
 function showAdminUI() {
-    // 静态模式：不显示管理员界面
+    if (!currentAdminInfo) return; // 防止 undefined
     document.getElementById('btnAdminLogin').style.display = 'none';
     document.getElementById('btnAdminCenter').style.display = 'inline-block';
     document.getElementById('btnAdminLogout').style.display = 'inline-block';
@@ -1642,7 +1642,7 @@ function loadAdminData() {
     const statusFilter = document.getElementById('adminFilterStatus') ? document.getElementById('adminFilterStatus').value : '';
     const keyword = document.getElementById('adminSearchInput') ? document.getElementById('adminSearchInput').value : '';
     
-    let url = '/api/data?include_pending=true';
+    let url = apiUrl('/api/data?include_pending=true');
     const params = [];
     if (region) params.push(`region=${encodeURIComponent(region)}`);
     if (ageRange) params.push(`age_range=${encodeURIComponent(ageRange)}`);
@@ -1707,7 +1707,23 @@ function clearAdminFilters() {
 }
 
 function loadAdminRegionOptions() {
-    // 静态模式：不支持动态地区选项
+    // 优先用 allData 提取地区列表
+    if (allData && allData.length > 0) {
+        const regionSet = new Set();
+        allData.forEach(r => { if(r.region_group) regionSet.add(r.region_group); });
+        const sel = document.getElementById('adminFilterRegion');
+        if (!sel) return;
+        const current = sel.value;
+        sel.innerHTML = '<option value="">全部地区</option>';
+        Array.from(regionSet).sort().forEach(g => {
+            const opt = document.createElement('option');
+            opt.value = g; opt.textContent = g;
+            sel.appendChild(opt);
+        });
+        sel.value = current;
+        return;
+    }
+    // allData 为空，调 API
     fetch(apiUrl('/api/regions'))
         .then(r => r.json())
         .then(res => {
@@ -1716,24 +1732,13 @@ function loadAdminRegionOptions() {
             if (!sel) return;
             const current = sel.value;
             sel.innerHTML = '<option value="">全部地区</option>';
-            // 按 dashboard 顺序排序
-            const regionOrder = ['扬中男','扬中女','镇江男','镇江女','南京','常州','苏州','上海','无锡杭州北京','扬中男再婚','扬中女再婚','镇江男再婚','镇江女再婚','其他'];
-            const sorted = [...res.regions].sort((a, b) => {
-                const ia = regionOrder.indexOf(a.name);
-                const ib = regionOrder.indexOf(b.name);
-                if (ia === -1 && ib === -1) return a.name.localeCompare(b.name);
-                if (ia === -1) return 1;
-                if (ib === -1) return -1;
-                return ia - ib;
-            });
-            sorted.forEach(r => {
+            (res.regions||[]).forEach(r => {
                 const opt = document.createElement('option');
-                opt.value = r.name;
-                opt.textContent = r.name;
+                opt.value = r.name; opt.textContent = r.name;
                 sel.appendChild(opt);
             });
             sel.value = current;
-        });
+        }).catch(()=>{});
 }
 
 
@@ -1839,7 +1844,7 @@ function loadAdminManage() {
         });
     
     // 加载管理员列表
-    fetch(apiUrl('/api/admin/list'))
+    fetch(apiUrl('/api/admin/list')).catch(()=>({json:()=>(Promise.resolve({success:false}))})).then(r=>r.json())
         .then(r => r.json())
         .then(res => {
             if (!res.success) {
@@ -1964,25 +1969,42 @@ function deleteAdmin(id, username) {
 
 // ===== 用户资料提交功能 =====
 function loadRegionOptionsForSubmit() {
-    fetch(apiUrl('/api/region-groups'))
-    .then(r => r.json())
-    .then(res => {
-        if (!res.success) return;
+    // 优先用 allData 提取地区列表（静态模式）
+    const regionSet = new Set();
+    if (allData && allData.length > 0) {
+        allData.forEach(r => { if(r.region_group) regionSet.add(r.region_group); });
         const sel = document.getElementById('submitRegion');
         sel.innerHTML = '';
-        // 添加默认提示选项
         const defaultOpt = document.createElement('option');
         defaultOpt.value = '';
         defaultOpt.textContent = '请选择地区';
         sel.appendChild(defaultOpt);
-        // 添加地区选项
-        res.groups.forEach(g => {
+        Array.from(regionSet).sort().forEach(g => {
             const opt = document.createElement('option');
             opt.value = g;
             opt.textContent = g;
             sel.appendChild(opt);
         });
-    });
+        return;
+    }
+    // allData 为空，调 API
+    fetch(apiUrl('/api/regions'))
+    .then(r => r.json())
+    .then(res => {
+        if (!res.success) return;
+        const sel = document.getElementById('submitRegion');
+        sel.innerHTML = '';
+        const defaultOpt = document.createElement('option');
+        defaultOpt.value = '';
+        defaultOpt.textContent = '请选择地区';
+        sel.appendChild(defaultOpt);
+        (res.regions||[]).forEach(r => {
+            const opt = document.createElement('option');
+            opt.value = r.name;
+            opt.textContent = r.name;
+            sel.appendChild(opt);
+        });
+    }).catch(()=>{});
 }
 
 function openUserSubmitModal() {
@@ -2237,10 +2259,10 @@ function loadStats() {
         .then(r => r.json())
         .then(res => {
             if (!res.success) return;
-            renderZodiacChart(res.zodiac);
-            renderHeightChart(res.height_male, res.height_female);
-            renderScatterChart(res.scatter_male, res.scatter_female);
-        });
+            renderZodiacChart(res.zodiac || {});
+            renderHeightChart((res.height_male||[]), (res.height_female||[]));
+            renderScatterChart((res.scatter_male||[]), (res.scatter_female||[]));
+        }).catch(()=>{});
 }
 
 // ===== 图表初始化 =====
@@ -2292,6 +2314,7 @@ function renderGenderChart(data) {
 }
 
 function renderZodiacChart(data) {
+    if (!data || typeof data !== 'object') data = {};
     const zodiacEmoji = {'鼠':'🐭','牛':'🐮','虎':'🐯','兔':'🐰','龙':'🐲','蛇':'🐍','马':'🐴','羊':'🐑','猴':'🐵','鸡':'🐔','狗':'🐶','猪':'🐷'};
     const colors = CHART_PALETTE;
     const entries = Object.entries(data).sort((a,b) => b[1]-a[1]);
@@ -2468,27 +2491,47 @@ function renderScatterChart(maleData, femaleData) {
 
 // ===== 加载地区选项 =====
 function loadRegionOptions() {
-    // 资料管理筛选下拉框的选项顺序（与数据看板图表顺序一致）
+    // 优先用 allData 提取地区列表（静态模式）
     const regionOrder = ['扬中男','扬中女','镇江男','镇江女','南京','常州','苏州','上海','无锡','杭州','北京','扬中男再婚','扬中女再婚','镇江男再婚','镇江女再婚','其他'];
-    fetch(apiUrl('/api/region-groups')).then(r=>r.json()).then(res=>{
+    if (allData && allData.length > 0) {
+        const regionSet = new Set();
+        allData.forEach(r => { if(r.region_group) regionSet.add(r.region_group); });
+        const sorted = Array.from(regionSet).sort((a, b) => {
+            const ia = regionOrder.indexOf(a);
+            const ib = regionOrder.indexOf(b);
+            if (ia === -1) return ib === -1 ? a.localeCompare(b) : 1;
+            if (ib === -1) return -1;
+            return ia - ib;
+        });
+        const sel1 = document.getElementById('filterRegion');
+        const sel2 = document.getElementById('formRegion');
+        sel1.innerHTML = '<option value="">全部地区</option>';
+        sel2.innerHTML = '';
+        sorted.forEach(g => {
+            sel1.add(new Option(g, g));
+            sel2.add(new Option(g, g));
+        });
+        return;
+    }
+    // allData 为空，调 API
+    fetch(apiUrl('/api/regions')).then(r=>r.json()).then(res=>{
         if(!res.success) return;
         const sel1 = document.getElementById('filterRegion');
         const sel2 = document.getElementById('formRegion');
         sel1.innerHTML = '<option value="">全部地区</option>';
         sel2.innerHTML = '';
-        // 按指定顺序排序后添加
-        const sorted = [...res.groups].sort((a, b) => {
-            const ia = regionOrder.indexOf(a);
-            const ib = regionOrder.indexOf(b);
-            if (ia === -1) return ib === -1 ? 0 : 1;
+        const sorted = (res.regions||[]).sort((a, b) => {
+            const ia = regionOrder.indexOf(a.name);
+            const ib = regionOrder.indexOf(b.name);
+            if (ia === -1) return ib === -1 ? a.name.localeCompare(b.name) : 1;
             if (ib === -1) return -1;
             return ia - ib;
         });
-        sorted.forEach(g => {
-            sel1.add(new Option(g, g));
-            sel2.add(new Option(g, g));
+        sorted.forEach(r => {
+            sel1.add(new Option(r.name, r.name));
+            sel2.add(new Option(r.name, r.name));
         });
-    });
+    }).catch(()=>{});
 }
 
 // ===== 加载数据 =====
