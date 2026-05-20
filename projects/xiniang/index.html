@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>喜娘上上牵 · 单身资料管理系统</title>
-<link rel="icon" href="/static/favicon.ico" type="image/x-icon">
-<link rel="shortcut icon" href="/static/favicon.ico">
-<link rel="icon" href="/static/favicon.png" type="image/png" sizes="64x64">
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="favicon.ico">
+<link rel="icon" href="favicon.png" type="image/png" sizes="64x64">
 <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
 <script>
 // ===== 鉴权辅助 =====
@@ -68,7 +68,7 @@ function cycleStatus(recordId, currentStatus) {
     });
 }
 </script>
-<script src="/static/config.js"></script>
+<script src="config.js"></script>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 :root {
@@ -411,6 +411,17 @@ tr:hover { background: var(--primary-soft); }
 
 /* 表单 */
 .form-group { margin-bottom: 14px; }
+.view-field {
+    min-height: 42px;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--surface-soft);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+}
 .form-group label { display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 6px; font-weight: 750; }
 .form-group input, .form-group select, .form-group textarea { width: 100%; min-height: 42px; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface); color: var(--text); font-size: 14px; font-family: inherit; }
 .form-group input::placeholder, .form-group textarea::placeholder { color: oklch(55% 0.034 355); }
@@ -963,6 +974,83 @@ tr:hover { background: var(--primary-soft); }
     </div>
 </div>
 
+<!-- 资料详情弹窗（只读） -->
+<div class="modal-overlay" id="viewModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 id="viewModalTitle">资料详情</h3>
+            <button class="modal-close" onclick="closeModal('viewModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>地区分组</label>
+                    <div class="view-field" id="viewRegion"></div>
+                </div>
+                <div class="form-group">
+                    <label>性别</label>
+                    <div class="view-field" id="viewGender"></div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>属相</label>
+                    <div class="view-field" id="viewZodiac"></div>
+                </div>
+                <div class="form-group">
+                    <label>出生年份</label>
+                    <div class="view-field" id="viewBirthYear"></div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>年龄</label>
+                    <div class="view-field" id="viewAge"></div>
+                </div>
+                <div class="form-group">
+                    <label>身高 (cm)</label>
+                    <div class="view-field" id="viewHeight"></div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>体重 (kg)</label>
+                    <div class="view-field" id="viewWeight"></div>
+                </div>
+                <div class="form-group">
+                    <label>学历</label>
+                    <div class="view-field" id="viewEdu"></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>工作</label>
+                <div class="view-field" id="viewJob"></div>
+            </div>
+            <div class="form-group">
+                <label>家庭情况</label>
+                <div class="view-field" id="viewFamily"></div>
+            </div>
+            <div class="form-group">
+                <label>择偶要求</label>
+                <div class="view-field" id="viewMate"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>状态</label>
+                    <div class="view-field" id="viewStatus"></div>
+                </div>
+                <div class="form-group">
+                    <label>上传时间</label>
+                    <div class="view-field" id="viewUploadDate"></div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary" onclick="closeModal('viewModal')">关闭</button>
+        </div>
+    </div>
+</div>
+
 <!-- 用户上传资料弹窗 -->
 <div class="modal-overlay" id="userSubmitModal">
     <div class="modal">
@@ -1310,7 +1398,7 @@ window.onload = function() {
 
 // ===== 检查登录状态 =====
 function checkLoginStatus() {
-    apiFetch('/api/admin/current')
+    fetch(apiUrl('/api/admin/current'), { headers: getAuthHeader() })
         .then(r => r.json())
         .then(res => {
             if (res.success && res.logged_in) {
@@ -1319,10 +1407,12 @@ function checkLoginStatus() {
             } else {
                 hideAdminUI();
             }
-        });
+        })
+        .catch(() => hideAdminUI());
 }
 
 function showAdminUI() {
+    if (!currentAdminInfo) return; // 防止 undefined
     document.getElementById('btnAdminLogin').style.display = 'none';
     document.getElementById('btnAdminCenter').style.display = 'inline-block';
     document.getElementById('btnAdminLogout').style.display = 'inline-block';
@@ -1395,10 +1485,7 @@ function adminLogin() {
 // ===== 管理员登出 =====
 function adminLogout() {
     const token = localStorage.getItem(CONFIG.TOKEN_KEY || 'xiniang_admin_token');
-    fetch(apiUrl('/api/admin/logout'), {
-        method: 'POST',
-        headers: token ? {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token} : {'Content-Type': 'application/json'}
-    })
+    apiFetch('/api/admin/logout', { method: 'POST' })
         .then(r => r.json())
         .then(res => {
             localStorage.removeItem(CONFIG.TOKEN_KEY || 'xiniang_admin_token');
@@ -1449,7 +1536,8 @@ function switchTab(tabName) {
 
 // ===== 资料审核功能 =====
 function loadPendingList() {
-    apiFetch('/api/admin/pending')
+    // 静态模式：从 allData 过滤待审核记录
+    fetch(apiUrl('/api/admin/pending'), { headers: getAuthHeader() })
         .then(r => r.json())
         .then(res => {
             if (!res.success) {
@@ -1489,8 +1577,9 @@ function loadPendingList() {
 function approveRecord(id) {
     if (!confirm('确定要通过这条记录吗？')) return;
     
-    apiFetch('/api/admin/review', {
+    fetch(apiUrl('/api/admin/review'), {
         method: 'POST',
+        headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({id: id, action: 'approve'})
     })
     .then(r => r.json())
@@ -1518,8 +1607,9 @@ function confirmReject() {
         return;
     }
     
-    apiFetch('/api/admin/review', {
+    fetch(apiUrl('/api/admin/review'), {
         method: 'POST',
+        headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({id: currentRejectId, action: 'reject', reject_reason: reason})
     })
     .then(r => r.json())
@@ -1534,8 +1624,38 @@ function confirmReject() {
     });
 }
 
+
+// ===== 渲染管理员资料表格 =====
+function renderAdminTable(data) {
+    if (!data || data.length === 0) {
+        document.getElementById('adminDataTable').innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:40px;">暂无数据</p>';
+        return;
+    }
+    let html = '<div class="admin-table-wrap"><table><thead><tr>';
+    html += '<th>ID</th><th>地区</th><th>年龄</th><th>身高</th><th>体重</th><th>学历</th><th>状态</th><th>操作</th>';
+    html += '</tr></thead><tbody>';
+    data.forEach(r => {
+        const statusText = r.status === 'pending' ? '待审核' : r.status === 'approved' ? '已通过' : '已过期';
+        const statusClass = r.status === 'pending' ? 'status-pending' : r.status === 'approved' ? 'status-approved' : 'status-rejected';
+        html += '<tr>';
+        html += '<td>' + r.id + '</td>';
+        html += '<td>' + (r.region_group || '-') + '</td>';
+        html += '<td>' + (r.age_raw || '') + ' ' + (r.age_normalized ? '(' + r.age_normalized + ')' : '') + '</td>';
+        html += '<td>' + (r.height || '-') + '</td>';
+        html += '<td>' + (r.weight || '-') + '</td>';
+        html += '<td>' + (r.education || '-') + '</td>';
+        html += '<td><span class="status-badge ' + statusClass + '" style="cursor:pointer" onclick="cycleStatus(' + r.id + ', \'' + (r.status||'approved') + '\'")>' + statusText + '</span></td>';
+        html += '<td><button class="action-btn btn-edit" onclick="openEditModal(' + r.id + ')">编辑</button> <button class="action-btn btn-del" onclick="deleteRecord(' + r.id + ')">删除</button></td>';
+        html += '</tr>';
+    });
+    html += '</tbody></table></div>';
+    document.getElementById('adminDataTable').innerHTML = html;
+}
+
 // ===== 资料管理功能（管理员）=====
 function loadAdminData() {
+    // 静态模式：直接从 allData 读取
+
     // 构建筛选参数
     const region = document.getElementById('adminFilterRegion') ? document.getElementById('adminFilterRegion').value : '';
     const ageRange = document.getElementById('adminFilterAgeRange') ? document.getElementById('adminFilterAgeRange').value : '';
@@ -1545,7 +1665,7 @@ function loadAdminData() {
     const statusFilter = document.getElementById('adminFilterStatus') ? document.getElementById('adminFilterStatus').value : '';
     const keyword = document.getElementById('adminSearchInput') ? document.getElementById('adminSearchInput').value : '';
     
-    let url = '/api/data?include_pending=true';
+    let url = apiUrl('/api/data?include_pending=true');
     const params = [];
     if (region) params.push(`region=${encodeURIComponent(region)}`);
     if (ageRange) params.push(`age_range=${encodeURIComponent(ageRange)}`);
@@ -1556,7 +1676,7 @@ function loadAdminData() {
     if (keyword) params.push(`keyword=${encodeURIComponent(keyword)}`);
     if (params.length) url += '&' + params.join('&');
     
-    apiFetch(url)
+    fetch(url)
         .then(r => r.json())
         .then(res => {
             if (!res.success) {
@@ -1610,6 +1730,23 @@ function clearAdminFilters() {
 }
 
 function loadAdminRegionOptions() {
+    // 优先用 allData 提取地区列表
+    if (allData && allData.length > 0) {
+        const regionSet = new Set();
+        allData.forEach(r => { if(r.region_group) regionSet.add(r.region_group); });
+        const sel = document.getElementById('adminFilterRegion');
+        if (!sel) return;
+        const current = sel.value;
+        sel.innerHTML = '<option value="">全部地区</option>';
+        Array.from(regionSet).sort().forEach(g => {
+            const opt = document.createElement('option');
+            opt.value = g; opt.textContent = g;
+            sel.appendChild(opt);
+        });
+        sel.value = current;
+        return;
+    }
+    // allData 为空，调 API
     fetch(apiUrl('/api/regions'))
         .then(r => r.json())
         .then(res => {
@@ -1618,30 +1755,20 @@ function loadAdminRegionOptions() {
             if (!sel) return;
             const current = sel.value;
             sel.innerHTML = '<option value="">全部地区</option>';
-            // 按 dashboard 顺序排序
-            const regionOrder = ['扬中男','扬中女','镇江男','镇江女','南京','常州','苏州','上海','无锡杭州北京','扬中男再婚','扬中女再婚','镇江男再婚','镇江女再婚','其他'];
-            const sorted = [...res.regions].sort((a, b) => {
-                const ia = regionOrder.indexOf(a.name);
-                const ib = regionOrder.indexOf(b.name);
-                if (ia === -1 && ib === -1) return a.name.localeCompare(b.name);
-                if (ia === -1) return 1;
-                if (ib === -1) return -1;
-                return ia - ib;
-            });
-            sorted.forEach(r => {
+            (res.regions||[]).forEach(r => {
                 const opt = document.createElement('option');
-                opt.value = r.name;
-                opt.textContent = r.name;
+                opt.value = r.name; opt.textContent = r.name;
                 sel.appendChild(opt);
             });
             sel.value = current;
-        });
+        }).catch(()=>{});
 }
 
 
 // ===== 地区管理功能 =====
 function loadRegionManage() {
-    apiFetch('/api/regions')
+    // 静态模式：不支持地区管理
+    fetch(apiUrl('/api/regions'))
         .then(r => r.json())
         .then(res => {
             if (!res.success) {
@@ -1684,8 +1811,9 @@ function addRegion() {
         return;
     }
     
-    apiFetch('/api/region/add', {
+    fetch(apiUrl('/api/region/add'), {
         method: 'POST',
+        headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({name})
     })
     .then(r => r.json())
@@ -1703,8 +1831,9 @@ function addRegion() {
 function deleteRegion(id, name) {
     if (!confirm(`确定要删除地区"${name}"吗？`)) return;
     
-    apiFetch('/api/region/delete', {
+    fetch(apiUrl('/api/region/delete'), {
         method: 'POST',
+        headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({id})
     })
     .then(r => r.json())
@@ -1720,8 +1849,9 @@ function deleteRegion(id, name) {
 
 // ===== 管理员管理功能 =====
 function loadAdminManage() {
+    // 静态模式：不支持管理员管理
     // 先加载地区列表到newAdminRegions选择框
-    apiFetch('/api/regions')
+    fetch(apiUrl('/api/regions'))
         .then(r => r.json())
         .then(res => {
             if (res.success) {
@@ -1737,7 +1867,7 @@ function loadAdminManage() {
         });
     
     // 加载管理员列表
-    apiFetch('/api/admin/list')
+    fetch(apiUrl('/api/admin/list')).catch(()=>({json:()=>(Promise.resolve({success:false}))})).then(r=>r.json())
         .then(r => r.json())
         .then(res => {
             if (!res.success) {
@@ -1790,8 +1920,9 @@ function addAdmin() {
         return;
     }
     
-    apiFetch('/api/admin/add', {
+    fetch(apiUrl('/api/admin/add'), {
         method: 'POST',
+        headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
             username,
             password,
@@ -1821,8 +1952,9 @@ function editAdmin(id) {
     
     const regions = regionsStr.split(',').map(r => r.trim()).filter(r => r);
     
-    apiFetch(`/api/admin/${id}`, {
+    fetch(apiUrl(`/api/admin/${id}`), {
         method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
             password: password || undefined,
             regions
@@ -1842,8 +1974,9 @@ function editAdmin(id) {
 function deleteAdmin(id, username) {
     if (!confirm(`确定要删除管理员"${username}"吗？`)) return;
     
-    apiFetch(`/api/admin/${id}`, {
+    fetch(apiUrl(`/api/admin/${id}`), {
         method: 'DELETE',
+        headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({})
     })
     .then(r => r.json())
@@ -1859,25 +1992,42 @@ function deleteAdmin(id, username) {
 
 // ===== 用户资料提交功能 =====
 function loadRegionOptionsForSubmit() {
-    fetch(apiUrl('/api/region-groups'))
-        .then(r => r.json())
-        .then(res => {
-            if (!res.success) return;
-            const sel = document.getElementById('submitRegion');
-            sel.innerHTML = '';
-            // 添加默认提示选项
-            const defaultOpt = document.createElement('option');
-            defaultOpt.value = '';
-            defaultOpt.textContent = '请选择地区';
-            sel.appendChild(defaultOpt);
-            // 添加地区选项
-            res.groups.forEach(g => {
-                const opt = document.createElement('option');
-                opt.value = g;
-                opt.textContent = g;
-                sel.appendChild(opt);
-            });
+    // 优先用 allData 提取地区列表（静态模式）
+    const regionSet = new Set();
+    if (allData && allData.length > 0) {
+        allData.forEach(r => { if(r.region_group) regionSet.add(r.region_group); });
+        const sel = document.getElementById('submitRegion');
+        sel.innerHTML = '';
+        const defaultOpt = document.createElement('option');
+        defaultOpt.value = '';
+        defaultOpt.textContent = '请选择地区';
+        sel.appendChild(defaultOpt);
+        Array.from(regionSet).sort().forEach(g => {
+            const opt = document.createElement('option');
+            opt.value = g;
+            opt.textContent = g;
+            sel.appendChild(opt);
         });
+        return;
+    }
+    // allData 为空，调 API
+    fetch(apiUrl('/api/regions'))
+    .then(r => r.json())
+    .then(res => {
+        if (!res.success) return;
+        const sel = document.getElementById('submitRegion');
+        sel.innerHTML = '';
+        const defaultOpt = document.createElement('option');
+        defaultOpt.value = '';
+        defaultOpt.textContent = '请选择地区';
+        sel.appendChild(defaultOpt);
+        (res.regions||[]).forEach(r => {
+            const opt = document.createElement('option');
+            opt.value = r.name;
+            opt.textContent = r.name;
+            sel.appendChild(opt);
+        });
+    }).catch(()=>{});
 }
 
 function openUserSubmitModal() {
@@ -2016,106 +2166,100 @@ function animateCount(el, target) {
 }
 
 function loadStats() {
-    if (CONFIG.STATIC_MODE) {
-        // 静态模式：直接读 data.json，本地计算统计
-        fetch(CONFIG.DATA_URL)
-            .then(r => r.json())
-            .then(allData => {
-                if (!Array.isArray(allData)) return;
-                // 只统计已审核或待审核（前端自行过滤）
-                const approved = allData.filter(r => (r.status || 'approved') !== 'expired');
-                // 性别统计
-                const genderStats = {};
-                approved.forEach(r => {
-                    const g = r.gender || '未知';
-                    genderStats[g] = (genderStats[g]||0) + 1;
-                });
-                // 地区统计
-                const regionStats = {};
-                approved.forEach(r => {
-                    const reg = r.region_group || '其他';
-                    regionStats[reg] = (regionStats[reg]||0) + 1;
-                });
-                // 年龄统计
-                const ageMap = {'20-25':0,'26-30':0,'31-35':0,'36-40':0,'40+':0,'未知':0};
-                approved.forEach(r => {
-                    const a = r.age_normalized;
-                    if (!a) { ageMap['未知']++; return; }
-                    if (a <= 25) ageMap['20-25']++;
-                    else if (a <= 30) ageMap['26-30']++;
-                    else if (a <= 35) ageMap['31-35']++;
-                    else if (a <= 40) ageMap['36-40']++;
-                    else ageMap['40+']++;
-                });
-                // 学历统计
-                const eduStats = {};
-                approved.forEach(r => {
-                    const e = r.education || '其他/未知';
-                    eduStats[e] = (eduStats[e]||0) + 1;
-                });
-                const s = { total: approved.length, gender: genderStats, region: regionStats, age: ageMap, education: eduStats };
-                // 渲染（复用原来逻辑）
-                const avgAge = (() => {
-                    let total = 0, count = 0;
-                    const w = {'20-25':22,'26-30':28,'31-35':33,'36-40':38,'40+':43};
-                    Object.entries(s.age).forEach(([k,v]) => { if (w[k]) { total += w[k]*v; count += v; } });
-                    return count ? Math.round(total/count) : '--';
-                })();
-                document.getElementById('statsCards').innerHTML = `
-                    <div class="stat-card stat-card-total"><div class="icon">💝</div><div class="num" id="sc-total">0</div><div class="label">总资料数</div></div>
-                    <div class="stat-card stat-card-male"><div class="icon">👨</div><div class="num" id="sc-male">0</div><div class="label">男生</div></div>
-                    <div class="stat-card stat-card-female"><div class="icon">👩</div><div class="num" id="sc-female">0</div><div class="label">女生</div></div>
-                    <div class="stat-card stat-card-region"><div class="icon">📍</div><div class="num" id="sc-region">0</div><div class="label">地区分组</div></div>
-                    <div class="stat-card stat-card-avg"><div class="icon">🎂</div><div class="num">${avgAge}</div><div class="label">平均年龄</div></div>
-                `;
-                animateCount(document.getElementById('sc-total'), s.total);
-                animateCount(document.getElementById('sc-male'), s.gender['男']||0);
-                animateCount(document.getElementById('sc-female'), s.gender['女']||0);
-                animateCount(document.getElementById('sc-region'), Object.keys(s.region).length);
-                renderGenderChart(s.gender);
-                renderRegionChart(s.region);
-                renderAgeChart(s.age);
-                renderEduChart(s.education);
-                // 扩展统计也本地算
-                const maleH = [], femaleH = [];
-                const scatterM = [], scatterF = [];
-                const zodiacStats = {};
-                approved.forEach(r => {
-                    if (r.height) {
-                        const h = parseInt(r.height);
-                        if (r.gender === '男') maleH.push(h);
-                        else if (r.gender === '女') femaleH.push(h);
-                    }
-                    if (r.birth_year) {
-                        const by = parseInt(r.birth_year);
-                        if (by) {
-                            const z = (by - 4) % 12;
-                            const names = ['鼠','牛','虎','兔','龙','蛇','马','羊','猴','鸡','狗','猪'];
-                            zodiacStats[names[z]] = (zodiacStats[names[z]]||0) + 1;
-                        }
-                    }
-                    if (r.age_normalized && r.height) {
-                        const pt = [r.age_normalized, parseInt(r.height)];
-                        if (r.gender === '男') scatterM.push(pt);
-                        else if (r.gender === '女') scatterF.push(pt);
-                    }
-                });
-                renderZodiacChart(zodiacStats);
-                renderHeightChart(maleH, femaleH);
-                renderScatterChart(scatterM, scatterF);
-            });
+    // 优先用 allData 本地计算统计
+    if (allData && allData.length > 0) {
+        const approved = allData.filter(r => (r.status || 'approved') !== 'expired');
+        // 性别统计
+        const genderStats = {};
+        approved.forEach(r => {
+            const g = r.gender || '未知';
+            genderStats[g] = (genderStats[g]||0) + 1;
+        });
+        // 地区统计
+        const regionStats = {};
+        approved.forEach(r => {
+            const reg = r.region_group || '其他';
+            regionStats[reg] = (regionStats[reg]||0) + 1;
+        });
+        // 年龄统计
+        const ageMap = {'20-25':0,'26-30':0,'31-35':0,'36-40':0,'40+':0,'未知':0};
+        approved.forEach(r => {
+            const a = r.age_normalized;
+            if (!a) { ageMap['未知']++; return; }
+            if (a <= 25) ageMap['20-25']++;
+            else if (a <= 30) ageMap['26-30']++;
+            else if (a <= 35) ageMap['31-35']++;
+            else if (a <= 40) ageMap['36-40']++;
+            else ageMap['40+']++;
+        });
+        // 学历统计
+        const eduStats = {};
+        approved.forEach(r => {
+            const e = r.education || '其他/未知';
+            eduStats[e] = (eduStats[e]||0) + 1;
+        });
+        const s = { total: approved.length, gender: genderStats, region: regionStats, age: ageMap, education: eduStats };
+        // 渲染统计卡片
+        const avgAge = (() => {
+            let total = 0, count = 0;
+            const w = {'20-25':22,'26-30':28,'31-35':33,'36-40':38,'40+':43};
+            Object.entries(s.age).forEach(([k,v]) => { if (w[k]) { total += w[k]*v; count += v; } });
+            return count ? Math.round(total/count) : '--';
+        })();
+        document.getElementById('statsCards').innerHTML = `
+            <div class="stat-card stat-card-total"><div class="icon">💝</div><div class="num" id="sc-total">0</div><div class="label">总资料数</div></div>
+            <div class="stat-card stat-card-male"><div class="icon">👨</div><div class="num" id="sc-male">0</div><div class="label">男生</div></div>
+            <div class="stat-card stat-card-female"><div class="icon">👩</div><div class="num" id="sc-female">0</div><div class="label">女生</div></div>
+            <div class="stat-card stat-card-region"><div class="icon">📍</div><div class="num" id="sc-region">0</div><div class="label">地区分组</div></div>
+            <div class="stat-card stat-card-avg"><div class="icon">🎂</div><div class="num">${avgAge}</div><div class="label">平均年龄</div></div>
+        `;
+        animateCount(document.getElementById('sc-total'), s.total);
+        animateCount(document.getElementById('sc-male'), s.gender['男']||0);
+        animateCount(document.getElementById('sc-female'), s.gender['女']||0);
+        animateCount(document.getElementById('sc-region'), Object.keys(s.region).length);
+        renderGenderChart(s.gender);
+        renderRegionChart(s.region);
+        renderAgeChart(s.age);
+        renderEduChart(s.education);
+        // 扩展统计也本地算
+        const maleH = [], femaleH = [];
+        const scatterM = [], scatterF = [];
+        const zodiacStats = {};
+        approved.forEach(r => {
+            if (r.height) {
+                const h = parseInt(r.height);
+                if (r.gender === '男') maleH.push(h);
+                else if (r.gender === '女') femaleH.push(h);
+            }
+            if (r.birth_year) {
+                const by = parseInt(r.birth_year);
+                if (by) {
+                    const z = (by - 4) % 12;
+                    const names = ['鼠','牛','虎','兔','龙','蛇','马','羊','猴','鸡','狗','猪'];
+                    zodiacStats[names[z]] = (zodiacStats[names[z]]||0) + 1;
+                }
+            }
+            if (r.age_normalized && r.height) {
+                const pt = [r.age_normalized, parseInt(r.height)];
+                if (r.gender === '男') scatterM.push(pt);
+                else if (r.gender === '女') scatterF.push(pt);
+            }
+        });
+        renderZodiacChart(zodiacStats);
+        renderHeightChart(maleH, femaleH);
+        renderScatterChart(scatterM, scatterF);
         return;
     }
-    // 非静态模式：走 API
-    apiFetch('/api/stats')
+    // allData 为空，调 API
+    fetch(apiUrl('/api/stats'))
         .then(r => r.json())
         .then(res => {
             if (!res.success) return;
             const s = res.stats;
             const avgAge = (() => {
                 let total = 0, count = 0;
-                const w = {'20-25': 22, '26-30': 28, '31-35': 33, '36-40': 38, '40+': 43};
-                Object.entries(s.age).forEach(([k, v]) => { if (w[k]) { total += w[k]*v; count += v; }});
+                const w = {'20-25':22,'26-30':28,'31-35':33,'36-40':38,'40+':43};
+                Object.entries(s.age).forEach(([k, v]) => { if (w[k]) { total += w[k]*v; count += v; } });
                 return count ? Math.round(total/count) : '--';
             })();
             document.getElementById('statsCards').innerHTML = `
@@ -2134,15 +2278,14 @@ function loadStats() {
             renderAgeChart(s.age);
             renderEduChart(s.education);
         });
-    
-    apiFetch('/api/stats/extended')
+    fetch(apiUrl('/api/stats/extended'))
         .then(r => r.json())
         .then(res => {
             if (!res.success) return;
-            renderZodiacChart(res.zodiac);
-            renderHeightChart(res.height_male, res.height_female);
-            renderScatterChart(res.scatter_male, res.scatter_female);
-        });
+            renderZodiacChart(res.zodiac || {});
+            renderHeightChart((res.height_male||[]), (res.height_female||[]));
+            renderScatterChart((res.scatter_male||[]), (res.scatter_female||[]));
+        }).catch(()=>{});
 }
 
 // ===== 图表初始化 =====
@@ -2194,6 +2337,7 @@ function renderGenderChart(data) {
 }
 
 function renderZodiacChart(data) {
+    if (!data || typeof data !== 'object') data = {};
     const zodiacEmoji = {'鼠':'🐭','牛':'🐮','虎':'🐯','兔':'🐰','龙':'🐲','蛇':'🐍','马':'🐴','羊':'🐑','猴':'🐵','鸡':'🐔','狗':'🐶','猪':'🐷'};
     const colors = CHART_PALETTE;
     const entries = Object.entries(data).sort((a,b) => b[1]-a[1]);
@@ -2370,27 +2514,47 @@ function renderScatterChart(maleData, femaleData) {
 
 // ===== 加载地区选项 =====
 function loadRegionOptions() {
-    // 资料管理筛选下拉框的选项顺序（与数据看板图表顺序一致）
-    const regionOrder = ['扬中男', '扬中女', '镇江男', '镇江女', '南京', '常州', '苏州', '上海', '无锡杭州北京', '扬中男再婚', '扬中女再婚', '镇江男再婚', '镇江女再婚', '其他'];
-    fetch(apiUrl('/api/region-groups')).then(r=>r.json()).then(res=>{
+    // 优先用 allData 提取地区列表（静态模式）
+    const regionOrder = ['扬中男','扬中女','镇江男','镇江女','南京','常州','苏州','上海','无锡','杭州','北京','扬中男再婚','扬中女再婚','镇江男再婚','镇江女再婚','其他'];
+    if (allData && allData.length > 0) {
+        const regionSet = new Set();
+        allData.forEach(r => { if(r.region_group) regionSet.add(r.region_group); });
+        const sorted = Array.from(regionSet).sort((a, b) => {
+            const ia = regionOrder.indexOf(a);
+            const ib = regionOrder.indexOf(b);
+            if (ia === -1) return ib === -1 ? a.localeCompare(b) : 1;
+            if (ib === -1) return -1;
+            return ia - ib;
+        });
+        const sel1 = document.getElementById('filterRegion');
+        const sel2 = document.getElementById('formRegion');
+        sel1.innerHTML = '<option value="">全部地区</option>';
+        sel2.innerHTML = '';
+        sorted.forEach(g => {
+            sel1.add(new Option(g, g));
+            sel2.add(new Option(g, g));
+        });
+        return;
+    }
+    // allData 为空，调 API
+    fetch(apiUrl('/api/regions')).then(r=>r.json()).then(res=>{
         if(!res.success) return;
         const sel1 = document.getElementById('filterRegion');
         const sel2 = document.getElementById('formRegion');
         sel1.innerHTML = '<option value="">全部地区</option>';
         sel2.innerHTML = '';
-        // 按指定顺序排序后添加
-        const sorted = [...res.groups].sort((a, b) => {
-            const ia = regionOrder.indexOf(a);
-            const ib = regionOrder.indexOf(b);
-            if (ia === -1) return ib === -1 ? 0 : 1;
+        const sorted = (res.regions||[]).sort((a, b) => {
+            const ia = regionOrder.indexOf(a.name);
+            const ib = regionOrder.indexOf(b.name);
+            if (ia === -1) return ib === -1 ? a.name.localeCompare(b.name) : 1;
             if (ib === -1) return -1;
             return ia - ib;
         });
-        sorted.forEach(g => {
-            sel1.add(new Option(g, g));
-            sel2.add(new Option(g, g));
+        sorted.forEach(r => {
+            sel1.add(new Option(r.name, r.name));
+            sel2.add(new Option(r.name, r.name));
         });
-    });
+    }).catch(()=>{});
 }
 
 // ===== 加载数据 =====
@@ -2407,65 +2571,6 @@ function loadData() {
     const statusFilter = document.getElementById('filterStatus') ? document.getElementById('filterStatus').value : '';
     const keyword = document.getElementById('searchInput').value;
 
-    if (CONFIG.STATIC_MODE) {
-        // 静态模式：读 data.json 本地过滤
-        fetch(CONFIG.DATA_URL)
-            .then(r => r.json())
-            .then(allRecords => {
-                if (!Array.isArray(allRecords)) return;
-                let filtered = allRecords.filter(r => (r.status || 'approved') !== 'expired');
-                if (region) filtered = filtered.filter(r => r.region_group === region);
-                if (gender) filtered = filtered.filter(r => r.gender === gender);
-                if (zodiac) filtered = filtered.filter(r => r.zodiac === zodiac);
-                if (education) filtered = filtered.filter(r => r.education === education);
-                if (ageRange) filtered = filtered.filter(r => {
-                    const a = r.age_normalized;
-                    if (!a) return ageRange === '未知';
-                    if (ageRange === '20-25') return a >= 20 && a <= 25;
-                    if (ageRange === '26-30') return a >= 26 && a <= 30;
-                    if (ageRange === '31-35') return a >= 31 && a <= 35;
-                    if (ageRange === '36-40') return a >= 36 && a <= 40;
-                    if (ageRange === '40+') return a >= 40;
-                    return true;
-                });
-                if (heightRange) filtered = filtered.filter(r => {
-                    const h = parseInt(r.height);
-                    if (!h) return heightRange === '未知';
-                    if (heightRange === '<150') return h < 150;
-                    if (heightRange === '150-159') return h >= 150 && h <= 159;
-                    if (heightRange === '160-169') return h >= 160 && h <= 169;
-                    if (heightRange === '170-179') return h >= 170 && h <= 179;
-                    if (heightRange === '180+') return h >= 180;
-                    return true;
-                });
-                if (weightRange) filtered = filtered.filter(r => {
-                    const w = parseInt(r.weight);
-                    if (!w) return weightRange === '未知';
-                    if (weightRange === '<100') return w < 100;
-                    if (weightRange === '100-119') return w >= 100 && w <= 119;
-                    if (weightRange === '120-139') return w >= 120 && w <= 139;
-                    if (weightRange === '140-159') return w >= 140 && w <= 159;
-                    if (weightRange === '160-179') return w >= 160 && w <= 179;
-                    if (weightRange === '180+') return w >= 180;
-                    return true;
-                });
-                if (statusFilter) filtered = filtered.filter(r => (r.status || 'approved') === statusFilter);
-                if (keyword) {
-                    const kw = keyword.toLowerCase();
-                    filtered = filtered.filter(r =>
-                        (r.family_info||'').toLowerCase().includes(kw) ||
-                        (r.mate_requirement||'').toLowerCase().includes(kw) ||
-                        (r.job||'').toLowerCase().includes(kw) ||
-                        (r.education||'').toLowerCase().includes(kw)
-                    );
-                }
-                allData = filtered;
-                currentPage = 1;
-                if (viewMode === 'card') renderCards();
-                else renderTable();
-            });
-        return;
-    }
     // 非静态模式：走 API
     let url = '/api/data?';
     const params = [];
@@ -2705,24 +2810,42 @@ function renderPagination() {
     pg.appendChild(info);
 }
 
-// ===== 查看记录 =====
+// ===== 查看记录（模态框展示）=====
 function viewRecord(id) {
+    // 先从 allData 查找（静态JSON数据）
+    if (allData && allData.length > 0) {
+        const r = allData.find(item => item.id == id);
+        if (r) {
+            showViewModal(r);
+            return;
+        }
+    }
+    // 如果 allData 没有，再尝试调 API
     fetch(apiUrl(`/api/record/${id}`)).then(r=>r.json()).then(res=>{
-        if(!res.success) return;
-        const r = res.data;
-        alert(`【详细信息】
-地区分组：${r.region_group||'-'}
-性别：${r.gender||'-'}
-属相：${r.zodiac||'-'}
-出生年：${r.birth_year||'-'}
-年龄：${r.age_raw||'-'} ${r.age_normalized?'('+r.age_normalized+'岁)':''}
-身高：${r.height||'-'} cm
-体重：${r.weight||'-'} kg
-学历：${r.education||'-'}
-工作：${r.job||'-'}
-家庭情况：${r.family_info||'-'}
-择偶要求：${r.mate_requirement||'-'}`);
+        if(!res.success) { alert('记录不存在'); return; }
+        showViewModal(res.data);
+    }).catch(()=>{
+        alert('无法加载资料详情');
     });
+}
+
+function showViewModal(r) {
+    document.getElementById('viewModalTitle').textContent = '资料详情 #' + r.id;
+    document.getElementById('viewRegion').textContent = r.region_group || '-';
+    document.getElementById('viewGender').textContent = r.gender || '-';
+    document.getElementById('viewZodiac').textContent = r.zodiac || r.zodiac || '-';
+    document.getElementById('viewBirthYear').textContent = r.birth_year || '-';
+    document.getElementById('viewAge').textContent = (r.age_raw || '') + (r.age_normalized ? ' (' + r.age_normalized + '岁)' : '');
+    document.getElementById('viewHeight').textContent = r.height ? r.height + ' cm' : '-';
+    document.getElementById('viewWeight').textContent = r.weight ? r.weight + ' kg' : '-';
+    document.getElementById('viewEdu').textContent = r.education || '-';
+    document.getElementById('viewJob').textContent = r.job || '-';
+    document.getElementById('viewFamily').textContent = r.family_info || '-';
+    document.getElementById('viewMate').textContent = r.mate_requirement || '-';
+    const statusLabels = {'pending':'待审核', 'approved':'已通过', 'expired':'已过期'};
+    document.getElementById('viewStatus').textContent = statusLabels[r.status] || r.status || '-';
+    document.getElementById('viewUploadDate').textContent = (r.upload_date || '').substring(0, 10) || '-';
+    document.getElementById('viewModal').classList.add('active');
 }
 
 // ===== 添加弹窗 =====
@@ -2748,6 +2871,30 @@ function openAddModal() {
 
 // ===== 编辑弹窗 =====
 function openEditModal(id) {
+    // 静态模式：从 allData 读取
+    if (allData && allData.length > 0) {
+        const r = allData.find(item => item.id == id);
+        if (r) {
+            editingId = id;
+            document.getElementById('editModalTitle').textContent = '编辑资料（静态模式只读）';
+            document.getElementById('formRegion').value = r.region_group||'';
+            document.getElementById('formGender').value = r.gender||'';
+            document.getElementById('formZodiac').value = r.zodiac||'';
+            document.getElementById('formBirthYear').value = r.birth_year||'';
+            document.getElementById('formAge').value = r.age_raw||'';
+            document.getElementById('formHeight').value = r.height||'';
+            document.getElementById('formWeight').value = r.weight||'';
+            document.getElementById('formEdu').value = r.education||'';
+            document.getElementById('formJob').value = r.job||'';
+            document.getElementById('formFamily').value = r.family_info||'';
+            document.getElementById('formMate').value = r.mate_requirement||'';
+            // 静态模式隐藏保存按钮
+            const saveBtn = document.querySelector('#editModal .modal-footer .btn-primary');
+            if (saveBtn) saveBtn.style.display = 'none';
+            document.getElementById('editModal').classList.add('active');
+        }
+        return;
+    }
     fetch(apiUrl(`/api/record/${id}`)).then(r=>r.json()).then(res=>{
         if(!res.success) return;
         editingId = id;
@@ -3103,7 +3250,7 @@ function reimportExcel(input) {
     }
     const fd = new FormData();
     fd.append('file', file);
-    apiFetch('/api/import/excel', { method:'POST', body: fd })
+    fetch(apiUrl('/api/import/excel'), { method:'POST', body: fd })
         .then(r=>r.json()).then(res=>{
             if (res.success) {
                 alert('导入完成，共 ' + res.total + ' 条记录');
@@ -3133,7 +3280,8 @@ window.addEventListener('resize', () => {
 
 // ===== 过期资料管理功能 =====
 function loadExpiredCount() {
-    apiFetch('/api/admin/expired')
+    // 静态模式：从 allData 统计过期数量
+    fetch(apiUrl('/api/admin/expired'), { headers: getAuthHeader() })
         .then(r => r.json())
         .then(res => {
             if (res.success && res.total > 0) {
@@ -3150,7 +3298,8 @@ function loadExpiredCount() {
 }
 
 function loadExpiredList() {
-    apiFetch('/api/admin/expired')
+    // 静态模式：从 allData 过滤过期记录
+    fetch(apiUrl('/api/admin/expired'), { headers: getAuthHeader() })
         .then(r => r.json())
         .then(res => {
             if (!res.success) {
@@ -3196,8 +3345,9 @@ function loadExpiredList() {
 function renewRecord(id) {
     if (!confirm('确定要重新上架这条资料吗？\n（上传日期将更新为今天，有效期延长1年）')) return;
     
-    apiFetch('/api/admin/renew', {
+    fetch(apiUrl('/api/admin/renew'), {
         method: 'POST',
+        headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({id: id})
     })
     .then(r => r.json())
@@ -3220,8 +3370,9 @@ function renewRecord(id) {
 function deleteExpiredRecord(id) {
     if (!confirm('确定要删除这条过期资料吗？\n此操作不可恢复！')) return;
     
-    apiFetch('/api/admin/delete-expired', {
+    fetch(apiUrl('/api/admin/delete-expired'), {
         method: 'POST',
+        headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({id: id})
     })
     .then(r => r.json())
@@ -3243,10 +3394,12 @@ function deleteExpiredRecord(id) {
 
 // 页面加载时也检查过期资料数量（如果已登录）
 function checkExpiredOnLoad() {
-    fetch(apiUrl('/api/admin/current'))
+    const token = localStorage.getItem(CONFIG.TOKEN_KEY || 'xiniang_admin_token');
+    if (!token) return;
+    fetch(apiUrl('/api/admin/current'), { headers: getAuthHeader() })
         .then(r => r.json())
         .then(res => {
-            if (res.success && res.logged_in) {
+            if (res.success) {
                 loadExpiredCount();
             }
         })
