@@ -1656,7 +1656,16 @@ function approveRecord(id) {
         if (res.success) {
             alert('审核通过！');
             loadPendingList();
+            // 更新 allData 中对应记录的状态
+            const idx = allData.findIndex(r => r.id === id);
+            if (idx > -1) {
+                allData[idx].status = 'approved';
+                allData[idx].review_time = new Date().toISOString().slice(0, 10);
+                allData[idx].reviewer = currentAdminInfo ? currentAdminInfo.username : '';
+                allData[idx].reject_reason = '';
+            }
             loadStats();
+            loadAdminData();
         } else {
             alert('操作失败：' + res.message);
         }
@@ -2329,14 +2338,26 @@ function submitUserRecord() {
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(record)
     })
-    .then(r => r.json())
+    .then(r => {
+        if (!r.ok) {
+            return r.json().then(err => {
+                throw new Error(err.message || err.Message || `HTTP ${r.status}`);
+            }).catch(() => {
+                throw new Error(`HTTP ${r.status}: ${r.statusText}`);
+            });
+        }
+        return r.json();
+    })
     .then(res => {
         if (res.success) {
             closeModal('userSubmitModal');
             document.getElementById('wechatCardModal').classList.add('active');
         } else {
-            alert('提交失败：' + res.message);
+            alert('提交失败：' + (res.message || res.Message || '未知错误'));
         }
+    })
+    .catch(err => {
+        alert('提交失败：' + err.message);
     });
 }
 
@@ -3398,7 +3419,13 @@ function deleteRecord(id) {
             headers: {'Content-Type':'application/json'},
             body: JSON.stringify({ password: 'logged_in' })
         }).then(r=>r.json()).then(res=>{
-            if(res.success) { loadData(); loadStats(); loadAdminData(); alert('删除成功！'); }
+            if(res.success) {
+                // 无论什么模式，都直接从 allData 移除该记录
+                allData = allData.filter(r => r.id !== id);
+                loadStats();
+                loadAdminData();
+                alert('删除成功！');
+            }
             else alert('删除失败：' + (res.message||''));
         });
     } else {
@@ -3408,7 +3435,12 @@ function deleteRecord(id) {
                 headers: {'Content-Type':'application/json'},
                 body: JSON.stringify({ password: document.getElementById('pwdInput').value })
             }).then(r=>r.json()).then(res=>{
-                if(res.success) { loadData(); loadStats(); loadAdminData(); alert('删除成功！'); }
+                if(res.success) {
+                    allData = allData.filter(r => r.id !== id);
+                    loadStats();
+                    loadAdminData();
+                    alert('删除成功！');
+                }
                 else alert('删除失败：' + (res.message||''));
                 closeModal('pwdModal');
             });
