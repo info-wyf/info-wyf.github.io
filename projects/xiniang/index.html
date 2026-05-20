@@ -1507,7 +1507,6 @@ function adminLogin() {
         .then(res => {
             if (res.success) {
                 currentAdminInfo = res.data;
-                // 存储 token 到 localStorage（关键！）
                 if (res.token) {
                     localStorage.setItem(CONFIG.TOKEN_KEY || 'xiniang_admin_token', res.token);
                 }
@@ -1515,23 +1514,23 @@ function adminLogin() {
                 closeModal('adminLoginModal');
                 alert('登录成功！');
             } else {
-            document.getElementById('loginError').textContent = res.message || '登录失败';
+                document.getElementById('loginError').textContent = res.message || '登录失败';
+                document.getElementById('loginError').style.display = 'block';
+            }
+        })
+        .catch(err => {
+            document.getElementById('loginError').textContent = '请求失败：' + err;
             document.getElementById('loginError').style.display = 'block';
-        }
-    });
+        });
 }
 
 // ===== 管理员登出 =====
 function adminLogout() {
-    // 无论是否静态模式，都尝试调用 API 登出并清除本地状态
-    apiFetch('/api/admin/logout', { method: 'POST' })
-        .catch(() => {})
-        .finally(() => {
-            localStorage.removeItem(CONFIG.TOKEN_KEY || 'xiniang_admin_token');
-            currentAdminInfo = null;
-            hideAdminUI();
-            alert('已退出登录');
-        });
+    // JWT 无需服务器端清除，仅清除本地存储
+    localStorage.removeItem(CONFIG.TOKEN_KEY || 'xiniang_admin_token');
+    currentAdminInfo = null;
+    hideAdminUI();
+    alert('已退出登录');
 }
 
 // ===== 管理员中心 =====

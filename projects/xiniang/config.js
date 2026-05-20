@@ -13,6 +13,9 @@ const CONFIG = {
     // 静态数据地址（相对于 index.html 同目录）
     DATA_URL: 'data.json',
 
+    // 地区数据地址（相对于 index.html 同目录）
+    REGIONS_URL: 'regions.json',
+
     // 管理员 Token 存储 Key
     TOKEN_KEY: 'xiniang_admin_token',
 
