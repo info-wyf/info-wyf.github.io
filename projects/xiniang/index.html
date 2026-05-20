@@ -1689,10 +1689,33 @@ function renderAdminTable(data) {
 }
 
 // ===== 资料管理功能（管理员）=====
-function loadAdminData() {
-    // 静态模式：直接从 allData 读取
+function renderAdminTable(data) {
+    if (!data || data.length === 0) {
+        document.getElementById('adminDataTable').innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:40px;">暂无数据</p>';
+        return;
+    }
+    let html = '<div class="admin-table-wrap"><table><thead><tr>';
+    html += '<th>ID</th><th>地区</th><th>年龄</th><th>身高</th><th>体重</th><th>学历</th><th>状态</th><th>操作</th>';
+    html += '</tr></thead><tbody>';
+    data.forEach(r => {
+        const statusText = r.status === 'pending' ? '待审核' : r.status === 'approved' ? '已通过' : '已过期';
+        const statusClass = r.status === 'pending' ? 'status-pending' : r.status === 'approved' ? 'status-approved' : 'status-rejected';
+        html += `<tr>`;
+        html += `<td>${r.id}</td>`;
+        html += `<td>${r.region_group || '-'}</td>`;
+        html += `<td>${r.age_raw || ''} ${r.age_normalized ? '(' + r.age_normalized + '岁)' : ''}</td>`;
+        html += `<td>${r.height || '-'}</td>`;
+        html += `<td>${r.weight || '-'}</td>`;
+        html += `<td>${r.education || '-'}</td>`;
+        html += `<td><span class="status-badge ${statusClass}" style="cursor:pointer" onclick="cycleStatus(${r.id}, '${r.status||'approved'}')">${statusText}</span></td>`;
+        html += `<td><button class="action-btn btn-edit" onclick="openEditModal(${r.id})">编辑</button><button class="action-btn btn-del" onclick="deleteRecord(${r.id})">删除</button></td>`;
+        html += `</tr>`;
+    });
+    html += '</tbody></table></div>';
+    document.getElementById('adminDataTable').innerHTML = html;
+}
 
-    // 构建筛选参数
+function loadAdminData() {
     const region = document.getElementById('adminFilterRegion') ? document.getElementById('adminFilterRegion').value : '';
     const ageRange = document.getElementById('adminFilterAgeRange') ? document.getElementById('adminFilterAgeRange').value : '';
     const heightRange = document.getElementById('adminFilterHeightRange') ? document.getElementById('adminFilterHeightRange').value : '';
@@ -1700,8 +1723,24 @@ function loadAdminData() {
     const education = document.getElementById('adminFilterEducation') ? document.getElementById('adminFilterEducation').value : '';
     const statusFilter = document.getElementById('adminFilterStatus') ? document.getElementById('adminFilterStatus').value : '';
     const keyword = document.getElementById('adminSearchInput') ? document.getElementById('adminSearchInput').value : '';
-    
-    let url = apiUrl('/api/data?include_pending=true');
+
+    if (!CONFIG.USE_API) {
+        let data = allData.filter(r => statusFilter ? (r.status || 'approved') === statusFilter : true);
+        if (region) data = data.filter(r => (r.region_group || '') === region);
+        if (keyword) {
+            const kw = keyword.toLowerCase();
+            data = data.filter(r =>
+                (r.region_group || '').toLowerCase().includes(kw) ||
+                (r.job || '').toLowerCase().includes(kw) ||
+                (r.education || '').toLowerCase().includes(kw)
+            );
+        }
+        renderAdminTable(data);
+        return;
+    }
+
+    // API 模式：带筛选参数
+    let url = '/api/data?include_pending=true';
     const params = [];
     if (region) params.push(`region=${encodeURIComponent(region)}`);
     if (ageRange) params.push(`age_range=${encodeURIComponent(ageRange)}`);
@@ -1711,48 +1750,47 @@ function loadAdminData() {
     if (statusFilter) params.push(`status=${encodeURIComponent(statusFilter)}`);
     if (keyword) params.push(`keyword=${encodeURIComponent(keyword)}`);
     if (params.length) url += '&' + params.join('&');
-    
-    fetch(url)
+
+    apiFetch(url)
         .then(r => r.json())
         .then(res => {
             if (!res.success) {
                 document.getElementById('adminDataTable').innerHTML = '<p class="error-message">加载失败：' + res.message + '</p>';
                 return;
             }
-            
-            const data = res.data;
-            if (data.length === 0) {
-                document.getElementById('adminDataTable').innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:40px;">暂无数据</p>';
-                return;
-            }
-            
-            let html = '<div class="admin-table-wrap"><table><thead><tr>';
-            html += '<th>ID</th><th>地区</th><th>年龄</th><th>身高</th><th>体重</th><th>学历</th><th>状态</th><th>操作</th>';
-            html += '</tr></thead><tbody>';
-            
-            data.forEach(r => {
-                const statusText = r.status === 'pending' ? '待审核' : r.status === 'approved' ? '已通过' : '已过期';
-                const statusClass = r.status === 'pending' ? 'status-pending' : r.status === 'approved' ? 'status-approved' : 'status-rejected';
-                
-                html += `<tr>`;
-                html += `<td>${r.id}</td>`;
-                html += `<td>${r.region_group || '-'}</td>`;
-                html += `<td>${r.age_raw || ''} ${r.age_normalized ? '(' + r.age_normalized + ')' : ''}</td>`;
-                html += `<td>${r.height || '-'}</td>`;
-                html += `<td>${r.weight || '-'}</td>`;
-                html += `<td>${r.education || '-'}</td>`;
-                html += `<td><span class="status-badge ${statusClass}" style="cursor:pointer" onclick="cycleStatus(${r.id}, '${r.status||'approved'}')">${statusText}</span></td>`;
-                html += `<td>
-                    <button class="action-btn btn-edit" onclick="openEditModal(${r.id})">编辑</button>
-                    <button class="action-btn btn-del" onclick="deleteRecord(${r.id})">删除</button>
-                </td>`;
-                html += `</tr>`;
-            });
-            
-            html += '</tbody></table></div>';
-            document.getElementById('adminDataTable').innerHTML = html;
+            renderAdminTable(res.data);
+        })
+        .catch(err => {
+            document.getElementById('adminDataTable').innerHTML = '<p class="error-message">加载失败：' + err + '</p>';
         });
 }
+
+function renderAdminTable(data) {
+    if (!data || data.length === 0) {
+        document.getElementById('adminDataTable').innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:40px;">暂无数据</p>';
+        return;
+    }
+    let html = '<div class="admin-table-wrap"><table><thead><tr>';
+    html += '<th>ID</th><th>地区</th><th>年龄</th><th>身高</th><th>体重</th><th>学历</th><th>状态</th><th>操作</th>';
+    html += '</tr></thead><tbody>';
+    data.forEach(r => {
+        const statusText = r.status === 'pending' ? '待审核' : r.status === 'approved' ? '已通过' : '已过期';
+        const statusClass = r.status === 'pending' ? 'status-pending' : r.status === 'approved' ? 'status-approved' : 'status-rejected';
+        html += `<tr>`;
+        html += `<td>${r.id}</td>`;
+        html += `<td>${r.region_group || '-'}</td>`;
+        html += `<td>${r.age_raw || ''} ${r.age_normalized ? '(' + r.age_normalized + '岁)' : ''}</td>`;
+        html += `<td>${r.height || '-'}</td>`;
+        html += `<td>${r.weight || '-'}</td>`;
+        html += `<td>${r.education || '-'}</td>`;
+        html += `<td><span class="status-badge ${statusClass}" style="cursor:pointer" onclick="cycleStatus(${r.id}, '${r.status||'approved'}')">${statusText}</span></td>`;
+        html += `<td><button class="action-btn btn-edit" onclick="openEditModal(${r.id})">编辑</button><button class="action-btn btn-del" onclick="deleteRecord(${r.id})">删除</button></td>`;
+        html += `</tr>`;
+    });
+    html += '</tbody></table></div>';
+    document.getElementById('adminDataTable').innerHTML = html;
+}
+
 
 function clearAdminFilters() {
     const els = ['adminFilterRegion', 'adminFilterAgeRange', 'adminFilterHeightRange', 'adminFilterWeightRange', 'adminFilterEducation', 'adminFilterStatus'];
@@ -1883,41 +1921,41 @@ function deleteRegion(id, name) {
 
 // ===== 管理员管理功能 =====
 function loadAdminManage() {
-    // 静态模式：不支持管理员管理
-    // 先加载地区列表到newAdminRegions选择框
+    // 加载地区列表
     apiFetch('/api/regions')
         .then(r => r.json())
         .then(res => {
             if (res.success) {
                 const select = document.getElementById('newAdminRegions');
                 select.innerHTML = '';
-                res.regions.forEach(r => {
+                (res.data || []).forEach(r => {
                     const opt = document.createElement('option');
                     opt.value = r.name;
                     opt.textContent = r.name;
                     select.appendChild(opt);
                 });
             }
-        });
-    
+        })
+        .catch(() => {});
+
     // 加载管理员列表
-    apiFetch('/api/admin/list').catch(()=>({json:()=>(Promise.resolve({success:false}))})).then(r=>r.json())
+    apiFetch('/api/admin/list')
         .then(r => r.json())
         .then(res => {
             if (!res.success) {
                 document.getElementById('adminTable').innerHTML = '<p class="error-message">加载失败</p>';
                 return;
             }
-            
-            const admins = res.data;
+
+            const admins = res.data || [];
             let html = '<div class="admin-table-wrap"><table><thead><tr>';
             html += '<th>ID</th><th>用户名</th><th>角色</th><th>负责地区</th><th>最后登录</th><th>操作</th>';
             html += '</tr></thead><tbody>';
-            
+
             admins.forEach(a => {
                 const roleText = a.role === 'super_admin' ? '主管理员' : '地区管理员';
-                const regionsText = a.regions.includes('全部') ? '全部' : a.regions.join(', ');
-                
+                const regionsText = (a.regions || []).includes('全部') ? '全部' : (a.regions || []).join(', ');
+
                 html += `<tr>`;
                 html += `<td>${a.id}</td>`;
                 html += `<td>${a.username}</td>`;
@@ -1925,16 +1963,71 @@ function loadAdminManage() {
                 html += `<td>${regionsText}</td>`;
                 html += `<td>${a.last_login || '-'}</td>`;
                 html += `<td>
-                    <button class="action-btn btn-view" onclick="editAdmin(${a.id})">编辑</button>
+                    <button class="action-btn btn-edit" onclick="openChangePwdModal(${a.id}, '${a.username}', ${a.role === 'super_admin'})">改密</button>
                     <button class="action-btn btn-del" onclick="deleteAdmin(${a.id}, '${a.username}')">删除</button>
                 </td>`;
                 html += `</tr>`;
             });
-            
+
             html += '</tbody></table></div>';
             document.getElementById('adminTable').innerHTML = html;
+        })
+        .catch(err => {
+            document.getElementById('adminTable').innerHTML = '<p class="error-message">加载失败：' + err + '</p>';
         });
 }
+
+// ===== 修改密码弹窗 =====
+function openChangePwdModal(adminId, username, isSuperAdmin) {
+    document.getElementById('cpAdminId').value = adminId;
+    document.getElementById('cpUsername').textContent = username;
+    document.getElementById('cpOldPwdGroup').style.display = isSuperAdmin ? 'none' : 'flex';
+    document.getElementById('cpNewPwd').value = '';
+    document.getElementById('cpOldPwd').value = '';
+    document.getElementById('changePwdError').style.display = 'none';
+    document.getElementById('changePwdModal').classList.add('active');
+}
+
+function changePassword() {
+    const adminId = document.getElementById('cpAdminId').value;
+    const oldPwd = document.getElementById('cpOldPwd').value;
+    const newPwd = document.getElementById('cpNewPwd').value;
+    const isSuper = document.getElementById('cpOldPwdGroup').style.display === 'none';
+
+    if (!newPwd) {
+        document.getElementById('changePwdError').textContent = '请输入新密码';
+        document.getElementById('changePwdError').style.display = 'block';
+        return;
+    }
+    if (!isSuper && !oldPwd) {
+        document.getElementById('changePwdError').textContent = '请输入原密码';
+        document.getElementById('changePwdError').style.display = 'block';
+        return;
+    }
+
+    const body = { password: newPwd };
+    if (!isSuper) body.old_password = oldPwd;
+
+    apiFetch(`/api/admin/${adminId}/change_password`, {
+        method: 'PUT',
+        body: JSON.stringify(body)
+    })
+    .then(r => r.json())
+    .then(res => {
+        if (res.success) {
+            alert('密码修改成功！');
+            closeModal('changePwdModal');
+        } else {
+            document.getElementById('changePwdError').textContent = res.message || '修改失败';
+            document.getElementById('changePwdError').style.display = 'block';
+        }
+    })
+    .catch(err => {
+        document.getElementById('changePwdError').textContent = '请求失败：' + err;
+        document.getElementById('changePwdError').style.display = 'block';
+    });
+}
+
 
 function addAdmin() {
     const username = document.getElementById('newAdminUsername').value.trim();
@@ -3090,6 +3183,64 @@ function saveRecord() {
 }
 
 // ===== 删除记录 =====
+
+// ===== 修改密码功能 =====
+function openChangePwdModal(adminId, username, isSuperAdmin) {
+    document.getElementById('cpAdminId').value = adminId;
+    document.getElementById('cpUsername').textContent = username;
+    document.getElementById('cpOldPwd').value = '';
+    document.getElementById('cpNewPwd').value = '';
+    document.getElementById('cpConfirmPwd').value = '';
+    document.getElementById('changePwdError').style.display = 'none';
+    // super_admin 不需要原密码
+    document.getElementById('cpOldPwdGroup').style.display = isSuperAdmin ? 'none' : 'block';
+    document.getElementById('changePwdModal').classList.add('active');
+}
+
+function submitChangePwd() {
+    const adminId = document.getElementById('cpAdminId').value;
+    const oldPwd = document.getElementById('cpOldPwd').value;
+    const newPwd = document.getElementById('cpNewPwd').value;
+    const confirmPwd = document.getElementById('cpConfirmPwd').value;
+    const errorEl = document.getElementById('changePwdError');
+    
+    if (!newPwd) {
+        errorEl.textContent = '请输入新密码';
+        errorEl.style.display = 'block';
+        return;
+    }
+    if (newPwd !== confirmPwd) {
+        errorEl.textContent = '两次输入的新密码不一致';
+        errorEl.style.display = 'block';
+        return;
+    }
+    
+    const body = { password: newPwd };
+    if (!document.getElementById('cpOldPwdGroup').style.display === 'none') {
+        body.old_password = oldPwd;
+    }
+    
+    apiFetch('/api/admin/' + adminId + '/change_password', {
+        method: 'PUT',
+        body: JSON.stringify(body)
+    })
+    .then(r => r.json())
+    .then(res => {
+        if (res.success) {
+            alert('密码修改成功！');
+            closeModal('changePwdModal');
+        } else {
+            errorEl.textContent = res.message || '修改失败';
+            errorEl.style.display = 'block';
+        }
+    })
+    .catch(err => {
+        errorEl.textContent = '请求失败：' + err;
+        errorEl.style.display = 'block';
+    });
+}
+
+
 function deleteRecord(id) {
     if(!confirm('确定要删除这条记录吗？')) return;
     // 如果已登录，直接删除，不需要密码
@@ -3546,5 +3697,39 @@ window.addEventListener('load', function() {
 });
 
 </script>
+
+<!-- 修改密码弹窗 -->
+<div class="modal-overlay" id="changePwdModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>修改密码</h3>
+            <button class="modal-close" onclick="closeModal('changePwdModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <input type="hidden" id="cpAdminId">
+            <div class="form-group">
+                <label class="form-label">管理员</label>
+                <div id="cpUsername" style="padding:8px 0;font-weight:600;"></div>
+            </div>
+            <div class="form-group" id="cpOldPwdGroup">
+                <label class="form-label">原密码</label>
+                <input type="password" id="cpOldPwd" class="form-input" placeholder="请输入原密码">
+            </div>
+            <div class="form-group">
+                <label class="form-label">新密码</label>
+                <input type="password" id="cpNewPwd" class="form-input" placeholder="请输入新密码">
+            </div>
+            <div class="form-group">
+                <label class="form-label">确认新密码</label>
+                <input type="password" id="cpConfirmPwd" class="form-input" placeholder="请再次输入新密码">
+            </div>
+            <p id="changePwdError" class="error-message" style="display:none;"></p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary" onclick="closeModal('changePwdModal')">取消</button>
+            <button class="btn-primary" onclick="submitChangePwd()">确认修改</button>
+        </div>
+    </div>
+</div>
 </body>
 </html>
