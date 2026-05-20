@@ -2313,6 +2313,22 @@ function animateCount(el, target) {
     }, 16);
 }
 
+// 标准化学历统计数据
+function standardizeEduStats(eduStats) {
+    const standard = {'其他/未知':0, '大专':0, '本科':0, '硕士':0, '博士':0};
+    if (!eduStats || typeof eduStats !== 'object') return standard;
+    Object.entries(eduStats).forEach(([key, val]) => {
+        let e = key.trim();
+        if (!e || e === '未知' || e === '其他') standard['其他/未知'] += val;
+        else if (e.includes('大专') || e.includes('专科')) standard['大专'] += val;
+        else if (e.includes('本科')) standard['本科'] += val;
+        else if (e.includes('硕士') || e.includes('研究生')) standard['硕士'] += val;
+        else if (e.includes('博士')) standard['博士'] += val;
+        else standard['其他/未知'] += val;
+    });
+    return standard;
+}
+
 function loadStats() {
     // 优先用 allData 本地计算统计
     if (allData && allData.length > 0) {
@@ -2340,10 +2356,17 @@ function loadStats() {
             else if (a <= 40) ageMap['36-40']++;
             else ageMap['40+']++;
         });
-        // 学历统计
+        // 学历统计（标准化）
         const eduStats = {};
         approved.forEach(r => {
-            const e = r.education || '其他/未知';
+            let e = (r.education || '').trim();
+            // 标准化学历值
+            if (!e || e === '未知' || e === '其他') e = '其他/未知';
+            else if (e.includes('大专') || e.includes('专科')) e = '大专';
+            else if (e.includes('本科')) e = '本科';
+            else if (e.includes('硕士') || e.includes('研究生')) e = '硕士';
+            else if (e.includes('博士')) e = '博士';
+            else e = '其他/未知';
             eduStats[e] = (eduStats[e]||0) + 1;
         });
         const s = { total: approved.length, gender: genderStats, region: regionStats, age: ageMap, education: eduStats };
@@ -2394,7 +2417,29 @@ function loadStats() {
             }
         });
         renderZodiacChart(zodiacStats);
-        renderHeightChart(maleH, femaleH);
+
+        // 将身高数组转换为 bucket 分类对象
+        const maleHBuckets = {'<160':0,'160-164':0,'165-169':0,'170-174':0,'175-179':0,'180-184':0,'185+':0};
+        const femaleHBuckets = {'<160':0,'160-164':0,'165-169':0,'170-174':0,'175-179':0,'180-184':0,'185+':0};
+        maleH.forEach(h => {
+            if (h < 160) maleHBuckets['<160']++;
+            else if (h <= 164) maleHBuckets['160-164']++;
+            else if (h <= 169) maleHBuckets['165-169']++;
+            else if (h <= 174) maleHBuckets['170-174']++;
+            else if (h <= 179) maleHBuckets['175-179']++;
+            else if (h <= 184) maleHBuckets['180-184']++;
+            else maleHBuckets['185+']++;
+        });
+        femaleH.forEach(h => {
+            if (h < 160) femaleHBuckets['<160']++;
+            else if (h <= 164) femaleHBuckets['160-164']++;
+            else if (h <= 169) femaleHBuckets['165-169']++;
+            else if (h <= 174) femaleHBuckets['170-174']++;
+            else if (h <= 179) femaleHBuckets['175-179']++;
+            else if (h <= 184) femaleHBuckets['180-184']++;
+            else femaleHBuckets['185+']++;
+        });
+        renderHeightChart(maleHBuckets, femaleHBuckets);
         renderScatterChart(scatterM, scatterF);
         return;
     }
@@ -2429,7 +2474,9 @@ function loadStats() {
             renderGenderChart(s.gender);
             renderRegionChart(s.region);
             renderAgeChart(s.age);
-            renderEduChart(s.education);
+            // 标准化学历数据
+            const eduStandard = standardizeEduStats(s.education);
+            renderEduChart(eduStandard);
         });
     apiFetch('/api/stats/extended')
         .then(r => r.json())
