@@ -58,6 +58,7 @@ function cycleStatus(recordId, currentStatus) {
         if (res.success) {
             alert('状态已更新为：' + labels[newStatus]);
             loadData();
+            loadAdminData();
         } else {
             alert('更新失败：' + res.message);
         }
@@ -1685,6 +1686,25 @@ function confirmReject() {
             alert('已拒绝！');
             closeModal('rejectModal');
             loadPendingList();
+            // 拒绝成功后刷新 allData，确保资料管理显示最新数据
+            if (CONFIG.USE_API) {
+                // API 模式：重新从服务器加载数据
+                apiFetch('/api/data?include_pending=true')
+                    .then(r => r.json())
+                    .then(res2 => {
+                        if (res2.success) allData = res2.data;
+                    })
+                    .catch(() => {});
+            } else {
+                // 静态模式：手动更新 allData 中对应记录的状态
+                const idx = allData.findIndex(r => r.id === currentRejectId);
+                if (idx > -1) {
+                    allData[idx].status = 'rejected';
+                    allData[idx].reject_reason = reason;
+                    allData[idx].review_time = new Date().toISOString().slice(0, 10);
+                    allData[idx].reviewer = currentAdminInfo ? currentAdminInfo.username : '';
+                }
+            }
         } else {
             alert('操作失败：' + res.message);
         }
@@ -3378,7 +3398,7 @@ function deleteRecord(id) {
             headers: {'Content-Type':'application/json'},
             body: JSON.stringify({ password: 'logged_in' })
         }).then(r=>r.json()).then(res=>{
-            if(res.success) { loadData(); loadStats(); alert('删除成功！'); }
+            if(res.success) { loadData(); loadStats(); loadAdminData(); alert('删除成功！'); }
             else alert('删除失败：' + (res.message||''));
         });
     } else {
@@ -3388,7 +3408,7 @@ function deleteRecord(id) {
                 headers: {'Content-Type':'application/json'},
                 body: JSON.stringify({ password: document.getElementById('pwdInput').value })
             }).then(r=>r.json()).then(res=>{
-                if(res.success) { loadData(); loadStats(); alert('删除成功！'); }
+                if(res.success) { loadData(); loadStats(); loadAdminData(); alert('删除成功！'); }
                 else alert('删除失败：' + (res.message||''));
                 closeModal('pwdModal');
             });
