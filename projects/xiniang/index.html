@@ -1575,6 +1575,37 @@ function switchTab(tabName) {
 // ===== 资料审核功能 =====
 function loadPendingList() {
     // 静态模式：从 allData 过滤待审核记录
+    if (allData && allData.length > 0) {
+        const pending = allData.filter(r => r.status === 'pending');
+        if (pending.length === 0) {
+            document.getElementById('pendingList').innerHTML = '<p class="empty-state">暂无待审核记录</p>';
+            return;
+        }
+        
+        let html = '';
+        pending.forEach(r => {
+            html += `
+                <div class="review-card">
+                    <h4>ID: ${r.id} | ${r.region_group || '-'}</h4>
+                    <p>年龄：${r.age_raw || '-'} ${r.age_normalized ? '(' + r.age_normalized + '岁)' : ''}</p>
+                    <p>身高：${r.height || '-'} cm | 体重：${r.weight || '-'} kg</p>
+                    <p>学历：${r.education || '-'} | 工作：${r.job || '-'}</p>
+                    <p>家庭情况：${r.family_info || '-'}</p>
+                    <p>择偶要求：${r.mate_requirement || '-'}</p>
+                    <p>提交时间：${r.submit_time || '-'}</p>
+                    <div class="review-actions">
+                        <button class="btn-success" style="padding:6px 16px;font-size:13px;" onclick="approveRecord(${r.id})">✅ 通过</button>
+                        <button class="btn-danger" style="padding:6px 16px;font-size:13px;" onclick="openRejectModal(${r.id})">❌ 拒绝</button>
+                    </div>
+                </div>
+                `;
+        });
+        
+        document.getElementById('pendingList').innerHTML = html;
+        return;
+    }
+    
+    // allData 为空，调用 API
     apiFetch('/api/admin/pending')
         .then(r => r.json())
         .then(res => {
