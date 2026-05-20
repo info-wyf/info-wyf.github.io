@@ -15492,12 +15492,12 @@
     "family_info": "",
     "mate_requirement": "",
     "notes": "",
-    "status": "pending",
+    "status": "rejected",
     "submit_time": "2026-05-20 21:03:56",
     "upload_date": "2026-05-20",
-    "review_time": null,
-    "reviewer": null,
-    "reject_reason": null
+    "review_time": "2026-05-20 21:10:23",
+    "reviewer": "admin",
+    "reject_reason": "无"
   },
   {
     "id": 677,
