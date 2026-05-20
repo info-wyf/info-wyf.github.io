@@ -10,8 +10,6 @@ const CONFIG = {
     // 静态数据地址（相对于 index.html 同目录）
     DATA_URL: 'data.json',
 
-    // 是否启用静态模式（GitHub Pages 上必须为 true）
-    STATIC_MODE: true,
 
     // 管理员 Token 存储 Key
     TOKEN_KEY: 'xiniang_admin_token',
