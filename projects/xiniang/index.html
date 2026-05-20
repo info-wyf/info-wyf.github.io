@@ -35,6 +35,15 @@ function apiFetch(path, options = {}) {
     return fetch(apiUrl(path), {
         ...options,
         headers: headers
+    }).then(r => {
+        // Token 过期或无效，自动退出登录
+        if (r.status === 401) {
+            localStorage.removeItem(CONFIG.TOKEN_KEY || 'xiniang_admin_token');
+            currentAdminInfo = null;
+            showPublicUI();
+            throw new Error('登录已过期，请重新登录');
+        }
+        return r;
     });
 }
 // 状态循环切换：待审核 → 已通过 → 已过期 → 待审核
@@ -1905,8 +1914,21 @@ function loadAdminManage() {
         });
     
     // 加载管理员列表
-    apiFetch('/api/admin/list').catch(()=>({json:()=>(Promise.resolve({success:false}))})).then(r=>r.json())
-        .then(r => r.json())
+    apiFetch('/api/admin/list')
+        .then(r => {
+            if (r.status === 401) {
+                // Token 过期或无效，退出登录
+                localStorage.removeItem(CONFIG.TOKEN_KEY || 'xiniang_admin_token');
+                currentAdminInfo = null;
+                showPublicUI();
+                throw new Error('登录已过期，请重新登录');
+            }
+            return r.json();
+        })
+        .catch(err => {
+            console.error('加载管理员列表失败：', err);
+            return {success: false, data: [], message: err.message};
+        })
         .then(res => {
             if (!res.success) {
                 document.getElementById('adminTable').innerHTML = '<p class="error-message">加载失败</p>';
@@ -2111,6 +2133,11 @@ function submitUserRecord() {
         mate_requirement: document.getElementById('submitMate').value.trim()
     };
 
+    // 乐观 UI：立即关闭提交窗口，显示微信名片
+    closeModal('userSubmitModal');
+    showWechatCard();
+    
+    // 后台发送 API 请求
     apiFetch('/api/user/submit', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
@@ -2118,13 +2145,32 @@ function submitUserRecord() {
     })
     .then(r => r.json())
     .then(res => {
-        if (res.success) {
-            alert('资料已提交，请联系微信：xiniang2026');
-            closeModal('userSubmitModal');
-        } else {
-            alert('提交失败：' + res.message);
+        if (!res.success) {
+            alert('提交失败：' + (res.message || '未知错误'));
+            // 如果失败，关闭微信名片窗口
+            closeModal('wechatCardModal');
         }
+    })
+    .catch(err => {
+        alert('提交失败：' + err.message);
+        closeModal('wechatCardModal');
     });
+}
+
+/**
+ * 显示微信名片窗口
+ */
+function showWechatCard() {
+    // 显示微信名片模态框（图片预留位，请替换为实际的微信二维码图片）
+    const qrImg = document.getElementById('wechatQrCode');
+    if (qrImg) {
+        // 预留位：请替换为实际的微信二维码图片路径
+        // 例如：qrImg.src = 'wechat-qr-code.jpg';
+        qrImg.style.display = 'block';
+    }
+    
+    // 显示微信名片模态框
+    document.getElementById('wechatCardModal').classList.add('active');
 }
 
 // ===== 标签页切换 =====
@@ -3496,5 +3542,27 @@ function stopAutoSync() {
 }
 
 </script>
+<!-- 微信名片模态框 -->
+<div class="modal-overlay" id="wechatCardModal">
+    <div class="modal" style="max-width: 400px; text-align: center;">
+        <button class="modal-close" onclick="closeModal('wechatCardModal')">&times;</button>
+        <h2 style="margin-bottom: 20px;">添加微信</h2>
+        <div style="padding: 20px;">
+            <div style="margin-bottom: 20px;">
+                <p style="font-size: 16px; color: var(--text-muted); margin-bottom: 8px;">微信号</p>
+                <p style="font-size: 24px; font-weight: bold; color: var(--primary); letter-spacing: 2px;">xiniang2026</p>
+            </div>
+            <div style="margin-bottom: 20px;">
+                <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 12px;">扫码添加微信</p>
+                <div style="background: white; padding: 12px; border-radius: 12px; display: inline-block; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <img id="wechatQrCode" src="" alt="微信二维码" style="width: 180px; height: 180px; display: block; background: #f5f5f5; border-radius: 8px;">
+                </div>
+                <p style="font-size: 12px; color: var(--text-muted); margin-top: 8px;">请替换为此处的微信二维码图片</p>
+            </div>
+            <p style="font-size: 14px; color: var(--text-muted);">请备注"喜娘上上牵"</p>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>
