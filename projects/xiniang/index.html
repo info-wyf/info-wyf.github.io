@@ -10,6 +10,7 @@
 <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
 <script>
 let syncIntervalId = null;  // 定时同步的定时器 ID
+let useApiMode = CONFIG.USE_API;  // 是否使用 API 模式（false = 静态模式）
 
 // ===== 鉴权辅助 =====
 function getAuthHeader() {
@@ -1516,6 +1517,9 @@ function adminLogin() {
                 closeModal('adminLoginModal');
                 alert('登录成功！');
                 
+                // 切换到 API 模式（管理员需要查看待审核等数据）
+                useApiMode = true;
+                
                 // 启动定时同步（每 5 分钟批量同步到 GitHub）
                 startAutoSync();
                 
@@ -1533,17 +1537,43 @@ function adminLogin() {
     });
 }
 
-// ===== 管理员登出 =====
 function adminLogout() {
-    const token = localStorage.getItem(CONFIG.TOKEN_KEY || 'xiniang_admin_token');
-    apiFetch('/api/admin/logout', { method: 'POST' })
-        .then(r => r.json())
-        .then(res => {
-            localStorage.removeItem(CONFIG.TOKEN_KEY || 'xiniang_admin_token');
-            currentAdminInfo = null;
-            hideAdminUI();
-            alert('已退出登录');
-        });
+    // 退出前先同步一次
+    syncToGithub().then(() => {
+        // 停止定时同步
+        stopAutoSync();
+        
+        apiFetch('/api/admin/logout', { method: 'POST' })
+            .then(r => r.json())
+            .then(res => {
+                localStorage.removeItem(CONFIG.TOKEN_KEY || 'xiniang_admin_token');
+                currentAdminInfo = null;
+                hideAdminUI();
+                // 切换回静态模式
+                useApiMode = false;
+                alert('已退出登录');
+            });
+    }).catch(() => {
+        // 同步失败也继续退出
+        stopAutoSync();
+        apiFetch('/api/admin/logout', { method: 'POST' })
+            .then(r => r.json())
+            .then(res => {
+                localStorage.removeItem(CONFIG.TOKEN_KEY || 'xiniang_admin_token');
+                currentAdminInfo = null;
+                hideAdminUI();
+                // 切换回静态模式
+                useApiMode = false;
+                alert('已退出登录');
+            }).catch(() => {
+                // 如果 API 调用也失败，直接退出
+                localStorage.removeItem(CONFIG.TOKEN_KEY || 'xiniang_admin_token');
+                currentAdminInfo = null;
+                hideAdminUI();
+                useApiMode = false;
+                alert('已退出登录');
+            });
+    });
 }
 
 // ===== 管理员中心 =====
@@ -2652,28 +2682,65 @@ function loadData() {
     const statusFilter = document.getElementById('filterStatus') ? document.getElementById('filterStatus').value : '';
     const keyword = document.getElementById('searchInput').value;
 
-    // 非静态模式：走 API
-    let url = '/api/data?';
-    const params = [];
-    if (region) params.push(`region=${encodeURIComponent(region)}`);
-    if (gender) params.push(`gender=${encodeURIComponent(gender)}`);
-    if (zodiac) params.push(`zodiac=${encodeURIComponent(zodiac)}`);
-    if (education) params.push(`education=${encodeURIComponent(education)}`);
-    if (ageRange) params.push(`age_range=${encodeURIComponent(ageRange)}`);
-    if (heightRange) params.push(`height_range=${encodeURIComponent(heightRange)}`);
-    if (heightMin) params.push(`height_min=${heightMin}`);
-    if (heightMax) params.push(`height_max=${heightMax}`);
-    if (weightRange) params.push(`weight_range=${encodeURIComponent(weightRange)}`);
-    if (statusFilter) params.push(`status=${encodeURIComponent(statusFilter)}`);
-    if (keyword) params.push(`keyword=${encodeURIComponent(keyword)}`);
-    url += params.join('&');
-    apiFetch(url).then(r=>r.json()).then(res=>{
-        if(!res.success) return;
-        allData = res.data;
-        currentPage = 1;
-        if (viewMode === 'card') renderCards();
-        else renderTable();
-    });
+    if (!useApiMode) {
+        // 静态模式：直接从 CONFIG.DATA_URL 读取静态 JSON 文件
+        fetch(CONFIG.DATA_URL)
+            .then(r => r.json())
+            .then(data => {
+                // 只显示已通过审核的资料
+                let filteredData = data.filter(r => r.status === 'approved');
+                
+                // 应用过滤条件（客户端过滤）
+                if (region) filteredData = filteredData.filter(r => (r.region_group || r.region) === region);
+                if (gender) filteredData = filteredData.filter(r => r.gender === gender);
+                if (zodiac) filteredData = filteredData.filter(r => r.zodiac === zodiac);
+                if (education) filteredData = filteredData.filter(r => r.education === education);
+                if (keyword) {
+                    const kw = keyword.toLowerCase();
+                    filteredData = filteredData.filter(r => 
+                        (r.name && r.name.toLowerCase().includes(kw)) ||
+                        (r.intro && r.intro.toLowerCase().includes(kw)) ||
+                        (r.job && r.job.toLowerCase().includes(kw))
+                    );
+                }
+                // TODO: 年龄、身高、体重的过滤可以在客户端实现
+                
+                allData = filteredData;
+                currentPage = 1;
+                if (viewMode === 'card') renderCards();
+                else renderTable();
+            })
+            .catch(err => {
+                console.error('加载数据失败：', err);
+                alert('加载数据失败，请检查 data.json 是否存在');
+            });
+    } else {
+        // API 模式：使用 API 加载（支持过滤）
+        let url = apiUrl('/api/data?');
+        const params = [];
+        if (region) params.push(`region=${encodeURIComponent(region)}`);
+        if (gender) params.push(`gender=${encodeURIComponent(gender)}`);
+        if (zodiac) params.push(`zodiac=${encodeURIComponent(zodiac)}`);
+        if (education) params.push(`education=${encodeURIComponent(education)}`);
+        if (ageRange) params.push(`age_range=${encodeURIComponent(ageRange)}`);
+        if (heightRange) params.push(`height_range=${encodeURIComponent(heightRange)}`);
+        if (heightMin) params.push(`height_min=${heightMin}`);
+        if (heightMax) params.push(`height_max=${heightMax}`);
+        if (weightRange) params.push(`weight_range=${encodeURIComponent(weightRange)}`);
+        if (statusFilter) params.push(`status=${encodeURIComponent(statusFilter)}`);
+        if (keyword) params.push(`keyword=${encodeURIComponent(keyword)}`);
+        url += params.join('&');
+        
+        apiFetch(url)
+            .then(r => r.json())
+            .then(res => {
+                if (!res.success) return;
+                allData = res.data;
+                currentPage = 1;
+                if (viewMode === 'card') renderCards();
+                else renderTable();
+            });
+    }
 }
 
 // ===== 视图模式 =====
