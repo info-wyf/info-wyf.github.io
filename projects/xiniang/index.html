@@ -12,8 +12,9 @@
 <script>
 // 全局变量声明（先声明，等 DOM 加载后再初始化）
 let syncIntervalId = null;  // 定时同步的定时器 ID
-let // useApiMode 不再使用，查询始终使用静态模式  // 查询始终使用静态模式，增删改使用 API 模式
+// useApiMode 不再使用，查询始终使用静态模式
 
+let viewMode = 'card';  // 视图模式：card 或 table
 // ===== 鉴权辅助 =====
 function getAuthHeader() {
     const token = localStorage.getItem(CONFIG.TOKEN_KEY || 'xiniang_admin_token');
