@@ -1539,8 +1539,15 @@ function adminLogin() {
 }
 
 function adminLogout() {
-    // 退出前先同步一次
-    syncToGithub().then(() => {
+    // 显示退出中动画
+    const logoutBtn = document.querySelector('button[onclick="adminLogout()"]');
+    if (logoutBtn) {
+        logoutBtn.disabled = true;
+        logoutBtn.innerHTML = '退出中...';
+    }
+    
+    // 强制触发同步（无论是否有待同步数据）
+    forceSync().then(() => {
         // 停止定时同步
         stopAutoSync();
         
@@ -1550,8 +1557,8 @@ function adminLogout() {
                 localStorage.removeItem(CONFIG.TOKEN_KEY || 'xiniang_admin_token');
                 currentAdminInfo = null;
                 hideAdminUI();
-                // 切换回静态模式
-                // useApiMode 不再使用，查询始终使用静态模式
+                // 重新加载数据（从静态文件）
+                loadData();
                 alert('已退出登录');
             });
     }).catch(() => {
@@ -1563,18 +1570,36 @@ function adminLogout() {
                 localStorage.removeItem(CONFIG.TOKEN_KEY || 'xiniang_admin_token');
                 currentAdminInfo = null;
                 hideAdminUI();
-                // 切换回静态模式
-                // useApiMode 不再使用，查询始终使用静态模式
+                // 重新加载数据（从静态文件）
+                loadData();
                 alert('已退出登录');
             }).catch(() => {
                 // 如果 API 调用也失败，直接退出
                 localStorage.removeItem(CONFIG.TOKEN_KEY || 'xiniang_admin_token');
                 currentAdminInfo = null;
                 hideAdminUI();
-                // useApiMode 不再使用，查询始终使用静态模式
+                // 重新加载数据（从静态文件）
+                loadData();
                 alert('已退出登录');
             });
     });
+}
+
+/**
+ * 强制同步（无论是否有待同步数据）
+ */
+async function forceSync() {
+    try {
+        const res = await apiFetch('/api/admin/batch-sync', { method: 'POST' });
+        const data = await res.json();
+        if (data.success) {
+            console.log(`✅ 强制同步完成：成功 ${data.synced_count} 个文件`);
+        } else {
+            console.log('ℹ️ 没有待同步的文件');
+        }
+    } catch (err) {
+        console.error('❌ 强制同步失败：', err);
+    }
 }
 
 // ===== 管理员中心 =====
@@ -1659,6 +1684,13 @@ function loadPendingList() {
 function approveRecord(id) {
     if (!confirm('确定要通过这条记录吗？')) return;
     
+    // 显示加载动画
+    const btn = event.target;
+    const originalText = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = '处理中...';
+    btn.classList.add('btn-loading');
+    
     // 乐观 UI：立即更新 allData
     const oldData = [...allData]; // 保存旧数据用于回滚
     const index = allData.findIndex(r => r.id === id);
@@ -1676,6 +1708,11 @@ function approveRecord(id) {
     })
     .then(r => r.json())
     .then(res => {
+        // 移除加载动画
+        btn.disabled = false;
+        btn.textContent = originalText;
+        btn.classList.remove('btn-loading');
+        
         if (res.success) {
             console.log('✅ 审核通过，已保存到待同步队列');
             // 重新加载待审核列表
@@ -1689,6 +1726,11 @@ function approveRecord(id) {
         }
     })
     .catch(err => {
+        // 移除加载动画
+        btn.disabled = false;
+        btn.textContent = originalText;
+        btn.classList.remove('btn-loading');
+        
         // 回滚 UI
         allData = oldData;
         renderAdminTable(allData);
@@ -1708,6 +1750,13 @@ function confirmReject() {
         return;
     }
     
+    // 显示加载动画
+    const confirmBtn = document.getElementById('confirmRejectBtn');
+    const originalText = confirmBtn.textContent;
+    confirmBtn.disabled = true;
+    confirmBtn.textContent = '处理中...';
+    confirmBtn.classList.add('btn-loading');
+    
     // 乐观 UI：立即更新 allData
     const oldData = [...allData]; // 保存旧数据用于回滚
     const index = allData.findIndex(r => r.id === currentRejectId);
@@ -1726,6 +1775,11 @@ function confirmReject() {
     })
     .then(r => r.json())
     .then(res => {
+        // 移除加载动画
+        confirmBtn.disabled = false;
+        confirmBtn.textContent = originalText;
+        confirmBtn.classList.remove('btn-loading');
+        
         if (res.success) {
             console.log('✅ 审核拒绝，已保存到待同步队列');
             // 重新加载待审核列表
@@ -1739,6 +1793,11 @@ function confirmReject() {
         }
     })
     .catch(err => {
+        // 移除加载动画
+        confirmBtn.disabled = false;
+        confirmBtn.textContent = originalText;
+        confirmBtn.classList.remove('btn-loading');
+        
         // 回滚 UI
         allData = oldData;
         renderAdminTable(allData);
@@ -2373,8 +2432,15 @@ function loadStats() {
         return;
     }
     // allData 为空，显示错误讯息
-    console.error('allData 为空，无法加载统计数据');
-    document.getElementById('statsCards').innerHTML = '<p class="error-message">无法加载统计数据，请检查 data.json 是否存在</p>';;
+    // allData 为空，显示 0
+    console.log('ℹ️ allData 为空，显示默认统计（0）');
+    document.getElementById('statsCards').innerHTML = `
+        <div class="stat-card stat-card-total"><div class="icon">💝</div><div class="num" id="sc-total">0</div><div class="label">总资料数</div></div>
+        <div class="stat-card stat-card-male"><div class="icon">👨</div><div class="num" id="sc-male">0</div><div class="label">男生</div></div>
+        <div class="stat-card stat-card-female"><div class="icon">👩</div><div class="num" id="sc-female">0</div><div class="label">女生</div></div>
+        <div class="stat-card stat-card-region"><div class="icon">📍</div><div class="num" id="sc-region">0</div><div class="label">地区分组</div></div>
+        <div class="stat-card stat-card-avg"><div class="icon">🎂</div><div class="num">--</div><div class="label">平均年龄</div></div>
+    `;
 }
 
 // ===== 图表初始化 =====
