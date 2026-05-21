@@ -1431,9 +1431,8 @@ function onSubmitAgeChange() {
 
 // ===== 初始化 =====
 window.onload = function() {
-    loadStats();
     loadRegionOptions();
-    loadData();
+    loadData();  // loadStats() 在 loadData() 成功后自动调用
     initCharts();
     checkLoginStatus();
     loadRegionOptionsForSubmit();
@@ -2741,6 +2740,7 @@ function loadData() {
             
             allData = filteredData;
             currentPage = 1;
+            loadStats();  // 数据加载成功后计算统计
             if (viewMode === 'card') renderCards();
             else renderTable();
         })
