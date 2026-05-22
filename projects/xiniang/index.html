@@ -2405,7 +2405,7 @@ function loadStats() {
             else if (a <= 40) ageMap['36-40']++;
             else ageMap['40+']++;
         });
-        // 学历统计
+        // 学历统计（按实际值分类，数量降序）
         const eduStats = {};
         approved.forEach(r => {
             const e = r.education || '其他/未知';
@@ -2682,8 +2682,7 @@ function renderEduChart(data) {
         }
     }
 
-    const order = ['其他/未知','大专','本科','硕士','博士'];
-    const keys = Object.keys(data).sort((a,b) => { const ia=order.indexOf(a), ib=order.indexOf(b); if(ia===-1&&ib===-1) return a.localeCompare(b); if(ia===-1) return 1; if(ib===-1) return -1; return ia-ib; });
+    const keys = Object.keys(data).sort((a,b) => data[b] - data[a]);
     const vals = keys.map(k => data[k]);
     chartEdu.setOption({
         tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
