@@ -984,7 +984,7 @@ tr:hover { background: var(--primary-soft); }
                 </div>
                 <div class="form-group">
                     <label>出生年份</label>
-                    <input type="number" id="formBirthYear" placeholder="如：1998" min="1940" max="2020">
+                    <input type="number" id="formBirthYear" placeholder="如：1998" min="1940" max="2020" oninput="onFormBirthYearChange()">
                 </div>
             </div>
             <div class="form-row">
@@ -1442,6 +1442,16 @@ function onSubmitAgeChange() {
     document.getElementById('submitBirthYear').value = SUBMIT_CURRENT_YEAR - parseInt(age);
     const z = submitYearToZodiac(SUBMIT_CURRENT_YEAR - parseInt(age));
     if (z) document.getElementById('submitZodiac').value = z;
+}
+
+// ===== 编辑表单：出生年→年龄/属相联动 =====
+function onFormBirthYearChange() {
+    const by = document.getElementById('formBirthYear').value;
+    if (!by) return;
+    const age = new Date().getFullYear() - parseInt(by);
+    document.getElementById('formAge').value = age + '岁';
+    const z = submitYearToZodiac(parseInt(by));
+    if (z) document.getElementById('formZodiac').value = z;
 }
 
 // ===== 初始化 =====
