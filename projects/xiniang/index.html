@@ -36,10 +36,16 @@ function apiFetch(path, options = {}) {
     if (options.body instanceof FormData) {
         delete headers['Content-Type'];
     }
-    return fetch(apiUrl(path), {
+    
+    const fullUrl = apiUrl(path);
+    console.log('📤 API 请求:', options.method || 'GET', fullUrl);
+    
+    return fetch(fullUrl, {
         ...options,
         headers: headers
     }).then(r => {
+        console.log('📥 API 响应:', r.status, r.statusText, fullUrl);
+        
         // Token 过期或无效，自动退出登录
         if (r.status === 401) {
             localStorage.removeItem(CONFIG.TOKEN_KEY || 'xiniang_admin_token');
@@ -47,6 +53,15 @@ function apiFetch(path, options = {}) {
             showPublicUI();
             throw new Error('登录已过期，请重新登录');
         }
+        
+        // 检查响应状态
+        if (!r.ok) {
+            return r.text().then(text => {
+                console.error('❌ API 错误响应:', text);
+                throw new Error('HTTP ' + r.status + ' ' + r.statusText + '\n' + text.substring(0, 200));
+            });
+        }
+        
         return r;
     });
 }
@@ -2347,6 +2362,13 @@ function animateCount(el, target) {
 }
 
 function loadStats() {
+    // ✅ 确保图表容器存在
+    const chartIds = ['chartGender', 'chartRegion', 'chartAge', 'chartEdu', 'chartZodiac', 'chartHeight', 'chartScatter'];
+    const missingCharts = chartIds.filter(id => !document.getElementById(id));
+    if (missingCharts.length > 0) {
+        console.warn('⚠️  部分图表容器未找到:', missingCharts);
+    }
+    
     // 优先用 allData 本地计算统计
     if (allData && allData.length > 0) {
         const approved = allData.filter(r => (r.status || 'approved') !== 'expired');
@@ -2427,7 +2449,33 @@ function loadStats() {
             }
         });
         renderZodiacChart(zodiacStats);
-        renderHeightChart(maleH, femaleH);
+        // 身高分桶
+        const heightBuckets = ['<160','160-164','165-169','170-174','175-179','180-184','185+'];
+        const maleHBucket = {};
+        const femaleHBucket = {};
+        heightBuckets.forEach(b => { maleHBucket[b] = 0; femaleHBucket[b] = 0; });
+        
+        maleH.forEach(h => {
+            if (h < 160) maleHBucket['<160']++;
+            else if (h <= 164) maleHBucket['160-164']++;
+            else if (h <= 169) maleHBucket['165-169']++;
+            else if (h <= 174) maleHBucket['170-174']++;
+            else if (h <= 179) maleHBucket['175-179']++;
+            else if (h <= 184) maleHBucket['180-184']++;
+            else maleHBucket['185+']++;
+        });
+        
+        femaleH.forEach(h => {
+            if (h < 160) femaleHBucket['<160']++;
+            else if (h <= 164) femaleHBucket['160-164']++;
+            else if (h <= 169) femaleHBucket['165-169']++;
+            else if (h <= 174) femaleHBucket['170-174']++;
+            else if (h <= 179) femaleHBucket['175-179']++;
+            else if (h <= 184) femaleHBucket['180-184']++;
+            else femaleHBucket['185+']++;
+        });
+        
+        renderHeightChart(maleHBucket, femaleHBucket);
         renderScatterChart(scatterM, scatterF);
         return;
     }
@@ -2649,7 +2697,29 @@ function renderEduChart(data) {
 }
 
 function renderHeightChart(maleData, femaleData) {
+    // ✅ 防御性检查：确保传入的是对象而不是数组
+    if (Array.isArray(maleData)) {
+        console.error('❌ renderHeightChart: maleData 应该是对象，但传入了数组', maleData);
+        return;
+    }
+    if (Array.isArray(femaleData)) {
+        console.error('❌ renderHeightChart: femaleData 应该是对象，但传入了数组', femaleData);
+        return;
+    }
+    
     const buckets = ['<160','160-164','165-169','170-174','175-179','180-184','185+'];
+    
+    // ✅ 确保 chartHeight 已初始化
+    if (!chartHeight) {
+        const dom = document.getElementById('chartHeight');
+        if (dom) {
+            chartHeight = echarts.init(dom);
+        } else {
+            console.error('❌ chartHeight 元素未找到');
+            return;
+        }
+    }
+    
     chartHeight.setOption({
         tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' },
             formatter: p => p.map(s => `${s.marker}${s.seriesName}: ${Math.abs(s.value)}人`).join('<br>') },
@@ -3271,7 +3341,15 @@ function deleteRecord(id) {
         headers: {'Content-Type':'application/json'},
         body: JSON.stringify({})
     })
-    .then(r => r.json())
+    .then(r => {
+        // 检查响应状态
+        if (!r.ok) {
+            return r.text().then(text => {
+                throw new Error('HTTP ' + r.status + ' ' + r.statusText + '\n' + text.substring(0, 200));
+            });
+        }
+        return r.json();
+    })
     .then(res => {
         if (res.success) {
             console.log('✅ 删除成功，已保存到待同步队列');
@@ -3289,6 +3367,7 @@ function deleteRecord(id) {
         allData = oldData;
         if (viewMode === 'card') renderCards();
         else renderTable();
+        console.error('❌ 删除失败:', err);
         alert('删除失败：' + err.message);
     });
 }
