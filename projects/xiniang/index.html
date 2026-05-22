@@ -1605,7 +1605,7 @@ function adminLogout() {
  */
 async function forceSync() {
     try {
-        const res = await apiFetch('/api/admin/batch-sync', { method: 'POST' });
+        const res = await apiFetch('/api/sync_github', { method: 'POST' });
         const data = await res.json();
         if (data.success) {
             console.log(`✅ 强制同步完成：成功 ${data.synced_count} 个文件`);
