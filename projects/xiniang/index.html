@@ -1614,15 +1614,23 @@ function adminLogout() {
 
 /**
  * 强制同步（无论是否有待同步数据）
+ * 同步完成后自动刷新页面数据
  */
 async function forceSync() {
     try {
-        const res = await apiFetch('/api/sync_github', { method: 'POST' });
+        const res = await apiFetch('/api/sync/reload', { method: 'POST' });
         const data = await res.json();
         if (data.success) {
-            console.log(`✅ 强制同步完成：成功 ${data.synced_count} 个文件`);
+            console.log(`✅ 强制同步完成：成功拉取最新数据（${data.count || 0} 条记录）`);
+            // 同步成功后重新加载数据到页面
+            await loadData();
+            // 如果管理员中心开着，刷新列表
+            const reviewContent = document.getElementById('tabReviewContent');
+            if (reviewContent && reviewContent.classList.contains('active')) {
+                loadPendingList();
+            }
         } else {
-            console.log('ℹ️ 没有待同步的文件');
+            console.log('⚠️ 同步失败：' + (data.message || '未知错误'));
         }
     } catch (err) {
         console.error('❌ 强制同步失败：', err);
@@ -2852,6 +2860,35 @@ function loadRegionOptions() {
     }).catch(()=>{});
 }
 
+// ===== 从 API 重新加载数据（管理员模式下获取最新数据）=====
+async function reloadDataFromAPI() {
+    const isAdmin = !!localStorage.getItem(CONFIG.TOKEN_KEY || 'xiniang_admin_token');
+    if (!isAdmin) {
+        // 普通用户：重新从静态文件加载
+        loadData();
+        return;
+    }
+    // 管理员：从 API 读取最新数据（FC 本地 data.json 是最新的）
+    try {
+        const r = await apiFetch('/api/records');
+        const data = await r.json();
+        if (data.success) {
+            allData = data.data || [];
+            currentPage = 1;
+            loadStats();
+            if (viewMode === 'card') renderCards();
+            else renderTable();
+            console.log(`✅ 从 API 重新加载：${allData.length} 条记录`);
+        } else {
+            // API 失败，降级到静态文件
+            loadData();
+        }
+    } catch (err) {
+        console.error('❌ API 加载失败，降级到静态文件:', err);
+        loadData();
+    }
+}
+
 // ===== 加载数据 =====
 function loadData() {
     const region = document.getElementById('filterRegion').value;
@@ -3344,7 +3381,6 @@ function deleteRecord(id) {
     
     // 乐观 UI：立即从 allData 移除
     const oldData = [...allData]; // 保存旧数据用于回滚
-    const deletedRecord = allData.find(r => r.id === id);
     allData = allData.filter(r => r.id !== id);
     if (viewMode === 'card') renderCards();
     else renderTable();
@@ -3364,10 +3400,11 @@ function deleteRecord(id) {
         }
         return r.json();
     })
-    .then(res => {
+    .then(async res => {
         if (res.success) {
             console.log('✅ 删除成功，已保存到待同步队列');
-            // 可选：显示成功消息
+            // 删除成功后，强制从 API 重新加载最新数据（确保 UI 与后端一致）
+            await reloadDataFromAPI();
         } else {
             // 回滚 UI
             allData = oldData;
