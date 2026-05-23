@@ -8,7 +8,7 @@
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="icon" href="favicon.png" type="image/png" sizes="64x64">
 <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
-<script src="config.js"></script>
+<script src="config.js?v=' + CONFIG.VERSION + '"></script>
 <script>
 // 全局变量声明（先声明，等 DOM 加载后再初始化）
 let syncIntervalId = null;  // 定时同步的定时器 ID
@@ -81,7 +81,7 @@ function cycleStatus(recordId, currentStatus) {
     });
 }
 </script>
-<script src="config.js"></script>
+<script src="config.js?v=' + CONFIG.VERSION + '"></script>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 :root {
@@ -743,6 +743,7 @@ tr:hover { background: var(--primary-soft); }
         <button id="btnUserSubmit" onclick="openUserSubmitModal()">💌 我想上传资料</button>
         <button id="btnAdminLogin" onclick="openAdminLoginModal()">🔐 管理员登录</button>
         <button id="btnAdminCenter" style="display:none;" onclick="openAdminCenterModal()">⚙️ 管理员中心<span id="expiredBadge" class="nav-badge" style="display:none;"></span></button>
+        <button id="btnForceSync" style="display:none;" onclick="forceSync()">🔄 强制同步</button>
         <button id="btnAdminLogout" style="display:none;" onclick="adminLogout()">🚪 退出登录</button>
     </div>
 </div>
@@ -1431,18 +1432,24 @@ function onSubmitAgeChange() {
 
 // ===== 初始化 =====
 // ===== 强制同步（无论是否有待同步数据）
-async function forceSync() {
+async async function forceSync() {
+    const btn = document.getElementById('btnForceSync');
+    if (btn) btn.disabled = true;
     try {
         const res = await apiFetch('/api/sync/reload', { method: 'POST' });
         const data = await res.json();
         if (data.success) {
             console.log('Force sync done: ' + (data.count || 0) + ' records');
+            alert('同步成功，已刷新数据');
             loadData();
         } else {
-            console.log('Force sync failed: ' + (data.message || 'unknown'));
+            alert('同步失败: ' + (data.message || '未知错误'));
         }
     } catch (err) {
         console.error('Force sync error:', err);
+        alert('同步失败，请检查网络');
+    } finally {
+        if (btn) btn.disabled = false;
     }
 }
 
@@ -1478,7 +1485,8 @@ function showAdminUI() {
     document.getElementById('btnAdminCenter').style.display = 'inline-block';
     document.getElementById('btnAdminLogout').style.display = 'inline-block';
     document.getElementById('btnAddData').style.display = 'inline-block';  // 显示添加按钮
-    document.getElementById('btnExportExcel').style.display = 'inline-block';  // 显示导出
+    document.getElementById('btnExportExcel').style.display = 'inline-block';
+    document.getElementById('btnForceSync').style.display = 'inline-block';  // 显示导出
     document.getElementById('btnReimport').style.display = 'inline-block';    // 显示重新导入
     
     // 根据角色显示/隐藏标签
@@ -1496,7 +1504,8 @@ function hideAdminUI() {
     document.getElementById('btnAdminLogin').style.display = 'inline-block';
     document.getElementById('btnAdminCenter').style.display = 'none';
     document.getElementById('btnAdminLogout').style.display = 'none';
-    document.getElementById('btnAddData').style.display = 'none';  // 隐藏添加按钮
+    document.getElementById('btnAddData').style.display = 'none';
+    document.getElementById('btnForceSync').style.display = 'none';  // 隐藏添加按钮
     document.getElementById('btnExportExcel').style.display = 'none'; // 隐藏导出
     document.getElementById('btnReimport').style.display = 'none';  // 隐藏重新导入
 }
@@ -1764,7 +1773,6 @@ function loadAdminData() {
     const statusFilter = document.getElementById('adminFilterStatus') ? document.getElementById('adminFilterStatus').value : '';
     const keyword = document.getElementById('adminSearchInput') ? document.getElementById('adminSearchInput').value : '';
     
-    let url = apiUrl('/api/data?include_pending=true');
     const params = [];
     if (region) params.push(`region=${encodeURIComponent(region)}`);
     if (ageRange) params.push(`age_range=${encodeURIComponent(ageRange)}`);
@@ -1775,7 +1783,7 @@ function loadAdminData() {
     if (keyword) params.push(`keyword=${encodeURIComponent(keyword)}`);
     if (params.length) url += '&' + params.join('&');
     
-    fetch(url)
+    apiFetch('/api/data?include_pending=true' + (params.length ? '&' + params.join('&') : ''))
         .then(r => r.json())
         .then(res => {
             if (!res.success) {
