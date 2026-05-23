@@ -8,7 +8,7 @@
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="icon" href="favicon.png" type="image/png" sizes="64x64">
 <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
-<script src="config.js?v=34"></script>
+<script src="config.js?v=35"></script>
 <script>
 // 全局变量声明（先声明，等 DOM 加载后再初始化）
 let syncIntervalId = null;  // 定时同步的定时器 ID
@@ -1431,6 +1431,26 @@ function onSubmitAgeChange() {
 
 // ===== 初始化 =====
 // ===== 强制同步（无论是否有待同步数据）
+// Auto-sync debounce: after any admin mutation, wait 60s then silently force-sync
+let _autoSyncTimer = null;
+
+function triggerAutoSync() {
+    if (_autoSyncTimer) clearTimeout(_autoSyncTimer);
+    _autoSyncTimer = setTimeout(() => {
+        _autoSyncTimer = null;
+        apiFetch('/api/sync/reload', { method: 'POST' })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('🔄 Auto sync done: ' + (data.count || 0) + ' records');
+                    loadData();
+                }
+            })
+            .catch(err => console.error('❌ Auto sync failed:', err));
+    }, 60 * 1000);
+    console.log('⏰ Auto sync scheduled in 60s');
+}
+
 async function forceSync() {
     const btn = document.getElementById('btnForceSync');
     if (btn) btn.disabled = true;
@@ -1439,8 +1459,9 @@ async function forceSync() {
         const data = await res.json();
         if (data.success) {
             console.log('Force sync done: ' + (data.count || 0) + ' records');
-            alert('同步成功，已刷新数据');
+            // 同步成功，重新加载静态数据
             loadData();
+            alert('同步成功，已刷新数据');
         } else {
             alert('同步失败: ' + (data.message || '未知错误'));
         }
@@ -1678,6 +1699,7 @@ function approveRecord(id) {
             alert('审核通过！');
             loadPendingList();
             loadStats();
+            triggerAutoSync();
         } else {
             alert('操作失败：' + res.message);
         }
@@ -1707,6 +1729,7 @@ function confirmReject() {
             alert('已拒绝！');
             closeModal('rejectModal');
             loadPendingList();
+            triggerAutoSync();
         } else {
             alert('操作失败：' + res.message);
         }
@@ -2183,7 +2206,9 @@ function submitUserRecord() {
     })
     .then(r => r.json())
     .then(res => {
-        if (!res.success) {
+        if (res.success) {
+            triggerAutoSync();
+        } else {
             alert('提交失败：' + (res.message || '未知错误'));
             // 如果失败，关闭微信名片窗口
             closeModal('wechatCardModal');
@@ -3171,6 +3196,7 @@ function saveRecord() {
                 closeModal('editModal');
                 loadData(); loadStats();
                 alert(editingId ? '修改成功！' : '添加成功！');
+                triggerAutoSync();
             } else {
                 alert('操作失败：' + (res.message||'未知错误'));
             }
@@ -3205,8 +3231,9 @@ function deleteRecord(id) {
     .then(async res => {
         if (res.success) {
             console.log('✅ 删除成功，已保存到待同步队列');
-            // 删除成功后重新加载最新数据
-            await loadDataFromStatic();
+            // 乐观 UI already removed the record from allData, no need to reload from static
+            loadStats();
+            triggerAutoSync();
         } else {
             allData = oldData;
             if (viewMode === 'card') renderCards();
