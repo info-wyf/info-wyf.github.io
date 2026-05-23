@@ -15476,5 +15476,27 @@
     "review_time": "2026-05-21 09:09:46",
     "reviewer": "admin",
     "reject_reason": ""
+  },
+  {
+    "id": 676,
+    "region_group": "其他",
+    "gender": "男",
+    "birth_year": 1995,
+    "age_normalized": 31,
+    "zodiac": "猪",
+    "age_raw": "",
+    "height": "",
+    "weight": "",
+    "education": "",
+    "job": "",
+    "family_info": "",
+    "mate_requirement": "",
+    "notes": "",
+    "status": "approved",
+    "submit_time": "2026-05-23 08:33:24",
+    "upload_date": "2026-05-23",
+    "review_time": "2026-05-23 08:33:30",
+    "reviewer": "admin",
+    "reject_reason": ""
   }
 ]
