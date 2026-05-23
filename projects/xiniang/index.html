@@ -1442,13 +1442,25 @@ function triggerAutoSync() {
             .then(r => r.json())
             .then(data => {
                 if (data.success) {
-                    console.log('🔄 Auto sync done: ' + (data.count || 0) + ' records');
-                    loadData();
+                    const count = data.synced_count || 0;
+                    if (count > 0) {
+                        console.log('🔄 Auto sync done: ' + count + ' records synced');
+                        console.log('ℹ️ CDN cache may take 1-5 min to refresh. Data will show correctly on next page reload.');
+                    }
+                    // 不调用 loadData() — CDN 缓存未更新，会覆盖乐观 UI
+                    // 更新 force sync 按钮状态，提示用户已同步
+                    updateSyncStatus(count);
                 }
             })
             .catch(err => console.error('❌ Auto sync failed:', err));
     }, 60 * 1000);
-    console.log('⏰ Auto sync scheduled in 60s');
+}
+
+function updateSyncStatus(count) {
+    const btn = document.getElementById('btnForceSync');
+    if (!btn) return;
+    const now = new Date().toLocaleTimeString('zh-CN', {hour: '2-digit', minute:'2-digit'});
+    btn.title = '上次自动同步: ' + now + ' (' + count + ' 条)';
 }
 
 async function forceSync() {
@@ -1458,10 +1470,10 @@ async function forceSync() {
         const res = await apiFetch('/api/sync/reload', { method: 'POST' });
         const data = await res.json();
         if (data.success) {
-            console.log('Force sync done: ' + (data.count || 0) + ' records');
-            // 同步成功，重新加载静态数据
-            loadData();
-            alert('同步成功，已刷新数据');
+            console.log('Force sync done: ' + (data.synced_count || 0) + ' records');
+            updateSyncStatus(data.synced_count || 0);
+            // CDN 缓存需要 1-5 分钟刷新，不立即 loadData() 避免读到旧数据
+            alert(data.message + '\n\n⚠️ GitHub Pages CDN 缓存需要 1-5 分钟更新，请稍后刷新页面查看最新数据。');
         } else {
             alert('同步失败: ' + (data.message || '未知错误'));
         }
