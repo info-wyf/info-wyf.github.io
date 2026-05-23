@@ -8,7 +8,7 @@
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="icon" href="favicon.png" type="image/png" sizes="64x64">
 <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
-<script src="config.js?v=' + CONFIG.VERSION + '"></script>
+<script src="config.js?v=29"></script>
 <script>
 // 全局变量声明（先声明，等 DOM 加载后再初始化）
 let syncIntervalId = null;  // 定时同步的定时器 ID
@@ -81,7 +81,7 @@ function cycleStatus(recordId, currentStatus) {
     });
 }
 </script>
-<script src="config.js?v=' + CONFIG.VERSION + '"></script>
+<script src="config.js?v=29"></script>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 :root {
@@ -1432,7 +1432,7 @@ function onSubmitAgeChange() {
 
 // ===== 初始化 =====
 // ===== 强制同步（无论是否有待同步数据）
-async async function forceSync() {
+async function forceSync() {
     const btn = document.getElementById('btnForceSync');
     if (btn) btn.disabled = true;
     try {
