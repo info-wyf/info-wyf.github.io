@@ -1461,7 +1461,6 @@ window.onload = function() {
     checkLoginStatus();
     loadRegionOptionsForSubmit();
     // Mei 5 FenZhong ZiDong LaQu ZuiXin ShuJu
-    setInterval(forceSync, 5 * 60 * 1000);
 };
 
 // ===== 检查登录状态 =====
@@ -1781,7 +1780,6 @@ function loadAdminData() {
     if (education) params.push(`education=${encodeURIComponent(education)}`);
     if (statusFilter) params.push(`status=${encodeURIComponent(statusFilter)}`);
     if (keyword) params.push(`keyword=${encodeURIComponent(keyword)}`);
-    if (params.length) url += '&' + params.join('&');
     
     apiFetch('/api/data?include_pending=true' + (params.length ? '&' + params.join('&') : ''))
         .then(r => r.json())
