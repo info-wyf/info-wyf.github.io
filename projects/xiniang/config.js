@@ -24,5 +24,5 @@ const CONFIG = {
     PAGE_SIZE: 20,
 
     // 前端版本号（用于清除浏览器缓存）
-    VERSION: 'v29',
+    VERSION: 'v34',
 };
