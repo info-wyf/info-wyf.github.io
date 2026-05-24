@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>真太阳时计算器 · True Solar Time</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cinzel+Decorative:wght@400;700&family=JetBrains+Mono:wght@300;400;500&family=Noto+Serif+SC:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #07090f;
+  --surface:  rgba(255,255,255,0.03);
+  --gold:     #c8a76b;
+  --gold-hi:  #e8cc8c;
+  --gold-dim: rgba(200,167,107,0.25);
+  --text:     #e2d9c4;
+  --dim:      #7a7060;
+  --border:   rgba(200,167,107,0.16);
+  --bhi:      rgba(200,167,107,0.45);
+  --green:    #7ab88a;
+  --red:      #d97068;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Noto Serif SC',serif;
+  font-weight:300;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* ─── star canvas ─── */
+#stars{position:fixed;inset:0;z-index:0;pointer-events:none;}
+
+.wrap{
+  position:relative;z-index:1;
+  max-width:680px;
+  margin:0 auto;
+  padding:64px 24px 88px;
+}
+
+/* ─── header ─── */
+header{text-align:center;margin-bottom:60px;}
+
+.title-main{
+  font-family:'Cinzel Decorative',serif;
+  font-size:clamp(26px,5.5vw,42px);
+  font-weight:400;
+  color:var(--gold-hi);
+  letter-spacing:.08em;
+  text-shadow:0 0 48px rgba(200,167,107,.45);
+  line-height:1.2;
+}
+.title-sub{
+  margin-top:14px;
+  font-family:'Cinzel',serif;
+  font-size:11px;
+  letter-spacing:.3em;
+  color:var(--dim);
+  text-transform:uppercase;
+}
+.divider{
+  width:100px;height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  margin:18px auto;
+}
+
+/* ─── card ─── */
+.card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  padding:30px 28px;
+  margin-bottom:18px;
+  transition:border-color .3s;
+}
+.card:hover{border-color:var(--gold-dim);}
+
+.card-title{
+  font-family:'Cinzel',serif;
+  font-size:10px;
+  letter-spacing:.35em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:24px;
+  display:flex;align-items:center;gap:12px;
+}
+.card-title::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* ─── form ─── */
+.field{margin-bottom:18px;}
+.field label{
+  display:block;
+  font-size:11px;letter-spacing:.1em;
+  color:var(--dim);margin-bottom:7px;
+}
+.field input,
+.field select{
+  width:100%;
+  background:rgba(255,255,255,0.04);
+  border:1px solid var(--border);
+  color:var(--text);
+  padding:11px 14px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:13.5px;
+  outline:none;
+  transition:border-color .2s,box-shadow .2s;
+  -webkit-appearance:none;
+  border-radius:0;
+}
+.field input:focus,
+.field select:focus{
+  border-color:var(--gold-dim);
+  box-shadow:0 0 0 2px rgba(200,167,107,.07);
+}
+.field select option{background:#12151f;}
+
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+
+/* address row */
+.addr-wrap{position:relative;}
+.addr-wrap input{padding-right:46px;}
+.addr-btn{
+  position:absolute;right:12px;top:50%;transform:translateY(-50%);
+  background:none;border:none;
+  color:var(--gold);font-size:18px;
+  cursor:pointer;opacity:.65;transition:opacity .2s;padding:4px;
+}
+.addr-btn:hover{opacity:1;}
+.geocode-msg{
+  margin-top:7px;font-size:11.5px;min-height:18px;
+  font-family:'JetBrains Mono',monospace;
+  color:var(--dim);padding:0 2px;
+  line-height:1.5;
+}
+.geocode-msg.ok{color:var(--green);}
+.geocode-msg.err{color:var(--red);}
+
+/* ─── main button ─── */
+.btn-calc{
+  width:100%;padding:15px;margin-top:6px;
+  background:transparent;
+  border:1px solid var(--gold);
+  color:var(--gold-hi);
+  font-family:'Cinzel',serif;
+  font-size:12px;letter-spacing:.35em;text-transform:uppercase;
+  cursor:pointer;transition:all .3s;
+}
+.btn-calc:hover{background:rgba(200,167,107,.07);box-shadow:0 0 28px rgba(200,167,107,.14);}
+.btn-calc:active{transform:scale(.99);}
+.btn-calc:disabled{opacity:.35;cursor:not-allowed;}
+
+/* ─── result panel ─── */
+#results{display:none;}
+
+.result-hero{
+  text-align:center;
+  padding:44px 28px 36px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  margin-bottom:18px;
+  position:relative;overflow:hidden;
+}
+.result-hero::before{
+  content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:240px;height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+}
+.res-label{
+  font-family:'Cinzel',serif;font-size:10px;
+  letter-spacing:.35em;text-transform:uppercase;
+  color:var(--dim);margin-bottom:18px;
+}
+.res-time{
+  font-family:'JetBrains Mono',monospace;
+  font-size:clamp(40px,9vw,62px);font-weight:300;
+  color:var(--gold-hi);
+  text-shadow:0 0 50px rgba(200,167,107,.55);
+  letter-spacing:.05em;line-height:1;
+  margin-bottom:10px;
+}
+.res-date{
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px;color:var(--dim);letter-spacing:.08em;
+}
+
+/* ─── breakdown rows ─── */
+.brow{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:13px 0;
+  border-bottom:1px solid rgba(255,255,255,0.04);
+  gap:12px;
+}
+.brow:last-child{border-bottom:none;}
+.blabel{font-size:13px;color:var(--dim);flex-shrink:0;}
+.blabel em{
+  display:block;font-style:normal;
+  font-size:10px;color:#4a4438;
+  font-family:'Cinzel',serif;letter-spacing:.1em;
+  margin-top:2px;
+}
+.bval{
+  font-family:'JetBrains Mono',monospace;
+  font-size:13.5px;color:var(--text);
+  text-align:right;
+}
+.bval.pos{color:var(--green);}
+.bval.neg{color:var(--red);}
+.bval.hi{color:var(--gold-hi);font-size:16px;}
+
+/* formula box */
+.fbox{
+  background:rgba(0,0,0,.32);
+  border:1px solid rgba(255,255,255,.05);
+  padding:14px 18px;
+  margin-top:18px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px;color:var(--dim);
+  line-height:1.9;
+}
+.fbox .fx{color:var(--gold);}
+.fbox .fs{color:#3e3a32;font-size:11px;}
+
+/* ─── accuracy note ─── */
+.note-row{display:flex;gap:8px;align-items:flex-start;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+.note-row:last-child{border-bottom:none;}
+.note-dot{color:var(--gold);font-size:16px;line-height:1.4;flex-shrink:0;}
+.note-text{font-size:12.5px;color:var(--dim);line-height:1.7;}
+.note-text strong{color:var(--text);font-weight:400;}
+
+/* ─── footer ─── */
+footer{
+  text-align:center;padding-top:44px;
+  font-size:11px;color:#38342c;
+  font-family:'Cinzel',serif;letter-spacing:.12em;
+  line-height:2.2;
+}
+
+/* ─── animations ─── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+.fu{animation:fadeUp .45s ease both;}
+.fu1{animation-delay:.08s;}
+.fu2{animation-delay:.16s;}
+
+/* spinner */
+.spin{
+  display:inline-block;width:13px;height:13px;
+  border:1.5px solid rgba(200,167,107,.2);
+  border-top-color:var(--gold);
+  border-radius:50%;
+  animation:_spin .75s linear infinite;
+  vertical-align:middle;margin-right:6px;
+}
+@keyframes _spin{to{transform:rotate(360deg);}}
+
+@media(max-width:480px){
+  .wrap{padding:40px 16px 60px;}
+  .card{padding:22px 18px;}
+  .row2{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+
+<div class="wrap">
+
+  <header>
+    <div class="title-main">真太阳時</div>
+    <div class="divider"></div>
+    <div class="title-sub">True Solar Time · Apparent Solar Time Calculator</div>
+  </header>
+
+  <!-- ══ INPUT CARD ══ -->
+  <div class="card">
+    <div class="card-title">地点与时间</div>
+
+    <div class="field">
+      <label>地址（任意语言，任意地点）</label>
+      <div class="addr-wrap">
+        <input type="text" id="address"
+          placeholder="例：上海市黄浦区 / Tokyo Japan / London UK / New York City" />
+        <button class="addr-btn" onclick="doGeocode()" title="搜索坐标">⌖</button>
+      </div>
+      <div class="geocode-msg" id="geo-msg">输入地址后按 Enter 或点击右侧图标搜索坐标</div>
+    </div>
+
+    <div class="row2">
+      <div class="field">
+        <label>日期</label>
+        <input type="date" id="idate" />
+      </div>
+      <div class="field">
+        <label>时间（当地时间）</label>
+        <input type="time" id="itime" step="1" />
+      </div>
+    </div>
+
+    <div class="field">
+      <label>UTC 时差（所在时区）</label>
+      <select id="ioffset"></select>
+    </div>
+
+    <button class="btn-calc" id="calcbtn" onclick="doCalc()">推 算 真 太 阳 时</button>
+  </div>
+
+  <!-- ══ RESULTS ══ -->
+  <div id="results">
+
+    <!-- hero -->
+    <div class="result-hero fu">
+      <div class="res-label">True Solar Time · 真太阳时</div>
+      <div class="res-time" id="r-tst">--:--:--</div>
+      <div class="res-date" id="r-date">——</div>
+    </div>
+
+    <!-- breakdown -->
+    <div class="card fu fu1">
+      <div class="card-title">逐步推算</div>
+
+      <div class="brow">
+        <div class="blabel">地理坐标<em>Coordinates</em></div>
+        <div class="bval" id="r-coord">—</div>
+      </div>
+      <div class="brow">
+        <div class="blabel">当地时间（输入）<em>Local Time Input</em></div>
+        <div class="bval" id="r-local">—</div>
+      </div>
+      <div class="brow">
+        <div class="blabel">世界时 UTC<em>Universal Time</em></div>
+        <div class="bval" id="r-utc">—</div>
+      </div>
+      <div class="brow">
+        <div class="blabel">① 经度时差<em>Longitude Correction · lon × 4 min/°</em></div>
+        <div class="bval" id="r-lon">—</div>
+      </div>
+      <div class="brow">
+        <div class="blabel">② 均时差<em>Equation of Time · NOAA Algorithm</em></div>
+        <div class="bval" id="r-eqt">—</div>
+      </div>
+      <div class="brow">
+        <div class="blabel"><strong>真太阳时</strong><em>True Solar Time</em></div>
+        <div class="bval hi" id="r-tst2">—</div>
+      </div>
+
+      <div class="fbox">
+        <div>真太阳时 = UTC时间 + 经度×4分钟/° + 均时差</div>
+        <div id="r-formula" style="margin-top:3px;"></div>
+      </div>
+    </div>
+
+    <!-- reference -->
+    <div class="card fu fu2">
+      <div class="card-title">参考与验证</div>
+
+      <div class="brow">
+        <div class="blabel">地方平时（LMT）<em>Local Mean Time = UTC + lon×4</em></div>
+        <div class="bval" id="r-lmt">—</div>
+      </div>
+      <div class="brow">
+        <div class="blabel">与标准时的偏差<em>Diff from Clock Time</em></div>
+        <div class="bval" id="r-diff">—</div>
+      </div>
+      <div class="brow">
+        <div class="blabel">均时差数值<em>EqT in minutes (raw)</em></div>
+        <div class="bval" id="r-eqtraw">—</div>
+      </div>
+      <div class="brow">
+        <div class="blabel">太阳算法来源<em>Algorithm</em></div>
+        <div class="bval" style="font-size:12px;">NOAA Solar Calculator</div>
+      </div>
+      <div class="brow">
+        <div class="blabel">精度说明<em>Accuracy</em></div>
+        <div class="bval" style="font-size:12px;">误差 &lt; 30 秒（典型值 &lt; 10 秒）</div>
+      </div>
+    </div>
+
+    <!-- accuracy notes -->
+    <div class="card fu fu2">
+      <div class="card-title">算法说明</div>
+
+      <div class="note-row">
+        <div class="note-dot">·</div>
+        <div class="note-text">
+          <strong>均时差（Equation of Time）</strong>由地球公转轨道椭圆形（开普勒第二定律）
+          与黄赤交角共同产生，全年范围约 −14 min ～ +16 min，每年 4 次过零点。
+        </div>
+      </div>
+      <div class="note-row">
+        <div class="note-dot">·</div>
+        <div class="note-text">
+          <strong>经度时差</strong>：标准时区以整数小时为步长，而真正的太阳位置取决于精确经度。
+          每偏离标准子午线 1° 对应 4 分钟误差。
+        </div>
+      </div>
+      <div class="note-row">
+        <div class="note-dot">·</div>
+        <div class="note-text">
+          <strong>NOAA 算法</strong>基于 Jean Meeus《Astronomical Algorithms》，
+          使用儒略世纪数（T）计算太阳几何平黄经、平近点角、黄赤交角与均时差，
+          适用于 ±1000 年，误差 &lt; 0.5 分钟。
+        </div>
+      </div>
+      <div class="note-row">
+        <div class="note-dot">·</div>
+        <div class="note-text">
+          <strong>交叉验证建议</strong>：可与
+          <a href="https://gml.noaa.gov/grad/solcalc/" target="_blank"
+             style="color:var(--gold);text-decoration:none;">NOAA 官方计算器</a>、
+          timeanddate.com 的 Sun Calculator 对比，误差应在 1 分钟以内。
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /results -->
+
+  <footer>
+    <div>地址解析 · OpenStreetMap Nominatim</div>
+    <div>太阳历算 · NOAA Solar Calculator (Meeus)</div>
+    <div style="margin-top:6px;color:#28241e;">真太阳时计算器 · 司天历算</div>
+  </footer>
+
+</div><!-- /wrap -->
+
+<script>
+/* ════════════════════════════════════════════
+   STARS
+════════════════════════════════════════════ */
+(function(){
+  const c = document.getElementById('stars');
+  const ctx = c.getContext('2d');
+  function draw(){
+    c.width = innerWidth; c.height = innerHeight;
+    ctx.clearRect(0,0,c.width,c.height);
+    for(let i=0;i<180;i++){
+      const x=Math.random()*c.width, y=Math.random()*c.height;
+      const r=Math.random()*1.1+.1;
+      const a=Math.random()*.55+.1;
+      ctx.beginPath();
+      ctx.arc(x,y,r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(255,248,220,${a})`;
+      ctx.fill();
+    }
+  }
+  draw();
+  window.addEventListener('resize',draw);
+})();
+
+/* ════════════════════════════════════════════
+   STATE
+════════════════════════════════════════════ */
+let LAT=null, LON=null;
+
+/* ════════════════════════════════════════════
+   INIT
+════════════════════════════════════════════ */
+(function(){
+  const now = new Date();
+  const p = n => String(n).padStart(2,'0');
+  document.getElementById('idate').value =
+    `${now.getFullYear()}-${p(now.getMonth()+1)}-${p(now.getDate())}`;
+  document.getElementById('itime').value =
+    `${p(now.getHours())}:${p(now.getMinutes())}:${p(now.getSeconds())}`;
+
+  // Build UTC offset options
+  const sel = document.getElementById('ioffset');
+  const mins = [];
+  for(let h=-12;h<=14;h++){
+    for(const m of [0,30]){
+      if(h===14&&m>0) continue;
+      if(h===-12&&m>0) continue;
+      const total = h<0 ? h*60-m : h*60+m;
+      if(!mins.includes(total)) mins.push(total);
+    }
+  }
+  mins.sort((a,b)=>a-b).forEach(t=>{
+    const s = t>=0?'+':'-';
+    const a = Math.abs(t);
+    const hh = String(Math.floor(a/60)).padStart(2,'0');
+    const mm = String(a%60).padStart(2,'0');
+    const o = document.createElement('option');
+    o.value = t;
+    o.text = `UTC ${s}${hh}:${mm}`;
+    sel.appendChild(o);
+  });
+  // browser local offset
+  const localOff = -now.getTimezoneOffset(); // JS: negative of UTC+
+  let best=mins[0], bestD=Infinity;
+  mins.forEach(v=>{ const d=Math.abs(v-localOff); if(d<bestD){bestD=d;best=v;} });
+  sel.value = best;
+})();
+
+// Enter key on address
+document.getElementById('address').addEventListener('keydown',e=>{ if(e.key==='Enter') doGeocode(); });
+
+/* ════════════════════════════════════════════
+   GEOCODING  (Nominatim / OpenStreetMap)
+════════════════════════════════════════════ */
+async function doGeocode(){
+  const addr = document.getElementById('address').value.trim();
+  if(!addr) return;
+  const el = document.getElementById('geo-msg');
+  el.className='geocode-msg';
+  el.innerHTML='<span class="spin"></span>正在搜索坐标…';
+
+  try{
+    const url = 'https://nominatim.openstreetmap.org/search?q='
+      + encodeURIComponent(addr)
+      + '&format=json&limit=1&accept-language=zh,en';
+    const res = await fetch(url, {
+      headers:{'User-Agent':'TrueSolarTimeCalc/1.0 (github.io static page)'}
+    });
+    const data = await res.json();
+    if(!data||!data.length){
+      el.className='geocode-msg err';
+      el.textContent='未找到该地址，请尝试更详细的描述或英文地名';
+      LAT=LON=null; return;
+    }
+    LAT = parseFloat(data[0].lat);
+    LON = parseFloat(data[0].lon);
+    const name = data[0].display_name.split(',').slice(0,3).join(', ');
+    el.className='geocode-msg ok';
+    el.textContent = `✓  ${latStr(LAT)},  ${lonStr(LON)}  ·  ${name}`;
+
+    // Auto-suggest timezone by longitude
+    const suggest = Math.round(LON/15)*60;
+    const sel = document.getElementById('ioffset');
+    let best=null, bestD=Infinity;
+    Array.from(sel.options).forEach(o=>{
+      const d=Math.abs(parseInt(o.value)-suggest);
+      if(d<bestD){bestD=d;best=o.value;}
+    });
+    if(best!==null) sel.value=best;
+  } catch(e){
+    el.className='geocode-msg err';
+    el.textContent='网络请求失败，请检查网络连接';
+    LAT=LON=null;
+  }
+}
+
+/* ════════════════════════════════════════════
+   NOAA EQUATION OF TIME
+   Source: NOAA Solar Calculator, Jean Meeus
+   "Astronomical Algorithms" 2nd Ed.
+   Accuracy: < 0.5 min within ±1000 years
+════════════════════════════════════════════ */
+function equationOfTime(utcDate){
+  // Julian Day Number
+  const JD = utcDate.getTime()/86400000 + 2440587.5;
+  // Julian centuries from J2000.0
+  const T = (JD - 2451545.0) / 36525.0;
+
+  // Geometric mean longitude of Sun (°), mod 360
+  const L0 = ((280.46646 + T*(36000.76983 + T*0.0003032)) % 360 + 360) % 360;
+
+  // Geometric mean anomaly (°)
+  const M = 357.52911 + T*(35999.05029 - T*0.0001537);
+
+  // Eccentricity of Earth's orbit
+  const e = 0.016708634 - T*(0.000042037 + T*0.0000001267);
+
+  // Equation of center (°)
+  const Mrad = M * Math.PI/180;
+  const C = Math.sin(Mrad)    * (1.914602 - T*(0.004817 + T*0.000014))
+           + Math.sin(2*Mrad) * (0.019993 - T*0.000101)
+           + Math.sin(3*Mrad) * 0.000289;
+
+  // Sun's true longitude (°)
+  const sunLon = L0 + C;
+
+  // Omega: moon's ascending node (for nutation)
+  const omega    = 125.04 - 1934.136 * T;
+  const omegaRad = omega * Math.PI/180;
+
+  // Mean obliquity of ecliptic (°)
+  const eps0 = 23 + (26 + (21.448 - T*(46.8150 + T*(0.00059 - T*0.001813)))/60)/60;
+  const eps  = (eps0 + 0.00256*Math.cos(omegaRad)) * Math.PI/180; // corrected, in rad
+
+  // y = tan²(ε/2)
+  const y    = Math.pow(Math.tan(eps/2), 2);
+  const L0r  = L0 * Math.PI/180;
+
+  // Equation of Time (minutes)
+  const EqT = 4 * (180/Math.PI) * (
+      y * Math.sin(2*L0r)
+    - 2*e * Math.sin(Mrad)
+    + 4*e*y * Math.sin(Mrad) * Math.cos(2*L0r)
+    - 0.5*y*y * Math.sin(4*L0r)
+    - 1.25*e*e * Math.sin(2*Mrad)
+  );
+
+  return EqT; // minutes
+}
+
+/* ════════════════════════════════════════════
+   CALCULATION
+════════════════════════════════════════════ */
+function doCalc(){
+  if(LAT===null||LON===null){
+    alert('请先搜索并确认地址坐标（点击 ⌖ 图标或按 Enter）');
+    return;
+  }
+  const dateStr = document.getElementById('idate').value;
+  const timeStr = document.getElementById('itime').value || '00:00:00';
+  const offsetMin = parseInt(document.getElementById('ioffset').value); // UTC offset in minutes
+
+  if(!dateStr){ alert('请输入日期'); return; }
+
+  const [yr,mo,dy] = dateStr.split('-').map(Number);
+  const tp = timeStr.split(':').map(Number);
+  const hr = tp[0]||0, mn = tp[1]||0, sc = tp[2]||0;
+
+  // Convert local → UTC
+  const localMs = Date.UTC(yr, mo-1, dy, hr, mn, sc);
+  const utcMs   = localMs - offsetMin*60000;
+  const utcDate = new Date(utcMs);
+
+  // UTC time of day in decimal minutes
+  const utcMins = utcDate.getUTCHours()*60
+                + utcDate.getUTCMinutes()
+                + utcDate.getUTCSeconds()/60;
+
+  // Equation of Time (minutes)
+  const eqT = equationOfTime(utcDate);
+
+  // Longitude correction: 4 min per degree east
+  const lonCorr = LON * 4;
+
+  // True Solar Time (minutes, normalized to 0-1440)
+  const tstRaw = utcMins + lonCorr + eqT;
+  const tst    = ((tstRaw % 1440) + 1440) % 1440;
+
+  // Local Mean Time (no EqT, just lon correction)
+  const lmt = ((utcMins + lonCorr % 1440 + 1440) % 1440);
+
+  // Diff from input clock time
+  const inputMins = hr*60 + mn + sc/60;
+  let diff = tst - inputMins;
+  if(diff >  720) diff -= 1440;
+  if(diff < -720) diff += 1440;
+
+  /* ── render ── */
+  document.getElementById('r-tst').textContent  = minsToHMS(tst);
+  document.getElementById('r-tst2').textContent = minsToHMS(tst);
+  document.getElementById('r-date').textContent =
+    `${dateStr}  ·  UTC ${utcDate.toISOString().slice(0,10)} ${pad2(utcDate.getUTCHours())}:${pad2(utcDate.getUTCMinutes())}:${pad2(utcDate.getUTCSeconds())}`;
+
+  document.getElementById('r-coord').textContent  = `${latStr(LAT)}   ${lonStr(LON)}`;
+  document.getElementById('r-local').textContent  = `${dateStr}  ${timeStr}`;
+  document.getElementById('r-utc').textContent    =
+    `${utcDate.toISOString().slice(0,10)}  ${pad2(utcDate.getUTCHours())}:${pad2(utcDate.getUTCMinutes())}:${pad2(utcDate.getUTCSeconds())}`;
+
+  setSignedVal('r-lon', lonCorr);
+  setSignedVal('r-eqt', eqT);
+  document.getElementById('r-lmt').textContent = minsToHMS(lmt);
+  document.getElementById('r-eqtraw').textContent = eqT.toFixed(4) + ' 分钟';
+
+  // Diff from clock
+  const diffEl = document.getElementById('r-diff');
+  if(Math.abs(diff)<0.08){
+    diffEl.textContent = '≈ 0  (真太阳时与标准时几乎相同)';
+    diffEl.className   = 'bval';
+  } else {
+    diffEl.textContent = `真太阳时比标准时${diff>0?'快':'慢'} ${fmtMinSec(Math.abs(diff))}`;
+    diffEl.className   = 'bval ' + (diff>0?'pos':'neg');
+  }
+
+  // Formula
+  const sL = lonCorr>=0?'+':'-';
+  const sE = eqT>=0?'+':'-';
+  document.getElementById('r-formula').innerHTML =
+    `<span class="fx">${utcMins.toFixed(3)} ${sL} ${Math.abs(lonCorr).toFixed(3)} ${sE} ${Math.abs(eqT).toFixed(3)} = ${tst.toFixed(3)} min</span>`
+   +`<span class="fs">  (UTC分钟 + 经度修正 + 均时差 = 真太阳时分钟数)</span>`;
+
+  // Show
+  const r = document.getElementById('results');
+  r.style.display='block';
+  setTimeout(()=>r.scrollIntoView({behavior:'smooth',block:'start'}),50);
+}
+
+/* ════════════════════════════════════════════
+   HELPERS
+════════════════════════════════════════════ */
+function minsToHMS(totalMins){
+  const t = ((totalMins%1440)+1440)%1440;
+  const h = Math.floor(t/60);
+  const m = Math.floor(t%60);
+  const s = Math.round((t%1)*60);
+  return `${pad2(h)}:${pad2(m)}:${pad2(s)}`;
+}
+
+function fmtMinSec(mins){
+  const m = Math.floor(mins);
+  const s = Math.round((mins-m)*60);
+  return `${m}分${pad2(s)}秒`;
+}
+
+function setSignedVal(id, val){
+  const el = document.getElementById(id);
+  el.textContent = (val>=0?'+':'')+fmtMinSec(Math.abs(val))
+                   + (val<0?' (减去)':'');
+  el.className   = 'bval ' + (val>=0?'pos':'neg');
+}
+
+function pad2(n){ return String(n).padStart(2,'0'); }
+
+function latStr(v){
+  return v>=0 ? v.toFixed(5)+'° N' : Math.abs(v).toFixed(5)+'° S';
+}
+function lonStr(v){
+  return v>=0 ? v.toFixed(5)+'° E' : Math.abs(v).toFixed(5)+'° W';
+}
+</script>
+</body>
+</html>
