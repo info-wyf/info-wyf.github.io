@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="zh" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>八字速配 · 甲申日主</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root[data-theme="dark"] {
+    --bg: #0d0d0d;
+    --bg2: #1a1a1a;
+    --bg3: #242424;
+    --border: rgba(139,115,85,0.3);
+    --border2: rgba(139,115,85,0.15);
+    --text: #e8dcc8;
+    --text2: #c8b89a;
+    --text3: #7f8c8d;
+    --gold: #d4a017;
+    --gold2: #8b7355;
+    --toggle-bg: #2a2a2a;
+    --toggle-icon: '☀️';
+    --input-bg: #141414;
+    --card-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  }
+  :root[data-theme="light"] {
+    --bg: #f5f0e8;
+    --bg2: #ffffff;
+    --bg3: #faf7f2;
+    --border: rgba(139,115,85,0.35);
+    --border2: rgba(139,115,85,0.2);
+    --text: #2c1f0e;
+    --text2: #5a3e1b;
+    --text3: #9e8870;
+    --gold: #b8860b;
+    --gold2: #8b6914;
+    --toggle-bg: #e8dcc8;
+    --toggle-icon: '🌙';
+    --input-bg: #f0ebe0;
+    --card-shadow: 0 4px 20px rgba(139,115,85,0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Serif SC', 'STSong', serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px 60px;
+    transition: background 0.35s, color 0.35s;
+  }
+
+  .container { width: 100%; max-width: 380px; }
+
+  /* Theme toggle */
+  .toggle-wrap {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 32px;
+  }
+  .toggle-btn {
+    background: var(--toggle-bg);
+    border: 1px solid var(--border);
+    border-radius: 30px;
+    padding: 6px 16px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text3);
+    letter-spacing: 1px;
+    transition: all 0.3s;
+    font-family: inherit;
+  }
+  .toggle-btn:hover { border-color: var(--gold2); color: var(--gold2); }
+
+  /* Header */
+  .header { text-align: center; margin-bottom: 36px; }
+  .header-sub {
+    font-size: 11px;
+    letter-spacing: 6px;
+    color: var(--gold2);
+    margin-bottom: 10px;
+  }
+  .header-title {
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: 5px;
+    color: var(--text);
+  }
+  .header-line {
+    width: 60px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold2), transparent);
+    margin: 14px auto 0;
+  }
+
+  /* Your pillar card */
+  .your-card {
+    background: linear-gradient(135deg, var(--bg2), var(--bg3));
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 24px;
+    margin-bottom: 28px;
+    text-align: center;
+    box-shadow: var(--card-shadow);
+  }
+  .your-card-label {
+    font-size: 11px;
+    color: var(--gold2);
+    letter-spacing: 4px;
+    margin-bottom: 10px;
+  }
+  .your-pillars {
+    font-size: 28px;
+    letter-spacing: 10px;
+    color: var(--gold);
+    margin-bottom: 4px;
+  }
+  .your-sub { font-size: 11px; color: var(--text3); }
+
+  /* Input */
+  .input-label {
+    font-size: 12px;
+    color: var(--gold2);
+    letter-spacing: 3px;
+    margin-bottom: 10px;
+  }
+  input[type="date"] {
+    width: 100%;
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 15px;
+    color: var(--text);
+    outline: none;
+    font-family: inherit;
+    margin-bottom: 16px;
+    transition: border-color 0.3s, background 0.35s;
+  }
+  input[type="date"]:focus { border-color: var(--gold2); }
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: var(--cal-filter, invert(0.5));
+    cursor: pointer;
+  }
+  :root[data-theme="light"] input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: none;
+  }
+
+  .btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--gold2), var(--gold));
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    color: #fff;
+    font-weight: 700;
+    letter-spacing: 4px;
+    cursor: pointer;
+    font-family: inherit;
+    margin-bottom: 28px;
+    transition: opacity 0.2s, transform 0.15s;
+    box-shadow: 0 4px 15px rgba(212,160,23,0.25);
+  }
+  :root[data-theme="light"] .btn { color: #1a0e00; }
+  .btn:hover { opacity: 0.88; transform: translateY(-1px); }
+  .btn:active { transform: translateY(0); }
+
+  /* Result */
+  #result { display: none; animation: fadeUp 0.4s ease; }
+  #result.show { display: block; }
+
+  .pillar-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px 24px;
+    margin-bottom: 14px;
+    text-align: center;
+    box-shadow: var(--card-shadow);
+  }
+  .pillar-card-label {
+    font-size: 11px;
+    color: var(--gold2);
+    letter-spacing: 3px;
+    margin-bottom: 14px;
+  }
+  .pillar-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+  }
+  .pillar-item { text-align: center; }
+  .pillar-chars {
+    font-size: 30px;
+    letter-spacing: 6px;
+    color: var(--text);
+  }
+  .pillar-chars.year { color: var(--gold2); }
+  .pillar-divider {
+    width: 1px;
+    height: 40px;
+    background: var(--border2);
+  }
+  .pillar-sub { font-size: 11px; color: var(--text3); margin-top: 5px; }
+
+  .score-card {
+    background: var(--bg2);
+    border-radius: 14px;
+    padding: 22px 24px;
+    margin-bottom: 14px;
+    text-align: center;
+    box-shadow: var(--card-shadow);
+    border: 1px solid var(--border2);
+  }
+  .score-label { font-size: 11px; color: var(--gold2); letter-spacing: 3px; margin-bottom: 12px; }
+  .score-emoji { font-size: 44px; margin-bottom: 6px; line-height: 1; }
+  .score-text { font-size: 22px; font-weight: 700; letter-spacing: 4px; }
+
+  .detail-cards { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+  .detail-card {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    padding: 15px 18px;
+    box-shadow: var(--card-shadow);
+    transition: background 0.35s;
+  }
+  .detail-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .detail-title { font-size: 12px; color: var(--gold2); letter-spacing: 2px; }
+  .detail-tag {
+    font-size: 12px;
+    padding: 2px 11px;
+    border-radius: 20px;
+    border-width: 1px;
+    border-style: solid;
+  }
+  .detail-desc { font-size: 13px; color: var(--text2); line-height: 1.75; margin-bottom: 4px; }
+  .detail-sub { font-size: 11px; color: var(--text3); }
+
+  .note {
+    padding: 14px 16px;
+    background: rgba(139,115,85,0.06);
+    border-radius: 10px;
+    border-left: 2px solid var(--border);
+    font-size: 12px;
+    color: var(--text3);
+    line-height: 1.8;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+  }
+  .shake { animation: shake 0.4s ease !important; border-color: #c0392b !important; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Toggle -->
+  <div class="toggle-wrap">
+    <button class="toggle-btn" onclick="toggleTheme()" id="toggleBtn">☀️ 明亮</button>
+  </div>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-sub">甲申日主专用</div>
+    <div class="header-title">八字速配</div>
+    <div class="header-line"></div>
+  </div>
+
+  <!-- Your pillar -->
+  <div class="your-card">
+    <div class="your-card-label">你的日柱</div>
+    <div class="your-pillars">甲 申</div>
+    <div class="your-sub">甲木日主 · 申金日支</div>
+  </div>
+
+  <!-- Input -->
+  <div class="input-label">对方生日</div>
+  <input type="date" id="dateInput" />
+  <button class="btn" onclick="analyze()">推 算</button>
+
+  <!-- Result -->
+  <div id="result">
+    <div class="pillar-card">
+      <div class="pillar-card-label">对方日柱 · 年柱</div>
+      <div class="pillar-row">
+        <div class="pillar-item">
+          <div class="pillar-chars" id="dayPillarText">—</div>
+          <div class="pillar-sub">日柱</div>
+        </div>
+        <div class="pillar-divider"></div>
+        <div class="pillar-item">
+          <div class="pillar-chars year" id="yearPillarText">—</div>
+          <div class="pillar-sub">年柱</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="score-card" id="scoreCard">
+      <div class="score-label">综合缘分</div>
+      <div class="score-emoji" id="scoreEmoji">—</div>
+      <div class="score-text" id="scoreText">—</div>
+    </div>
+
+    <div class="detail-cards">
+      <div class="detail-card">
+        <div class="detail-top">
+          <span class="detail-title">日支关系</span>
+          <span class="detail-tag" id="tag1">—</span>
+        </div>
+        <div class="detail-desc" id="desc1">—</div>
+        <div class="detail-sub" id="sub1">—</div>
+      </div>
+
+      <div class="detail-card">
+        <div class="detail-top">
+          <span class="detail-title">财星检验</span>
+          <span class="detail-tag" id="tag2">—</span>
+        </div>
+        <div class="detail-desc" id="desc2">—</div>
+        <div class="detail-sub">甲木财星 = 土</div>
+      </div>
+
+      <div class="detail-card">
+        <div class="detail-top">
+          <span class="detail-title">日干五行</span>
+          <span class="detail-tag" id="tag3">—</span>
+        </div>
+        <div class="detail-desc" id="desc3">—</div>
+        <div class="detail-sub" id="sub3">—</div>
+      </div>
+    </div>
+
+    <div class="note">
+      速查仅看日柱，完整合婚需四柱 + 大运 + 流年综合判断。
+    </div>
+  </div>
+</div>
+
+<script>
+const STEMS   = ['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
+const BRANCHES= ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+
+const STEM_EL   = {甲:'木',乙:'木',丙:'火',丁:'火',戊:'土',己:'土',庚:'金',辛:'金',壬:'水',癸:'水'};
+const BRANCH_EL = {子:'水',丑:'土',寅:'木',卯:'木',辰:'土',巳:'火',午:'火',未:'土',申:'金',酉:'金',戌:'土',亥:'水'};
+
+// Anchor: 2000-01-07 = 甲子日 index 0
+const ANCHOR = new Date(2000,0,7).getTime();
+
+function getDayPillar(dateStr) {
+  const [y,m,d] = dateStr.split('-').map(Number);
+  const t = new Date(y,m-1,d).getTime();
+  const diff = Math.round((t - ANCHOR) / 86400000);
+  const idx = ((diff % 60) + 60) % 60;
+  return { stem: STEMS[idx%10], branch: BRANCHES[idx%12] };
+}
+
+function getYearPillar(year) {
+  return {
+    stem:   STEMS[((year-4)%10+10)%10],
+    branch: BRANCHES[((year-4)%12+12)%12]
+  };
+}
+
+const BRANCH_COMPAT = {
+  '巳': { score:3, tag:'六合 ⭐⭐⭐', color:'#27ae60', desc:'巳申六合，最强天然吸引力' },
+  '子': { score:2, tag:'三合 ⭐⭐',   color:'#27ae60', desc:'申子辰三合，和谐稳定' },
+  '辰': { score:2, tag:'三合 ⭐⭐',   color:'#27ae60', desc:'申子辰三合，和谐稳定' },
+  '酉': { score:2, tag:'半合 ⭐⭐',   color:'#16a085', desc:'申酉半合，顺畅默契' },
+  '申': { score:1, tag:'比肩 ⭐',    color:'#d4a017', desc:'同日支，理解但易争强' },
+  '寅': { score:-2,tag:'相冲 ❌',    color:'#c0392b', desc:'寅申相冲，摩擦大、易分离' },
+};
+
+const SCORE_TABLE = [
+  { min:4,  emoji:'🔥', label:'极佳', color:'#c0392b' },
+  { min:3,  emoji:'✅', label:'很好', color:'#16a085' },
+  { min:2,  emoji:'👍', label:'不错', color:'#27ae60' },
+  { min:1,  emoji:'～', label:'一般', color:'#d4a017' },
+  { min:0,  emoji:'○', label:'普通', color:'#7f8c8d' },
+  { min:-99,emoji:'⚠️',label:'相冲', color:'#c0392b' },
+];
+
+const STEM_DESC = {
+  '木':'同为木，性格相近，容易理解彼此',
+  '火':'火泄木气，活泼外向，对你是食伤星',
+  '土':'土是你的财星，踏实型，感情基础稳',
+  '金':'金克木，是你的官星/七杀，有张力也有吸引力',
+  '水':'水生木，滋养型，对你是印星，有帮助',
+};
+
+function setTag(id, text, color) {
+  const el = document.getElementById(id);
+  el.textContent = text;
+  el.style.color = color;
+  el.style.background = color + '18';
+  el.style.borderColor = color + '55';
+}
+
+function analyze() {
+  const inp = document.getElementById('dateInput');
+  if (!inp.value) {
+    inp.classList.add('shake');
+    setTimeout(() => inp.classList.remove('shake'), 500);
+    return;
+  }
+
+  const dateStr = inp.value;
+  const year = +dateStr.split('-')[0];
+  const day = getDayPillar(dateStr);
+  const yr  = getYearPillar(year);
+
+  const compat = BRANCH_COMPAT[day.branch] || { score:0, tag:'无特殊', color:'#7f8c8d', desc:'与申无特殊关系，普通缘分' };
+
+  const isTuBranch = ['丑','辰','未','戌'].includes(day.branch);
+  const isTuStem   = ['戊','己'].includes(day.stem);
+  const hasCai = isTuBranch || isTuStem;
+
+  let score = compat.score + (hasCai ? 1 : 0);
+  const lbl = SCORE_TABLE.find(s => score >= s.min);
+
+  // Pillars
+  document.getElementById('dayPillarText').textContent = day.stem + day.branch;
+  document.getElementById('yearPillarText').textContent = yr.stem + yr.branch;
+
+  // Score
+  document.getElementById('scoreEmoji').textContent = lbl.emoji;
+  document.getElementById('scoreText').textContent = lbl.label;
+  document.getElementById('scoreText').style.color = lbl.color;
+  document.getElementById('scoreCard').style.borderColor = lbl.color + '50';
+
+  // Card 1: 日支
+  setTag('tag1', compat.tag, compat.color);
+  document.getElementById('desc1').textContent = compat.desc;
+  document.getElementById('sub1').textContent  = '你申 × 对方' + day.branch;
+
+  // Card 2: 财星
+  const c2color = hasCai ? '#27ae60' : '#7f8c8d';
+  const c2tag   = hasCai ? '有土 ✅' : '无土';
+  const c2desc  = hasCai
+    ? '对方' + (isTuStem?'日干':'') + (isTuBranch?'日支':'') + '带土，是你的财星类型'
+    : '日柱无土，财星感弱，需再看其他柱位';
+  setTag('tag2', c2tag, c2color);
+  document.getElementById('desc2').textContent = c2desc;
+
+  // Card 3: 五行
+  const stemEl = STEM_EL[day.stem];
+  const brEl   = BRANCH_EL[day.branch];
+  setTag('tag3', stemEl, '#8b7355');
+  document.getElementById('desc3').textContent = STEM_DESC[stemEl] || '—';
+  document.getElementById('sub3').textContent  = day.stem + day.branch + ' · ' + stemEl + brEl;
+
+  const res = document.getElementById('result');
+  res.classList.remove('show');
+  void res.offsetWidth; // reflow for re-animation
+  res.classList.add('show');
+}
+
+function toggleTheme() {
+  const html = document.documentElement;
+  const btn  = document.getElementById('toggleBtn');
+  if (html.getAttribute('data-theme') === 'dark') {
+    html.setAttribute('data-theme','light');
+    btn.textContent = '🌙 暗色';
+  } else {
+    html.setAttribute('data-theme','dark');
+    btn.textContent = '☀️ 明亮';
+  }
+}
+
+// Enter key support
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter') analyze();
+});
+</script>
+</body>
+</html>
