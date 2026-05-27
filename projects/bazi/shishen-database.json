@@ -5,20 +5,20 @@
   },
   "ten_gods": {
     "正印": {
-      "nature": "温和谦虚",
+      "nature": "温和谦虚，人间磨拳",
       "category": "印星"
     },
     "偏印": {
-      "nature": "小众怪异",
+      "nature": "小众怪异，学习玄学",
       "alias": "枭神",
       "category": "印星"
     },
     "正官": {
-      "nature": "严肃认真",
+      "nature": "严肃认真，社会干事",
       "category": "官杀"
     },
     "七杀": {
-      "nature": "霸道果断",
+      "nature": "霸道果断，世间历练",
       "category": "官杀"
     },
     "正财": {
@@ -26,23 +26,23 @@
       "category": "财星"
     },
     "偏财": {
-      "nature": "豪放慷慨",
+      "nature": "豪放慷慨，成就富豪",
       "category": "财星"
     },
     "食神": {
-      "nature": "厚道随性",
+      "nature": "厚道随性，世上享福",
       "category": "食伤"
     },
     "伤官": {
-      "nature": "尖锐高傲",
+      "nature": "尖锐高傲,人前展现",
       "category": "食伤"
     },
     "比肩": {
-      "nature": "自信性刚",
+      "nature": "自信性刚，成就犟种",
       "category": "比劫"
     },
     "劫财": {
-      "nature": "性急爱争",
+      "nature": "性急爱争，合作共事",
       "category": "比劫"
     }
   },
