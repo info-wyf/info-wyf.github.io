@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NCEA Credits and University Entrance Guide</title>
+  <style>
+    :root {
+      --ink: #172026;
+      --muted: #586670;
+      --line: #d7dee3;
+      --paper: #fbfcfd;
+      --white: #ffffff;
+      --teal: #0f766e;
+      --teal-soft: #d9f3ef;
+      --red: #b6422d;
+      --red-soft: #ffe0d8;
+      --gold: #9a6b00;
+      --gold-soft: #fff1bf;
+      --blue: #2864a8;
+      --blue-soft: #e4eef9;
+      --shadow: 0 18px 45px rgba(23, 32, 38, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+      color: var(--ink);
+      background: var(--paper);
+      line-height: 1.55;
+    }
+    a { color: var(--blue); }
+    .shell { width: min(1180px, calc(100% - 32px)); margin: 0 auto; }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(251, 252, 253, 0.94);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(12px);
+    }
+    .topbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 64px;
+      gap: 16px;
+    }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; }
+    .mark {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border: 2px solid var(--ink);
+      background: var(--gold-soft);
+      font-weight: 900;
+    }
+    nav { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+    nav a, .plain-link {
+      min-height: 34px;
+      padding: 7px 10px;
+      border-radius: 6px;
+      color: var(--ink);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 800;
+    }
+    nav a:hover { background: var(--blue-soft); }
+    .plain-link { border: 1px solid var(--line); background: var(--blue-soft); }
+    .hero {
+      min-height: calc(100vh - 64px);
+      display: grid;
+      align-items: center;
+      padding: 48px 0 28px;
+      border-bottom: 1px solid var(--line);
+      background:
+        linear-gradient(90deg, rgba(217, 243, 239, 0.72) 0 34%, transparent 34% 100%),
+        linear-gradient(180deg, #ffffff 0%, #f5f8fa 100%);
+    }
+    .hero-grid, .split {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(360px, 0.86fr);
+      gap: 36px;
+      align-items: center;
+    }
+    .eyebrow {
+      margin: 0 0 12px;
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--teal);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    h1 { margin: 0; max-width: 800px; font-size: clamp(34px, 5vw, 66px); line-height: 1.05; }
+    h2 { margin: 0; font-size: clamp(28px, 3.4vw, 44px); line-height: 1.1; }
+    h3 { margin: 0 0 10px; font-size: 22px; line-height: 1.2; }
+    .lead { margin: 22px 0 0; max-width: 780px; color: var(--muted); font-size: clamp(17px, 2vw, 21px); }
+    .answer-strip, .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 28px; }
+    .answer, .card, .myth, .step, .checker {
+      padding: 20px;
+      border: 1px solid var(--line);
+      background: var(--white);
+      border-radius: 8px;
+    }
+    .answer { min-height: 128px; box-shadow: var(--shadow); }
+    .answer strong { display: block; font-size: 30px; line-height: 1.05; margin-bottom: 8px; }
+    .answer span, .section-head p, .card p, footer { color: var(--muted); }
+    .answer.teal { border-top: 6px solid var(--teal); }
+    .answer.red { border-top: 6px solid var(--red); }
+    .answer.gold { border-top: 6px solid var(--gold); }
+    .visual { padding: 24px; border: 1px solid var(--line); border-radius: 8px; background: var(--white); box-shadow: var(--shadow); }
+    .ladder { display: grid; gap: 14px; }
+    .rung { display: grid; grid-template-columns: 92px 1fr 66px; gap: 12px; align-items: center; }
+    .label, .credits { font-weight: 900; }
+    .credits { text-align: right; }
+    .bar { height: 32px; border: 1px solid var(--line); background: #eef3f5; overflow: hidden; border-radius: 6px; }
+    .fill { height: 100%; display: block; background: var(--teal); }
+    .rung:nth-child(2) .fill { background: var(--blue); }
+    .rung:nth-child(3) .fill { background: var(--red); }
+    .coreq { margin-top: 22px; padding: 16px; border-radius: 8px; background: var(--gold-soft); border: 1px solid #ecd47c; font-weight: 800; }
+    section { padding: 62px 0; border-bottom: 1px solid var(--line); }
+    .section-head { display: grid; grid-template-columns: minmax(0, 0.72fr) minmax(320px, 1fr); gap: 30px; align-items: end; margin-bottom: 28px; }
+    .tag { display: inline-flex; align-items: center; min-height: 30px; padding: 4px 9px; border-radius: 6px; font-weight: 800; font-size: 13px; margin-bottom: 14px; }
+    .tag.teal { background: var(--teal-soft); color: #07544e; }
+    .tag.blue { background: var(--blue-soft); color: #1e4f83; }
+    .tag.red { background: var(--red-soft); color: #8c2b1c; }
+    .tag.gold { background: var(--gold-soft); color: #6f4d00; }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); background: var(--white); border-radius: 8px; }
+    table { width: 100%; border-collapse: collapse; min-width: 760px; }
+    th, td { padding: 15px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { background: #eef3f5; font-size: 14px; text-transform: uppercase; letter-spacing: 0.04em; }
+    tr:last-child td { border-bottom: 0; }
+    .split { grid-template-columns: minmax(0, 1fr) minmax(340px, 0.8fr); align-items: start; }
+    .steps, .myth-grid { display: grid; gap: 12px; }
+    .myth-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    .step { position: relative; padding-left: 54px; }
+    .step::before {
+      counter-increment: step;
+      content: counter(step);
+      position: absolute;
+      left: 16px;
+      top: 17px;
+      display: grid;
+      place-items: center;
+      width: 26px;
+      height: 26px;
+      background: var(--ink);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 900;
+      border-radius: 50%;
+    }
+    .steps { counter-reset: step; }
+    .fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    label { display: grid; gap: 6px; font-size: 13px; font-weight: 800; color: var(--muted); }
+    input, select { width: 100%; min-height: 42px; padding: 8px 10px; border: 1px solid #b9c5cc; border-radius: 6px; background: #fff; color: var(--ink); font: inherit; font-weight: 700; }
+    .result { margin-top: 16px; padding: 16px; border-radius: 8px; background: var(--blue-soft); border: 1px solid #b8d0eb; }
+    .result strong { display: block; margin-bottom: 6px; }
+    .source-list { columns: 2; column-gap: 28px; padding-left: 20px; }
+    .source-list li { break-inside: avoid; margin-bottom: 12px; }
+    footer { padding: 30px 0 42px; font-size: 14px; }
+    @media (max-width: 900px) {
+      .hero-grid, .section-head, .split, .answer-strip, .grid-3, .myth-grid { grid-template-columns: 1fr; }
+      .hero { min-height: auto; padding-top: 34px; }
+      nav { display: none; }
+    }
+    @media (max-width: 560px) {
+      .shell { width: min(100% - 22px, 1180px); }
+      .fields { grid-template-columns: 1fr; }
+      .rung { grid-template-columns: 74px 1fr 56px; }
+      .source-list { columns: 1; }
+      h1 { font-size: 34px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <div class="brand"><span class="mark">N</span><span>NCEA / UE Guide</span></div>
+      <nav aria-label="Main sections">
+        <a href="#levels">Levels</a>
+        <a href="#ue">UE</a>
+        <a href="#checker">Checker</a>
+        <a href="#myths">Myths</a>
+        <a href="#sources">Sources</a>
+      </nav>
+      <a class="plain-link" href="index.html">Chinese / English switcher</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="shell hero-grid">
+        <div>
+          <p class="eyebrow">For families learning New Zealand senior secondary</p>
+          <h1>How many NCEA credits do students need, and what is UE?</h1>
+          <p class="lead">A clear guide to NCEA Levels 1, 2 and 3, and University Entrance for Year 11-13 students: start with the answer, then read the rules.</p>
+          <div class="answer-strip">
+            <div class="answer teal"><strong>60 + 20</strong><span>Each NCEA certificate needs 80 credits: 60 main credits plus the 20-credit literacy/numeracy or te reo matatini/pāngarau requirement, which only needs to be met once.</span></div>
+            <div class="answer red"><strong>Level 3 + UE</strong><span>New Zealand university entry normally starts with UE: NCEA Level 3, three approved subjects, UE literacy and UE numeracy.</span></div>
+            <div class="answer gold"><strong>Not one big exam</strong><span>NCEA is a credit-based qualification. Internal and external assessments can both contribute credits, and grades can contribute to endorsement.</span></div>
+          </div>
+        </div>
+        <aside class="visual" aria-label="NCEA credit ladder">
+          <div class="ladder">
+            <div class="rung"><div class="label">Level 3</div><div class="bar"><span class="fill" style="width: 75%"></span></div><div class="credits">60c</div></div>
+            <div class="rung"><div class="label">Level 2</div><div class="bar"><span class="fill" style="width: 75%"></span></div><div class="credits">60c</div></div>
+            <div class="rung"><div class="label">Level 1</div><div class="bar"><span class="fill" style="width: 75%"></span></div><div class="credits">60c</div></div>
+          </div>
+          <div class="coreq">Co-requisite: 10 literacy or te reo matatini credits + 10 numeracy or pāngarau credits</div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="levels">
+      <div class="shell">
+        <div class="section-head">
+          <h2>How to understand NCEA Levels</h2>
+          <p>NCEA Levels are often studied in particular year levels, but they are qualification levels, not single end-of-year exams. Students build credits through achievement standards and unit standards.</p>
+        </div>
+        <div class="grid-3">
+          <article class="card"><span class="tag teal">Year 11</span><h3>NCEA Level 1</h3><p>Usually studied in Year 11. The Level 1 certificate requires 60 credits at any NCEA level: Level 1, 2 or 3, plus the 20-credit co-requisite.</p></article>
+          <article class="card"><span class="tag blue">Year 12</span><h3>NCEA Level 2</h3><p>Usually studied in Year 12. The certificate requires 60 credits at Level 2 or above, plus the co-requisite. Level 2 is often treated as an important school-leaver qualification.</p></article>
+          <article class="card"><span class="tag red">Year 13</span><h3>NCEA Level 3</h3><p>Usually studied in Year 13. The certificate requires 60 credits at Level 3 or above, plus the co-requisite. University study also requires University Entrance.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="shell">
+        <div class="section-head">
+          <h2>Certificate credit rules</h2>
+          <p>NZQA describes each NCEA certificate as requiring 80 credits: 60 credits for the certificate level, plus the 20-credit literacy/numeracy or te reo matatini/pāngarau requirement. The 20-credit requirement only needs to be met once and then counts for every NCEA level.</p>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Goal</th><th>Requirement</th><th>Plain explanation</th><th>Keywords</th></tr></thead>
+            <tbody>
+              <tr><td>NCEA Level 1</td><td>60 credits at any NCEA Level + 20-credit co-requisite</td><td>60 credits at Level 1, 2 or 3, plus 10 literacy or te reo matatini credits and 10 numeracy or pāngarau credits.</td><td>Level 1 certificate, co-requisite</td></tr>
+              <tr><td>NCEA Level 2</td><td>60 credits at Level 2 or above + co-requisite</td><td>60 credits at Level 2 or 3. If the co-requisite has already been met, it does not need to be repeated.</td><td>Level 2 certificate</td></tr>
+              <tr><td>NCEA Level 3</td><td>60 credits at Level 3 or above + co-requisite</td><td>60 credits at Level 3 or above. This is part of UE, but it is not the whole UE requirement.</td><td>Level 3 certificate, University Entrance</td></tr>
+              <tr><td>Endorsement</td><td>Certificate endorsement recognises strong achievement; NZQA also has course endorsement rules.</td><td>This is a recognition of achievement quality, not a requirement for the certificate. Check NZQA for the exact endorsement rules.</td><td>Merit, Excellence, endorsement</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="ue">
+      <div class="shell split">
+        <div>
+          <div class="section-head" style="display:block; margin-bottom: 20px;">
+            <h2>What is UE?</h2>
+            <p style="margin-top:14px;">UE stands for University Entrance. It is the minimum common requirement to go from school to a New Zealand university, but it is not a guarantee of admission to a particular programme.</p>
+          </div>
+          <div class="steps">
+            <div class="step"><strong>Achieve NCEA Level 3</strong></div>
+            <div class="step"><strong>Get 14 Level 3 credits in each of three approved subjects</strong></div>
+            <div class="step"><strong>Meet UE literacy: 10 Level 2+ credits, made up of 5 reading and 5 writing credits</strong></div>
+            <div class="step"><strong>Meet UE numeracy: 10 Level 1+ credits through 32406/32412 or certain achievement standards</strong></div>
+          </div>
+        </div>
+        <aside class="card">
+          <span class="tag gold">Important</span>
+          <h3>UE is not the same as being admitted</h3>
+          <p>UE is the common minimum entry qualification. Individual universities and programmes can set higher requirements, such as rank scores, required subjects, portfolios or interviews.</p>
+        </aside>
+      </div>
+    </section>
+
+    <section id="checker">
+      <div class="shell split">
+        <div>
+          <div class="section-head" style="display:block; margin-bottom: 20px;">
+            <h2>Quick checker</h2>
+            <p style="margin-top:14px;">This tool gives a basic check against the public rules. Course design, specific standards and university programme requirements should still be checked with the school and university.</p>
+          </div>
+          <div class="checker">
+            <h3>NCEA / UE credit checker</h3>
+            <div class="fields">
+              <label>Level 1/2/3 credits<input id="l1" type="number" min="0" value="60"></label>
+              <label>Level 2+ credits<input id="l2" type="number" min="0" value="60"></label>
+              <label>Level 3+ credits<input id="l3" type="number" min="0" value="60"></label>
+              <label>NCEA co-requisite completed<select id="coreq"><option value="yes">Yes</option><option value="no">No</option></select></label>
+              <label>Approved subjects with 14 L3 credits<input id="subjects" type="number" min="0" max="8" value="3"></label>
+              <label>UE literacy completed<select id="uelit"><option value="yes">Yes</option><option value="no">No</option></select></label>
+              <label>UE numeracy completed<select id="uenum"><option value="yes">Yes</option><option value="no">No</option></select></label>
+            </div>
+            <div class="result" id="result" aria-live="polite"></div>
+          </div>
+        </div>
+        <div class="grid-3" style="grid-template-columns: 1fr;">
+          <article class="card"><span class="tag teal">Internal</span><h3>Internal assessment</h3><p>Internal assessment is completed during the school year and assessed by the school.</p></article>
+          <article class="card"><span class="tag red">External</span><h3>External assessment</h3><p>External assessment may include NZQA examinations or externally marked submissions.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="myths">
+      <div class="shell">
+        <div class="section-head">
+          <h2>Common misunderstandings</h2>
+          <p>These points are designed to build the right mental model for people new to NCEA.</p>
+        </div>
+        <div class="myth-grid">
+          <div class="myth"><b>Myth: NCEA is like one national university entrance exam.</b><p>More accurate: NCEA is credit-based. Credits are gained across subjects and standards, and external exams are only one part of the system.</p></div>
+          <div class="myth"><b>Myth: NCEA Level 3 automatically means university admission.</b><p>More accurate: Level 3 is only part of UE. Students also need three approved subjects, UE literacy and UE numeracy. Competitive programmes may require more.</p></div>
+          <div class="myth"><b>Myth: Levels 1, 2 and 3 are exactly the same as school years.</b><p>More accurate: They are often linked with Years 11, 12 and 13, but the Level is a qualification level. Courses can include standards at different levels.</p></div>
+          <div class="myth"><b>Myth: Finishing Year 13 is the same as having university entrance.</b><p>More accurate: New Zealand looks at NCEA qualifications, credits, subjects and UE. Completing Year 13 and being awarded UE are different things.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="shell">
+        <div class="section-head">
+          <h2>Qualification change timeline</h2>
+          <p>As of 2 June 2026, NCEA remains the current system. The Government has announced new senior secondary qualifications: a Year 11 Foundational Award from 2028, NZCE for Year 12 from 2029, and NZACE for Year 13 from 2030.</p>
+        </div>
+        <div class="card"><p>This guide explains the current NZQA rules. Students currently in or entering senior secondary school should also check school transition advice and Ministry updates.</p></div>
+      </div>
+    </section>
+
+    <section id="sources">
+      <div class="shell">
+        <div class="section-head">
+          <h2>Official sources</h2>
+          <p>Content is based on NZQA and Ministry of Education public information, with reference to the XMind notes you provided. Checked on 2 June 2026.</p>
+        </div>
+        <ol class="source-list">
+          <li><a href="https://www2.nzqa.govt.nz/ncea/about-ncea/ncea-levels-and-certificates/" target="_blank" rel="noreferrer">NZQA: NCEA levels and certificates</a></li>
+          <li><a href="https://www2.nzqa.govt.nz/ncea/understanding-secondary-quals/university-entrance/" target="_blank" rel="noreferrer">NZQA: University Entrance</a></li>
+          <li><a href="https://www2.nzqa.govt.nz/ncea/understanding-secondary-quals/university-entrance/ue-subjects/" target="_blank" rel="noreferrer">NZQA: Approved subjects for University Entrance</a></li>
+          <li><a href="https://www2.nzqa.govt.nz/ncea/subjects/litnum" target="_blank" rel="noreferrer">NZQA: Literacy and numeracy co-requisite</a></li>
+          <li><a href="https://ncea.education.govt.nz/whats-new/further-details-new-senior-secondary-qualifications" target="_blank" rel="noreferrer">Ministry of Education: New senior secondary qualifications</a></li>
+        </ol>
+      </div>
+    </section>
+  </main>
+
+  <footer><div class="shell">This is an educational guide for learners and families, not an enrolment decision from any school or university.</div></footer>
+
+  <script>
+    const fields = ["l1", "l2", "l3", "coreq", "subjects", "uelit", "uenum"].map((id) => document.getElementById(id));
+    const result = document.getElementById("result");
+    function num(id) { return Number(document.getElementById(id).value || 0); }
+    function updateResult() {
+      const coreq = document.getElementById("coreq").value === "yes";
+      const ueLit = document.getElementById("uelit").value === "yes";
+      const ueNum = document.getElementById("uenum").value === "yes";
+      const l1 = num("l1");
+      const l2 = num("l2");
+      const l3 = num("l3");
+      const subjects = num("subjects");
+      const achieved = [];
+      const missing = [];
+      if (l1 >= 60 && coreq) achieved.push("NCEA Level 1");
+      else missing.push("Level 1: needs 60 credits at any NCEA level and the co-requisite");
+      if (l2 >= 60 && coreq) achieved.push("NCEA Level 2");
+      else missing.push("Level 2: needs 60 Level 2+ credits and the co-requisite");
+      if (l3 >= 60 && coreq) achieved.push("NCEA Level 3");
+      else missing.push("Level 3: needs 60 Level 3+ credits and the co-requisite");
+      const ue = l3 >= 60 && subjects >= 3 && ueLit && ueNum;
+      if (ue) achieved.push("UE minimum requirements");
+      else {
+        const ueMissing = [];
+        if (l3 < 60) ueMissing.push("NCEA Level 3");
+        if (subjects < 3) ueMissing.push("3 approved subjects");
+        if (!ueLit) ueMissing.push("UE literacy");
+        if (!ueNum) ueMissing.push("UE numeracy");
+        missing.push("UE: missing " + ueMissing.join(", "));
+      }
+      result.innerHTML = `<strong>${achieved.length ? "Currently meets: " + achieved.join(" / ") : "No full certificate condition is met yet"}</strong><span>${missing.length ? missing.join("; ") : "The basic rules are met. Individual university programmes may still set higher requirements."}</span>`;
+    }
+    fields.forEach((field) => field.addEventListener("input", updateResult));
+    fields.forEach((field) => field.addEventListener("change", updateResult));
+    updateResult();
+  </script>
+</body>
+</html>

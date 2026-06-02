@@ -1,0 +1,887 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NCEA Credits and University Entrance Guide</title>
+  <style>
+    :root {
+      --ink: #172026;
+      --muted: #586670;
+      --line: #d7dee3;
+      --paper: #fbfcfd;
+      --white: #ffffff;
+      --teal: #0f766e;
+      --teal-soft: #d9f3ef;
+      --red: #b6422d;
+      --red-soft: #ffe0d8;
+      --gold: #9a6b00;
+      --gold-soft: #fff1bf;
+      --green: #2f7d32;
+      --green-soft: #def0df;
+      --blue: #2864a8;
+      --blue-soft: #e4eef9;
+      --shadow: 0 18px 45px rgba(23, 32, 38, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: Inter, "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+      color: var(--ink);
+      background: var(--paper);
+      line-height: 1.55;
+    }
+
+    a { color: var(--blue); }
+
+    .shell {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(251, 252, 253, 0.94);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(12px);
+    }
+
+    .topbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 64px;
+      gap: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .mark {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border: 2px solid var(--ink);
+      background: var(--gold-soft);
+      font-weight: 900;
+    }
+
+    nav {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    nav a {
+      padding: 8px 10px;
+      border-radius: 6px;
+      color: var(--ink);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    nav a:hover { background: var(--blue-soft); }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .lang-toggle {
+      display: inline-flex;
+      padding: 3px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--white);
+    }
+
+    .lang-toggle button,
+    .plain-link {
+      min-height: 34px;
+      border: 0;
+      border-radius: 6px;
+      padding: 7px 10px;
+      background: transparent;
+      color: var(--ink);
+      font: inherit;
+      font-size: 14px;
+      font-weight: 800;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .lang-toggle button.active {
+      background: var(--ink);
+      color: var(--white);
+    }
+
+    .plain-link {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--line);
+      background: var(--blue-soft);
+    }
+
+    main { overflow: hidden; }
+
+    .hero {
+      min-height: calc(100vh - 64px);
+      display: grid;
+      align-items: center;
+      padding: 48px 0 28px;
+      border-bottom: 1px solid var(--line);
+      background:
+        linear-gradient(90deg, rgba(217, 243, 239, 0.72) 0 34%, transparent 34% 100%),
+        linear-gradient(180deg, #ffffff 0%, #f5f8fa 100%);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(360px, 0.86fr);
+      gap: 36px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      margin: 0 0 12px;
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--teal);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 780px;
+      font-size: clamp(34px, 5vw, 66px);
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      margin: 22px 0 0;
+      max-width: 780px;
+      color: var(--muted);
+      font-size: clamp(17px, 2vw, 21px);
+    }
+
+    .answer-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .answer {
+      min-height: 128px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      background: var(--white);
+      box-shadow: var(--shadow);
+      border-radius: 8px;
+    }
+
+    .answer strong {
+      display: block;
+      font-size: 30px;
+      line-height: 1.05;
+      margin-bottom: 8px;
+    }
+
+    .answer span {
+      display: block;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .answer.teal { border-top: 6px solid var(--teal); }
+    .answer.red { border-top: 6px solid var(--red); }
+    .answer.gold { border-top: 6px solid var(--gold); }
+
+    .visual {
+      position: relative;
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--white);
+      box-shadow: var(--shadow);
+    }
+
+    .ladder {
+      display: grid;
+      gap: 14px;
+    }
+
+    .rung {
+      display: grid;
+      grid-template-columns: 92px 1fr 66px;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .rung .label {
+      font-weight: 900;
+      font-size: 18px;
+    }
+
+    .bar {
+      height: 32px;
+      border: 1px solid var(--line);
+      background: #eef3f5;
+      overflow: hidden;
+      border-radius: 6px;
+    }
+
+    .fill {
+      height: 100%;
+      display: block;
+      background: var(--teal);
+    }
+
+    .rung:nth-child(2) .fill { background: var(--blue); }
+    .rung:nth-child(3) .fill { background: var(--red); }
+
+    .credits {
+      font-weight: 900;
+      text-align: right;
+    }
+
+    .coreq {
+      margin-top: 22px;
+      padding: 16px;
+      border-radius: 8px;
+      background: var(--gold-soft);
+      border: 1px solid #ecd47c;
+      font-weight: 800;
+    }
+
+    section {
+      padding: 62px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: minmax(0, 0.72fr) minmax(320px, 1fr);
+      gap: 30px;
+      align-items: end;
+      margin-bottom: 28px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: clamp(28px, 3.4vw, 44px);
+      line-height: 1.1;
+      letter-spacing: 0;
+    }
+
+    .section-head p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .card {
+      padding: 20px;
+      border: 1px solid var(--line);
+      background: var(--white);
+      border-radius: 8px;
+      min-height: 100%;
+    }
+
+    .card h3 {
+      margin: 0 0 10px;
+      font-size: 22px;
+      line-height: 1.2;
+    }
+
+    .en {
+      color: var(--muted);
+      font-size: 14px;
+      border-left: 3px solid var(--line);
+      padding-left: 12px;
+      margin-top: 12px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 4px 9px;
+      border-radius: 6px;
+      font-weight: 800;
+      font-size: 13px;
+      margin-bottom: 14px;
+    }
+
+    .tag.teal { background: var(--teal-soft); color: #07544e; }
+    .tag.blue { background: var(--blue-soft); color: #1e4f83; }
+    .tag.red { background: var(--red-soft); color: #8c2b1c; }
+    .tag.gold { background: var(--gold-soft); color: #6f4d00; }
+    .tag.green { background: var(--green-soft); color: #245f27; }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      background: var(--white);
+      border-radius: 8px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 760px;
+    }
+
+    th, td {
+      padding: 15px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #eef3f5;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    .split {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(340px, 0.8fr);
+      gap: 20px;
+      align-items: start;
+    }
+
+    .checker {
+      border: 1px solid var(--line);
+      background: var(--white);
+      border-radius: 8px;
+      padding: 22px;
+    }
+
+    .checker h3 { margin-top: 0; }
+
+    .fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--muted);
+    }
+
+    input, select {
+      width: 100%;
+      min-height: 42px;
+      padding: 8px 10px;
+      border: 1px solid #b9c5cc;
+      border-radius: 6px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      font-weight: 700;
+    }
+
+    .result {
+      margin-top: 16px;
+      padding: 16px;
+      border-radius: 8px;
+      background: var(--blue-soft);
+      border: 1px solid #b8d0eb;
+    }
+
+    .result strong { display: block; margin-bottom: 6px; }
+
+    .steps {
+      display: grid;
+      gap: 12px;
+      counter-reset: step;
+    }
+
+    .step {
+      position: relative;
+      padding: 16px 16px 16px 54px;
+      border: 1px solid var(--line);
+      background: var(--white);
+      border-radius: 8px;
+    }
+
+    .step::before {
+      counter-increment: step;
+      content: counter(step);
+      position: absolute;
+      left: 16px;
+      top: 17px;
+      display: grid;
+      place-items: center;
+      width: 26px;
+      height: 26px;
+      background: var(--ink);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 900;
+      border-radius: 50%;
+    }
+
+    .myth-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .myth {
+      padding: 18px;
+      border: 1px solid var(--line);
+      background: var(--white);
+      border-radius: 8px;
+    }
+
+    .myth b { color: var(--red); }
+    .myth strong { color: var(--green); }
+
+    .source-list {
+      columns: 2;
+      column-gap: 28px;
+      padding-left: 20px;
+    }
+
+    .source-list li {
+      break-inside: avoid;
+      margin-bottom: 12px;
+    }
+
+    footer {
+      padding: 30px 0 42px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    @media (max-width: 900px) {
+      .hero-grid,
+      .section-head,
+      .split {
+        grid-template-columns: 1fr;
+      }
+
+      .answer-strip,
+      .grid-3,
+      .myth-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        min-height: auto;
+        padding-top: 34px;
+      }
+
+      nav { display: none; }
+      .actions { margin-left: auto; }
+    }
+
+    @media (max-width: 560px) {
+      .shell { width: min(100% - 22px, 1180px); }
+      .fields { grid-template-columns: 1fr; }
+      .rung { grid-template-columns: 74px 1fr 56px; }
+      .visual { padding: 16px; }
+      .source-list { columns: 1; }
+      h1 { font-size: 34px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <div class="brand"><span class="mark">N</span><span data-zh="NCEA / UE 指南" data-en="NCEA / UE Guide">NCEA / UE 指南</span></div>
+      <div class="actions">
+        <nav aria-label="Main sections">
+          <a href="#levels" data-zh="Levels" data-en="Levels">Levels</a>
+          <a href="#ue" data-zh="UE" data-en="UE">UE</a>
+          <a href="#checker" data-zh="自查" data-en="Checker">自查</a>
+          <a href="#myths" data-zh="误区" data-en="Myths">误区</a>
+          <a href="#sources" data-zh="来源" data-en="Sources">来源</a>
+        </nav>
+        <div class="lang-toggle" aria-label="Language switch">
+          <button type="button" id="zhBtn" class="active">中文</button>
+          <button type="button" id="enBtn">English</button>
+        </div>
+        <a class="plain-link" href="english.html" data-zh="纯英文版" data-en="English only">纯英文版</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="top">
+      <div class="shell hero-grid">
+        <div>
+          <p class="eyebrow" data-zh="给中国家庭理解新西兰高中" data-en="For families learning New Zealand senior secondary">给中国家庭理解新西兰高中</p>
+          <h1 data-zh="NCEA 到底要多少学分？UE 又是什么？" data-en="How many NCEA credits do students need, and what is UE?">NCEA 到底要多少学分？UE 又是什么？</h1>
+          <p class="lead" data-zh="把新西兰高中 Year 11-13 的 NCEA Level 1、2、3 和大学入学资格 UE，翻译成中国学生和家长容易理解的版本：先看结论，再看规则。" data-en="A clear guide to NCEA Levels 1, 2 and 3, and University Entrance for Year 11-13 students: start with the answer, then read the rules.">把新西兰高中 Year 11-13 的 NCEA Level 1、2、3 和大学入学资格 UE，翻译成中国学生和家长容易理解的版本：先看结论，再看规则。</p>
+          <div class="answer-strip" aria-label="核心结论">
+            <div class="answer teal">
+              <strong>60 + 20</strong>
+              <span data-zh="每个 NCEA 证书共需 80 学分：60 个主体学分，加上一次性完成的 20 个 literacy/numeracy 或 te reo matatini/pāngarau 共同要求。" data-en="Each NCEA certificate needs 80 credits: 60 main credits plus the 20-credit literacy/numeracy or te reo matatini/pāngarau requirement, which only needs to be met once.">每个 NCEA 证书共需 80 学分：60 个主体学分，加上一次性完成的 20 个 literacy/numeracy 或 te reo matatini/pāngarau 共同要求。</span>
+            </div>
+            <div class="answer red">
+              <strong>Level 3 + UE</strong>
+              <span data-zh="进入新西兰大学通常看 UE：NCEA Level 3、三门 approved subjects、UE literacy 和 UE numeracy。" data-en="New Zealand university entry normally starts with UE: NCEA Level 3, three approved subjects, UE literacy and UE numeracy.">进入新西兰大学通常看 UE：NCEA Level 3、三门 approved subjects、UE literacy 和 UE numeracy。</span>
+            </div>
+            <div class="answer gold">
+              <strong data-zh="不是高考" data-en="Not one big exam">不是高考</strong>
+              <span data-zh="NCEA 是累计学分制。Internal 和 External 都可能给学分，成绩等级可用于 endorsement。" data-en="NCEA is a credit-based qualification. Internal and external assessments can both contribute credits, and grades can contribute to endorsement.">NCEA 是累计学分制。Internal 和 External 都可能给学分，成绩等级可用于 endorsement。</span>
+            </div>
+          </div>
+        </div>
+
+        <aside class="visual" aria-label="NCEA 学分阶梯图">
+          <div class="ladder">
+            <div class="rung">
+              <div class="label">Level 3</div>
+              <div class="bar"><span class="fill" style="width: 75%"></span></div>
+              <div class="credits">60c</div>
+            </div>
+            <div class="rung">
+              <div class="label">Level 2</div>
+              <div class="bar"><span class="fill" style="width: 75%"></span></div>
+              <div class="credits">60c</div>
+            </div>
+            <div class="rung">
+              <div class="label">Level 1</div>
+              <div class="bar"><span class="fill" style="width: 75%"></span></div>
+              <div class="credits">60c</div>
+            </div>
+          </div>
+          <div class="coreq" data-zh="共同要求：10 个 literacy 或 te reo matatini 学分 + 10 个 numeracy 或 pāngarau 学分" data-en="Co-requisite: 10 literacy or te reo matatini credits + 10 numeracy or pāngarau credits">共同要求：10 个 literacy 或 te reo matatini 学分 + 10 个 numeracy 或 pāngarau 学分</div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="levels">
+      <div class="shell">
+        <div class="section-head">
+          <h2 data-zh="NCEA Levels 怎么理解" data-en="How to understand NCEA Levels">NCEA Levels 怎么理解</h2>
+          <p data-zh="NCEA Level 通常和年级一起理解，但它本质上是资格等级，不是简单的“高一/高二/高三期末考试”。学生通过多个 achievement standards 或 unit standards 累计学分。" data-en="NCEA Levels are often studied in particular year levels, but they are qualification levels, not single end-of-year exams. Students build credits through achievement standards and unit standards.">NCEA Level 通常和年级一起理解，但它本质上是资格等级，不是简单的“高一/高二/高三期末考试”。学生通过多个 achievement standards 或 unit standards 累计学分。</p>
+        </div>
+
+        <div class="grid-3">
+          <article class="card">
+            <span class="tag teal">Year 11</span>
+            <h3>NCEA Level 1</h3>
+            <p data-zh="通常在 11 年级学习。Level 1 证书需要 60 个任意 NCEA 等级学分，也就是 Level 1、2 或 3 都可计入；另需完成 20 个共同要求学分。" data-en="Usually studied in Year 11. The Level 1 certificate requires 60 credits at any NCEA level: Level 1, 2 or 3, plus the 20-credit co-requisite.">通常在 11 年级学习。Level 1 证书需要 60 个任意 NCEA 等级学分，也就是 Level 1、2 或 3 都可计入；另需完成 20 个共同要求学分。</p>
+          </article>
+
+          <article class="card">
+            <span class="tag blue">Year 12</span>
+            <h3>NCEA Level 2</h3>
+            <p data-zh="通常在 12 年级学习。证书需要 60 个 Level 2 或以上学分，并完成共同要求。Level 2 常被雇主和培训路径视为重要高中资格。" data-en="Usually studied in Year 12. The certificate requires 60 credits at Level 2 or above, plus the co-requisite. Level 2 is often treated as an important school-leaver qualification.">通常在 12 年级学习。证书需要 60 个 Level 2 或以上学分，并完成共同要求。Level 2 常被雇主和培训路径视为重要高中资格。</p>
+          </article>
+
+          <article class="card">
+            <span class="tag red">Year 13</span>
+            <h3>NCEA Level 3</h3>
+            <p data-zh="通常在 13 年级学习。证书需要 60 个 Level 3 或以上学分，并完成共同要求。想进新西兰大学，还要另外满足 UE。" data-en="Usually studied in Year 13. The certificate requires 60 credits at Level 3 or above, plus the co-requisite. University study also requires University Entrance.">通常在 13 年级学习。证书需要 60 个 Level 3 或以上学分，并完成共同要求。想进新西兰大学，还要另外满足 UE。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="shell">
+        <div class="section-head">
+          <h2 data-zh="证书学分规则" data-en="Certificate credit rules">证书学分规则</h2>
+          <p data-zh="官方说法是每个 NCEA Level 证书需要 80 credits：其中 60 credits 是该证书的主体要求；另外 20 credits 是 literacy/numeracy 或 te reo matatini/pāngarau 共同要求，只需完成一次，之后适用于每个 NCEA Level。" data-en="NZQA describes each NCEA certificate as requiring 80 credits: 60 credits for the certificate level, plus the 20-credit literacy/numeracy or te reo matatini/pāngarau requirement. The 20-credit requirement only needs to be met once and then counts for every NCEA level.">官方说法是每个 NCEA Level 证书需要 80 credits：其中 60 credits 是该证书的主体要求；另外 20 credits 是 literacy/numeracy 或 te reo matatini/pāngarau 共同要求，只需完成一次，之后适用于每个 NCEA Level。</p>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th data-zh="目标" data-en="Goal">目标</th>
+                <th data-zh="需要什么" data-en="Requirement">需要什么</th>
+                <th data-zh="解释" data-en="Plain explanation">解释</th>
+                <th data-zh="关键词" data-en="Keywords">关键词</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>NCEA Level 1</td>
+                <td data-zh="60 credits at any NCEA Level + 20-credit co-requisite" data-en="60 credits at any NCEA Level + 20-credit co-requisite">60 credits at any NCEA Level + 20-credit co-requisite</td>
+                <td data-zh="60 个 Level 1、2 或 3 学分；再完成 literacy/te reo matatini 10 + numeracy/pāngarau 10。" data-en="60 credits at Level 1, 2 or 3, plus 10 literacy or te reo matatini credits and 10 numeracy or pāngarau credits.">60 个 Level 1、2 或 3 学分；再完成 literacy/te reo matatini 10 + numeracy/pāngarau 10。</td>
+                <td>Level 1 certificate, co-requisite</td>
+              </tr>
+              <tr>
+                <td>NCEA Level 2</td>
+                <td data-zh="60 credits at Level 2 or above + co-requisite" data-en="60 credits at Level 2 or above + co-requisite">60 credits at Level 2 or above + co-requisite</td>
+                <td data-zh="60 个 Level 2 或 3 学分；共同要求如果之前已完成，不用重新做。" data-en="60 credits at Level 2 or 3. If the co-requisite has already been met, it does not need to be repeated.">60 个 Level 2 或 3 学分；共同要求如果之前已完成，不用重新做。</td>
+                <td>Level 2 certificate</td>
+              </tr>
+              <tr>
+                <td>NCEA Level 3</td>
+                <td data-zh="60 credits at Level 3 or above + co-requisite" data-en="60 credits at Level 3 or above + co-requisite">60 credits at Level 3 or above + co-requisite</td>
+                <td data-zh="60 个 Level 3 或以上学分；这是 UE 的基础之一，但不是 UE 的全部。" data-en="60 credits at Level 3 or above. This is part of UE, but it is not the whole UE requirement.">60 个 Level 3 或以上学分；这是 UE 的基础之一，但不是 UE 的全部。</td>
+                <td>Level 3 certificate, University Entrance</td>
+              </tr>
+              <tr>
+                <td>Endorsement</td>
+                <td data-zh="Certificate endorsement recognises strong achievement; NZQA also has course endorsement rules." data-en="Certificate endorsement recognises strong achievement; NZQA also has course endorsement rules.">Certificate endorsement recognises strong achievement; NZQA also has course endorsement rules.</td>
+                <td data-zh="这是“成绩质量”的荣誉标记，不是拿证书的必要条件。具体 endorsement 规则应以 NZQA 页面为准。" data-en="This is a recognition of achievement quality, not a requirement for the certificate. Check NZQA for the exact endorsement rules.">这是“成绩质量”的荣誉标记，不是拿证书的必要条件。具体 endorsement 规则应以 NZQA 页面为准。</td>
+                <td>Merit endorsement, Excellence endorsement</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="ue">
+      <div class="shell split">
+        <div>
+          <div class="section-head" style="display:block; margin-bottom: 20px;">
+            <h2 data-zh="UE 是什么？" data-en="What is UE?">UE 是什么？</h2>
+            <p style="margin-top:14px;" data-zh="UE 全称 University Entrance，是从学校进入新西兰大学的最低通用要求。把它理解成“大学入学资格线”最接近，但它不是录取保证。" data-en="UE stands for University Entrance. It is the minimum common requirement to go from school to a New Zealand university, but it is not a guarantee of admission to a particular programme.">UE 全称 University Entrance，是从学校进入新西兰大学的最低通用要求。把它理解成“大学入学资格线”最接近，但它不是录取保证。</p>
+          </div>
+          <div class="steps">
+            <div class="step">
+              <strong data-zh="先拿 NCEA Level 3" data-en="Achieve NCEA Level 3">先拿 NCEA Level 3</strong>
+            </div>
+            <div class="step">
+              <strong data-zh="三门 approved subjects，各至少 14 个 Level 3 学分" data-en="Get 14 Level 3 credits in each of three approved subjects">三门 approved subjects，各至少 14 个 Level 3 学分</strong>
+            </div>
+            <div class="step">
+              <strong data-zh="UE literacy：10 个 Level 2 或以上学分，其中 reading 5、writing 5" data-en="Meet UE literacy: 10 Level 2+ credits, made up of 5 reading and 5 writing credits">UE literacy：10 个 Level 2 或以上学分，其中 reading 5、writing 5</strong>
+            </div>
+            <div class="step">
+              <strong data-zh="UE numeracy：10 个 Level 1 或以上学分，可通过 32406/32412 或特定 achievement standards" data-en="Meet UE numeracy: 10 Level 1+ credits through 32406/32412 or certain achievement standards">UE numeracy：10 个 Level 1 或以上学分，可通过 32406/32412 或特定 achievement standards</strong>
+            </div>
+          </div>
+        </div>
+
+        <aside class="card">
+          <span class="tag gold">Important</span>
+          <h3 data-zh="UE 不是“被大学录取”" data-en="UE is not the same as being admitted">UE 不是“被大学录取”</h3>
+          <p data-zh="UE 只是最低入学资格。具体大学和专业可能要求更高分数、特定科目、作品集、面试或 rank score。" data-en="UE is the common minimum entry qualification. Individual universities and programmes can set higher requirements, such as rank scores, required subjects, portfolios or interviews.">UE 只是最低入学资格。具体大学和专业可能要求更高分数、特定科目、作品集、面试或 rank score。</p>
+        </aside>
+      </div>
+    </section>
+
+    <section id="checker">
+      <div class="shell split">
+        <div>
+          <div class="section-head" style="display:block; margin-bottom: 20px;">
+            <h2 data-zh="快速自查" data-en="Quick checker">快速自查</h2>
+            <p style="margin-top:14px;" data-zh="这个小工具按官方规则做基础判断。学校课程安排、具体 standards 和大学专业要求仍要看学校与大学官网。" data-en="This tool gives a basic check against the public rules. Course design, specific standards and university programme requirements should still be checked with the school and university.">这个小工具按官方规则做基础判断。学校课程安排、具体 standards 和大学专业要求仍要看学校与大学官网。</p>
+          </div>
+          <div class="checker">
+            <h3>NCEA / UE credit checker</h3>
+            <div class="fields">
+              <label><span data-zh="Level 1/2/3 学分" data-en="Level 1/2/3 credits">Level 1/2/3 学分</span>
+                <input id="l1" type="number" min="0" value="60">
+              </label>
+              <label><span data-zh="Level 2+ 学分" data-en="Level 2+ credits">Level 2+ 学分</span>
+                <input id="l2" type="number" min="0" value="60">
+              </label>
+              <label><span data-zh="Level 3+ 学分" data-en="Level 3+ credits">Level 3+ 学分</span>
+                <input id="l3" type="number" min="0" value="60">
+              </label>
+              <label><span data-zh="NCEA 共同要求已完成" data-en="NCEA co-requisite completed">NCEA 共同要求已完成</span>
+                <select id="coreq">
+                  <option value="yes" data-zh="是" data-en="Yes">是</option>
+                  <option value="no" data-zh="否" data-en="No">否</option>
+                </select>
+              </label>
+              <label><span data-zh="14 个 L3 学分的 approved subjects 数量" data-en="Approved subjects with 14 L3 credits">14 个 L3 学分的 approved subjects 数量</span>
+                <input id="subjects" type="number" min="0" max="8" value="3">
+              </label>
+              <label><span data-zh="UE literacy 已完成" data-en="UE literacy completed">UE literacy 已完成</span>
+                <select id="uelit">
+                  <option value="yes" data-zh="是" data-en="Yes">是</option>
+                  <option value="no" data-zh="否" data-en="No">否</option>
+                </select>
+              </label>
+              <label><span data-zh="UE numeracy 已完成" data-en="UE numeracy completed">UE numeracy 已完成</span>
+                <select id="uenum">
+                  <option value="yes" data-zh="是" data-en="Yes">是</option>
+                  <option value="no" data-zh="否" data-en="No">否</option>
+                </select>
+              </label>
+            </div>
+            <div class="result" id="result" aria-live="polite"></div>
+          </div>
+        </div>
+
+        <div class="grid-3" style="grid-template-columns: 1fr;">
+          <article class="card">
+            <span class="tag teal">Internal</span>
+            <h3 data-zh="校内评估" data-en="Internal assessment">校内评估</h3>
+            <p data-zh="Internal assessment 通常在平时课程中完成，由学校评估后送交审核。" data-en="Internal assessment is completed during the school year and assessed by the school.">Internal assessment 通常在平时课程中完成，由学校评估后送交审核。</p>
+          </article>
+          <article class="card">
+            <span class="tag red">External</span>
+            <h3 data-zh="外部评估" data-en="External assessment">外部评估</h3>
+            <p data-zh="External assessment 通常包括 NZQA 统一考试或外部提交作品。" data-en="External assessment may include NZQA examinations or externally marked submissions.">External assessment 通常包括 NZQA 统一考试或外部提交作品。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="myths">
+      <div class="shell">
+        <div class="section-head">
+          <h2 data-zh="最容易卡住的误区" data-en="Common misunderstandings">最容易卡住的误区</h2>
+          <p data-zh="下面这些不是逐字翻译，而是为了帮助第一次接触 NCEA 的家庭快速建立正确心智模型。" data-en="These points are designed to build the right mental model for people new to NCEA.">下面这些不是逐字翻译，而是为了帮助第一次接触 NCEA 的家庭快速建立正确心智模型。</p>
+        </div>
+        <div class="myth-grid">
+          <div class="myth">
+            <b data-zh="误区：NCEA 就像中国高考。" data-en="Myth: NCEA is like one national university entrance exam.">误区：NCEA 就像中国高考。</b>
+            <p data-zh="更准确：NCEA 是累计学分制。不同科目、不同 standards 分散获得学分，外部考试只是其中一部分。" data-en="More accurate: NCEA is credit-based. Credits are gained across subjects and standards, and external exams are only one part of the system.">更准确：NCEA 是累计学分制。不同科目、不同 standards 分散获得学分，外部考试只是其中一部分。</p>
+          </div>
+          <div class="myth">
+            <b data-zh="误区：拿到 Level 3 就一定能进大学。" data-en="Myth: NCEA Level 3 automatically means university admission.">误区：拿到 Level 3 就一定能进大学。</b>
+            <p data-zh="更准确：Level 3 是 UE 的一部分；还要满足三门 approved subjects、UE literacy 和 UE numeracy。热门专业会更高。" data-en="More accurate: Level 3 is only part of UE. Students also need three approved subjects, UE literacy and UE numeracy. Competitive programmes may require more.">更准确：Level 3 是 UE 的一部分；还要满足三门 approved subjects、UE literacy 和 UE numeracy。热门专业会更高。</p>
+          </div>
+          <div class="myth">
+            <b data-zh="误区：Level 1、2、3 等于中国初三、高一、高二。" data-en="Myth: Levels 1, 2 and 3 are exactly the same as school years.">误区：Level 1、2、3 等于中国初三、高一、高二。</b>
+            <p data-zh="更准确：它们通常对应 Year 11、12、13，但 Level 是资格等级。课程可以包含不同等级 standards。" data-en="More accurate: They are often linked with Years 11, 12 and 13, but the Level is a qualification level. Courses can include standards at different levels.">更准确：它们通常对应 Year 11、12、13，但 Level 是资格等级。课程可以包含不同等级 standards。</p>
+          </div>
+          <div class="myth">
+            <b data-zh="误区：读完 Year 13 就等于有大学入学资格。" data-en="Myth: Finishing Year 13 is the same as having university entrance.">误区：读完 Year 13 就等于有大学入学资格。</b>
+            <p data-zh="更准确：新西兰更看 NCEA 资格、学分、科目和 UE。读完 Year 13 和获得 UE 是两件事。" data-en="More accurate: New Zealand looks at NCEA qualifications, credits, subjects and UE. Completing Year 13 and being awarded UE are different things.">更准确：新西兰更看 NCEA 资格、学分、科目和 UE。读完 Year 13 和获得 UE 是两件事。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="shell">
+        <div class="section-head">
+          <h2 data-zh="改革时间线提醒" data-en="Qualification change timeline">改革时间线提醒</h2>
+          <p data-zh="截至 2026-06-02，NCEA 仍是当前规则；但新西兰政府已公布新的 senior secondary qualifications。2028 年将引入 Year 11 的 Foundational Award；Year 12 的 NZCE 计划 2029 推出；Year 13 的 NZACE 计划 2030 推出。" data-en="As of 2 June 2026, NCEA remains the current system. The Government has announced new senior secondary qualifications: a Year 11 Foundational Award from 2028, NZCE for Year 12 from 2029, and NZACE for Year 13 from 2030.">截至 2026-06-02，NCEA 仍是当前规则；但新西兰政府已公布新的 senior secondary qualifications。2028 年将引入 Year 11 的 Foundational Award；Year 12 的 NZCE 计划 2029 推出；Year 13 的 NZACE 计划 2030 推出。</p>
+        </div>
+        <div class="card">
+          <p data-zh="本页按当前 NZQA 公开规则解释 NCEA 与 UE。正在读高中或即将入学的学生，应同时关注学校给出的过渡安排和教育部更新。" data-en="This guide explains the current NZQA rules. Students currently in or entering senior secondary school should also check school transition advice and Ministry updates.">本页按当前 NZQA 公开规则解释 NCEA 与 UE。正在读高中或即将入学的学生，应同时关注学校给出的过渡安排和教育部更新。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="sources">
+      <div class="shell">
+        <div class="section-head">
+          <h2 data-zh="官方来源" data-en="Official sources">官方来源</h2>
+          <p data-zh="内容按 NZQA 与教育部公开信息整理，并参考你提供的 XMind 旧版结构笔记。核对日期：2026-06-02。" data-en="Content is based on NZQA and Ministry of Education public information, with reference to the XMind notes you provided. Checked on 2 June 2026.">内容按 NZQA 与教育部公开信息整理，并参考你提供的 XMind 旧版结构笔记。核对日期：2026-06-02。</p>
+        </div>
+        <ol class="source-list">
+          <li><a href="https://www2.nzqa.govt.nz/ncea/about-ncea/ncea-levels-and-certificates/" target="_blank" rel="noreferrer">NZQA: NCEA levels and certificates</a></li>
+          <li><a href="https://www2.nzqa.govt.nz/ncea/understanding-secondary-quals/university-entrance/" target="_blank" rel="noreferrer">NZQA: University Entrance</a></li>
+          <li><a href="https://www2.nzqa.govt.nz/ncea/understanding-secondary-quals/university-entrance/ue-subjects/" target="_blank" rel="noreferrer">NZQA: Approved subjects for University Entrance</a></li>
+          <li><a href="https://www2.nzqa.govt.nz/ncea/subjects/litnum" target="_blank" rel="noreferrer">NZQA: Literacy and numeracy co-requisite</a></li>
+          <li><a href="https://ncea.education.govt.nz/whats-new/further-details-new-senior-secondary-qualifications" target="_blank" rel="noreferrer">Ministry of Education: New senior secondary qualifications</a></li>
+        </ol>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="shell" data-zh="这是面向学习者和家庭的解释性网页，不是任何学校或大学的录取决定。" data-en="This is an educational guide for learners and families, not an enrolment decision from any school or university.">这是面向学习者和家庭的解释性网页，不是任何学校或大学的录取决定。</div>
+  </footer>
+
+  <script>
+    let currentLang = localStorage.getItem("ncea-lang") || "zh";
+    const fields = ["l1", "l2", "l3", "coreq", "subjects", "uelit", "uenum"].map((id) => document.getElementById(id));
+    const result = document.getElementById("result");
+    const zhBtn = document.getElementById("zhBtn");
+    const enBtn = document.getElementById("enBtn");
+
+    function num(id) {
+      return Number(document.getElementById(id).value || 0);
+    }
+
+    function updateResult() {
+      const coreq = document.getElementById("coreq").value === "yes";
+      const ueLit = document.getElementById("uelit").value === "yes";
+      const ueNum = document.getElementById("uenum").value === "yes";
+      const l1 = num("l1");
+      const l2 = num("l2");
+      const l3 = num("l3");
+      const subjects = num("subjects");
+
+      const achieved = [];
+      const missing = [];
+
+      if (l1 >= 60 && coreq) achieved.push("NCEA Level 1");
+      else missing.push(currentLang === "zh" ? "Level 1: 需要 60 个任意 NCEA 等级学分和共同要求" : "Level 1: needs 60 credits at any NCEA level and the co-requisite");
+
+      if (l2 >= 60 && coreq) achieved.push("NCEA Level 2");
+      else missing.push(currentLang === "zh" ? "Level 2: 需要 60 个 L2+ 学分和共同要求" : "Level 2: needs 60 Level 2+ credits and the co-requisite");
+
+      if (l3 >= 60 && coreq) achieved.push("NCEA Level 3");
+      else missing.push(currentLang === "zh" ? "Level 3: 需要 60 个 L3+ 学分和共同要求" : "Level 3: needs 60 Level 3+ credits and the co-requisite");
+
+      const ue = l3 >= 60 && subjects >= 3 && ueLit && ueNum;
+      if (ue) achieved.push("UE minimum requirements");
+      else {
+        const ueMissing = [];
+        if (l3 < 60) ueMissing.push("NCEA Level 3");
+        if (subjects < 3) ueMissing.push("3 approved subjects");
+        if (!ueLit) ueMissing.push("UE literacy");
+        if (!ueNum) ueMissing.push("UE numeracy");
+        missing.push((currentLang === "zh" ? "UE: 还缺 " : "UE: missing ") + ueMissing.join(", "));
+      }
+
+      result.innerHTML = `
+        <strong>${achieved.length ? (currentLang === "zh" ? "目前满足：" : "Currently meets: ") + achieved.join(" / ") : (currentLang === "zh" ? "目前还未满足任何完整证书条件" : "No full certificate condition is met yet")}</strong>
+        <span>${missing.length ? missing.join(currentLang === "zh" ? "；" : "; ") : (currentLang === "zh" ? "基础规则已全部满足。具体大学专业仍可能有更高要求。" : "The basic rules are met. Individual university programmes may still set higher requirements.")}</span>
+      `;
+    }
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      localStorage.setItem("ncea-lang", lang);
+      document.documentElement.lang = lang === "zh" ? "zh-Hans" : "en";
+      document.querySelectorAll("[data-zh][data-en]").forEach((node) => {
+        node.textContent = node.dataset[lang];
+      });
+      zhBtn.classList.toggle("active", lang === "zh");
+      enBtn.classList.toggle("active", lang === "en");
+      updateResult();
+    }
+
+    zhBtn.addEventListener("click", () => setLanguage("zh"));
+    enBtn.addEventListener("click", () => setLanguage("en"));
+    fields.forEach((field) => field.addEventListener("input", updateResult));
+    fields.forEach((field) => field.addEventListener("change", updateResult));
+    setLanguage(currentLang);
+  </script>
+</body>
+</html>
