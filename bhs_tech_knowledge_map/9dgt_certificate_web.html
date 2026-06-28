@@ -528,7 +528,7 @@ body{
     <div class="cert-certifies" id="cert-certifies">This certifies that</div>
     <div class="cert-name" id="cert-name">Student Name</div>
     <div class="cert-name-line" id="cert-name-line"></div>
-    <div class="cert-completed" id="cert-completed">has successfully completed all 6 modules and 39 lessons</div>
+    <div class="cert-completed" id="cert-completed">has successfully completed all 6 modules</div>
     <div class="pills-row" id="pills-row"></div>
     <div class="cert-rank-badge" id="cert-rank-badge"></div>
     <div class="cert-rank-desc" id="cert-rank-desc"></div>
@@ -1578,7 +1578,7 @@ function update(){
   document.getElementById("cert-name-line").style.background="linear-gradient(90deg,transparent,"+r.label_color+",transparent)";
 
   var enabledCount=0;for(var ei=0;ei<MODULES.length;ei++)if(MODULES[ei].on)enabledCount++;
-  document.getElementById("cert-completed").textContent=completed||(enabledCount>=6?"has successfully completed all 6 modules and 39 lessons":"has successfully completed "+enabledCount+" of 6 modules");
+  document.getElementById("cert-completed").textContent=completed||(enabledCount>=6?"has successfully completed all 6 modules":"has successfully completed "+enabledCount+" of 6 modules");
   document.getElementById("cert-completed").style.color=textMuted;
 
   /* Pills */
@@ -1905,7 +1905,7 @@ async function renderCertToCanvasExport(){
     var rankBadgeText=document.getElementById("inp-rank-badge").value||("\u2605 "+r.name.toUpperCase()+" \u00B7 "+r.title.toUpperCase()+" \u2605");
     var rankDescText=document.getElementById("inp-rank-desc").value||r.desc||"";
     var enabledCount=0;for(var ei=0;ei<MODULES.length;ei++)if(MODULES[ei].on)enabledCount++;
-    if(!completed) completed=enabledCount>=6?"has successfully completed all 6 modules and 39 lessons":"has successfully completed "+enabledCount+" of 6 modules";
+    if(!completed) completed=enabledCount>=6?"has successfully completed all 6 modules":"has successfully completed "+enabledCount+" of 6 modules";
 
     // Get module pills
     var pillsHtml="";
@@ -2669,7 +2669,7 @@ async function renderCertForStudent(studentName, rank) {
   var rankDescText = r.desc || "";
   var enabledCount = 0;
   for (var ei = 0; ei < MODULES.length; ei++) if (MODULES[ei].on) enabledCount++;
-  if (!completed) completed = enabledCount >= 6 ? "has successfully completed all 6 modules and 39 lessons" : "has successfully completed " + enabledCount + " of 6 modules";
+  if (!completed) completed = enabledCount >= 6 ? "has successfully completed all 6 modules" : "has successfully completed " + enabledCount + " of 6 modules";
   
   // Get module pills
   var pillsHtml = "";
