@@ -591,7 +591,7 @@ function App() {
       {/* ════════════════════════════════════════════════════════════════ */}
       {/* INCOME TAB                                                       */}
       {/* ════════════════════════════════════════════════════════════════ */}
-      {tab === "income" && (
+      {tab === "income" && (<Fragment>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
             <div style={panelStyle}>
@@ -602,10 +602,7 @@ function App() {
               <SliderRow label="每年涨薪" value={salaryIncrease} min={0} max={10000} step={500} unit="$" onChange={setSalaryIncrease} note="教师薪资等级自动增长" color={COLORS.cyan} />
               <SliderRow label="薪资上限" value={salaryCap} min={50000} max={200000} step={1000} unit="$" onChange={setSalaryCap} note="PCT1–PCT2 上限" color={COLORS.cyan} />
 
-              <div style={labelStyle}>② 伴侣薪资</div>
-              <SliderRow label="伴侣年薪（税前，无则为 0）" value={partnerSalary} min={0} max={200000} step={1000} unit="$" onChange={setPartnerSalary} color={COLORS.cyan} />
-
-              <div style={labelStyle}>③ 本人 KiwiSaver</div>
+              <div style={labelStyle}>② 本人 KiwiSaver</div>
               <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
                 {[3,4,6,8,10].map(v => (
                   <button key={v} onClick={() => setKiwiRate(v)} style={{
@@ -619,6 +616,9 @@ function App() {
               <div style={{ fontSize: 11, color: "#475669", marginBottom: 12 }}>本人员工缴纳比例</div>
               <SliderRow label="KiwiSaver 现有余额" value={kiwiBalance} min={0} max={200000} step={500} unit="$" onChange={setKiwiBalance} color={COLORS.purple} />
               <SliderRow label="KiwiSaver 已加入年数" value={kiwiYears} min={0} max={30} step={1} unit="年" onChange={setKiwiYears} note={`${kiwiYears + purchaseYearsAway >= 3 ? "✅ 购房时可提取首套房" : "❌ 购房时仍不满 3 年，不可提取"}`} color={COLORS.purple} />
+
+              <div style={labelStyle}>③ 伴侣薪资</div>
+              <SliderRow label="伴侣年薪（税前，无则为 0）" value={partnerSalary} min={0} max={200000} step={1000} unit="$" onChange={setPartnerSalary} color={COLORS.cyan} />
 
               <div style={labelStyle}>④ 伴侣 KiwiSaver</div>
               <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
@@ -637,17 +637,35 @@ function App() {
 
               <div style={labelStyle}>⑤ 共用设定</div>
               <div style={{ fontSize: 11, color: "#94a3b8", marginBottom: 6 }}>雇主强制配套（本人 & 伴侣）</div>
-              <div style={{ display: "flex", gap: 8, marginBottom: 6 }}>
-                {[3, 3.5, 4].map(v => (
-                  <button key={v} onClick={() => setEmployerMatchRate(v)} style={{
-                    flex: 1, padding: "7px 0", borderRadius: 7, cursor: "pointer", fontSize: 12, fontWeight: 700,
-                    background: employerMatchRate === v ? COLORS.green : "#1e293b",
-                    color: employerMatchRate === v ? "#0f172a" : "#64748b",
-                    border: `1px solid ${employerMatchRate === v ? COLORS.green : "#334155"}`,
-                  }}>{v}%</button>
-                ))}
+              <div style={{ display: "flex", gap: 5, marginBottom: 6, flexWrap: "wrap" }}>
+                {[0, 3, 3.5, 4, 5].map(v => {
+                  const isActive = employerMatchRate === v;
+                  return (
+                    <button key={v} onClick={() => setEmployerMatchRate(v)} style={{
+                      flex: 1, minWidth: 42, padding: "7px 4px", borderRadius: 7, cursor: "pointer", fontSize: 12, fontWeight: 700,
+                      background: isActive ? COLORS.green : "#1e293b",
+                      color: isActive ? "#0f172a" : "#64748b",
+                      border: `1px solid ${isActive ? COLORS.green : "#334155"}`,
+                    }}>{v}%</button>
+                  );
+                })}
+                <div style={{
+                  display: "flex", alignItems: "center", gap: 3,
+                  background: [0, 3, 3.5, 4, 5].includes(employerMatchRate) ? "#1e293b" : COLORS.green,
+                  borderRadius: 7, padding: "4px 8px", border: `1px solid ${[0, 3, 3.5, 4, 5].includes(employerMatchRate) ? "#334155" : COLORS.green}`,
+                  flex: 1, minWidth: 72,
+                }}>
+                  <input type="number" value={employerMatchRate} min={0} max={10} step={0.1}
+                    onChange={e => setEmployerMatchRate(Number(e.target.value) || 0)}
+                    style={{
+                      width: "100%", background: "transparent", border: "none", outline: "none",
+                      color: [0, 3, 3.5, 4, 5].includes(employerMatchRate) ? "#64748b" : "#0f172a",
+                      fontSize: 12, fontWeight: 700, textAlign: "center",
+                    }} />
+                  <span style={{ fontSize: 11, fontWeight: 700, color: [0, 3, 3.5, 4, 5].includes(employerMatchRate) ? "#475669" : "#0f172a" }}>%</span>
+                </div>
               </div>
-              <div style={{ fontSize: 11, color: "#475669", marginBottom: 14 }}>现行 3%，2026 年起 3.5%，2028 年起 4%（扣除 ESCT 税后入账）</div>
+              <div style={{ fontSize: 11, color: "#475669", marginBottom: 14 }}>预设快捷选择 0–5%，亦可直接输入自定义百分比（0–10%）。现行 3%，2026 年起 3.5%，2028 年起 4%（扣除 ESCT 税后入账）</div>
               <SliderRow label="预计几年后购房" value={purchaseYearsAway} min={0} max={15} step={1} unit="年" onChange={setPurchaseYearsAway} color={COLORS.amber} />
               <SliderRow label="KiwiSaver 基金年回报" value={kiwiFundReturn} min={2} max={10} step={0.5} unit="%" onChange={setKiwiFundReturn} note="稳健型约 4–5%，成长型约 6–8%（本人与伴侣共用）" color={COLORS.purple} />
             </div>
@@ -809,6 +827,34 @@ function App() {
             </div>
           </div>
         </div>
+
+        {/* 中国财务义务 · 仅收入标签页显示（与购房决策无关的跨境义务） */}
+        <div style={{ ...panelStyle, marginTop: 14, gridColumn: "1 / -1" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 11, color: COLORS.amber, textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 700, marginBottom: 14 }}>
+            🇨🇳 中国财务义务
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 24 }}>
+            <div>
+              <SliderRow label="每月汇款到中国（NZD）" value={remittanceToChina} min={0} max={3000} step={50} unit="$" onChange={setRemittanceToChina} note="5000人民币/月 × 汇率0.23 ≈ $1,150 NZD" color={COLORS.red} />
+            </div>
+            <div>
+              <SliderRow label="中国保险费待支付（NZD）" value={chineseInsuranceDue} min={0} max={50000} step={500} unit="$" onChange={setChineseInsuranceDue} note="80000人民币 ≈ $18,400 NZD" color={COLORS.amber} />
+            </div>
+            <div>
+              <SliderRow label="中国保险5年后可提取（NZD）" value={chineseInsuranceMaturity} min={0} max={100000} step={1000} unit="$" onChange={setChineseInsuranceMaturity} note="140000人民币 ≈ $32,200 NZD" color={COLORS.purple} />
+            </div>
+          </div>
+          <div style={{ marginTop: 10, padding: 12, background: "#0a0f1a", borderRadius: 8, borderLeft: `3px solid ${COLORS.amber}` }}>
+            <div style={{ fontSize: 11, color: "#94a3b8", marginBottom: 6 }}>📋 中国保险说明</div>
+            <div style={{ fontSize: 11, color: "#64748b", lineHeight: 1.7 }}>
+              • 10万人民币 × 3年 = 30万（约 $69,000）<br />
+              • 4万人民币 × 3年 = 12万（约 $27,600）<br />
+              • 合计46万人民币，5年后可提取<br />
+              • 待支付保费：8万人民币（约 $18,400）
+            </div>
+          </div>
+        </div>
+      </Fragment>
       )}
 
       {/* ════════════════════════════════════════════════════════════════ */}
@@ -831,7 +877,7 @@ function App() {
               </div>
               <div>
                 <div style={{ fontSize: 11, color: "#64748b", marginBottom: 4 }}>首付 {downPct}% = {fmtFull(down)}</div>
-                <input type="range" min={10} max={50} step={1} value={downPct} onChange={e => setDownPct(Number(e.target.value))} style={{ marginTop: 8 }} />
+                <input type="range" min={10} max={100} step={1} value={downPct} onChange={e => setDownPct(Number(e.target.value))} style={{ marginTop: 8 }} />
               </div>
             </div>
             <div style={labelStyle}>法律 & 调查</div>
@@ -1065,36 +1111,6 @@ function App() {
           </div>
         </div>
       )}
-
-      {/* ════════════════════════════════════════════════════════════════ */}
-      {/* 中国财务义务 · 始终可见 · 页面最底部                                       */}
-      {/* ════════════════════════════════════════════════════════════════ */}
-      <div style={{ ...panelStyle, marginTop: 18 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 11, color: COLORS.amber, textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 700, marginBottom: 14 }}>
-          🇨🇳 中国财务义务
-          <span style={{ fontSize: 10, color: "#475669", fontWeight: 500, textTransform: "none", letterSpacing: 0 }}>（与购房决策无关的跨境义务，统一列于页面底部）</span>
-        </div>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 24 }}>
-          <div>
-            <SliderRow label="每月汇款到中国（NZD）" value={remittanceToChina} min={0} max={3000} step={50} unit="$" onChange={setRemittanceToChina} note="5000人民币/月 × 汇率0.23 ≈ $1,150 NZD" color={COLORS.red} />
-          </div>
-          <div>
-            <SliderRow label="中国保险费待支付（NZD）" value={chineseInsuranceDue} min={0} max={50000} step={500} unit="$" onChange={setChineseInsuranceDue} note="80000人民币 ≈ $18,400 NZD" color={COLORS.amber} />
-          </div>
-          <div>
-            <SliderRow label="中国保险5年后可提取（NZD）" value={chineseInsuranceMaturity} min={0} max={100000} step={1000} unit="$" onChange={setChineseInsuranceMaturity} note="140000人民币 ≈ $32,200 NZD" color={COLORS.purple} />
-          </div>
-        </div>
-        <div style={{ marginTop: 10, padding: 12, background: "#0a0f1a", borderRadius: 8, borderLeft: `3px solid ${COLORS.amber}` }}>
-          <div style={{ fontSize: 11, color: "#94a3b8", marginBottom: 6 }}>📋 中国保险说明</div>
-          <div style={{ fontSize: 11, color: "#64748b", lineHeight: 1.7 }}>
-            • 10万人民币 × 3年 = 30万（约 $69,000）<br />
-            • 4万人民币 × 3年 = 12万（约 $27,600）<br />
-            • 合计46万人民币，5年后可提取<br />
-            • 待支付保费：8万人民币（约 $18,400）
-          </div>
-        </div>
-      </div>
 
     </div>
   );
