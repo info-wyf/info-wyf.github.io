@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Brisbane 9.28–10.5 旅行手册</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  :root{
+    --deep-teal:#0d3b3e;
+    --reef-teal:#155e63;
+    --sand:#f5efe1;
+    --coral:#ef6f4f;
+    --sun:#f2b134;
+    --ink:#1c2b2c;
+    --paper:#fffdf8;
+    --line:#d8cfb8;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--sand);
+    color:var(--ink);
+    font-family:"Noto Sans SC","Helvetica Neue",Arial,sans-serif;
+    line-height:1.6;
+  }
+  h1,h2,h3{
+    font-family:"Noto Serif SC",Georgia,serif;
+    margin:0;
+  }
+  .hero{
+    background:linear-gradient(160deg,var(--deep-teal) 0%, var(--reef-teal) 55%, #1d7a72 100%);
+    color:var(--sand);
+    padding:70px 24px 90px;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero::after{
+    content:"";
+    position:absolute;
+    right:-60px;bottom:-80px;
+    width:340px;height:340px;
+    border-radius:50%;
+    background:radial-gradient(circle at 30% 30%, var(--sun) 0%, transparent 70%);
+    opacity:.35;
+  }
+  .hero-inner{max-width:920px;margin:0 auto;position:relative;z-index:1;}
+  .eyebrow{
+    letter-spacing:.28em;
+    text-transform:uppercase;
+    font-size:12px;
+    color:var(--sun);
+    font-weight:600;
+  }
+  .hero h1{
+    font-size:44px;
+    margin:14px 0 6px;
+    color:#fffdf8;
+  }
+  .hero p.sub{
+    font-size:16px;
+    max-width:560px;
+    color:#dce9e6;
+    margin-top:8px;
+  }
+  .hero-stats{
+    display:flex;
+    gap:28px;
+    margin-top:36px;
+    flex-wrap:wrap;
+  }
+  .hero-stats div{border-left:2px solid var(--sun);padding-left:12px;}
+  .hero-stats .num{font-size:22px;font-weight:700;color:#fffdf8;font-family:"Noto Serif SC",serif;}
+  .hero-stats .lab{font-size:12px;color:#c7d9d5;}
+
+  nav.daynav{
+    max-width:920px;
+    margin:-40px auto 0;
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:14px 18px;
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    position:relative;
+    z-index:2;
+    box-shadow:0 12px 28px rgba(13,59,62,.18);
+  }
+  nav.daynav a{
+    text-decoration:none;
+    color:var(--reef-teal);
+    background:#eef2ea;
+    padding:6px 12px;
+    border-radius:20px;
+    font-size:13px;
+    font-weight:600;
+    border:1px solid transparent;
+    transition:.15s;
+  }
+  nav.daynav a:hover{border-color:var(--coral);color:var(--coral);}
+
+  main{max-width:920px;margin:0 auto;padding:50px 24px 100px;}
+
+  .confirmed{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:26px 28px;
+    margin-bottom:46px;
+  }
+  .confirmed h2{font-size:22px;color:var(--deep-teal);margin-bottom:16px;}
+  table{width:100%;border-collapse:collapse;font-size:14px;}
+  table.simple td, table.simple th{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left;}
+  table.simple th{color:var(--reef-teal);font-size:12px;text-transform:uppercase;letter-spacing:.05em;}
+
+  details.day{
+    margin-bottom:20px;
+    scroll-margin-top:20px;
+    background:transparent;
+  }
+  details.day summary{
+    list-style:none;
+    cursor:pointer;
+  }
+  details.day summary::-webkit-details-marker{display:none;}
+  details.day[open] summary{margin-bottom:6px;}
+  .day-head{
+    display:flex;
+    align-items:baseline;
+    gap:16px;
+    border-bottom:3px solid var(--coral);
+    padding-bottom:10px;
+    margin-bottom:6px;
+  }
+  .chevron{
+    align-self:center;
+    margin-left:10px;
+    font-size:18px;
+    color:var(--reef-teal);
+    transition:transform .2s;
+  }
+  details.day[open] .chevron{transform:rotate(180deg);}
+  .day-body{padding-top:4px;}
+  .day-num{
+    font-family:"Noto Serif SC",serif;
+    font-size:34px;
+    color:var(--deep-teal);
+    font-weight:700;
+    min-width:52px;
+  }
+  .day-title h2{font-size:20px;color:var(--ink);}
+  .day-title .date{font-size:13px;color:var(--reef-teal);font-weight:600;}
+  .intensity{
+    margin-left:auto;
+    font-size:13px;
+    color:var(--coral);
+    white-space:nowrap;
+    align-self:center;
+  }
+
+  .schedule{width:100%;border-collapse:collapse;margin-top:14px;font-size:13.5px;}
+  .schedule th{
+    background:var(--deep-teal);
+    color:var(--sand);
+    padding:10px 10px;
+    text-align:left;
+    font-weight:600;
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:.04em;
+  }
+  .schedule th:first-child{border-radius:8px 0 0 0;}
+  .schedule th:last-child{border-radius:0 8px 0 0;}
+  .schedule td{
+    padding:10px;
+    border-bottom:1px solid var(--line);
+    vertical-align:top;
+    background:var(--paper);
+  }
+  .schedule tr:nth-child(even) td{background:#faf6ec;}
+  .time{font-weight:700;color:var(--coral);white-space:nowrap;}
+  .route{font-size:12.5px;color:var(--reef-teal);}
+  .note{font-size:12.5px;color:#6b6b5f;}
+
+  .meta-row{
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+    margin-top:14px;
+  }
+  .meta-card{
+    flex:1 1 260px;
+    background:#eef2ea;
+    border-left:4px solid var(--sun);
+    border-radius:8px;
+    padding:12px 14px;
+    font-size:13px;
+  }
+  .meta-card h4{
+    margin:0 0 6px;
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:.05em;
+    color:var(--deep-teal);
+  }
+  .meta-card.warn{border-left-color:var(--coral);}
+
+  .budget{
+    background:var(--deep-teal);
+    color:var(--sand);
+    border-radius:16px;
+    padding:30px 28px;
+    margin-top:10px;
+  }
+  .budget h2{color:#fffdf8;font-size:20px;margin-bottom:14px;}
+  .budget table{color:var(--sand);}
+  .budget td, .budget th{border-bottom:1px solid rgba(255,255,255,.15);}
+  .budget th{color:var(--sun);}
+  .total-line{
+    margin-top:14px;
+    font-size:16px;
+    font-weight:700;
+    color:var(--sun);
+  }
+
+  .checklist{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:26px 28px;
+    margin-top:46px;
+  }
+  .checklist h2{color:var(--deep-teal);font-size:20px;margin-bottom:16px;}
+  .cl-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:20px;
+  }
+  .cl-grid h4{margin:0 0 8px;color:var(--reef-teal);font-size:13px;text-transform:uppercase;}
+  .cl-grid ul{margin:0;padding-left:18px;font-size:13.5px;}
+  .cl-grid li{margin-bottom:4px;}
+
+  footer{
+    text-align:center;
+    font-size:12px;
+    color:#8a8674;
+    padding:30px 0 60px;
+  }
+
+  @media(max-width:600px){
+    .hero h1{font-size:32px;}
+    .schedule{font-size:12px;}
+    .day-num{font-size:26px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow">Brisbane · 9.28 – 10.5</div>
+    <h1>八天七晚 昆士兰行程手册</h1>
+    <p class="sub">从抵达机场到登机回程,每天精确到时间段的行动清单 —— 去哪、怎么去、带什么、要注意什么。</p>
+    <div class="hero-stats">
+      <div><div class="num">8天</div><div class="lab">9/28 – 10/5</div></div>
+      <div><div class="num">6项</div><div class="lab">已确认预订</div></div>
+      <div><div class="num">NZ$1,580–1,620</div><div class="lab">预估总花费(不含机票)</div></div>
+    </div>
+  </div>
+</div>
+
+<nav class="daynav">
+  <a href="#d1">Day1 抵达</a>
+  <a href="#d2">Day2 River+Koala</a>
+  <a href="#d3">Day3 摩顿岛</a>
+  <a href="#d4">Day4 慢游</a>
+  <a href="#d5">Day5 Springbrook</a>
+  <a href="#d6">Day6 动物园</a>
+  <a href="#d7">Day7 自由日</a>
+  <a href="#d8">Day8 返程</a>
+  <a href="#checklist">清单</a>
+  <a href="#confirmed">已订项目</a>
+</nav>
+
+<main>
+
+  <!-- DAY 1 -->
+  <details class="day" id="d1" open>
+    <summary><div class="day-head">
+      <div class="day-num">01</div>
+      <div class="day-title"><h2>抵达 Brisbane + 熟悉城市</h2><div class="date">9月28日 周一</div></div>
+      <div class="intensity">强度 ⭐</div>
+      <div class="chevron">▾</div>
+    </div></summary>
+    <div class="day-body">
+    <table class="schedule">
+      <tr><th>时间</th><th>做什么</th><th>路线 / 时长</th><th>注意事项</th></tr>
+      <tr><td class="time">07:55</td><td>抵达 Brisbane Airport,入境+取行李+买Go Card</td><td class="route">机场内,约45分钟</td><td class="note">不要急着安排活动</td></tr>
+      <tr><td class="time">08:45–09:30</td><td>Airtrain 前往住宿</td><td class="route">机场→Roma Street站(约30分钟)+步行10分钟到YHA</td><td class="note">-</td></tr>
+      <tr><td class="time">09:30–11:00</td><td>YHA寄存行李,办理check-in,问前台建议</td><td class="route">-</td><td class="note">房间大概率下午才能入住</td></tr>
+      <tr><td class="time">11:00–13:00</td><td>Roma Street Parkland 逛花园</td><td class="route">步行约5分钟</td><td class="note">适合调整时差,慢慢逛</td></tr>
+      <tr><td class="time">13:00–14:00</td><td>午饭</td><td class="route">住宿附近</td><td class="note">预算 $15–25 AUD</td></tr>
+      <tr><td class="time">14:00–16:00</td><td>回YHA休息,建议睡1小时</td><td class="route">-</td><td class="note">早起+机场流程很累</td></tr>
+      <tr><td class="time">16:00–18:30</td><td>South Bank 第一次探索,看Brisbane Wheel和河边夕阳</td><td class="route">YHA→Kurilpa Bridge→South Bank Parklands</td><td class="note">-</td></tr>
+      <tr><td class="time">18:30–20:00</td><td>晚餐</td><td class="route">South Bank附近</td><td class="note">第一天不要吃太贵</td></tr>
+      <tr><td class="time">20:30</td><td>回YHA早点睡</td><td class="route">-</td><td class="note">如飞机晚点,直接取消下午Roma Park,晚上South Bank即可</td></tr>
+    </table>
+    <div class="meta-row">
+      <div class="meta-card"><h4>带什么</h4>护照、机票、酒店订单、防晒、充电宝</div>
+      <div class="meta-card warn"><h4>提醒</h4>行程较松,重点是倒时差,别硬赶景点</div>
+    </div>
+    </div>
+  </details>
+
+  <!-- DAY 2 -->
+  <details class="day" id="d2">
+    <summary><div class="day-head">
+      <div class="day-num">02</div>
+      <div class="day-title"><h2>River Cruise + Lone Pine Koala Sanctuary</h2><div class="date">9月29日 周二</div></div>
+      <div class="intensity">强度 ⭐⭐</div>
+      <div class="chevron">▾</div>
+    </div></summary>
+    <div class="day-body">
+    <table class="schedule">
+      <tr><th>时间</th><th>做什么</th><th>路线 / 时长</th><th>注意事项</th></tr>
+      <tr><td class="time">07:00–07:40</td><td>起床洗漱</td><td class="route">-</td><td class="note">-</td></tr>
+      <tr><td class="time">07:40</td><td>早餐(咖啡+香蕉+三明治)</td><td class="route">附近买</td><td class="note">预算 $10–15 AUD,不建议买YHA早餐</td></tr>
+      <tr><td class="time">07:45–08:30</td><td>前往集合点</td><td class="route">YHA→Cultural Centre Pontoon,步行约20分钟</td><td class="note">提前15分钟到,不用太早</td></tr>
+      <tr><td class="time">09:00–10:15</td><td>Brisbane River Cruise</td><td class="route">船上约75分钟</td><td class="note">看CBD天际线、Story Bridge、Kangaroo Point</td></tr>
+      <tr><td class="time">10:15–13:30</td><td>Lone Pine Koala Sanctuary(先看动物→喂袋鼠→午餐)</td><td class="route">园区内</td><td class="note">午餐预算 $20–30 AUD</td></tr>
+      <tr><td class="time">14:30</td><td>返回市区</td><td class="route">-</td><td class="note">-</td></tr>
+      <tr><td class="time">14:45–15:30</td><td>回YHA洗澡休息</td><td class="route">-</td><td class="note">-</td></tr>
+      <tr><td class="time">16:00–18:30</td><td>South Bank 黄昏路线,16:30–17:30拍照最佳</td><td class="route">YHA→South Bank Parklands→Wheel of Brisbane</td><td class="note">-</td></tr>
+      <tr><td class="time">18:30–20:00</td><td>晚餐</td><td class="route">South Bank解决,不要安排太远</td><td class="note">-</td></tr>
+      <tr><td class="time">20:30</td><td>回YHA早点睡</td><td class="route">-</td><td class="note">明天摩顿岛要早起</td></tr>
+    </table>
+    <div class="meta-row">
+      <div class="meta-card"><h4>带什么</h4>Go Card、水、防晒、相机</div>
+    </div>
+    </div>
+  </details>
+
+  <!-- DAY 3 -->
+  <details class="day" id="d3">
+    <summary><div class="day-head">
+      <div class="day-num">03</div>
+      <div class="day-title"><h2>Moreton Island 摩顿岛一日游</h2><div class="date">9月30日 周三</div></div>
+      <div class="intensity">强度 ⭐⭐⭐⭐⭐</div>
+      <div class="chevron">▾</div>
+    </div></summary>
+    <div class="day-body">
+    <table class="schedule">
+      <tr><th>时间</th><th>做什么</th><th>路线 / 时长</th><th>注意事项</th></tr>
+      <tr><td class="time">04:45–05:00</td><td>起床,准备好装备</td><td class="route">-</td><td class="note">前一晚手机充满电,设两个闹钟</td></tr>
+      <tr><td class="time">05:30–06:30</td><td>YHA集合出发</td><td class="route">-</td><td class="note">票面写5:30AM,含接送/集合时间</td></tr>
+      <tr><td class="time">07:00–09:00</td><td>前往码头坐船</td><td class="route">Brisbane→Rivergate Marina/Port of Brisbane→Moreton Island</td><td class="note">-</td></tr>
+      <tr><td class="time">09:30</td><td>抵达摩顿岛</td><td class="route">-</td><td class="note">-</td></tr>
+      <tr><td class="time">10:00–12:00</td><td>Tangalooma Wrecks 浮潜</td><td class="route">-</td><td class="note">不会游泳可浅水体验或沙滩休息</td></tr>
+      <tr><td class="time">12:00–13:00</td><td>午餐(buffet/picnic,视团而定)</td><td class="route">-</td><td class="note">-</td></tr>
+      <tr><td class="time">13:00–15:30</td><td>沙滩时间,拍照看海</td><td class="route">-</td><td class="note">不要一直玩项目,留时间放松</td></tr>
+      <tr><td class="time">15:30–17:00</td><td>返回Brisbane</td><td class="route">-</td><td class="note">-</td></tr>
+      <tr><td class="time">17:30–18:30</td><td>回YHA</td><td class="route">-</td><td class="note">会比较累,不安排远的晚餐/夜景/酒吧</td></tr>
+      <tr><td class="time">18:30–20:00</td><td>简单晚餐(牛肉汉堡/亚洲餐/面)</td><td class="route">附近解决</td><td class="note">-</td></tr>
+      <tr><td class="time">20:30</td><td>睡觉</td><td class="route">-</td><td class="note">-</td></tr>
+    </table>
+    <div class="meta-row">
+      <div class="meta-card"><h4>必带装备</h4>防晒、帽子、墨镜、泳衣(提前穿好)、毛巾、换洗衣服、水、手机防水袋</div>
+      <div class="meta-card warn"><h4>穿什么</h4>早晨偏凉:短袖+薄外套;白天短袖;海边风大注意防晒</div>
+      <div class="meta-card"><h4>不要带</h4>笔记本电脑、大相机包 — 一个小背包即可</div>
+    </div>
+    </div>
+  </details>
+
+  <!-- DAY 4 -->
+  <details class="day" id="d4">
+    <summary><div class="day-head">
+      <div class="day-num">04</div>
+      <div class="day-title"><h2>Mt Coot-tha + Brisbane City 慢游</h2><div class="date">10月1日 周四</div></div>
+      <div class="intensity">强度 ⭐⭐</div>
+      <div class="chevron">▾</div>
+    </div></summary>
+    <div class="day-body">
+    <table class="schedule">
+      <tr><th>时间</th><th>做什么</th><th>路线 / 时长</th><th>注意事项</th></tr>
+      <tr><td class="time">09:00</td><td>起床,吃早餐</td><td class="route">-</td><td class="note">睡晚一点,不报团</td></tr>
+      <tr><td class="time">10:00–12:00</td><td>Mt Coot-tha Lookout,看Brisbane全景/CBD/Moreton Bay方向</td><td class="route">建议Uber过去(公交耗时)</td><td class="note">-</td></tr>
+      <tr><td class="time">12:00–13:30</td><td>Mt Coot-tha Botanic Gardens 慢慢走</td><td class="route">-</td><td class="note">春天很舒服</td></tr>
+      <tr><td class="time">14:00</td><td>回CBD</td><td class="route">-</td><td class="note">-</td></tr>
+      <tr><td class="time">14:30–17:30</td><td>Queen Street Mall → City Hall → Treasury Building</td><td class="route">-</td><td class="note">-</td></tr>
+      <tr><td class="time">17:30–19:00</td><td>Howard Smith Wharves,看Story Bridge,喝咖啡拍照</td><td class="route">-</td><td class="note">-</td></tr>
+      <tr><td class="time">晚上</td><td>回YHA</td><td class="route">-</td><td class="note">-</td></tr>
+    </table>
+    </div>
+  </details>
+
+  <!-- DAY 5 -->
+  <details class="day" id="d5">
+    <summary><div class="day-head">
+      <div class="day-num">05</div>
+      <div class="day-title"><h2>Springbrook + Tamborine Rainforest</h2><div class="date">10月2日 周五</div></div>
+      <div class="intensity">强度 ⭐⭐⭐⭐</div>
+      <div class="chevron">▾</div>
+    </div></summary>
+    <div class="day-body">
+    <table class="schedule">
+      <tr><th>时间</th><th>做什么</th><th>路线 / 时长</th><th>注意事项</th></tr>
+      <tr><td class="time">06:15</td><td>起床洗漱,检查天气,涂防晒</td><td class="route">-</td><td class="note">-</td></tr>
+      <tr><td class="time">06:40</td><td>早餐(三明治+香蕉+咖啡)</td><td class="route">-</td><td class="note">不用吃太饱</td></tr>
+      <tr><td class="time">06:55</td><td>离开YHA前往集合点</td><td class="route">YHA→222 Margaret Street,步行约18–20分钟</td><td class="note">预留30分钟,06:55出门最保险</td></tr>
+      <tr><td class="time">07:25</td><td>到达集合点</td><td class="route">-</td><td class="note">早到可上厕所整理背包</td></tr>
+      <tr><td class="time">07:35</td><td>Check-in</td><td class="route">-</td><td class="note">-</td></tr>
+      <tr><td class="time">07:45</td><td>发车</td><td class="route">-</td><td class="note">-</td></tr>
+      <tr><td class="time">全天</td><td>Hinze Dam → Springbrook National Park(Natural Bridge)→ 雨林步道 → Gallery Walk(午餐自理,预算20–30 AUD)→ Cedar Creek Glow Worm Cave → Curtis Falls</td><td class="route">-</td><td class="note">洞穴内禁止拍照/闪光灯;连续步行2–3小时,中等体能要求</td></tr>
+      <tr><td class="time">17:30–18:00</td><td>返回Brisbane,回到222 Margaret Street</td><td class="route">步行约20分钟回YHA</td><td class="note">-</td></tr>
+      <tr><td class="time">晚上</td><td>早点休息</td><td class="route">-</td><td class="note">第二天动物园又要早起</td></tr>
+    </table>
+    <div class="meta-row">
+      <div class="meta-card"><h4>穿什么</h4>运动鞋(不要拖鞋)、运动裤或短裤、短袖+薄外套(山区比市区凉)</div>
+      <div class="meta-card"><h4>带什么</h4>小背包、水、帽子、墨镜、防晒、充电宝、雨衣、少量零食</div>
+    </div>
+    </div>
+  </details>
+
+  <!-- DAY 6 -->
+  <details class="day" id="d6">
+    <summary><div class="day-head">
+      <div class="day-num">06</div>
+      <div class="day-title"><h2>Australia Zoo</h2><div class="date">10月3日 周六</div></div>
+      <div class="intensity">强度 ⭐⭐⭐⭐</div>
+      <div class="chevron">▾</div>
+    </div></summary>
+    <div class="day-body">
+    <table class="schedule">
+      <tr><th>时间</th><th>做什么</th><th>路线 / 时长</th><th>注意事项</th></tr>
+      <tr><td class="time">06:15</td><td>起床</td><td class="route">-</td><td class="note">-</td></tr>
+      <tr><td class="time">06:15–06:45</td><td>洗漱、整理背包</td><td class="route">-</td><td class="note">带手机、充电宝、帽子、墨镜、防晒、水壶、零食、雨衣</td></tr>
+      <tr><td class="time">06:45–07:05</td><td>早餐</td><td class="route">-</td><td class="note">不用吃太多但一定要吃</td></tr>
+      <tr><td class="time">07:10</td><td>离开YHA</td><td class="route">-</td><td class="note">-</td></tr>
+      <tr><td class="time">07:25–07:30</td><td>到达 Pullman Brisbane King George Square</td><td class="route">-</td><td class="note">-</td></tr>
+      <tr><td class="time">07:40</td><td>上车出发</td><td class="route">-</td><td class="note">-</td></tr>
+      <tr><td class="time">全天</td><td>推荐顺序:①Crocoseum鳄鱼秀 ②Koala区 ③Kangaroo区 ④非洲动物区 ⑤老虎等大型动物 ⑥纪念品店</td><td class="route">-</td><td class="note">鳄鱼秀一定要看,提前安排好时间</td></tr>
+      <tr><td class="time">傍晚</td><td>返回同一上车点</td><td class="route">回市区后步行约12–15分钟回YHA</td><td class="note">-</td></tr>
+    </table>
+    </div>
+  </details>
+
+  <!-- DAY 7 -->
+  <details class="day" id="d7">
+    <summary><div class="day-head">
+      <div class="day-num">07</div>
+      <div class="day-title"><h2>自由机动日</h2><div class="date">10月4日 周日</div></div>
+      <div class="intensity">强度 ⭐</div>
+      <div class="chevron">▾</div>
+    </div></summary>
+    <div class="day-body">
+    <table class="schedule">
+      <tr><th>方案</th><th>内容</th><th>路线 / 时长</th><th>适合情况</th></tr>
+      <tr><td class="time">方案① 推荐</td><td>Gold Coast:Surfers Paradise / Broadbeach / Pacific Fair</td><td class="route">Brisbane→Surfers Paradise 火车约1.5小时</td><td class="note">天气好、想看海和购物</td></tr>
+      <tr><td class="time">方案②</td><td>North Stradbroke Island</td><td class="route">需提前查船班</td><td class="note">天气好,想再体验一个海岛</td></tr>
+      <tr><td class="time">方案③ 轻松</td><td>West End → New Farm Park → Howard Smith Wharves</td><td class="route">市区内</td><td class="note">想休息,适合拍照</td></tr>
+    </table>
+    <div class="meta-row">
+      <div class="meta-card warn"><h4>提醒</h4>不要提前塞满,当天根据天气再决定</div>
+    </div>
+    </div>
+  </details>
+
+  <!-- DAY 8 -->
+  <details class="day" id="d8">
+    <summary><div class="day-head">
+      <div class="day-num">08</div>
+      <div class="day-title"><h2>退房 + 返程</h2><div class="date">10月5日 周一</div></div>
+      <div class="intensity">强度 ⭐</div>
+      <div class="chevron">▾</div>
+    </div></summary>
+    <div class="day-body">
+    <table class="schedule">
+      <tr><th>时间</th><th>做什么</th><th>路线 / 时长</th><th>注意事项</th></tr>
+      <tr><td class="time">上午</td><td>退房(YHA可寄存行李)</td><td class="route">-</td><td class="note">-</td></tr>
+      <tr><td class="time">09:30–12:00</td><td>最后购物:巧克力、保健品、纪念品</td><td class="route">Queen Street Mall</td><td class="note">-</td></tr>
+      <tr><td class="time">12:00</td><td>午饭</td><td class="route">-</td><td class="note">-</td></tr>
+      <tr><td class="time">13:30</td><td>回YHA取行李</td><td class="route">-</td><td class="note">-</td></tr>
+      <tr><td class="time">14:00–15:00</td><td>前往机场</td><td class="route">-</td><td class="note">不要16点才走</td></tr>
+      <tr><td class="time">15:30</td><td>到机场</td><td class="route">-</td><td class="note">国际航班建议提前2.5–3小时</td></tr>
+      <tr><td class="time">18:55</td><td>QF135 Brisbane → Christchurch</td><td class="route">-</td><td class="note">-</td></tr>
+    </table>
+    </div>
+  </details>
+
+  <section class="checklist" id="checklist">
+    <h2>出发前检查清单</h2>
+    <div class="cl-grid">
+      <div><h4>证件</h4><ul>
+        <li>护照</li><li>澳大利亚 ETA</li><li>机票</li><li>酒店订单</li><li>所有Tour订单</li>
+      </ul></div>
+      <div><h4>电子设备</h4><ul>
+        <li>手机</li><li>充电器</li><li>充电宝</li><li>Type I 插头(备用)</li>
+      </ul></div>
+      <div><h4>衣物</h4><ul>
+        <li>运动鞋</li><li>拖鞋</li><li>泳衣</li><li>帽子</li><li>墨镜</li><li>轻薄外套</li><li>雨衣</li>
+      </ul></div>
+      <div><h4>其他</h4><ul>
+        <li>防晒霜 SPF50+</li><li>水壶</li><li>小锁(YHA储物柜)</li><li>耳塞</li><li>眼罩</li><li>防水手机袋</li>
+      </ul></div>
+    </div>
+  </section>
+
+  <section class="confirmed" id="confirmed">
+    <h2>已确认预订</h2>
+    <table class="simple">
+      <tr><th>项目</th><th>日期</th><th>金额</th></tr>
+      <tr><td>✈️ 往返机票 CHC ⇄ BNE</td><td>9/28–10/5</td><td>¥4,324 RMB</td></tr>
+      <tr><td>🏨 YHA Brisbane City（4人间，7晚）</td><td>9/28–10/5</td><td>NZ$786</td></tr>
+      <tr><td>🚢 River Cruise + Lone Pine Koala</td><td>9/29</td><td>AUD124.20</td></tr>
+      <tr><td>🏝 Moreton Island 一日游</td><td>9/30</td><td>NZ$239.02</td></tr>
+      <tr><td>🌳 Springbrook & Tamborine 一日游</td><td>10/2</td><td>NZ$207.32</td></tr>
+      <tr><td>🦘 Australia Zoo 接送+门票</td><td>10/3</td><td>NZ$227.00</td></tr>
+    </table>
+    <div class="total-line" style="color:var(--coral);margin-top:16px;">
+      已确认预订总花费:约 <strong>NZ$2,700</strong> ≈ <strong>¥10,700 RMB</strong>
+    </div>
+    <div class="note" style="margin-top:4px;">按当前汇率粗略折算(1 AUD≈1.20 NZD,1 CNY≈0.25 NZD),仅供参考,不含餐饮和市内交通</div>
+  </section>
+
+</main>
+
+<footer>Brisbane 行程手册 · 9.28 – 10.5</footer>
+
+</body>
+</html>
