@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>新西兰 · 租房 vs 买房 全成本分析</title>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+<script src="prop-types.min.js"></script>
+<script src="Recharts.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;800&family=DM+Mono:wght@500;700&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0a0f1a; color: #e2e8f0; font-family: 'DM Sans','Segoe UI',sans-serif; padding: 20px 16px; min-height: 100vh; }
+  input[type=number]::-webkit-outer-spin-button, input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
+  input[type=number] { -moz-appearance: textfield; }
+  input[type=range] { -webkit-appearance: none; width: 100%; height: 3px; border-radius: 2px; background: #1e293b; outline: none; cursor: pointer; }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: var(--thumb-color, #34d399); box-shadow: 0 0 0 3px rgba(52,211,153,0.15); }
+  input[type=number]:focus { border-color: #34d399 !important; outline: none; }
+  ::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 2px; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+<script type="text/babel">
+const { useState, useMemo, useRef, useEffect, Fragment } = React;
+const {
+  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  ReferenceLine, AreaChart, Area, defs, linearGradient, stop, CartesianGrid: CG
+} = Recharts;
+
+// ── Formatters ────────────────────────────────────────────────────────────────
+const fmtFull = (n) => `$${Math.round(n).toLocaleString()}`;
+const fmt = (n) => n >= 1000000 ? `$${(n/1000000).toFixed(2)}M` : n >= 1000 ? `$${(n/1000).toFixed(0)}k` : `$${Math.round(n)}`;
+const fmtPct = (n) => `${n.toFixed(1)}%`;
+
+// ── NZ PAYE Calculator (2024/25) ──────────────────────────────────────────────
+function calcPAYE(gross) {
+  const brackets = [
+    { limit: 14000, rate: 0.105 },
+    { limit: 48000, rate: 0.175 },
+    { limit: 70000, rate: 0.30 },
+    { limit: 180000, rate: 0.33 },
+    { limit: Infinity, rate: 0.39 },
+  ];
+  let tax = 0, prev = 0;
+  for (const b of brackets) {
+    if (gross <= prev) break;
+    const taxable = Math.min(gross, b.limit) - prev;
+    tax += taxable * b.rate;
+    prev = b.limit;
+  }
+  return tax;
+}
+
+// ── ESCT Rate (approximate for employer KiwiSaver) ────────────────────────────
+function esctRate(gross) {
+  if (gross <= 16800) return 0.105;
+  if (gross <= 57600) return 0.175;
+  if (gross <= 84000) return 0.30;
+  if (gross <= 216000) return 0.33;
+  return 0.39;
+}
+
+const ACC_RATE = 0.0167;
+const ACC_CAP = 142283;
+
+// ── Shared UI ─────────────────────────────────────────────────────────────────
+const COLORS = { green: "#34d399", blue: "#60a5fa", amber: "#fbbf24", purple: "#a78bfa", red: "#fb7185", cyan: "#22d3ee" };
+
+const CostRow = ({ item, value, onChange, note, tag, disabled }) => (
+  <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "9px 0", borderBottom: "1px solid #1e293b", opacity: disabled ? 0.4 : 1 }}>
+    <div style={{ flex: 1 }}>
+      <div style={{ fontSize: 13, color: "#e2e8f0", display: "flex", alignItems: "center", gap: 6 }}>
+        {item}
+        {tag && <span style={{ fontSize: 10, background: tag === "NZ特有" ? "#064e3b" : tag === "必须" ? "#3b1d04" : "#1e3a5f", color: tag === "NZ特有" ? "#34d399" : tag === "必须" ? "#fb923c" : "#60a5fa", padding: "1px 6px", borderRadius: 4, fontWeight: 700 }}>{tag}</span>}
+      </div>
+      {note && <div style={{ fontSize: 11, color: "#475569", marginTop: 2 }}>{note}</div>}
+    </div>
+    <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+      <span style={{ color: "#475569", fontSize: 12 }}>$</span>
+      <input type="number" value={disabled ? 0 : value} disabled={disabled} onChange={e => onChange(Number(e.target.value))}
+        style={{ width: 108, background: "#0a0f1a", border: "1px solid #1e293b", borderRadius: 6, color: "#f1f5f9", fontSize: 13, fontFamily: "'DM Mono',monospace", fontWeight: 600, padding: "5px 8px", textAlign: "right", outline: "none" }} />
+    </div>
+  </div>
+);
+
+const panelStyle = { background: "#111827", borderRadius: 12, padding: 20, border: "1px solid #1e293b" };
+const labelStyle = { fontSize: 11, color: "#475569", textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 700, marginBottom: 10, marginTop: 14 };
+
+const SliderRow = ({ label, value, min, max, step, unit, onChange, note, color = "#34d399" }) => (
+  <div style={{ marginBottom: 16 }}>
+    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+      <span style={{ fontSize: 12, color: "#94a3b8" }}>{label}</span>
+      <span style={{ fontSize: 15, fontWeight: 800, color, fontFamily: "'DM Mono',monospace" }}>{unit === "$" ? fmtFull(value) : `${value}${unit}`}</span>
+    </div>
+    <input type="range" min={min} max={max} step={step} value={value} onChange={e => onChange(Number(e.target.value))}
+      style={{ "--thumb-color": color }} />
+    {note && <div style={{ fontSize: 11, color: "#475569", marginTop: 3 }}>{note}</div>}
+  </div>
+);
+
+const TabBtn = ({ active, onClick, children }) => (
+  <button onClick={onClick} style={{
+    padding: "7px 14px", borderRadius: 7, cursor: "pointer", fontSize: 12, fontWeight: 700,
+    background: active ? "#1e293b" : "transparent", color: active ? "#e2e8f0" : "#475669",
+    border: `1px solid ${active ? "#334155" : "transparent"}`, transition: "all 0.15s",
+  }}>{children}</button>
+);
+
+const Gauge = ({ label, value, max, warn, danger, unit = "%" }) => {
+  const pct = Math.min(value / max * 100, 100);
+  const color = value >= danger ? COLORS.red : value >= warn ? COLORS.amber : COLORS.green;
+  return (
+    <div style={{ marginBottom: 14 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 5 }}>
+        <span style={{ fontSize: 12, color: "#94a3b8" }}>{label}</span>
+        <span style={{ fontSize: 14, fontWeight: 800, color, fontFamily: "'DM Mono',monospace" }}>{unit === "%" ? fmtPct(value) : fmtFull(value)}{unit === "x" ? "x" : ""}</span>
+      </div>
+      <div style={{ height: 6, background: "#1e293b", borderRadius: 3, overflow: "hidden" }}>
+        <div style={{ height: "100%", width: `${pct}%`, background: color, borderRadius: 3, transition: "width 0.4s" }} />
+      </div>
+      <div style={{ fontSize: 10, color: "#334155", marginTop: 3 }}>
+        安全线 &lt;{warn}{unit === "x" ? "x" : "%"} · 警戒线 &lt;{danger}{unit === "x" ? "x" : "%"}
+      </div>
+    </div>
+  );
+};
+
+const TaxBracketBar = ({ gross, tax, acc, kiwiEmp }) => {
+  const total = gross;
+  const segments = [
+    { label: "PAYE税", value: tax, color: COLORS.red },
+    { label: "ACC", value: acc, color: COLORS.amber },
+    { label: "KiwiSaver(员工)", value: kiwiEmp, color: COLORS.purple },
+    { label: "实收薪资", value: gross - tax - acc - kiwiEmp, color: COLORS.green },
+  ];
+  return (
+    <div>
+      <div style={{ display: "flex", height: 20, borderRadius: 6, overflow: "hidden", marginBottom: 8 }}>
+        {segments.map(s => (
+          <div key={s.label} style={{ width: `${s.value / total * 100}%`, background: s.color, transition: "width 0.3s" }} title={s.label} />
+        ))}
+      </div>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "6px 16px" }}>
+        {segments.map(s => (
+          <div key={s.label} style={{ display: "flex", alignItems: "center", gap: 5 }}>
+            <div style={{ width: 8, height: 8, background: s.color, borderRadius: 2 }} />
+            <span style={{ fontSize: 11, color: "#94a3b8" }}>{s.label}</span>
+            <span style={{ fontSize: 11, fontFamily: "'DM Mono',monospace", color: s.color, fontWeight: 700 }}>{fmtFull(s.value)}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const CustomTooltip = ({ active, payload, label }) => {
+  if (!active || !payload || !payload.length) return null;
+  return (
+    <div style={{ background: "#0a0f1a", border: "1px solid #334155", borderRadius: 8, padding: "10px 14px" }}>
+      <div style={{ color: "#64748b", fontSize: 11, marginBottom: 6 }}>第 {label} 年</div>
+      {payload.map(p => (
+        <div key={p.name} style={{ color: p.color || p.stroke, fontSize: 12, fontWeight: 700, marginBottom: 2 }}>
+          {p.name}: <span style={{ fontFamily: "'DM Mono',monospace" }}>{fmtFull(p.value)}</span>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+// ═══════════════════════════════════════════════════════════════════════════════
+function App() {
+  const [tab, setTab] = useState("income");
+  const fileInputRef = useRef(null);
+
+  // ── 本地缓存 ──────────────────────────────────────────────────────
+  const saveToCache = () => {
+    const state = {
+      grossSalary, kiwiRate, kiwiBalance, partnerKiwiRate, partnerKiwiBalance, partnerKiwiYears, employerMatchRate, kiwiYears, kiwiFundReturn, partnerSalary, purchaseYearsAway,
+      salaryIncrease, salaryCap, remittanceToChina, chineseInsuranceDue, chineseInsuranceMaturity,
+      housePrice, downPct, mortgageRate, loanYears,
+      weeklyRent, roomsRented, roomWeeklyRent,
+      lawyerFee, limReport, buildingInspection, valuation, mortgageEstab, titleReg, movingCosts, renovation,
+      councilRates, buildingInsurance, contentsInsurance, waterRates, maintenance, majorRepair, bodyCorp,
+      appreciation, investReturn, analyzeYears,
+    };
+    localStorage.setItem('rent_vs_buy_nz', JSON.stringify(state));
+  };
+
+  const loadFromCache = () => {
+    try {
+      const cached = JSON.parse(localStorage.getItem('rent_vs_buy_nz'));
+      if (cached) {
+        if (cached.grossSalary !== undefined) setGrossSalary(cached.grossSalary);
+        if (cached.kiwiRate !== undefined) setKiwiRate(cached.kiwiRate);
+        if (cached.kiwiBalance !== undefined) setKiwiBalance(cached.kiwiBalance);
+        if (cached.kiwiYears !== undefined) setKiwiYears(cached.kiwiYears);
+        if (cached.kiwiFundReturn !== undefined) setKiwiFundReturn(cached.kiwiFundReturn);
+        if (cached.partnerSalary !== undefined) setPartnerSalary(cached.partnerSalary);
+        if (cached.partnerKiwiRate !== undefined) setPartnerKiwiRate(cached.partnerKiwiRate);
+        if (cached.partnerKiwiBalance !== undefined) setPartnerKiwiBalance(cached.partnerKiwiBalance);
+        if (cached.partnerKiwiYears !== undefined) setPartnerKiwiYears(cached.partnerKiwiYears);
+        if (cached.employerMatchRate !== undefined) setEmployerMatchRate(cached.employerMatchRate);
+        if (cached.purchaseYearsAway !== undefined) setPurchaseYearsAway(cached.purchaseYearsAway);
+        if (cached.salaryIncrease !== undefined) setSalaryIncrease(cached.salaryIncrease);
+        if (cached.salaryCap !== undefined) setSalaryCap(cached.salaryCap);
+        if (cached.remittanceToChina !== undefined) setRemittanceToChina(cached.remittanceToChina);
+        if (cached.chineseInsuranceDue !== undefined) setChineseInsuranceDue(cached.chineseInsuranceDue);
+        if (cached.chineseInsuranceMaturity !== undefined) setChineseInsuranceMaturity(cached.chineseInsuranceMaturity);
+        if (cached.housePrice !== undefined) setHousePrice(cached.housePrice);
+        if (cached.downPct !== undefined) setDownPct(cached.downPct);
+        if (cached.mortgageRate !== undefined) setMortgageRate(cached.mortgageRate);
+        if (cached.loanYears !== undefined) setLoanYears(cached.loanYears);
+        if (cached.weeklyRent !== undefined) setWeeklyRent(cached.weeklyRent);
+        if (cached.roomsRented !== undefined) setRoomsRented(cached.roomsRented);
+        if (cached.roomWeeklyRent !== undefined) setRoomWeeklyRent(cached.roomWeeklyRent);
+        if (cached.lawyerFee !== undefined) setLawyerFee(cached.lawyerFee);
+        if (cached.limReport !== undefined) setLimReport(cached.limReport);
+        if (cached.buildingInspection !== undefined) setBuildingInspection(cached.buildingInspection);
+        if (cached.valuation !== undefined) setValuation(cached.valuation);
+        if (cached.mortgageEstab !== undefined) setMortgageEstab(cached.mortgageEstab);
+        if (cached.titleReg !== undefined) setTitleReg(cached.titleReg);
+        if (cached.movingCosts !== undefined) setMovingCosts(cached.movingCosts);
+        if (cached.renovation !== undefined) setRenovation(cached.renovation);
+        if (cached.councilRates !== undefined) setCouncilRates(cached.councilRates);
+        if (cached.buildingInsurance !== undefined) setBuildingInsurance(cached.buildingInsurance);
+        if (cached.contentsInsurance !== undefined) setContentsInsurance(cached.contentsInsurance);
+        if (cached.waterRates !== undefined) setWaterRates(cached.waterRates);
+        if (cached.maintenance !== undefined) setMaintenance(cached.maintenance);
+        if (cached.majorRepair !== undefined) setMajorRepair(cached.majorRepair);
+        if (cached.bodyCorp !== undefined) setBodyCorp(cached.bodyCorp);
+        if (cached.appreciation !== undefined) setAppreciation(cached.appreciation);
+        if (cached.investReturn !== undefined) setInvestReturn(cached.investReturn);
+        if (cached.analyzeYears !== undefined) setAnalyzeYears(cached.analyzeYears);
+        return true;
+      }
+    } catch (e) { console.warn('加载缓存失败', e); }
+    return false;
+  };
+
+  const resetToDefaults = () => {
+    if (!confirm('确定重置所有参数为默认值？')) return;
+    localStorage.removeItem('rent_vs_buy_nz');
+    window.location.reload();
+  };
+
+  // 初始加载缓存
+  const [loaded, setLoaded] = useState(() => loadFromCache());
+
+  // 自动保存缓存
+  useEffect(() => {
+    if (loaded) saveToCache();
+  }, [loaded, grossSalary, kiwiRate, kiwiBalance, partnerKiwiRate, partnerKiwiBalance, partnerKiwiYears, employerMatchRate, kiwiYears, kiwiFundReturn, partnerSalary, purchaseYearsAway,
+      salaryIncrease, salaryCap, remittanceToChina, chineseInsuranceDue, chineseInsuranceMaturity,
+      housePrice, downPct, mortgageRate, loanYears,
+      weeklyRent, roomsRented, roomWeeklyRent,
+      lawyerFee, limReport, buildingInspection, valuation, mortgageEstab, titleReg, movingCosts, renovation,
+      councilRates, buildingInsurance, contentsInsurance, waterRates, maintenance, majorRepair, bodyCorp,
+      appreciation, investReturn, analyzeYears]);
+
+  // ── Import / Export ──────────────────────────────────────────────────
+  const exportParams = () => {
+    const params = {
+      version: "1.0",
+      exportDate: new Date().toISOString(),
+      income: { grossSalary, kiwiRate, kiwiBalance, partnerKiwiRate, partnerKiwiBalance, partnerKiwiYears, employerMatchRate, kiwiYears, kiwiFundReturn, partnerSalary, purchaseYearsAway,
+                 salaryIncrease, salaryCap, remittanceToChina, chineseInsuranceDue, chineseInsuranceMaturity,
+                 roomsRented, roomWeeklyRent },
+      house: { housePrice, downPct, mortgageRate, loanYears },
+      rent: { weeklyRent },
+      oneTime: { lawyerFee, limReport, buildingInspection, valuation, mortgageEstab, titleReg, movingCosts, renovation },
+      annual: { councilRates, buildingInsurance, contentsInsurance, waterRates, maintenance, majorRepair, bodyCorp },
+      market: { appreciation, investReturn, analyzeYears },
+    };
+    const json = JSON.stringify(params, null, 2);
+    const blob = new Blob([json], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `rent_vs_buy_nz_${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const importParams = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const p = JSON.parse(event.target.result);
+        if (p.income) {
+          if (p.income.grossSalary !== undefined) setGrossSalary(p.income.grossSalary);
+          if (p.income.kiwiRate !== undefined) setKiwiRate(p.income.kiwiRate);
+          if (p.income.kiwiBalance !== undefined) setKiwiBalance(p.income.kiwiBalance);
+          if (p.income.kiwiYears !== undefined) setKiwiYears(p.income.kiwiYears);
+          if (p.income.kiwiFundReturn !== undefined) setKiwiFundReturn(p.income.kiwiFundReturn);
+          if (p.income.partnerSalary !== undefined) setPartnerSalary(p.income.partnerSalary);
+          if (p.income.partnerKiwiRate !== undefined) setPartnerKiwiRate(p.income.partnerKiwiRate);
+          if (p.income.partnerKiwiBalance !== undefined) setPartnerKiwiBalance(p.income.partnerKiwiBalance);
+          if (p.income.partnerKiwiYears !== undefined) setPartnerKiwiYears(p.income.partnerKiwiYears);
+          if (p.income.employerMatchRate !== undefined) setEmployerMatchRate(p.income.employerMatchRate);
+          if (p.income.purchaseYearsAway !== undefined) setPurchaseYearsAway(p.income.purchaseYearsAway);
+          if (p.income.salaryIncrease !== undefined) setSalaryIncrease(p.income.salaryIncrease);
+          if (p.income.salaryCap !== undefined) setSalaryCap(p.income.salaryCap);
+          if (p.income.remittanceToChina !== undefined) setRemittanceToChina(p.income.remittanceToChina);
+          if (p.income.chineseInsuranceDue !== undefined) setChineseInsuranceDue(p.income.chineseInsuranceDue);
+          if (p.income.chineseInsuranceMaturity !== undefined) setChineseInsuranceMaturity(p.income.chineseInsuranceMaturity);
+          if (p.income.roomsRented !== undefined) setRoomsRented(p.income.roomsRented);
+          if (p.income.roomWeeklyRent !== undefined) setRoomWeeklyRent(p.income.roomWeeklyRent);
+        }
+        if (p.house) {
+          if (p.house.housePrice !== undefined) setHousePrice(p.house.housePrice);
+          if (p.house.downPct !== undefined) setDownPct(p.house.downPct);
+          if (p.house.mortgageRate !== undefined) setMortgageRate(p.house.mortgageRate);
+          if (p.house.loanYears !== undefined) setLoanYears(p.house.loanYears);
+        }
+        if (p.rent && p.rent.weeklyRent !== undefined) setWeeklyRent(p.rent.weeklyRent);
+        if (p.oneTime) {
+          if (p.oneTime.lawyerFee !== undefined) setLawyerFee(p.oneTime.lawyerFee);
+          if (p.oneTime.limReport !== undefined) setLimReport(p.oneTime.limReport);
+          if (p.oneTime.buildingInspection !== undefined) setBuildingInspection(p.oneTime.buildingInspection);
+          if (p.oneTime.valuation !== undefined) setValuation(p.oneTime.valuation);
+          if (p.oneTime.mortgageEstab !== undefined) setMortgageEstab(p.oneTime.mortgageEstab);
+          if (p.oneTime.titleReg !== undefined) setTitleReg(p.oneTime.titleReg);
+          if (p.oneTime.movingCosts !== undefined) setMovingCosts(p.oneTime.movingCosts);
+          if (p.oneTime.renovation !== undefined) setRenovation(p.oneTime.renovation);
+        }
+        if (p.annual) {
+          if (p.annual.councilRates !== undefined) setCouncilRates(p.annual.councilRates);
+          if (p.annual.buildingInsurance !== undefined) setBuildingInsurance(p.annual.buildingInsurance);
+          if (p.annual.contentsInsurance !== undefined) setContentsInsurance(p.annual.contentsInsurance);
+          if (p.annual.waterRates !== undefined) setWaterRates(p.annual.waterRates);
+          if (p.annual.maintenance !== undefined) setMaintenance(p.annual.maintenance);
+          if (p.annual.majorRepair !== undefined) setMajorRepair(p.annual.majorRepair);
+          if (p.annual.bodyCorp !== undefined) setBodyCorp(p.annual.bodyCorp);
+        }
+        if (p.market) {
+          if (p.market.appreciation !== undefined) setAppreciation(p.market.appreciation);
+          if (p.market.investReturn !== undefined) setInvestReturn(p.market.investReturn);
+          if (p.market.analyzeYears !== undefined) setAnalyzeYears(p.market.analyzeYears);
+        }
+        alert("✅ 参数导入成功！");
+      } catch (err) {
+        alert("❌ JSON 文件格式错误：" + err.message);
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = "";
+  };
+
+  // ── Income ────────────────────────────────────────────────────────────────
+  const [grossSalary, setGrossSalary] = useState(82000);
+  const [kiwiRate, setKiwiRate] = useState(10);       // employee %
+  const [kiwiBalance, setKiwiBalance] = useState(18000);
+  const [kiwiYears, setKiwiYears] = useState(0);     // years of KiwiSaver membership
+  const [kiwiFundReturn, setKiwiFundReturn] = useState(5); // % p.a.
+  const [partnerSalary, setPartnerSalary] = useState(0);
+  const [partnerKiwiRate, setPartnerKiwiRate] = useState(10);     // 伴侣 KiwiSaver 员工 %
+  const [partnerKiwiBalance, setPartnerKiwiBalance] = useState(0); // 伴侣 KiwiSaver 现有余额
+  const [partnerKiwiYears, setPartnerKiwiYears] = useState(0);    // 伴侣已加入年数
+  const [employerMatchRate, setEmployerMatchRate] = useState(3);  // 雇主强制配套 %（2026→3.5%，2028→4%）
+  const [purchaseYearsAway, setPurchaseYearsAway] = useState(3);  // 预计几年后购房
+  
+  // ── 中国财务义务 ──────────────────────────────────────────────────────
+  const [salaryIncrease, setSalaryIncrease] = useState(5000);    // 每年涨薪
+  const [salaryCap, setSalaryCap] = useState(107000);           // 薪资上限
+  const [remittanceToChina, setRemittanceToChina] = useState(1150); // 每月汇款到中国（NZD）
+  const [chineseInsuranceDue, setChineseInsuranceDue] = useState(18400); // 中国保险费待支付（NZD）
+  const [chineseInsuranceMaturity, setChineseInsuranceMaturity] = useState(32200); // 中国保险5年后可提取（NZD）
+
+  // ── House / Mortgage ──────────────────────────────────────────────────────
+  const [housePrice, setHousePrice] = useState(750000);
+  const [downPct, setDownPct] = useState(20);
+  const [mortgageRate, setMortgageRate] = useState(6.5);
+  const [loanYears, setLoanYears] = useState(30);
+
+  // ── Rent ─────────────────────────────────────────────────────────────────
+  const [weeklyRent, setWeeklyRent] = useState(550);
+
+  // ── 买房后出租房间（boards / flatmates）─────────────────────────────────
+  const [roomsRented, setRoomsRented] = useState(0);         // 0 / 1 / 2 间
+  const [roomWeeklyRent, setRoomWeeklyRent] = useState(280);  // 每间周租（NZD）
+
+  // ── One-time costs ────────────────────────────────────────────────────────
+  const [lawyerFee, setLawyerFee] = useState(2500);
+  const [limReport, setLimReport] = useState(350);
+  const [buildingInspection, setBuildingInspection] = useState(650);
+  const [valuation, setValuation] = useState(600);
+  const [mortgageEstab, setMortgageEstab] = useState(750);
+  const [titleReg, setTitleReg] = useState(150);
+  const [movingCosts, setMovingCosts] = useState(1500);
+  const [renovation, setRenovation] = useState(25000);
+
+  // ── Annual costs ──────────────────────────────────────────────────────────
+  const [councilRates, setCouncilRates] = useState(3000);
+  const [buildingInsurance, setBuildingInsurance] = useState(2200);
+  const [contentsInsurance, setContentsInsurance] = useState(600);
+  const [waterRates, setWaterRates] = useState(900);
+  const [maintenance, setMaintenance] = useState(7500);
+  const [majorRepair, setMajorRepair] = useState(3000);
+  const [bodyCorp, setBodyCorp] = useState(0);
+
+  // ── Market ────────────────────────────────────────────────────────────────
+  const [appreciation, setAppreciation] = useState(5);
+  const [investReturn, setInvestReturn] = useState(7);
+  const [analyzeYears, setAnalyzeYears] = useState(20);
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // COMPUTED: Income & Tax
+  // ─────────────────────────────────────────────────────────────────────────
+  const income = useMemo(() => {
+    const combined = grossSalary + partnerSalary;
+    const paye = calcPAYE(grossSalary) + calcPAYE(partnerSalary);
+    const acc = Math.min(grossSalary, ACC_CAP) * ACC_RATE + Math.min(partnerSalary, ACC_CAP) * ACC_RATE;
+    // 本人 KiwiSaver（仅按本人收入计算）
+    const kiwiEmp = grossSalary * kiwiRate / 100;
+    const empKiwiGross = grossSalary * employerMatchRate / 100;
+    const esct = empKiwiGross * esctRate(grossSalary);
+    const kiwiEmpr = empKiwiGross - esct;
+    const govtMTC = Math.min(kiwiEmp, 1042.86) * 0.5;
+
+    // 伴侣 KiwiSaver（按伴侣收入计算，可与本人合并用于首套房提取）
+    const partnerKiwiEmp = partnerSalary * partnerKiwiRate / 100;
+    const partnerEmpKiwiGross = partnerSalary * employerMatchRate / 100;
+    const partnerEsct = partnerEmpKiwiGross * esctRate(partnerSalary);
+    const partnerKiwiEmpr = partnerEmpKiwiGross - partnerEsct;
+    const partnerGovtMTC = Math.min(partnerKiwiEmp, 1042.86) * 0.5;
+
+    const annualTakeHome = combined - paye - acc - kiwiEmp;
+    const monthlyTakeHome = annualTakeHome / 12;
+    const weeklyTakeHome = annualTakeHome / 52;
+    const monthlyDisposable = monthlyTakeHome - remittanceToChina;  // 扣除汇款到中国后的可支配收入
+
+    const stressRate = mortgageRate + 2;
+    const loan = housePrice * (1 - downPct / 100);
+    const rMonthly = mortgageRate / 100 / 12;
+    const rStress = stressRate / 100 / 12;
+    const nMonths = loanYears * 12;
+    const monthlyMortgage = loan > 0 ? loan * rMonthly * Math.pow(1 + rMonthly, nMonths) / (Math.pow(1 + rMonthly, nMonths) - 1) : 0;
+    const stressMortgage = loan > 0 ? loan * rStress * Math.pow(1 + rStress, nMonths) / (Math.pow(1 + rStress, nMonths) - 1) : 0;
+
+    const annualRecurring = councilRates + buildingInsurance + contentsInsurance + waterRates + maintenance + majorRepair + bodyCorp;
+    const totalBuyMonthly = monthlyMortgage + annualRecurring / 12;
+    const rentMonthly = weeklyRent * 52 / 12;
+
+    // ── 买房后出租房间（boards / flatmates）── 租金收入 + 房贷利息抵扣 ──
+    const TOTAL_BEDROOMS = 3;                          // 假设 3 卧住宅，按房间数比例分摊可抵扣费用
+    const roomRentalWeekly = roomsRented * roomWeeklyRent;
+    const roomRentalMonthly = roomRentalWeekly * 52 / 12;
+    const roomRentalAnnual = roomRentalWeekly * 52;
+    const annualInterest = loan * (mortgageRate / 100);    // 首年房贷利息近似（用于出租比例分摊）
+    const rentalApportion = roomsRented / TOTAL_BEDROOMS;
+    const deductibleInterest = annualInterest * rentalApportion;
+    // 出租净应纳税收入（租金 − 可抵扣房贷利息），再按边际税率算税负
+    const netRentalTaxable = Math.max(0, roomRentalAnnual - deductibleInterest);
+    const rentalTaxExtra = calcPAYE(combined + netRentalTaxable) - calcPAYE(combined);
+    const rentalTaxMonthly = rentalTaxExtra / 12;
+    const totalBuyMonthlyNet = totalBuyMonthly - roomRentalMonthly + rentalTaxMonthly;
+
+    const mortgageToIncome = monthlyMortgage / monthlyTakeHome * 100;
+    const totalBuyToIncome = totalBuyMonthly / monthlyTakeHome * 100;
+    const totalBuyToIncomeNet = totalBuyMonthlyNet / monthlyTakeHome * 100;
+    const rentToIncome = rentMonthly / monthlyTakeHome * 100;
+    const dti = loan / combined;
+    const stressMortgageToIncome = stressMortgage / monthlyTakeHome * 100;
+
+    const annualKiwi = kiwiEmp + kiwiEmpr + govtMTC + partnerKiwiEmp + partnerKiwiEmpr + partnerGovtMTC;
+
+    // 分别投影本人与伴侣 KiwiSaver（基金回报与购房年限共用）
+    let userProjected = kiwiBalance;
+    let partnerProjected = partnerKiwiBalance;
+    for (let y = 0; y < purchaseYearsAway; y++) {
+      userProjected = userProjected * (1 + kiwiFundReturn / 100) + (kiwiEmp + kiwiEmpr + govtMTC);
+      partnerProjected = partnerProjected * (1 + kiwiFundReturn / 100) + (partnerKiwiEmp + partnerKiwiEmpr + partnerGovtMTC);
+    }
+    const kiwiProjected = userProjected + partnerProjected;
+    const kiwiWithdrawable = Math.max(0, userProjected - 1000) + Math.max(0, partnerProjected - 1000);
+
+    const effectiveDeposit = housePrice * downPct / 100;
+    const kiwiCoversDeposit = (kiwiWithdrawable / effectiveDeposit * 100);
+
+    return {
+      paye, acc, kiwiEmp, kiwiEmpr, govtMTC, esct,
+      partnerKiwiEmp, partnerKiwiEmpr, partnerGovtMTC,
+      annualTakeHome, monthlyTakeHome, weeklyTakeHome,
+      monthlyMortgage, stressMortgage, stressRate,
+      annualRecurring, totalBuyMonthly, totalBuyMonthlyNet, totalBuyToIncomeNet, rentMonthly,
+      mortgageToIncome, totalBuyToIncome, rentToIncome, dti, stressMortgageToIncome,
+      roomRentalMonthly, roomRentalAnnual, rentalApportion, deductibleInterest, rentalTaxMonthly,
+      kiwiProjected, kiwiWithdrawable, kiwiCoversDeposit, annualKiwi, combined, monthlyDisposable, remittanceToChina,
+      userProjected, partnerProjected,
+    };
+  }, [grossSalary, partnerSalary, kiwiRate, kiwiBalance, partnerKiwiRate, partnerKiwiBalance, partnerKiwiYears, employerMatchRate, kiwiYears, kiwiFundReturn,
+      mortgageRate, loanYears, housePrice, downPct, weeklyRent, purchaseYearsAway,
+      roomsRented, roomWeeklyRent,
+      councilRates, buildingInsurance, contentsInsurance, waterRates, maintenance, majorRepair, bodyCorp,
+      remittanceToChina, salaryIncrease, salaryCap]);
+
+  // KiwiSaver chart data
+  const kiwiChartData = useMemo(() => {
+    const data = [];
+    let bal = kiwiBalance + partnerKiwiBalance;
+    for (let y = 0; y <= Math.max(analyzeYears, purchaseYearsAway + 1); y++) {
+      data.push({ year: y, balance: Math.round(bal), withdrawable: Math.round(Math.max(0, bal - 2000)) });
+      bal = bal * (1 + kiwiFundReturn / 100) + income.annualKiwi;
+    }
+    return data;
+  }, [kiwiBalance, partnerKiwiBalance, kiwiFundReturn, income.annualKiwi, analyzeYears, purchaseYearsAway]);
+
+  // Wealth comparison chart
+  const down = housePrice * downPct / 100;
+  const oneTimeCosts = lawyerFee + limReport + buildingInspection + valuation + mortgageEstab + titleReg + movingCosts + renovation;
+  const loanAmt = housePrice - down;
+  const r = mortgageRate / 100 / 12;
+  const n = loanYears * 12;
+
+  const { chartData, breakEven, finalBuy, finalRent } = useMemo(() => {
+    let remainingLoan = loanAmt;
+    let propValue = housePrice;
+    let rentWealth = down + oneTimeCosts;
+    let breakEven = null;
+    const annualRecurring = councilRates + buildingInsurance + contentsInsurance + waterRates + maintenance + majorRepair + bodyCorp;
+    const buyMonthly = income.monthlyMortgage + annualRecurring / 12 - income.roomRentalMonthly + income.rentalTaxMonthly;
+    const rentMonthlyVal = income.rentMonthly;
+    const surplus = buyMonthly - rentMonthlyVal;
+
+    const data = [];
+    for (let y = 0; y <= analyzeYears; y++) {
+      const buyNW = propValue - remainingLoan;
+      const rentNW = rentWealth;
+      if (y > 0 && !breakEven && buyNW >= rentNW) breakEven = y;
+      data.push({ year: y, buying: Math.round(buyNW), renting: Math.round(rentNW), propValue: Math.round(propValue) });
+      for (let m = 0; m < 12; m++) {
+        const interest = remainingLoan * r;
+        remainingLoan = Math.max(0, remainingLoan - (income.monthlyMortgage - interest));
+      }
+      propValue *= (1 + appreciation / 100);
+      rentWealth = rentWealth * (1 + investReturn / 100) + (surplus > 0 ? surplus * 12 * (1 + investReturn / 100 / 2) : surplus * 12);
+    }
+    const finalBuyVal = data[analyzeYears] && data[analyzeYears].buying !== undefined ? data[analyzeYears].buying : 0;
+    const finalRentVal = data[analyzeYears] && data[analyzeYears].renting !== undefined ? data[analyzeYears].renting : 0;
+    return { chartData: data, breakEven, finalBuy: finalBuyVal, finalRent: finalRentVal };
+  }, [loanAmt, housePrice, down, oneTimeCosts, councilRates, buildingInsurance, contentsInsurance, waterRates, maintenance, majorRepair, bodyCorp, income, r, appreciation, investReturn, analyzeYears]);
+
+  const winner = finalBuy > finalRent ? "buy" : "rent";
+  const bankPass = income.dti <= 6 && income.stressMortgageToIncome <= 45;
+
+  return (
+    <div style={{ maxWidth: 980, margin: "0 auto" }}>
+
+      {/* ── Header ── */}
+      <div style={{ marginBottom: 18, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
+        <div>
+          <div style={{ fontSize: 10, color: COLORS.green, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 4 }}>新西兰 · 综合财务决策</div>
+          <h1 style={{ fontSize: 24, fontWeight: 800, color: "#f8fafc", letterSpacing: "-0.02em" }}>租房 vs 买房 · 全成本 + 收入分析</h1>
+        </div>
+        <div style={{ display: "flex", gap: 20 }}>
+          {[
+            { l: "税后月收入", v: fmtFull(income.monthlyTakeHome), c: COLORS.green },
+            { l: "月供", v: fmtFull(income.monthlyMortgage), c: COLORS.amber },
+            { l: "银行资格", v: bankPass ? "✅ 通过" : "❌ 不通过", c: bankPass ? COLORS.green : COLORS.red },
+          ].map(s => (
+            <div key={s.l} style={{ textAlign: "right" }}>
+              <div style={{ fontSize: 10, color: "#475669", textTransform: "uppercase" }}>{s.l}</div>
+              <div style={{ fontSize: 14, fontWeight: 800, color: s.c, fontFamily: "'DM Mono',monospace" }}>{s.v}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Tabs ── */}
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16, flexWrap: "wrap" }}>
+        <div style={{ display: "flex", gap: 3, padding: 4, background: "#111827", borderRadius: 10 }}>
+          {[["income","💼 收入 & KiwiSaver"],["onetime","💰 一次性费用"],["annual","📅 年度费用"],["params","⚙️ 市场参数"],["results","📊 对比结果"]].map(([id,label]) => (
+            <TabBtn key={id} active={tab===id} onClick={()=>setTab(id)}>{label}</TabBtn>
+          ))}
+        </div>
+        <div style={{ display: "flex", gap: 6, marginLeft: "auto" }}>
+          <button onClick={() => fileInputRef.current.click()} style={{ padding: "7px 14px", borderRadius: 7, cursor: "pointer", fontSize: 12, fontWeight: 600, background: "#1e293b", color: "#94a3b8", border: "1px solid #334155", transition: "all 0.15s" }} onMouseEnter={e => e.target.style.background = "#334155"} onMouseLeave={e => e.target.style.background = "#1e293b"}>📂 导入参数</button>
+          <button onClick={exportParams} style={{ padding: "7px 14px", borderRadius: 7, cursor: "pointer", fontSize: 12, fontWeight: 600, background: "#064e3b", color: COLORS.green, border: "1px solid #065f46", transition: "all 0.15s" }} onMouseEnter={e => e.target.style.background = "#065f46"} onMouseLeave={e => e.target.style.background = "#064e3b"}>💾 导出参数</button>
+          <button onClick={resetToDefaults} style={{ padding: "7px 14px", borderRadius: 7, cursor: "pointer", fontSize: 12, fontWeight: 600, background: "#7f1d1d", color: COLORS.red, border: "1px solid #991b1b", transition: "all 0.15s" }} onMouseEnter={e => e.target.style.background = "#991b1b"} onMouseLeave={e => e.target.style.background = "#7f1d1d"}>🔄 重置默认</button>
+          <input ref={fileInputRef} type="file" accept=".json" onChange={importParams} style={{ display: "none" }} />
+        </div>
+      </div>
+
+      {/* ════════════════════════════════════════════════════════════════ */}
+      {/* INCOME TAB                                                       */}
+      {/* ════════════════════════════════════════════════════════════════ */}
+      {tab === "income" && (<Fragment>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            <div style={panelStyle}>
+              <div style={{ fontSize: 11, color: COLORS.green, textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 700, marginBottom: 14 }}>💼 薪资设置</div>
+
+              <div style={labelStyle}>① 本人薪资</div>
+              <SliderRow label="本人年薪（税前）" value={grossSalary} min={30000} max={200000} step={1000} unit="$" onChange={setGrossSalary} note={`每年涨 $${salaryIncrease.toLocaleString()} 至上限 $${salaryCap.toLocaleString()}`} color={COLORS.green} />
+              <SliderRow label="每年涨薪" value={salaryIncrease} min={0} max={10000} step={500} unit="$" onChange={setSalaryIncrease} note="教师薪资等级自动增长" color={COLORS.cyan} />
+              <SliderRow label="薪资上限" value={salaryCap} min={50000} max={200000} step={1000} unit="$" onChange={setSalaryCap} note="PCT1–PCT2 上限" color={COLORS.cyan} />
+
+              <div style={labelStyle}>② 本人 KiwiSaver</div>
+              <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
+                {[3,4,6,8,10].map(v => (
+                  <button key={v} onClick={() => setKiwiRate(v)} style={{
+                    flex: 1, padding: "7px 0", borderRadius: 7, cursor: "pointer", fontSize: 12, fontWeight: 700,
+                    background: kiwiRate === v ? COLORS.purple : "#1e293b",
+                    color: kiwiRate === v ? "#0f172a" : "#64748b",
+                    border: `1px solid ${kiwiRate === v ? COLORS.purple : "#334155"}`,
+                  }}>{v}%</button>
+                ))}
+              </div>
+              <div style={{ fontSize: 11, color: "#475669", marginBottom: 12 }}>本人员工缴纳比例</div>
+              <SliderRow label="KiwiSaver 现有余额" value={kiwiBalance} min={0} max={200000} step={500} unit="$" onChange={setKiwiBalance} color={COLORS.purple} />
+              <SliderRow label="KiwiSaver 已加入年数" value={kiwiYears} min={0} max={30} step={1} unit="年" onChange={setKiwiYears} note={`${kiwiYears + purchaseYearsAway >= 3 ? "✅ 购房时可提取首套房" : "❌ 购房时仍不满 3 年，不可提取"}`} color={COLORS.purple} />
+
+              <div style={labelStyle}>③ 伴侣薪资</div>
+              <SliderRow label="伴侣年薪（税前，无则为 0）" value={partnerSalary} min={0} max={200000} step={1000} unit="$" onChange={setPartnerSalary} color={COLORS.cyan} />
+
+              <div style={labelStyle}>④ 伴侣 KiwiSaver</div>
+              <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
+                {[3,4,6,8,10].map(v => (
+                  <button key={v} onClick={() => setPartnerKiwiRate(v)} style={{
+                    flex: 1, padding: "7px 0", borderRadius: 7, cursor: "pointer", fontSize: 12, fontWeight: 700,
+                    background: partnerKiwiRate === v ? COLORS.blue : "#1e293b",
+                    color: partnerKiwiRate === v ? "#0f172a" : "#64748b",
+                    border: `1px solid ${partnerKiwiRate === v ? COLORS.blue : "#334155"}`,
+                  }}>{v}%</button>
+                ))}
+              </div>
+              <div style={{ fontSize: 11, color: "#475669", marginBottom: 12 }}>伴侣员工缴纳比例</div>
+              <SliderRow label="伴侣 KiwiSaver 现有余额" value={partnerKiwiBalance} min={0} max={200000} step={500} unit="$" onChange={setPartnerKiwiBalance} color={COLORS.blue} />
+              <SliderRow label="伴侣 KiwiSaver 已加入年数" value={partnerKiwiYears} min={0} max={30} step={1} unit="年" onChange={setPartnerKiwiYears} note={`${partnerKiwiYears + purchaseYearsAway >= 3 ? "✅ 购房时可提取首套房" : "❌ 购房时仍不满 3 年，不可提取"}`} color={COLORS.blue} />
+
+              <div style={labelStyle}>⑤ 共用设定</div>
+              <div style={{ fontSize: 11, color: "#94a3b8", marginBottom: 6 }}>雇主强制配套（本人 & 伴侣）</div>
+              <div style={{ display: "flex", gap: 5, marginBottom: 6, flexWrap: "wrap" }}>
+                {[0, 3, 3.5, 4, 5].map(v => {
+                  const isActive = employerMatchRate === v;
+                  return (
+                    <button key={v} onClick={() => setEmployerMatchRate(v)} style={{
+                      flex: 1, minWidth: 42, padding: "7px 4px", borderRadius: 7, cursor: "pointer", fontSize: 12, fontWeight: 700,
+                      background: isActive ? COLORS.green : "#1e293b",
+                      color: isActive ? "#0f172a" : "#64748b",
+                      border: `1px solid ${isActive ? COLORS.green : "#334155"}`,
+                    }}>{v}%</button>
+                  );
+                })}
+                <div style={{
+                  display: "flex", alignItems: "center", gap: 3,
+                  background: [0, 3, 3.5, 4, 5].includes(employerMatchRate) ? "#1e293b" : COLORS.green,
+                  borderRadius: 7, padding: "4px 8px", border: `1px solid ${[0, 3, 3.5, 4, 5].includes(employerMatchRate) ? "#334155" : COLORS.green}`,
+                  flex: 1, minWidth: 72,
+                }}>
+                  <input type="number" value={employerMatchRate} min={0} max={10} step={0.1}
+                    onChange={e => setEmployerMatchRate(Number(e.target.value) || 0)}
+                    style={{
+                      width: "100%", background: "transparent", border: "none", outline: "none",
+                      color: [0, 3, 3.5, 4, 5].includes(employerMatchRate) ? "#64748b" : "#0f172a",
+                      fontSize: 12, fontWeight: 700, textAlign: "center",
+                    }} />
+                  <span style={{ fontSize: 11, fontWeight: 700, color: [0, 3, 3.5, 4, 5].includes(employerMatchRate) ? "#475669" : "#0f172a" }}>%</span>
+                </div>
+              </div>
+              <div style={{ fontSize: 11, color: "#475669", marginBottom: 14 }}>预设快捷选择 0–5%，亦可直接输入自定义百分比（0–10%）。现行 3%，2026 年起 3.5%，2028 年起 4%（扣除 ESCT 税后入账）</div>
+              <SliderRow label="预计几年后购房" value={purchaseYearsAway} min={0} max={15} step={1} unit="年" onChange={setPurchaseYearsAway} color={COLORS.amber} />
+              <SliderRow label="KiwiSaver 基金年回报" value={kiwiFundReturn} min={2} max={10} step={0.5} unit="%" onChange={setKiwiFundReturn} note="稳健型约 4–5%，成长型约 6–8%（本人与伴侣共用）" color={COLORS.purple} />
+            </div>
+            <div style={panelStyle}>
+              <div style={{ fontSize: 11, color: COLORS.red, textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 700, marginBottom: 14 }}>🧾 税务分解（年度）</div>
+              <TaxBracketBar gross={income.combined} tax={income.paye} acc={income.acc} kiwiEmp={income.kiwiEmp} />
+              <div style={{ marginTop: 14, display: "flex", flexDirection: "column", gap: 0 }}>
+                {[
+                  ["税前总收入", income.combined, "#e2e8f0"],
+                  ["PAYE 所得税", -income.paye, COLORS.red],
+                  ["ACC 伤害保险", -income.acc, COLORS.amber],
+                  ["KiwiSaver（员工 " + kiwiRate + "%）", -income.kiwiEmp, COLORS.purple],
+                  null,
+                  ["税后实收（年）", income.annualTakeHome, COLORS.green],
+                  ["税后实收（月）", income.monthlyTakeHome, COLORS.green],
+                  ["减：汇款到中国（月）", -income.remittanceToChina, COLORS.red],
+                  ["可支配（月）", income.monthlyDisposable, COLORS.green],
+                ].map((row, i) => row === null ? (
+                  <div key={i} style={{ height: 1, background: "#1e293b", margin: "8px 0" }} />
+                ) : (
+                  <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "5px 0", borderBottom: i < 3 ? "1px solid #0f172a" : "none" }}>
+                    <span style={{ fontSize: 12, color: "#64748b" }}>{row[0]}</span>
+                    <span style={{ fontSize: 13, fontFamily: "'DM Mono',monospace", color: row[2], fontWeight: 700 }}>
+                      {row[1] < 0 ? "−" : ""}{fmtFull(Math.abs(row[1]))}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <div style={{ marginTop: 12, fontSize: 11, color: "#475669", padding: "8px 10px", background: "#0a0f1a", borderRadius: 6, borderLeft: `2px solid ${COLORS.amber}` }}>
+                实际到手税率：{fmtPct((income.paye + income.acc) / income.combined * 100)}（含ACC）
+              </div>
+            </div>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            <div style={panelStyle}>
+              <div style={{ fontSize: 11, color: COLORS.amber, textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 700, marginBottom: 14 }}>🏦 银行资格 & 负担能力</div>
+              <Gauge label="月供占税后收入比（买房）" value={income.mortgageToIncome} max={100} warn={35} danger={45} />
+              <Gauge label="买房净月支出占收入比(扣租金)" value={income.totalBuyToIncomeNet} max={100} warn={40} danger={55} />
+              <Gauge label="租金占税后收入比" value={income.rentToIncome} max={100} warn={30} danger={40} />
+              <Gauge label={`压力测试月供占收入（利率 ${fmtPct(income.stressRate)}）`} value={income.stressMortgageToIncome} max={100} warn={40} danger={50} />
+              <Gauge label="债务收入比（DTI）" value={income.dti} max={8} warn={5} danger={6} unit="x" />
+              <div style={{ marginTop: 14, padding: 12, borderRadius: 8, background: bankPass ? "#064e3b33" : "#7f1d1d33", border: `1px solid ${bankPass ? COLORS.green : COLORS.red}` }}>
+                <div style={{ fontSize: 13, fontWeight: 800, color: bankPass ? COLORS.green : COLORS.red, marginBottom: 6 }}>
+                  {bankPass ? "✅ 大概率通过银行审批" : "❌ 当前参数银行可能不批"}
+                </div>
+                <div style={{ fontSize: 11, color: "#64748b", lineHeight: 1.7 }}>
+                  RBNZ DTI 上限 6x · 银行通常要求压力测试月供 &lt;45% 税后收入<br />
+                  贷款额 {fmtFull(loanAmt)} · 联合年收入 {fmtFull(income.combined)} · DTI = {income.dti.toFixed(2)}x
+                </div>
+              </div>
+              <div style={{ marginTop: 10, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+                {[
+                  ["月供", fmtFull(income.monthlyMortgage), COLORS.amber],
+                  ["压力测试月供", fmtFull(income.stressMortgage), COLORS.red],
+                  ["净买房月支出(扣租金)", fmtFull(income.totalBuyMonthlyNet), "#e2e8f0"],
+                  ["月租", fmtFull(income.rentMonthly), COLORS.blue],
+                ].map(([l,v,c]) => (
+                  <div key={l} style={{ background: "#0a0f1a", borderRadius: 6, padding: "8px 10px" }}>
+                    <div style={{ fontSize: 10, color: "#475669", marginBottom: 2 }}>{l}</div>
+                    <div style={{ fontSize: 14, fontWeight: 800, color: c, fontFamily: "'DM Mono',monospace" }}>{v}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* 买房后出租房间增收面板 */}
+            <div style={panelStyle}>
+              <div style={{ fontSize: 11, color: COLORS.cyan, textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 700, marginBottom: 14 }}>🏠 买房后出租房间增收</div>
+
+              <div style={{ fontSize: 12, color: "#94a3b8", marginBottom: 8 }}>出租房间数</div>
+              <div style={{ display: "flex", gap: 6, marginBottom: 16 }}>
+                {[0, 1, 2].map(v => (
+                  <button key={v} onClick={() => setRoomsRented(v)} style={{
+                    flex: 1, padding: "9px 0", borderRadius: 7, cursor: "pointer", fontSize: 13, fontWeight: 700,
+                    background: roomsRented === v ? COLORS.cyan : "#1e293b",
+                    color: roomsRented === v ? "#0f172a" : "#64748b",
+                    border: `1px solid ${roomsRented === v ? COLORS.cyan : "#334155"}`,
+                    transition: "all 0.15s",
+                  }}>{v === 0 ? "不出租" : `${v} 间`}</button>
+                ))}
+              </div>
+
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
+                <span style={{ fontSize: 12, color: "#94a3b8" }}>每间周租（NZD）</span>
+                <input type="number" value={roomWeeklyRent} min={0} max={1500} step={10} onChange={e => setRoomWeeklyRent(Number(e.target.value) || 0)}
+                  style={{ width: 88, background: "#0a0f1a", border: "1px solid #1e293b", borderRadius: 6, color: "#f1f5f9", fontSize: 13, fontFamily: "'DM Mono',monospace", fontWeight: 700, padding: "5px 8px", textAlign: "right", outline: "none" }} />
+              </div>
+              <input type="range" min={0} max={1500} step={10} value={Math.min(roomWeeklyRent, 1500)} onChange={e => setRoomWeeklyRent(Number(e.target.value))}
+                style={{ "--thumb-color": COLORS.cyan }} />
+              <div style={{ fontSize: 11, color: "#475669", marginTop: 3 }}>范围 $0–$1,500/周，可手动输入精确值</div>
+
+              {roomsRented > 0 && (
+                <div style={{ marginTop: 14, display: "flex", flexDirection: "column", gap: 0 }}>
+                  {[
+                    ["年租金收入", income.roomRentalAnnual, COLORS.cyan],
+                    [`可抵扣房贷利息（${Math.round(income.rentalApportion * 100)}%）`, income.deductibleInterest, COLORS.blue],
+                    ["出租净税负（年）", income.rentalTaxMonthly * 12, COLORS.red],
+                    ["净买房月支出", income.totalBuyMonthlyNet, COLORS.green],
+                  ].map((row, i) => (
+                    <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", borderBottom: i < 3 ? "1px solid #0f172a" : "none" }}>
+                      <span style={{ fontSize: 11, color: "#64748b" }}>{row[0]}</span>
+                      <span style={{ fontSize: 13, fontFamily: "'DM Mono',monospace", color: row[2], fontWeight: 700 }}>{fmtFull(row[1])}</span>
+                    </div>
+                  ))}
+                  <div style={{ fontSize: 11, color: "#475669", marginTop: 8, padding: "8px 10px", background: "#0a0f1a", borderRadius: 6, lineHeight: 1.7 }}>
+                    假设 3 卧住宅，按房间数比例（1间≈33%、2间≈67%）分摊房贷利息抵扣；租金超出抵扣部分按边际税率征税。
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div style={panelStyle}>
+              <div style={{ fontSize: 11, color: COLORS.purple, textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 700, marginBottom: 14 }}>🥝 KiwiSaver 首套房提取预测</div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 10 }}>
+                {[
+                  ["本人年入(缴+配+补)", fmtFull(income.kiwiEmp + income.kiwiEmpr + income.govtMTC), COLORS.purple],
+                  ["伴侣年入(缴+配+补)", fmtFull(income.partnerKiwiEmp + income.partnerKiwiEmpr + income.partnerGovtMTC), COLORS.blue],
+                  ["合计年入", fmtFull(income.annualKiwi), COLORS.green],
+                ].map(([l,v,c]) => (
+                  <div key={l} style={{ background: "#0a0f1a", borderRadius: 6, padding: "8px 10px", textAlign: "center" }}>
+                    <div style={{ fontSize: 10, color: "#475669", marginBottom: 2 }}>{l}</div>
+                    <div style={{ fontSize: 13, fontWeight: 800, color: c, fontFamily: "'DM Mono',monospace" }}>{v}</div>
+                  </div>
+                ))}
+              </div>
+              <ResponsiveContainer width="100%" height={140}>
+                <AreaChart data={kiwiChartData} margin={{ top: 5, right: 5, bottom: 0, left: 5 }}>
+                  <defs>
+                    <linearGradient id="kg" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor={COLORS.purple} stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor={COLORS.purple} stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+                  <XAxis dataKey="year" tick={{ fill: "#475669", fontSize: 10 }} tickFormatter={v => `${v}y`} stroke="#1e293b" />
+                  <YAxis tick={{ fill: "#475669", fontSize: 10 }} tickFormatter={fmt} stroke="#1e293b" />
+                  <Tooltip content={<CustomTooltip />} />
+                  {purchaseYearsAway > 0 && <ReferenceLine x={purchaseYearsAway} stroke={COLORS.amber} strokeDasharray="4 4" label={{ value: "购房", fill: COLORS.amber, fontSize: 10 }} />}
+                  <Area type="monotone" dataKey="balance" name="KiwiSaver余额" stroke={COLORS.purple} fill="url(#kg)" strokeWidth={2} dot={false} />
+                </AreaChart>
+              </ResponsiveContainer>
+              <div style={{ marginTop: 12, display: "flex", flexDirection: "column", gap: 6 }}>
+                {[
+                  [`${purchaseYearsAway}年后KiwiSaver余额（本人+伴侣）`, fmtFull(income.kiwiProjected), ""],
+                  ["本人可提取（余留$1,000）", fmtFull(Math.max(0, income.userProjected - 1000)), kiwiYears + purchaseYearsAway >= 3 ? "" : " ❌ 未满3年"],
+                  ["伴侣可提取（余留$1,000）", fmtFull(Math.max(0, income.partnerProjected - 1000)), partnerKiwiYears + purchaseYearsAway >= 3 ? "" : " ❌ 未满3年"],
+                  ["合计可提取（首套房）", fmtFull(income.kiwiWithdrawable), ""],
+                  [`占所需首付比例（${downPct}%首付=${fmtFull(down)}）`, fmtPct(Math.min(income.kiwiCoversDeposit, 100)), ""],
+                ].map(([l, v, note], i) => (
+                  <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "5px 0", borderBottom: i < 4 ? "1px solid #0f172a" : "none" }}>
+                    <span style={{ fontSize: 11, color: i === 4 ? COLORS.green : "#64748b" }}>{l}{note && <span style={{ color: COLORS.red }}>{note}</span>}</span>
+                    <span style={{ fontSize: 12, fontFamily: "'DM Mono',monospace", color: i === 4 ? COLORS.green : "#e2e8f0", fontWeight: 700 }}>{v}</span>
+                  </div>
+                ))}
+              </div>
+              <div style={{ marginTop: 10, fontSize: 11, color: "#475669", padding: "8px 10px", background: "#0a0f1a", borderRadius: 6, lineHeight: 1.7 }}>
+                ⚠️ 雇主 {employerMatchRate}% 缴款扣除 ESCT 税后实际入账约 {fmtFull(income.kiwiEmpr + income.partnerKiwiEmpr)}/年 · 政府 MTC 最高 $521.43/人/年（需员工缴满 $1,042.86）· 两人合计可合并提取用于首套房
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 中国财务义务 · 仅收入标签页显示（与购房决策无关的跨境义务） */}
+        <div style={{ ...panelStyle, marginTop: 14, gridColumn: "1 / -1" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 11, color: COLORS.amber, textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 700, marginBottom: 14 }}>
+            🇨🇳 中国财务义务
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 24 }}>
+            <div>
+              <SliderRow label="每月汇款到中国（NZD）" value={remittanceToChina} min={0} max={3000} step={50} unit="$" onChange={setRemittanceToChina} note="5000人民币/月 × 汇率0.23 ≈ $1,150 NZD" color={COLORS.red} />
+            </div>
+            <div>
+              <SliderRow label="中国保险费待支付（NZD）" value={chineseInsuranceDue} min={0} max={50000} step={500} unit="$" onChange={setChineseInsuranceDue} note="80000人民币 ≈ $18,400 NZD" color={COLORS.amber} />
+            </div>
+            <div>
+              <SliderRow label="中国保险5年后可提取（NZD）" value={chineseInsuranceMaturity} min={0} max={100000} step={1000} unit="$" onChange={setChineseInsuranceMaturity} note="140000人民币 ≈ $32,200 NZD" color={COLORS.purple} />
+            </div>
+          </div>
+          <div style={{ marginTop: 10, padding: 12, background: "#0a0f1a", borderRadius: 8, borderLeft: `3px solid ${COLORS.amber}` }}>
+            <div style={{ fontSize: 11, color: "#94a3b8", marginBottom: 6 }}>📋 中国保险说明</div>
+            <div style={{ fontSize: 11, color: "#64748b", lineHeight: 1.7 }}>
+              • 10万人民币 × 3年 = 30万（约 $69,000）<br />
+              • 4万人民币 × 3年 = 12万（约 $27,600）<br />
+              • 合计46万人民币，5年后可提取<br />
+              • 待支付保费：8万人民币（约 $18,400）
+            </div>
+          </div>
+        </div>
+      </Fragment>
+      )}
+
+      {/* ════════════════════════════════════════════════════════════════ */}
+      {/* ONE-TIME TAB                                                     */}
+      {/* ════════════════════════════════════════════════════════════════ */}
+      {tab === "onetime" && (
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+          <div style={panelStyle}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 4 }}>
+              <div style={{ fontSize: 11, color: COLORS.green, textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 700 }}>🏠 买房一次性支出</div>
+              <div style={{ fontSize: 15, fontWeight: 800, color: COLORS.green, fontFamily: "'DM Mono',monospace" }}>{fmtFull(down + oneTimeCosts)}</div>
+            </div>
+            <div style={{ height: 1, background: "#1e293b", marginBottom: 12 }} />
+            <div style={labelStyle}>房价 & 首付</div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 12 }}>
+              <div>
+                <div style={{ fontSize: 11, color: "#64748b", marginBottom: 4 }}>房价</div>
+                <input type="number" value={housePrice} step={5000} onChange={e => setHousePrice(Number(e.target.value))}
+                  style={{ width: "100%", background: "#0a0f1a", border: "1px solid #1e293b", borderRadius: 6, color: "#f1f5f9", fontSize: 13, fontFamily: "'DM Mono',monospace", fontWeight: 700, padding: "6px 8px", outline: "none" }} />
+              </div>
+              <div>
+                <div style={{ fontSize: 11, color: "#64748b", marginBottom: 4 }}>首付 {downPct}% = {fmtFull(down)}</div>
+                <input type="range" min={10} max={100} step={1} value={downPct} onChange={e => setDownPct(Number(e.target.value))} style={{ marginTop: 8 }} />
+              </div>
+            </div>
+            <div style={labelStyle}>法律 & 调查</div>
+            <CostRow item="律师费" value={lawyerFee} onChange={setLawyerFee} note="产权过户，必须" tag="必须" />
+            <CostRow item="LIM 报告" value={limReport} onChange={setLimReport} note="地块洪水/地质/分区信息" tag="必须" />
+            <CostRow item="房屋检查（Building Inspection）" value={buildingInspection} onChange={setBuildingInspection} note="检查漏水、结构等" tag="必须" />
+            <CostRow item="银行评估（Valuation）" value={valuation} onChange={setValuation} note="银行独立评估" tag="必须" />
+            <CostRow item="产权注册费（LINZ）" value={titleReg} onChange={setTitleReg} note="Land Information NZ" tag="NZ特有" />
+            <div style={labelStyle}>贷款 & 搬入</div>
+            <CostRow item="贷款手续费" value={mortgageEstab} onChange={setMortgageEstab} />
+            <CostRow item="搬家费用" value={movingCosts} onChange={setMovingCosts} />
+            <CostRow item="初次装修 / 翻新" value={renovation} onChange={setRenovation} note="视房况，油漆/厨卫/地板等" />
+            <div style={labelStyle}>税费（NZ）</div>
+            <CostRow item="印花税" value={0} onChange={() => {}} note="✅ 新西兰无印花税" disabled tag="NZ特有" />
+            <CostRow item="土地转让税" value={0} onChange={() => {}} note="✅ 新西兰无" disabled tag="NZ特有" />
+            <div style={{ marginTop: 14, background: "#0a0f1a", borderRadius: 8, padding: 12, border: "1px solid #1e3a2e" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+                <span style={{ fontSize: 12, color: "#64748b" }}>首付</span>
+                <span style={{ fontFamily: "'DM Mono',monospace", color: COLORS.amber, fontWeight: 700 }}>{fmtFull(down)}</span>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <span style={{ fontSize: 12, color: "#64748b" }}>所有手续 & 装修</span>
+                <span style={{ fontFamily: "'DM Mono',monospace", color: "#e2e8f0", fontWeight: 700 }}>{fmtFull(oneTimeCosts)}</span>
+              </div>
+              <div style={{ height: 1, background: "#1e293b", margin: "8px 0" }} />
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <span style={{ color: COLORS.green, fontWeight: 700 }}>第一天需准备</span>
+                <span style={{ fontFamily: "'DM Mono',monospace", color: COLORS.green, fontWeight: 800, fontSize: 16 }}>{fmtFull(down + oneTimeCosts)}</span>
+              </div>
+                <div style={{ fontSize: 11, color: "#475669", marginTop: 6 }}>
+                  其中 KiwiSaver 可提取 {fmtFull(income.kiwiWithdrawable)} 可用于首付
+                </div>
+            </div>
+          </div>
+          <div style={panelStyle}>
+            <div style={{ fontSize: 11, color: COLORS.blue, textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 700, marginBottom: 14 }}>🏡 租房一次性支出</div>
+            <CostRow item="押金（Bond，4周租金）" value={weeklyRent * 4} onChange={() => {}} note="存入政府 Tenancy Services，退租归还" disabled />
+            <CostRow item="首月租金" value={Math.round(weeklyRent * 52 / 12)} onChange={() => {}} disabled />
+            <div style={{ marginTop: 14, background: "#0a0f1a", borderRadius: 8, padding: 12, border: "1px solid #1e3a5f" }}>
+              <div style={{ fontSize: 12, color: COLORS.blue, fontWeight: 700, marginBottom: 8 }}>租房节省的资金可用于投资</div>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+                <span style={{ fontSize: 12, color: "#64748b" }}>首付（可保留投资）</span>
+                <span style={{ fontFamily: "'DM Mono',monospace", color: COLORS.blue }}>{fmtFull(down)}</span>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <span style={{ fontSize: 12, color: "#64748b" }}>手续费（可保留投资）</span>
+                <span style={{ fontFamily: "'DM Mono',monospace", color: COLORS.blue }}>{fmtFull(oneTimeCosts)}</span>
+              </div>
+              <div style={{ height: 1, background: "#1e293b", margin: "8px 0" }} />
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <span style={{ color: COLORS.blue, fontWeight: 700 }}>可投入市场总额</span>
+                <span style={{ fontFamily: "'DM Mono',monospace", color: COLORS.blue, fontWeight: 800, fontSize: 16 }}>{fmtFull(down + oneTimeCosts)}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ════════════════════════════════════════════════════════════════ */}
+      {/* ANNUAL TAB                                                       */}
+      {/* ════════════════════════════════════════════════════════════════ */}
+      {tab === "annual" && (
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+          <div style={panelStyle}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 4 }}>
+              <div style={{ fontSize: 11, color: COLORS.green, textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 700 }}>🏠 买房年度支出</div>
+              <div>
+                <div style={{ fontSize: 15, fontWeight: 800, color: COLORS.green, fontFamily: "'DM Mono',monospace" }}>{fmtFull(income.totalBuyMonthlyNet * 12)}/年</div>
+                <div style={{ fontSize: 10, color: "#475669", textAlign: "right" }}>月均 {fmtFull(income.totalBuyMonthlyNet)}（含出租抵扣）</div>
+              </div>
+            </div>
+            <div style={{ height: 1, background: "#1e293b", marginBottom: 12 }} />
+            <div style={labelStyle}>贷款</div>
+            <CostRow item="年度还款（本息）" value={Math.round(income.monthlyMortgage * 12)} onChange={() => {}} note={`月供 ${fmtFull(income.monthlyMortgage)}，利率 ${mortgageRate}%，${loanYears}年`} disabled />
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, margin: "8px 0 12px" }}>
+              <div>
+                <div style={{ fontSize: 11, color: "#64748b", marginBottom: 3 }}>利率 {mortgageRate}%</div>
+                <input type="range" min={3} max={10} step={0.1} value={mortgageRate} onChange={e => setMortgageRate(Number(e.target.value))} />
+              </div>
+              <div>
+                <div style={{ fontSize: 11, color: "#64748b", marginBottom: 3 }}>年限 {loanYears}年</div>
+                <input type="range" min={10} max={30} step={5} value={loanYears} onChange={e => setLoanYears(Number(e.target.value))} />
+              </div>
+            </div>
+            <div style={labelStyle}>税费 & 公共服务</div>
+            <CostRow item="议会税（Council Rates）" value={councilRates} onChange={setCouncilRates} note="基督城均值 ~$2,800–$3,500" tag="NZ特有" />
+            <CostRow item="水费（Water Rates）" value={waterRates} onChange={setWaterRates} note="计量收费，~$800–$1,100" tag="NZ特有" />
+            <CostRow item="年度土地税" value={0} onChange={() => {}} note="✅ NZ无年度土地税" disabled tag="NZ特有" />
+            <div style={labelStyle}>保险</div>
+            <CostRow item="建筑保险（含 EQC 地震险）" value={buildingInsurance} onChange={setBuildingInsurance} tag="必须" />
+            <CostRow item="内容保险" value={contentsInsurance} onChange={setContentsInsurance} />
+            <div style={labelStyle}>维护 & 大修</div>
+            <CostRow item="日常维护（~1% 房价）" value={maintenance} onChange={setMaintenance} note="园艺/小修/清洁等" />
+            <CostRow item="大修储备（屋顶/热水器/外墙等）" value={majorRepair} onChange={setMajorRepair} note="屋顶翻新 ~$20k/20年，热水器 ~$2k/12年" />
+            <CostRow item="物业费（公寓才有）" value={bodyCorp} onChange={setBodyCorp} note="独立屋=0，Chch公寓约 $3k–8k" />
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            <div style={panelStyle}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 4 }}>
+                <div style={{ fontSize: 11, color: COLORS.blue, textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 700 }}>🏡 租房年度支出</div>
+                <div style={{ fontSize: 15, fontWeight: 800, color: COLORS.blue, fontFamily: "'DM Mono',monospace" }}>{fmtFull(weeklyRent * 52 + contentsInsurance)}/年</div>
+              </div>
+              <div style={{ height: 1, background: "#1e293b", marginBottom: 12 }} />
+              <CostRow item="年租金" value={weeklyRent * 52} onChange={() => {}} disabled />
+              <div style={{ marginTop: 8, marginBottom: 12 }}>
+                <div style={{ fontSize: 11, color: "#64748b", marginBottom: 3 }}>周租 ${weeklyRent}</div>
+                <input type="range" min={100} max={1500} step={10} value={weeklyRent} onChange={e => setWeeklyRent(Number(e.target.value))} style={{ "--thumb-color": COLORS.blue }} />
+              </div>
+              <CostRow item="内容保险" value={contentsInsurance} onChange={setContentsInsurance} />
+            </div>
+            <div style={{ ...panelStyle, flex: 1 }}>
+              <div style={{ fontSize: 11, color: "#94a3b8", fontWeight: 700, marginBottom: 12 }}>买房年度费用构成</div>
+              {[
+                { n: "贷款还款", v: Math.round(income.monthlyMortgage * 12), c: COLORS.amber },
+                { n: "议会税", v: councilRates, c: COLORS.green },
+                { n: "水费", v: waterRates, c: COLORS.cyan },
+                { n: "建筑保险", v: buildingInsurance, c: COLORS.blue },
+                { n: "内容保险", v: contentsInsurance, c: COLORS.purple },
+                { n: "日常维护", v: maintenance, c: COLORS.red },
+                { n: "大修储备", v: majorRepair, c: "#f97316" },
+                ...(bodyCorp > 0 ? [{ n: "物业费", v: bodyCorp, c: "#a78bfa" }] : []),
+              ].map(item => (
+                <div key={item.n} style={{ marginBottom: 8 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
+                    <span style={{ fontSize: 11, color: "#94a3b8" }}>{item.n}</span>
+                    <span style={{ fontSize: 11, fontFamily: "'DM Mono',monospace", color: item.c, fontWeight: 600 }}>{fmtFull(item.v)}</span>
+                  </div>
+                  <div style={{ height: 4, background: "#1e293b", borderRadius: 2 }}>
+                    <div style={{ height: "100%", width: `${item.v / income.totalBuyMonthlyNet / 12 * 100}%`, background: item.c, borderRadius: 2 }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ════════════════════════════════════════════════════════════════ */}
+      {/* PARAMS TAB                                                       */}
+      {/* ════════════════════════════════════════════════════════════════ */}
+      {tab === "params" && (
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+          <div style={panelStyle}>
+            <div style={{ fontSize: 11, color: COLORS.amber, textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 700, marginBottom: 16 }}>📈 市场假设</div>
+            <SliderRow label="房价年增长率" value={appreciation} min={0} max={10} step={0.5} unit="%" onChange={setAppreciation} note="NZ历史均值 4–7%，基督城近5年约 6%" color={COLORS.amber} />
+            <SliderRow label="股市/基金年回报（不买房时）" value={investReturn} min={2} max={15} step={0.5} unit="%" onChange={setInvestReturn} note="NZX50约 7–9%，KiwiSaver成长型约 6–8%" color={COLORS.blue} />
+            <SliderRow label="分析年限" value={analyzeYears} min={5} max={30} step={1} unit="年" onChange={setAnalyzeYears} note="持有时间越长买房通常越有优势" color={COLORS.green} />
+          </div>
+          <div style={panelStyle}>
+            <div style={{ fontSize: 11, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 700, marginBottom: 14 }}>📋 NZ 市场参考（2025）</div>
+            {[
+              ["基督城房价中位数", "~$680k–$780k"],
+              ["奥克兰房价中位数", "~$980k–$1.1M"],
+              ["基督城周租均值（3卧）", "~$520–$600"],
+              ["固定贷款利率（2年）", "~5.7–6.5%"],
+              ["RBNZ DTI上限", "6x（总债务/年收入）"],
+              ["NZX50历史年均含息回报", "~7–9%"],
+              ["NZ房价历史年均增长", "~4–7%（40年）"],
+              ["最低首付要求", "20%（部分10%）"],
+              ["Bright-line适用期", "持有不满2年（投资房）"],
+              ["Kāinga Ora 首次购房补贴", "已取消（2024年5月）"],
+              ["KiwiSaver首套提取门槛", "持有满3年"],
+            ].map(([k,v]) => (
+              <div key={k} style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", borderBottom: "1px solid #0f172a" }}>
+                <span style={{ fontSize: 11, color: "#64748b" }}>{k}</span>
+                <span style={{ fontSize: 11, fontFamily: "'DM Mono',monospace", color: "#e2e8f0", fontWeight: 600 }}>{v}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ════════════════════════════════════════════════════════════════ */}
+      {/* RESULTS TAB                                                      */}
+      {/* ════════════════════════════════════════════════════════════════ */}
+      {tab === "results" && (
+        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 8 }}>
+            {[
+              { l: "第一天需准备", v: fmtFull(down + oneTimeCosts), c: COLORS.green },
+              { l: "净买房月支出", v: fmtFull(income.totalBuyMonthlyNet), c: COLORS.amber },
+              { l: "租房月均支出", v: fmtFull(income.rentMonthly), c: COLORS.blue },
+              { l: "银行资格", v: bankPass ? "✅ 通过" : "❌ 不通过", c: bankPass ? COLORS.green : COLORS.red },
+              { l: "盈亏平衡", v: breakEven ? `第${breakEven}年` : "期内未达", c: COLORS.purple },
+            ].map(s => (
+              <div key={s.l} style={{ background: "#111827", borderRadius: 10, padding: "12px 14px", border: "1px solid #1e293b" }}>
+                <div style={{ fontSize: 10, color: "#475669", textTransform: "uppercase", marginBottom: 5 }}>{s.l}</div>
+                <div style={{ fontSize: 15, fontWeight: 800, color: s.c, fontFamily: "'DM Mono',monospace" }}>{s.v}</div>
+              </div>
+            ))}
+          </div>
+          <div style={panelStyle}>
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 14, alignItems: "center" }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: "#94a3b8" }}>净资产对比（{analyzeYears}年）</div>
+              <div style={{ display: "flex", gap: 16 }}>
+                <span style={{ fontSize: 11, color: COLORS.green }}>▬ 买房净资产</span>
+                <span style={{ fontSize: 11, color: COLORS.blue }}>▬ 租房+投资净资产</span>
+              </div>
+            </div>
+            <ResponsiveContainer width="100%" height={260}>
+              <LineChart data={chartData} margin={{ top: 5, right: 5, bottom: 0, left: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+                <XAxis dataKey="year" stroke="#1e293b" tick={{ fill: "#475669", fontSize: 11 }} tickFormatter={v => `${v}y`} />
+                <YAxis stroke="#1e293b" tick={{ fill: "#475669", fontSize: 11 }} tickFormatter={fmt} />
+                <Tooltip content={<CustomTooltip />} />
+                {breakEven && <ReferenceLine x={breakEven} stroke={COLORS.amber} strokeDasharray="5 5" label={{ value: `平衡点 ${breakEven}年`, fill: COLORS.amber, fontSize: 10, position: "top" }} />}
+                <Line type="monotone" dataKey="buying" name="买房净资产" stroke={COLORS.green} strokeWidth={2.5} dot={false} />
+                <Line type="monotone" dataKey="renting" name="租房+投资净资产" stroke={COLORS.blue} strokeWidth={2.5} dot={false} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+          <div style={{ background: "#111827", borderRadius: 12, padding: 20, border: `2px solid ${winner === "buy" ? COLORS.green : COLORS.blue}` }}>
+            <div style={{ fontSize: 14, fontWeight: 800, color: winner === "buy" ? COLORS.green : COLORS.blue, marginBottom: 14 }}>
+              {winner === "buy" ? `🏠 ${analyzeYears}年维度下买房净资产更高` : `📈 ${analyzeYears}年维度下租房+投资净资产更高`}
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10, marginBottom: 14 }}>
+              {[
+                { l: `买房${analyzeYears}年后净资产`, v: fmtFull(finalBuy), c: COLORS.green },
+                { l: `租房+投资${analyzeYears}年后净资产`, v: fmtFull(finalRent), c: COLORS.blue },
+                { l: "两者差额", v: fmtFull(Math.abs(finalBuy - finalRent)), c: winner === "buy" ? COLORS.green : COLORS.blue },
+              ].map(s => (
+                <div key={s.l} style={{ background: "#0a0f1a", borderRadius: 8, padding: 12 }}>
+                  <div style={{ fontSize: 10, color: "#475669", marginBottom: 4 }}>{s.l}</div>
+                  <div style={{ fontSize: 18, fontWeight: 800, color: s.c, fontFamily: "'DM Mono',monospace" }}>{s.v}</div>
+                </div>
+              ))}
+            </div>
+            <div style={{ fontSize: 11, color: "#475669", lineHeight: 1.9 }}>
+              ⚠️ 免责：① 租金/房价固定增长为简化假设 ② 未计通胀 ③ Bright-line仅投资房适用 ④ KiwiSaver提取已在首付中体现 ⑤ <strong style={{ color: "#e2e8f0" }}>非PR/公民无法购住宅用地</strong> ⑥ 建议购房前咨询注册律师与贷款经纪人
+            </div>
+          </div>
+        </div>
+      )}
+
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<App />);
+</script>
+</body>
+</html>
