@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Burnside 课程代码查询</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: #10241c;
+    color: #eee;
+    margin: 0;
+    padding: 16px;
+    min-height: 100vh;
+  }
+  h1 {
+    font-size: 20px;
+    margin: 0 0 4px;
+    color: #fff;
+  }
+  .sub {
+    font-size: 13px;
+    color: #9fcbb5;
+    margin-bottom: 16px;
+  }
+  #q {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 16px;
+    border-radius: 10px;
+    border: 1px solid #2c5341;
+    background: #163327;
+    color: #fff;
+    outline: none;
+    margin-bottom: 10px;
+  }
+  #q:focus { border-color: #4fd1a5; }
+  .filter-label {
+    font-size: 11px;
+    color: #6d8f7e;
+    margin: 4px 0 4px;
+  }
+  #filters, #catfilters {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .filter-btn {
+    flex: 0 0 auto;
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid #2c5341;
+    background: transparent;
+    color: #cfe9dc;
+    white-space: nowrap;
+  }
+  .filter-btn.active {
+    background: #1f9e75;
+    border-color: #1f9e75;
+    color: #fff;
+  }
+  .filter-btn.cat.active {
+    background: #7f77dd;
+    border-color: #7f77dd;
+    color: #fff;
+  }
+  #count {
+    font-size: 12px;
+    color: #7ea393;
+    margin-bottom: 8px;
+  }
+  .group-header {
+    font-size: 13px;
+    font-weight: 600;
+    color: #a9d9c4;
+    margin: 18px 0 8px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #234a3b;
+  }
+  .group-header:first-child { margin-top: 4px; }
+  .card {
+    background: #16332c;
+    border: 1px solid #234a3b;
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+  }
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .code {
+    font-weight: 600;
+    font-size: 15px;
+    color: #7fe0bd;
+  }
+  .badges {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+  .stage {
+    font-size: 11px;
+    color: #9fcbb5;
+    background: #0d2019;
+    padding: 2px 8px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  .cat {
+    font-size: 11px;
+    color: #d9d6f7;
+    background: #2c2864;
+    padding: 2px 8px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  .name {
+    font-size: 15px;
+    margin-top: 4px;
+    color: #fff;
+  }
+  .note {
+    font-size: 13px;
+    color: #a9c9bb;
+    margin-top: 4px;
+  }
+  .empty {
+    text-align: center;
+    color: #6d8f7e;
+    font-size: 14px;
+    margin-top: 40px;
+  }
+  footer {
+    text-align: center;
+    font-size: 11px;
+    color: #4d6b5d;
+    margin-top: 24px;
+  }
+</style>
+</head>
+<body>
+
+<h1>Burnside High 课程代码查询</h1>
+<div class="sub">输入代码或名字，如 DGT / Digital / 数学 · 截止日期 8月14日 2026</div>
+
+<input id="q" type="text" placeholder="搜索课程代码或名称...">
+
+<div class="filter-label">年级阶段</div>
+<div id="filters">
+  <button class="filter-btn active" data-stage="all">全部</button>
+  <button class="filter-btn" data-stage="Year 9→10">Y9→10</button>
+  <button class="filter-btn" data-stage="Year10→11">Y10→11</button>
+  <button class="filter-btn" data-stage="Year11→12">Y11→12</button>
+  <button class="filter-btn" data-stage="Year12→13">Y12→13</button>
+</div>
+
+<div class="filter-label">学科大类</div>
+<div id="catfilters">
+  <button class="filter-btn cat active" data-cat="all">全部</button>
+  <button class="filter-btn cat" data-cat="English">English</button>
+  <button class="filter-btn cat" data-cat="Mathematics">Mathematics</button>
+  <button class="filter-btn cat" data-cat="Science">Science</button>
+  <button class="filter-btn cat" data-cat="Social Sciences">Social Sciences</button>
+  <button class="filter-btn cat" data-cat="Health & PE">Health & PE</button>
+  <button class="filter-btn cat" data-cat="Creative Arts">Creative Arts</button>
+  <button class="filter-btn cat" data-cat="Languages">Languages</button>
+  <button class="filter-btn cat" data-cat="Technology">Technology</button>
+  <button class="filter-btn cat" data-cat="Student Support">Student Support</button>
+</div>
+
+<div id="count"></div>
+<div id="results"></div>
+<div id="empty" class="empty" style="display:none;">没有找到匹配结果</div>
+
+<footer>Course Selection closes Friday 14 August 2026</footer>
+
+<script>
+// [code, name, stage, note, category]
+const data = [
+// ---- Year 9 -> 10 ----
+["10ENG/10ESL","English/ESOL","Year 9→10","必修","English"],
+["10MAT","Mathematics","Year 9→10","必修","Mathematics"],
+["10SCI/10SCE","Science / Environment Science","Year 9→10","必修，Env Science仅Year10自选","Science"],
+["10SOC","Social Sciences","Year 9→10","必修（Year11起变为自选）","Social Sciences"],
+["10HEA","Health","Year 9→10","必修（Year11起变为自选）","Health & PE"],
+["10PE","Physical Education","Year 9→10","必修（Year11起变为自选）","Health & PE"],
+["10ART","Art","Year 9→10","自选，通向 Year11 Visual Art","Creative Arts"],
+["10ADP","Art Design and Photography","Year 9→10","自选，通向 Design & Photography / Cambridge Art","Creative Arts"],
+["10DNC","Dance","Year 9→10","自选","Creative Arts"],
+["10DRA","Drama","Year 9→10","自选","Creative Arts"],
+["10MUO","Music","Year 9→10","自选，通向 Contemporary/Cambridge Music","Creative Arts"],
+["10TAH","Te Ao Haka","Year 9→10","自选","Creative Arts"],
+["10MNC","Chinese Mandarin","Year 9→10","自选，需Year9已修同语言","Languages"],
+["10FRE","French","Year 9→10","自选","Languages"],
+["10JAP","Japanese","Year 9→10","自选","Languages"],
+["10SPN","Spanish","Year 9→10","自选","Languages"],
+["10MAO","Te Reo Māori","Year 9→10","自选","Languages"],
+["10BEA","Business, Economics, Accounting","Year 9→10","自选，通向 Year11 Commerce","Social Sciences"],
+["10DVC","Design & Visual Communications","Year 9→10","自选","Technology"],
+["10DGT","Digital Technologies","Year 9→10","自选，通向 游戏设计/软工/编程等","Technology"],
+["10DTE","Electronics & Mechatronics","Year 9→10","自选","Technology"],
+["10FDT","Food Technology","Year 9→10","自选","Technology"],
+["10TTT","Textiles Technology","Year 9→10","自选，通向 Fashion Design Technology","Technology"],
+["10MTT","Mixed Materials Technology","Year 9→10","自选，建筑/工程/多材料","Technology"],
+["10KCP","Key Competency Program","Year 9→10","需HOD批准","Student Support"],
+["10LIT","Literacy","Year 9→10","需HOD批准","Student Support"],
+["10CFS","NZ Cert in Foundation Skills","Year 9→10","需HOD批准，仅Year10","Student Support"],
+
+// ---- Year 10 -> 11 ----
+["11EXT/11ENA/11ENJ/11ENM/ESOL","English (Treasures/Adventures/Social Justice/Media等)","Year10→11","必修","English"],
+["11MAT","Mathematics","Year10→11","必修","Mathematics"],
+["11SCI","Science","Year10→11","必修","Science"],
+["11MNC","Chinese Mandarin","Year10→11","自选","Languages"],
+["11FRE","French","Year10→11","自选","Languages"],
+["11GER","German","Year10→11","自选","Languages"],
+["11JAP","Japanese","Year10→11","自选","Languages"],
+["11SPN","Spanish","Year10→11","自选","Languages"],
+["11MAO","Te Reo Māori","Year10→11","自选","Languages"],
+["11HEA","Health","Year10→11","自选，不可与Food&Nutrition同选","Health & PE"],
+["11PED","Physical Education","Year10→11","自选","Health & PE"],
+["11COM","Commerce","Year10→11","自选","Social Sciences"],
+["11CLS","Classics","Year10→11","自选","Social Sciences"],
+["11GEO","Geography","Year10→11","自选","Social Sciences"],
+["11HIS","History","Year10→11","自选","Social Sciences"],
+["11ART","Visual Art","Year10→11","自选","Creative Arts"],
+["11ADP","Design & Photography","Year10→11","自选","Creative Arts"],
+["11ACM","Cambridge Art","Year10→11","自选，需Year10修过Art","Creative Arts"],
+["11DNC","Dance","Year10→11","自选","Creative Arts"],
+["11DRA","Drama","Year10→11","自选","Creative Arts"],
+["11MUO","Cambridge Music","Year10→11","自选","Creative Arts"],
+["11MUC","Contemporary Music","Year10→11","自选","Creative Arts"],
+["11DTE","Electronics & Mechatronics","Year10→11","自选","Technology"],
+["11DTG","Interactive Game Design","Year10→11","自选","Technology"],
+["11DTM","Product & Digital Design","Year10→11","自选","Technology"],
+["11DTP","Software Engineering & Computer Science","Year10→11","自选","Technology"],
+["11DTA","Generative AI Technologies","Year10→11","自选","Technology"],
+["11PCE","Practical Computing","Year10→11","自选","Technology"],
+["11DVC","Design & Visual Communications","Year10→11","自选","Technology"],
+["11FDN","Food & Nutrition","Year10→11","自选，不可与Health同选","Technology"],
+["11FDT","Food Technology","Year10→11","自选","Technology"],
+["11HFS","Hospitality Food Studies","Year10→11","自选","Technology"],
+["11TTT","Fashion Design Technology","Year10→11","自选","Technology"],
+["11TBC","Building Construction","Year10→11","自选","Technology"],
+["11TEN","Engineering","Year10→11","自选，优先给完成10MTT学生","Technology"],
+["11MTT","Mixed Materials Technology","Year10→11","自选","Technology"],
+["11EMP","Employment Skills","Year10→11","自选","Student Support"],
+["11LIT","Literacy","Year10→11","需HOD批准","Student Support"],
+
+// ---- Year 11 -> 12 ----
+["12MED","Media Studies","Year11→12","自选，10学分L1英语","English"],
+["12ESO/12ESL","ESOL","Year11→12","自选","English"],
+["12ENC","English Classic to Contemporary","Year11→12","自选，10学分L1英语含writing standard","English"],
+["12ENL","English Literacies","Year11→12","自选，0-5学分L1英语","English"],
+["12ENX","Extension English","Year11→12","自选，15学分L1英语","English"],
+["12ENV","Visual English","Year11→12","自选，5学分L1英语","English"],
+["12MAT","Mathematics","Year11→12","自选，10+学分L1数学+代数测试","Mathematics"],
+["12ARH","Art History","Year11→12","自选","Creative Arts"],
+["12APD","Design","Year11→12","自选","Creative Arts"],
+["12APA","Painting","Year11→12","自选","Creative Arts"],
+["12APS","Sculpture/Printmaking","Year11→12","自选","Creative Arts"],
+["12APH","Photography","Year11→12","自选","Creative Arts"],
+["12ACM","Cambridge AS Art","Year11→12","自选","Creative Arts"],
+["12DNC","Dance","Year11→12","自选","Creative Arts"],
+["12DRA","Drama","Year11→12","自选","Creative Arts"],
+["12MUO","Cambridge Music","Year11→12","自选，需11MUO/11MUC或HOD批准","Creative Arts"],
+["12MUC","Contemporary Music","Year11→12","自选，需11MUO/11MUC或HOD批准","Creative Arts"],
+["12MUT","Music Technology","Year11→12","自选","Creative Arts"],
+["12PMU","Performance Music","Year11→12","自选，需11MUO/11MUC或HOD批准","Creative Arts"],
+["12TAH","Te Ao Haka","Year11→12","自选","Creative Arts"],
+["12MNC","Chinese Mandarin","Year11→12","自选","Languages"],
+["12FRE","French","Year11→12","自选","Languages"],
+["12GER","German","Year11→12","自选","Languages"],
+["12JAP","Japanese","Year11→12","自选","Languages"],
+["12SPN","Spanish","Year11→12","自选","Languages"],
+["12MAO","Te Reo Māori","Year11→12","自选","Languages"],
+["12HEA","Health","Year11→12","自选","Health & PE"],
+["12ODP","Outdoor Pursuits","Year11→12","自选","Health & PE"],
+["12PED","Physical Education","Year11→12","自选","Health & PE"],
+["12SLP","Sports Leadership & Performance","Year11→12","自选","Health & PE"],
+["12BIO","Biology","Year11→12","自选，10学分含Chem&Bio1.1","Science"],
+["12CHE","Chemistry","Year11→12","自选，10学分含Chem&Bio1.2","Science"],
+["12SCI","General Science","Year11→12","自选，5学分任一L1科学","Science"],
+["12PHY","Physics","Year11→12","自选，10学分含Physics/Earth&Space1.4+10学分数学","Science"],
+["12ACC","Accounting","Year11→12","自选，需通过L1商业中的会计部分","Social Sciences"],
+["12BUS","Business Studies","Year11→12","自选","Social Sciences"],
+["12CLS","Classics","Year11→12","自选","Social Sciences"],
+["12ECO","Economics","Year11→12","自选","Social Sciences"],
+["12GEO","Geography","Year11→12","自选","Social Sciences"],
+["12HIS","History","Year11→12","自选，10学分L1历史或英语相关科目","Social Sciences"],
+["12LGL","Legal Studies","Year11→12","自选","Social Sciences"],
+["12TOU","Tourism","Year11→12","自选","Social Sciences"],
+["12TRT","Travel & Tourism","Year11→12","自选，需L1 Travel&Tourism或HOD批准","Social Sciences"],
+["12DTE","Electronics & Mechatronics","Year11→12","自选","Technology"],
+["12DTG","Interactive Game Design","Year11→12","自选","Technology"],
+["12DTM","Product & Digital Media","Year11→12","自选","Technology"],
+["12DTP","Software Engineering & CompSci","Year11→12","自选","Technology"],
+["12DTA","Generative AI Technologies","Year11→12","自选","Technology"],
+["12PCE","Practical Computing","Year11→12","自选","Technology"],
+["12DVC","Design & Visual Communications","Year11→12","自选","Technology"],
+["12ECS","Early Childhood Studies","Year11→12","自选","Technology"],
+["12FDN","Food & Nutrition","Year11→12","自选","Technology"],
+["12FDT","Food Technology","Year11→12","自选","Technology"],
+["12HFB","Hospitality Food & Beverage","Year11→12","自选","Technology"],
+["12HFS","Hospitality Food Studies","Year11→12","自选","Technology"],
+["12HFC","NZ Cert in Hospitality","Year11→12","自选，两年制，最后一届2027","Technology"],
+["12TTT","Fashion Design Technology","Year11→12","自选","Technology"],
+["12TCB","Construction Building","Year11→12","自选","Technology"],
+["12TEN","Engineering","Year11→12","自选，需通过Year11 Engineering或HOD批准","Technology"],
+["12MTT","Mixed Materials Technology","Year11→12","自选，需通过Year11 MTT或HOD批准","Technology"],
+["12EMP","Employment Skills","Year11→12","自选","Student Support"],
+["12NUM","Numeracy in Action","Year11→12","自选","Student Support"],
+
+// ---- Year 12 -> 13 ----
+["13MED","Media Studies *","Year12→13","自选，*=UE认可，10学分L2英语","English"],
+["13ESL","ESOL","Year12→13","自选，15学分12ESL","English"],
+["13ENC","Contemporary/Extension English *","Year12→13","自选，12学分L2英语含writing folio","English"],
+["13ENV","Visual English *","Year12→13","自选，10学分L2英语","English"],
+["13MAS","Statistics *","Year12→13","自选，12学分L2数学含Probability","Mathematics"],
+["13MAC","Calculus *","Year12→13","自选，12学分L2数学含Algebra&Calculus","Mathematics"],
+["13MCB","Cambridge Mathematics *","Year12→13","自选，需12MAX 60%+ in AS","Mathematics"],
+["13ARH","Art History *","Year12→13","自选","Creative Arts"],
+["13APD","Design *","Year12→13","自选","Creative Arts"],
+["13APA","Painting *","Year12→13","自选","Creative Arts"],
+["13APS","Sculpture *","Year12→13","自选","Creative Arts"],
+["13APR","Printmaking *","Year12→13","自选","Creative Arts"],
+["13DNC","Dance *","Year12→13","自选，需HOD批准","Creative Arts"],
+["13DRA","Drama *","Year12→13","自选","Creative Arts"],
+["13MUO","Cambridge Music *","Year12→13","自选，需12MUO","Creative Arts"],
+["13MUC","Contemporary Music *","Year12→13","自选，需12MUO/12MUC/12PMU","Creative Arts"],
+["13MUT","Music Technology *","Year12→13","自选，需12MUT或HOD批准","Creative Arts"],
+["13MUP","Music Project","Year12→13","自选，需12MUO/12MUC/12PMU或HOD批准","Creative Arts"],
+["13TAH","Te Ao Haka","Year12→13","自选","Creative Arts"],
+["13MNC","Chinese Mandarin *","Year12→13","自选，14学分L2 Mandarin","Languages"],
+["13FRE","French *","Year12→13","自选，14学分L2 French","Languages"],
+["13JAP","Japanese *","Year12→13","自选，14学分L2 Japanese","Languages"],
+["13SPN","Spanish *","Year12→13","自选，14学分L2 Spanish","Languages"],
+["13MAO","Te Reo Māori *","Year12→13","自选，14学分L2 Te Reo Māori","Languages"],
+["13GER","German *","Year12→13","自选，14学分L2 German","Languages"],
+["13HEA","Health *","Year12→13","自选","Health & PE"],
+["13OED","Outdoor Education","Year12→13","自选","Health & PE"],
+["13PED","Physical Education *","Year12→13","自选","Health & PE"],
+["13SLP","Sports Leadership & Performance","Year12→13","自选","Health & PE"],
+["13BIO","Biology *","Year12→13","自选，11学分L2生物含一门external","Science"],
+["13CHE","Chemistry *","Year12→13","自选，14学分L2化学","Science"],
+["13SCI","General Science *","Year12→13","自选，10学分任一L2科学","Science"],
+["13PHY","Physics *","Year12→13","自选，13学分L2物理","Science"],
+["13ACC","Accounting *","Year12→13","自选，9学分L2会计","Social Sciences"],
+["13BUS","Business Studies *","Year12→13","自选","Social Sciences"],
+["13CLS","Classics *","Year12→13","自选","Social Sciences"],
+["13ECO","Economics *","Year12→13","自选，12学分L2经济/数学/英语","Social Sciences"],
+["13GEO","Geography *","Year12→13","自选","Social Sciences"],
+["13HIS","History *","Year12→13","自选，12学分L2历史或英语相关科目","Social Sciences"],
+["13LGL","Legal Studies","Year12→13","自选","Social Sciences"],
+["13TOU","Tourism","Year12→13","自选，不可给选过Year11 Travel&Tourism的学生","Social Sciences"],
+["13DTE","Electronics & Mechatronics *","Year12→13","自选","Technology"],
+["13DTG","Interactive Game Design *","Year12→13","自选","Technology"],
+["13DTM","Product & Digital Media *","Year12→13","自选","Technology"],
+["13DTP","Software Engineering & CompSci *","Year12→13","自选","Technology"],
+["13DTA","Generative AI Technologies *","Year12→13","自选","Technology"],
+["13PCE","Practical Computing","Year12→13","自选","Technology"],
+["13DVC","Design & Visual Communications *","Year12→13","自选，需HOD批准","Technology"],
+["13ECS","Early Childhood Studies *","Year12→13","自选","Technology"],
+["13FDN","Food & Nutrition *","Year12→13","自选","Technology"],
+["13FDT","Food Technology *","Year12→13","自选","Technology"],
+["13HCT","Hospitality Cuisine & Coffee","Year12→13","自选","Technology"],
+["13HFS","Hospitality Food Studies","Year12→13","自选","Technology"],
+["13TCB","Construction Building","Year12→13","自选","Technology"],
+["13TEN","Engineering","Year12→13","自选，需通过Year12 Engineering或HOD批准","Technology"],
+["13MTT","Mixed Materials Technology *","Year12→13","自选，需通过Year12 MTT或HOD批准","Technology"],
+["13TTT","Fashion Design Technology *","Year12→13","自选","Technology"],
+["13EMP","Employment Skills","Year12→13","自选","Student Support"],
+["13LIT","Senior Literacy","Year12→13","自选","Student Support"],
+["13NUM","Numeracy in Action","Year12→13","自选","Student Support"],
+];
+
+let currentStage = 'all';
+let currentCat = 'all';
+
+const resultsEl = document.getElementById('results');
+const countEl = document.getElementById('count');
+const emptyEl = document.getElementById('empty');
+const inputEl = document.getElementById('q');
+
+function groupOrder(cat){
+  const order = ["English","Mathematics","Science","Social Sciences","Health & PE","Creative Arts","Languages","Technology","Student Support"];
+  return order.indexOf(cat);
+}
+
+function render() {
+  const v = inputEl.value.trim().toLowerCase();
+  let filtered = data;
+  if (currentStage !== 'all') {
+    filtered = filtered.filter(r => r[2] === currentStage);
+  }
+  if (currentCat !== 'all') {
+    filtered = filtered.filter(r => r[4] === currentCat);
+  }
+  if (v) {
+    filtered = filtered.filter(r =>
+      r[0].toLowerCase().includes(v) || r[1].toLowerCase().includes(v)
+    );
+  }
+
+  const noFilterActive = !v && currentStage === 'all' && currentCat === 'all';
+  if (noFilterActive) {
+    resultsEl.innerHTML = '';
+    countEl.textContent = '';
+    emptyEl.style.display = 'none';
+    return;
+  }
+
+  if (filtered.length === 0) {
+    resultsEl.innerHTML = '';
+    countEl.textContent = '';
+    emptyEl.style.display = 'block';
+    return;
+  }
+
+  emptyEl.style.display = 'none';
+  countEl.textContent = `找到 ${filtered.length} 项`;
+
+  // group by category for readability
+  const sorted = [...filtered].sort((a,b) => groupOrder(a[4]) - groupOrder(b[4]));
+  let html = '';
+  let lastCat = null;
+  for (const r of sorted) {
+    if (r[4] !== lastCat) {
+      html += `<div class="group-header">${r[4]}</div>`;
+      lastCat = r[4];
+    }
+    html += `
+      <div class="card">
+        <div class="card-top">
+          <span class="code">${r[0]}</span>
+          <div class="badges">
+            <span class="stage">${r[2]}</span>
+          </div>
+        </div>
+        <div class="name">${r[1]}</div>
+        ${r[3] ? `<div class="note">${r[3]}</div>` : ''}
+      </div>`;
+  }
+  resultsEl.innerHTML = html;
+}
+
+inputEl.addEventListener('input', render);
+
+document.querySelectorAll('.filter-btn[data-stage]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn[data-stage]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentStage = btn.dataset.stage;
+    render();
+  });
+});
+
+document.querySelectorAll('.filter-btn[data-cat]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn[data-cat]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentCat = btn.dataset.cat;
+    render();
+  });
+});
+
+render();
+</script>
+
+</body>
+</html>
