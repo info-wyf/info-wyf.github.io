@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🇳🇿 NZ Primary Division Visual Learning Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Fredoka', 'Noto Sans SC', sans-serif;
+            background-color: #f0fdf4;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .bubbly-button {
+            transition: transform 0.1s ease, box-shadow 0.1s ease;
+        }
+        .bubbly-button:active {
+            transform: scale(0.95);
+        }
+        .item-pop {
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        /* Mobile slider touch friendliness */
+        input[type=range] {
+            height: 8px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen pb-12">
+
+    <!-- Header -->
+    <header class="bg-emerald-600 text-white shadow-lg py-4 px-3 sm:py-6 sm:px-4 mb-4 sm:mb-6">
+        <div class="max-w-5xl mx-auto">
+            
+            <!-- Top bar with Badge and Language Button -->
+            <div class="flex flex-row justify-between items-center gap-2 mb-2">
+                <div class="inline-flex items-center gap-1.5 bg-emerald-700 text-emerald-100 text-[10px] sm:text-xs px-2.5 py-1 rounded-full font-semibold tracking-wide uppercase">
+                    <span>🇳🇿 NZ Numeracy (Stage 4 - 7)</span>
+                </div>
+
+                <!-- Language Switcher Button -->
+                <button onclick="toggleLanguage()" id="lang-btn" class="bg-emerald-800/90 hover:bg-emerald-900 text-white border border-emerald-400/40 text-xs font-bold px-3 py-1.5 rounded-full shadow transition flex items-center gap-1.5 bubbly-button">
+                    <i class="fa-solid fa-globe text-emerald-300"></i>
+                    <span id="lang-btn-text">中文</span>
+                </button>
+            </div>
+
+            <div class="text-center mt-1">
+                <h1 class="text-xl sm:text-3xl md:text-4xl font-bold tracking-tight" id="ui-title">NZ Primary Division Visual Guide</h1>
+                <p class="text-emerald-100 text-xs sm:text-sm md:text-base mt-1 sm:mt-2 max-w-2xl mx-auto" id="ui-subtitle">
+                    From Equal Sharing to Grouping, Array Model, and DMSB Long Division!
+                </p>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-3 sm:px-4">
+        
+        <!-- Navigation Tabs -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 mb-4 sm:mb-6" id="tabs-nav">
+            <button onclick="switchTab('share')" id="tab-btn-share" class="tab-btn bg-emerald-500 text-white p-2.5 sm:p-3 rounded-xl font-bold text-center shadow flex flex-col items-center justify-center gap-1 transition bubbly-button">
+                <i class="fa-solid text-lg sm:text-xl fa-hand-holding-heart"></i>
+                <span class="text-[11px] sm:text-xs md:text-sm" id="nav-tab-1">1. 平分法 (Sharing)</span>
+            </button>
+            <button onclick="switchTab('group')" id="tab-btn-group" class="tab-btn bg-white text-slate-700 hover:bg-emerald-50 p-2.5 sm:p-3 rounded-xl font-bold text-center border border-slate-200 flex flex-col items-center justify-center gap-1 transition bubbly-button">
+                <i class="fa-solid text-lg sm:text-xl fa-boxes-packing text-amber-500"></i>
+                <span class="text-[11px] sm:text-xs md:text-sm" id="nav-tab-2">2. 分组法 (Grouping)</span>
+            </button>
+            <button onclick="switchTab('array')" id="tab-btn-array" class="tab-btn bg-white text-slate-700 hover:bg-emerald-50 p-2.5 sm:p-3 rounded-xl font-bold text-center border border-slate-200 flex flex-col items-center justify-center gap-1 transition bubbly-button">
+                <i class="fa-solid text-lg sm:text-xl fa-table-cells text-blue-500"></i>
+                <span class="text-[11px] sm:text-xs md:text-sm" id="nav-tab-3">3. 阵列法 (Array)</span>
+            </button>
+            <button onclick="switchTab('bus')" id="tab-btn-bus" class="tab-btn bg-white text-slate-700 hover:bg-emerald-50 p-2.5 sm:p-3 rounded-xl font-bold text-center border border-slate-200 flex flex-col items-center justify-center gap-1 transition bubbly-button">
+                <i class="fa-solid text-lg sm:text-xl fa-list-ol text-indigo-500"></i>
+                <span class="text-[11px] sm:text-xs md:text-sm" id="nav-tab-4">4. DMSB 长除法</span>
+            </button>
+            <button onclick="switchTab('quiz')" id="tab-btn-quiz" class="tab-btn bg-white text-slate-700 hover:bg-emerald-50 p-2.5 sm:p-3 rounded-xl font-bold text-center border border-slate-200 col-span-2 sm:col-span-1 flex flex-col items-center justify-center gap-1 transition bubbly-button">
+                <i class="fa-solid text-lg sm:text-xl fa-gamepad text-purple-500"></i>
+                <span class="text-[11px] sm:text-xs md:text-sm" id="nav-tab-5">5. 挑战游乐场</span>
+            </button>
+        </div>
+
+        <!-- STAGE 1: EQUAL SHARING -->
+        <section id="content-share" class="tab-content bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-emerald-100">
+            <div class="mb-4 sm:mb-6 bg-emerald-50 p-3.5 sm:p-4 rounded-xl border border-emerald-200">
+                <h2 class="text-base sm:text-lg font-bold text-emerald-900 flex items-center gap-2">
+                    <span class="bg-emerald-600 text-white text-[10px] sm:text-xs px-2 py-0.5 rounded">Stage 4</span>
+                    <span id="s1-header">步骤一：Equal Sharing (公平平分法)</span>
+                </h2>
+                <p class="text-xs sm:text-sm text-emerald-700 mt-1 leading-relaxed" id="s1-desc">
+                    <strong>新西兰教学核心概念：</strong>“我有 N 个物品，平均分给 M 个朋友，每个人得到多少个？” 适合初学者建立直观感知。
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+                <!-- Controls -->
+                <div class="bg-slate-50 p-4 rounded-xl space-y-4 border border-slate-100">
+                    <h3 class="font-bold text-slate-700 border-b pb-2 text-sm sm:text-base" id="s1-setting-title">设置题目</h3>
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 block mb-1"><span id="s1-lbl-total">总数量 (Dividend)</span>: <span id="share-total-val" class="text-emerald-600 text-base">12</span></label>
+                        <input type="range" id="share-total" min="4" max="24" value="12" class="w-full accent-emerald-500 cursor-pointer" oninput="updateSharingVisual()">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 block mb-1"><span id="s1-lbl-divisor">平分份数 (Divisor)</span>: <span id="share-groups-val" class="text-emerald-600 text-base">3</span></label>
+                        <input type="range" id="share-groups" min="2" max="6" value="3" class="w-full accent-emerald-500 cursor-pointer" oninput="updateSharingVisual()">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 block mb-1" id="s1-lbl-icon">物品图案:</label>
+                        <select id="share-icon" class="w-full bg-white border border-slate-300 rounded-lg p-2 text-sm" onchange="updateSharingVisual()">
+                            <option value="🥝" id="opt-kiwi">🥝 奇异果 (Kiwi Fruit)</option>
+                            <option value="🍎" id="opt-apple">🍎 苹果 (Apples)</option>
+                            <option value="🐑" id="opt-sheep">🐑 绵羊 (Sheep)</option>
+                            <option value="⭐" id="opt-star">⭐ 星星 (Stars)</option>
+                        </select>
+                    </div>
+
+                    <div class="pt-2 text-center bg-emerald-100/70 p-3 rounded-lg">
+                        <div class="text-xs text-emerald-800 font-medium" id="s1-eq-title">数学算式 (Equation)</div>
+                        <div class="text-xl font-bold text-emerald-700" id="share-equation">12 ÷ 3 = 4</div>
+                    </div>
+                </div>
+
+                <!-- Visualization Area -->
+                <div class="md:col-span-2 space-y-4">
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2" id="s1-vis-title">平分到不同盒子 (Groups):</h4>
+                        <div id="share-buckets" class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-3">
+                            <!-- Buckets populated by JS -->
+                        </div>
+                    </div>
+
+                    <div id="share-remainder-box" class="hidden p-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-800 text-xs flex items-center gap-2">
+                        <i class="fa-solid fa-triangle-exclamation text-amber-500 text-base shrink-0"></i>
+                        <span id="share-remainder-text">剩下的无法平分，叫 **Remainder (余数)**！</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- STAGE 2: GROUPING -->
+        <section id="content-group" class="tab-content hidden bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-amber-100">
+            <div class="mb-4 sm:mb-6 bg-amber-50 p-3.5 sm:p-4 rounded-xl border border-amber-200">
+                <h2 class="text-base sm:text-lg font-bold text-amber-900 flex items-center gap-2">
+                    <span class="bg-amber-600 text-white text-[10px] sm:text-xs px-2 py-0.5 rounded">Stage 5</span>
+                    <span id="s2-header">步骤二：Grouping (按量分组法)</span>
+                </h2>
+                <p class="text-xs sm:text-sm text-amber-700 mt-1 leading-relaxed" id="s2-desc">
+                    <strong>新西兰教学核心概念：</strong>“我有 N 个物品，每 M 个打包成一组，可以装成多少组？” 引入重复减法 (Repeated Subtraction) 概念。
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+                <!-- Controls -->
+                <div class="bg-slate-50 p-4 rounded-xl space-y-4 border border-slate-100">
+                    <h3 class="font-bold text-slate-700 border-b pb-2 text-sm sm:text-base" id="s2-setting-title">设置题目</h3>
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 block mb-1"><span id="s2-lbl-total">总数量</span>: <span id="group-total-val" class="text-amber-600 text-base">15</span></label>
+                        <input type="range" id="group-total" min="5" max="30" value="15" class="w-full accent-amber-500 cursor-pointer" oninput="updateGroupingVisual()">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 block mb-1"><span id="s2-lbl-size">每组几个 (Group size)</span>: <span id="group-size-val" class="text-amber-600 text-base">4</span></label>
+                        <input type="range" id="group-size" min="2" max="6" value="4" class="w-full accent-amber-500 cursor-pointer" oninput="updateGroupingVisual()">
+                    </div>
+
+                    <div class="pt-2 text-center bg-amber-100/70 p-3 rounded-lg">
+                        <div class="text-xs text-amber-800 font-medium" id="s2-eq-title">算式与结果</div>
+                        <div class="text-xl font-bold text-amber-700" id="group-equation">15 ÷ 4 = 3 r 3</div>
+                        <div class="text-xs text-amber-600 mt-1" id="group-explanation">能装 3 组，还剩 3 个</div>
+                    </div>
+                </div>
+
+                <!-- Visual Area -->
+                <div class="md:col-span-2">
+                    <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2" id="s2-vis-title">圈组可视化 (Groups of Box):</h4>
+                    <div id="group-container" class="flex flex-wrap gap-2.5 sm:gap-4 p-3.5 sm:p-4 bg-slate-50 rounded-xl min-h-[160px] items-start justify-start">
+                        <!-- Group boxes populated by JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- STAGE 3: ARRAY MODEL -->
+        <section id="content-array" class="tab-content hidden bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-blue-100">
+            <div class="mb-4 sm:mb-6 bg-blue-50 p-3.5 sm:p-4 rounded-xl border border-blue-200">
+                <h2 class="text-base sm:text-lg font-bold text-blue-900 flex items-center gap-2">
+                    <span class="bg-blue-600 text-white text-[10px] sm:text-xs px-2 py-0.5 rounded">Stage 6</span>
+                    <span id="s3-header">步骤三：Array Model (矩形阵列与乘法逆向)</span>
+                </h2>
+                <p class="text-xs sm:text-sm text-blue-700 mt-1 leading-relaxed" id="s3-desc">
+                    <strong>新西兰教学核心概念：</strong>“除法是乘法的逆运算 (Inverse of Multiplication)”。通过网格阵列，寻找“已知总数量与行数，求列数”。
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+                <!-- Controls -->
+                <div class="bg-slate-50 p-4 rounded-xl space-y-4 border border-slate-100">
+                    <h3 class="font-bold text-slate-700 border-b pb-2 text-sm sm:text-base" id="s3-setting-title">设置题目</h3>
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 block mb-1"><span id="s3-lbl-rows">行数 (Rows / Divisor)</span>: <span id="array-rows-val" class="text-blue-600 text-base">3</span></label>
+                        <input type="range" id="array-rows" min="2" max="6" value="3" class="w-full accent-blue-500 cursor-pointer" oninput="updateArrayVisual()">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 block mb-1"><span id="s3-lbl-cols">列数 (Cols / Answer)</span>: <span id="array-cols-val" class="text-blue-600 text-base">4</span></label>
+                        <input type="range" id="array-cols" min="2" max="8" value="4" class="w-full accent-blue-500 cursor-pointer" oninput="updateArrayVisual()">
+                    </div>
+
+                    <div class="pt-2 text-center bg-blue-100/70 p-3 rounded-lg">
+                        <div class="text-xs text-blue-800 font-medium" id="s3-eq-title">阵列与双向算式</div>
+                        <div class="text-lg font-bold text-blue-700" id="array-equation-div">12 ÷ 3 = 4</div>
+                        <div class="text-xs text-blue-600 font-medium mt-1" id="array-equation-mul">3 × 4 = 12</div>
+                    </div>
+                </div>
+
+                <!-- Visual Area -->
+                <div class="md:col-span-2 flex flex-col items-center justify-center p-3.5 sm:p-4 bg-slate-50 rounded-xl min-h-[200px] overflow-x-auto">
+                    <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 self-start" id="s3-vis-title">网格点阵阵列 (Grid Array):</h4>
+                    <div id="array-grid-container" class="inline-grid gap-1.5 sm:gap-2 p-3 sm:p-4 bg-white rounded-xl shadow-inner border border-slate-200">
+                        <!-- Rendered by JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- STAGE 4: DMSB LONG DIVISION METHOD -->
+        <section id="content-bus" class="tab-content hidden bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-indigo-100">
+            <div class="mb-4 sm:mb-6 bg-indigo-50 p-3.5 sm:p-4 rounded-xl border border-indigo-200">
+                <h2 class="text-base sm:text-lg font-bold text-indigo-900 flex items-center gap-2">
+                    <span class="bg-indigo-600 text-white text-[10px] sm:text-xs px-2 py-0.5 rounded">Stage 6/7</span>
+                    <span id="s4-header">步骤四：DMSB 标准长除法 (Long Division Algorithm)</span>
+                </h2>
+                <p class="text-xs sm:text-sm text-indigo-700 mt-1 leading-relaxed" id="s4-desc">
+                    <strong>新西兰/国际小学核心算法：</strong>利用 <strong>D-M-S-B</strong> 记忆口诀（家庭成员口诀）依次循环完成多位数除法！
+                </p>
+
+                <!-- DMSB Mnemonic Cards -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-3">
+                    <div class="bg-white p-2 sm:p-2.5 rounded-lg border border-indigo-100 shadow-sm text-center">
+                        <span class="text-[11px] sm:text-xs font-black text-indigo-600 bg-indigo-100 px-2 py-0.5 rounded-full">D</span>
+                        <div class="text-xs font-bold text-slate-800 mt-1" id="dmsb-dad">👨 Dad: Divide</div>
+                        <div class="text-[10px] text-slate-500 leading-tight mt-0.5" id="dmsb-dad-sub">计算除数能进几次</div>
+                    </div>
+                    <div class="bg-white p-2 sm:p-2.5 rounded-lg border border-indigo-100 shadow-sm text-center">
+                        <span class="text-[11px] sm:text-xs font-black text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full">M</span>
+                        <div class="text-xs font-bold text-slate-800 mt-1" id="dmsb-mom">👩 Mom: Multiply</div>
+                        <div class="text-[10px] text-slate-500 leading-tight mt-0.5" id="dmsb-mom-sub">商 × 除数写在下方</div>
+                    </div>
+                    <div class="bg-white p-2 sm:p-2.5 rounded-lg border border-indigo-100 shadow-sm text-center">
+                        <span class="text-[11px] sm:text-xs font-black text-rose-600 bg-rose-100 px-2 py-0.5 rounded-full">S</span>
+                        <div class="text-xs font-bold text-slate-800 mt-1" id="dmsb-sis">👧 Sister: Subtract</div>
+                        <div class="text-[10px] text-slate-500 leading-tight mt-0.5" id="dmsb-sis-sub">相减求得剩余数值</div>
+                    </div>
+                    <div class="bg-white p-2 sm:p-2.5 rounded-lg border border-indigo-100 shadow-sm text-center">
+                        <span class="text-[11px] sm:text-xs font-black text-amber-600 bg-amber-100 px-2 py-0.5 rounded-full">B</span>
+                        <div class="text-xs font-bold text-slate-800 mt-1" id="dmsb-bro">👦 Brother: Bring Down</div>
+                        <div class="text-[10px] text-slate-500 leading-tight mt-0.5" id="dmsb-bro-sub">下拉被除数下一位</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+                <!-- Inputs & Step Navigator -->
+                <div class="bg-slate-50 p-4 rounded-xl space-y-4 border border-slate-100">
+                    <h3 class="font-bold text-slate-700 border-b pb-2 text-sm sm:text-base" id="s4-setting-title">自定义算式</h3>
+                    <div class="flex gap-2 items-center">
+                        <div class="flex-1">
+                            <label class="text-[11px] sm:text-xs font-bold text-slate-500 block mb-1" id="s4-lbl-dividend">被除数 (Dividend)</label>
+                            <input type="number" id="bus-dividend-input" value="74" min="10" max="999" class="w-full border border-slate-300 rounded-lg p-2 font-bold text-center text-base sm:text-lg">
+                        </div>
+                        <span class="text-lg sm:text-xl font-bold text-slate-400 mt-5">÷</span>
+                        <div class="w-24 sm:w-28">
+                            <label class="text-[11px] sm:text-xs font-bold text-slate-500 block mb-1" id="s4-lbl-divisor">除数 (Divisor)</label>
+                            <input type="number" id="bus-divisor-input" value="3" min="2" max="9" class="w-full border border-slate-300 rounded-lg p-2 font-bold text-center text-base sm:text-lg">
+                        </div>
+                    </div>
+                    <button onclick="initBusStop()" id="s4-btn-gen" class="w-full bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-bold py-2.5 rounded-lg transition text-xs sm:text-sm shadow">
+                        生成 DMSB 解题步骤
+                    </button>
+
+                    <hr class="my-2 sm:my-3">
+
+                    <div class="flex gap-2">
+                        <button onclick="prevBusStep()" id="bus-prev-btn" class="flex-1 bg-slate-200 hover:bg-slate-300 active:scale-95 text-slate-700 font-bold py-2 sm:py-2.5 rounded-lg text-xs disabled:opacity-40 transition" disabled>
+                            <i class="fa-solid fa-arrow-left"></i> <span id="s4-btn-prev">上一步</span>
+                        </button>
+                        <button onclick="nextBusStep()" id="bus-next-btn" class="flex-1 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-bold py-2 sm:py-2.5 rounded-lg text-xs transition">
+                            <span id="s4-btn-next">下一步</span> <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+
+                    <div id="bus-step-description" class="p-3 bg-indigo-50 border border-indigo-100 rounded-lg text-xs text-indigo-900 leading-relaxed min-h-[85px]">
+                        点击“生成 DMSB 解题步骤”开始！
+                    </div>
+                </div>
+
+                <!-- Interactive Aligned Grid Visualizer -->
+                <div class="md:col-span-2 bg-slate-900 rounded-2xl p-3 sm:p-6 text-white flex flex-col items-center justify-start min-h-[320px] sm:min-h-[360px] overflow-x-auto">
+                    <div class="text-[10px] sm:text-xs text-slate-400 mb-2 font-mono flex items-center gap-2">
+                        <span>DMSB Vertical Standard Visualizer</span>
+                    </div>
+                    
+                    <div id="bus-interactive-display" class="w-full flex justify-center py-2 overflow-x-auto">
+                        <!-- Rendered via HTML Table Grid by JS -->
+                    </div>
+
+                    <div id="bus-status-badge" class="mt-auto text-xs font-sans bg-indigo-500/30 text-indigo-300 px-3.5 py-1.5 rounded-full text-center">
+                        准备就绪
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- STAGE 5: QUIZ ARENA -->
+        <section id="content-quiz" class="tab-content hidden bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-purple-100">
+            <div class="mb-4 bg-purple-50 p-3.5 sm:p-4 rounded-xl border border-purple-200 flex justify-between items-center">
+                <div>
+                    <h2 class="text-base sm:text-lg font-bold text-purple-900" id="s5-header">🎯 互动小挑战 (Practice Arena)</h2>
+                    <p class="text-xs text-purple-700" id="s5-desc">巩固所学概念，用图形辅助思考！</p>
+                </div>
+                <div class="text-right shrink-0">
+                    <span class="text-[10px] sm:text-xs text-slate-500 block" id="s5-score-label">得分 (Score)</span>
+                    <span id="quiz-score" class="text-xl sm:text-2xl font-bold text-purple-600">0</span>
+                </div>
+            </div>
+
+            <div class="max-w-xl mx-auto bg-slate-50 p-4 sm:p-6 rounded-2xl border border-slate-200 text-center space-y-4 sm:space-y-6">
+                <div class="text-2xl sm:text-3xl font-bold text-slate-800 tracking-wider" id="quiz-question">
+                    12 ÷ 4 = ?
+                </div>
+
+                <!-- Visual Hint Box -->
+                <div id="quiz-hint-box" class="flex flex-wrap gap-1.5 sm:gap-2 justify-center p-3 sm:p-4 bg-white rounded-xl border border-dashed border-purple-300 min-h-[50px]">
+                    <!-- Visual hints dynamically inserted -->
+                </div>
+
+                <!-- Options -->
+                <div class="grid grid-cols-2 gap-2.5 sm:gap-3" id="quiz-options">
+                    <!-- Buttons inserted dynamically -->
+                </div>
+
+                <div id="quiz-feedback" class="hidden p-3 rounded-lg text-xs sm:text-sm font-bold"></div>
+
+                <button onclick="generateQuiz()" class="text-xs text-purple-600 underline hover:text-purple-800" id="s5-btn-next-q">
+                    换一题 (Next Question)
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // =====================================
+        // INTERNATIONALIZATION (I18N) DICTIONARY
+        // =====================================
+        let currentLang = 'en';
+
+        const i18n = {
+            zh: {
+                langBtn: "English",
+                title: "新西兰小学除法可视化教学指南",
+                subtitle: "从具体物体平分（Sharing），到阵列模型（Array），再到 DMSB 长除法！",
+                tabs: {
+                    t1: "1. 平分法 (Sharing)",
+                    t2: "2. 分组法 (Grouping)",
+                    t3: "3. 阵列法 (Array)",
+                    t4: "4. DMSB 长除法",
+                    t5: "5. 挑战游乐场"
+                },
+                s1: {
+                    header: "步骤一：Equal Sharing (公平平分法)",
+                    desc: "<strong>新西兰教学核心概念：</strong>“我有 N 个物品，平均分给 M 个朋友，每个人得到多少个？” 适合初学者建立直观感知。",
+                    settingTitle: "设置题目",
+                    lblTotal: "总数量 (Dividend)",
+                    lblDivisor: "平分份数 (Divisor)",
+                    lblIcon: "物品图案:",
+                    optKiwi: "🥝 奇异果 (Kiwi Fruit)",
+                    optApple: "🍎 苹果 (Apples)",
+                    optSheep: "🐑 绵羊 (Sheep)",
+                    optStar: "⭐ 星星 (Stars)",
+                    eqTitle: "数学算式 (Equation)",
+                    visTitle: "平分到不同盒子 (Groups):",
+                    student: "小朋友",
+                    remainderText: (total, groups, perGroup, remainder) => `共有 <strong>${total}</strong> 个物品平分给 <strong>${groups}</strong> 人，每人分到 <strong>${perGroup}</strong> 个，剩 <strong>${remainder}</strong> 个 (${remainder} 即 Remainder)。`
+                },
+                s2: {
+                    header: "步骤二：Grouping (按量分组法)",
+                    desc: "<strong>新西兰教学核心概念：</strong>“我有 N 个物品，每 M 个打包成一组，可以装成多少组？” 引入重复减法 (Repeated Subtraction) 概念。",
+                    settingTitle: "设置题目",
+                    lblTotal: "总数量",
+                    lblSize: "每组几个 (Group size)",
+                    eqTitle: "算式与结果",
+                    explanation: (groups, rem) => `能装 ${groups} 组，还剩 ${rem} 个`,
+                    visTitle: "圈组可视化 (Groups of Box):",
+                    remainderLbl: "余数"
+                },
+                s3: {
+                    header: "步骤三：Array Model (矩形阵列与乘法逆向)",
+                    desc: "<strong>新西兰教学核心概念：</strong>“除法是乘法的逆运算 (Inverse of Multiplication)”。通过网格阵列，寻找“已知总数量与行数，求列数”。",
+                    settingTitle: "设置题目",
+                    lblRows: "行数 (Rows / Divisor)",
+                    lblCols: "列数 (Cols / Answer)",
+                    eqTitle: "阵列与双向算式",
+                    visTitle: "网格点阵阵列 (Grid Array):"
+                },
+                s4: {
+                    header: "步骤四：DMSB 标准长除法 (Long Division Algorithm)",
+                    desc: "<strong>新西兰/国际小学核心算法：</strong>利用 <strong>D-M-S-B</strong> 记忆口诀（家庭成员口诀）依次循环完成多位数除法！",
+                    dad: "👨 Dad: Divide",
+                    dadSub: "计算除数能进几次",
+                    mom: "👩 Mom: Multiply",
+                    momSub: "商 × 除数写在下方",
+                    sis: "👧 Sister: Subtract",
+                    sisSub: "相减求得剩余数值",
+                    bro: "👦 Brother: Bring Down",
+                    broSub: "下拉被除数下一位",
+                    settingTitle: "自定义算式",
+                    lblDividend: "被除数 (Dividend)",
+                    lblDivisor: "除数 (Divisor)",
+                    btnGen: "生成 DMSB 解题步骤",
+                    btnPrev: "上一步",
+                    btnNext: "下一步",
+                    startHint: "点击 <strong>下一步</strong>，按 <strong>D → M → S → B</strong> 顺序演示解题步骤！",
+                    readyStatus: "准备就绪 (Ready)",
+                    progress: (step, max, tag) => `进度：${step} / ${max} (阶段: ${tag})`,
+                    dStep: (val, div, q) => `<strong>👨 D (Divide):</strong> 计算 <strong>${val} ÷ ${div}</strong>。商为 <strong>${q}</strong>，写在上方对应的数位上。`,
+                    mStep: (q, div, prod) => `<strong>👩 M (Multiply):</strong> 计算商与除数的乘积：<strong>${q} × ${div} = ${prod}</strong>，数位对齐写在下方。`,
+                    sStep: (val, prod, diff) => `<strong>👧 S (Subtract):</strong> 计算差值：<strong>${val} - ${prod} = ${diff}</strong>。`,
+                    bStep: (next, diff, newWorking) => `<strong>👦 B (Bring down):</strong> 下拉下一位数 <strong>${next}</strong>，与余数 <strong>${diff}</strong> 组合成 <strong>${newWorking}</strong>。`,
+                    doneStep: (quotient, rem) => `<strong>🎉 计算完成！</strong> 最终商数为 <strong>${quotient}</strong>${rem > 0 ? `，余数为 <strong>r ${rem}</strong>` : ''}。`
+                },
+                s5: {
+                    header: "🎯 互动小挑战 (Practice Arena)",
+                    desc: "巩固所学概念，用图形辅助思考！",
+                    scoreLabel: "得分 (Score)",
+                    btnNextQ: "换一题 (Next Question)",
+                    correct: "🎉 太棒了！回答正确！ (+10分)",
+                    incorrect: (ans) => `❌ 再试一次哦！正确答案是 ${ans}。`
+                }
+            },
+            en: {
+                langBtn: "中文",
+                title: "NZ Primary Math Division Visual Learning Tool",
+                subtitle: "From Equal Sharing to Grouping, Array Model, and DMSB Long Division!",
+                tabs: {
+                    t1: "1. Sharing",
+                    t2: "2. Grouping",
+                    t3: "3. Array Model",
+                    t4: "4. DMSB Division",
+                    t5: "5. Practice Arena"
+                },
+                s1: {
+                    header: "Step 1: Equal Sharing",
+                    desc: "<strong>NZ Core Concept:</strong> 'I have N items to share equally among M friends. How many items does each person get?' Great for visual building.",
+                    settingTitle: "Problem Setup",
+                    lblTotal: "Total Items (Dividend)",
+                    lblDivisor: "Number of Groups (Divisor)",
+                    lblIcon: "Item Icon:",
+                    optKiwi: "🥝 Kiwi Fruit",
+                    optApple: "🍎 Apples",
+                    optSheep: "🐑 Sheep",
+                    optStar: "⭐ Stars",
+                    eqTitle: "Mathematical Equation",
+                    visTitle: "Equal Sharing into Buckets:",
+                    student: "Person",
+                    remainderText: (total, groups, perGroup, remainder) => `Shared <strong>${total}</strong> items among <strong>${groups}</strong> groups. Each gets <strong>${perGroup}</strong>, with <strong>${remainder}</strong> left over (Remainder).`
+                },
+                s2: {
+                    header: "Step 2: Grouping",
+                    desc: "<strong>NZ Core Concept:</strong> 'I have N items, packed into groups of M. How many groups can I make?' Introduces Repeated Subtraction.",
+                    settingTitle: "Problem Setup",
+                    lblTotal: "Total Quantity",
+                    lblSize: "Group Size",
+                    eqTitle: "Equation & Result",
+                    explanation: (groups, rem) => `Made ${groups} groups, with ${rem} left over`,
+                    visTitle: "Grouping Visualizer:",
+                    remainderLbl: "Remainder"
+                },
+                s3: {
+                    header: "Step 3: Array Model & Inverse Multiplication",
+                    desc: "<strong>NZ Core Concept:</strong> 'Division is the inverse of multiplication.' Use grid arrays to find missing columns given total and rows.",
+                    settingTitle: "Problem Setup",
+                    lblRows: "Rows (Divisor)",
+                    lblCols: "Columns (Quotient)",
+                    eqTitle: "Array Equations",
+                    visTitle: "Grid Array Visualizer:"
+                },
+                s4: {
+                    header: "Step 4: DMSB Standard Long Division",
+                    desc: "<strong>Core Algorithm:</strong> Use the <strong>D-M-S-B</strong> family mnemonic to master multi-digit long division step-by-step!",
+                    dad: "👨 Dad: Divide",
+                    dadSub: "How many times divisor goes in",
+                    mom: "👩 Mom: Multiply",
+                    momSub: "Multiply quotient by divisor",
+                    sis: "👧 Sister: Subtract",
+                    sisSub: "Subtract to find remainder",
+                    bro: "👦 Brother: Bring Down",
+                    broSub: "Bring down the next digit",
+                    settingTitle: "Custom Problem",
+                    lblDividend: "Dividend",
+                    lblDivisor: "Divisor",
+                    btnGen: "Generate DMSB Steps",
+                    btnPrev: "Previous",
+                    btnNext: "Next Step",
+                    startHint: "Click <strong>Next Step</strong> to step through <strong>D → M → S → B</strong>!",
+                    readyStatus: "Ready",
+                    progress: (step, max, tag) => `Progress: ${step} / ${max} (Stage: ${tag})`,
+                    dStep: (val, div, q) => `<strong>👨 D (Divide):</strong> Calculate <strong>${val} ÷ ${div}</strong>. Quotient digit is <strong>${q}</strong>. Place on top.`,
+                    mStep: (q, div, prod) => `<strong>👩 M (Multiply):</strong> Multiply quotient by divisor: <strong>${q} × ${div} = ${prod}</strong>. Write below.`,
+                    sStep: (val, prod, diff) => `<strong>👧 S (Subtract):</strong> Subtract values: <strong>${val} - ${prod} = ${diff}</strong>.`,
+                    bStep: (next, diff, newWorking) => `<strong>👦 B (Bring down):</strong> Bring down digit <strong>${next}</strong> with remainder <strong>${diff}</strong> to make <strong>${newWorking}</strong>.`,
+                    doneStep: (quotient, rem) => `<strong>🎉 Completed!</strong> Final Quotient is <strong>${quotient}</strong>${rem > 0 ? `, Remainder is <strong>r ${rem}</strong>` : ''}.`
+                },
+                s5: {
+                    header: "🎯 Practice Arena",
+                    desc: "Reinforce division concepts with quick visual practice!",
+                    scoreLabel: "Score",
+                    btnNextQ: "Next Question",
+                    correct: "🎉 Great Job! Correct Answer! (+10 pts)",
+                    incorrect: (ans) => `❌ Give it another try! Correct answer is ${ans}.`
+                }
+            }
+        };
+
+        function applyLanguage(lang) {
+            currentLang = lang;
+            const dict = i18n[currentLang];
+
+            // Header & Nav
+            document.getElementById('lang-btn-text').innerText = dict.langBtn;
+            document.getElementById('ui-title').innerText = dict.title;
+            document.getElementById('ui-subtitle').innerText = dict.subtitle;
+
+            document.getElementById('nav-tab-1').innerText = dict.tabs.t1;
+            document.getElementById('nav-tab-2').innerText = dict.tabs.t2;
+            document.getElementById('nav-tab-3').innerText = dict.tabs.t3;
+            document.getElementById('nav-tab-4').innerText = dict.tabs.t4;
+            document.getElementById('nav-tab-5').innerText = dict.tabs.t5;
+
+            // Stage 1
+            document.getElementById('s1-header').innerText = dict.s1.header;
+            document.getElementById('s1-desc').innerHTML = dict.s1.desc;
+            document.getElementById('s1-setting-title').innerText = dict.s1.settingTitle;
+            document.getElementById('s1-lbl-total').innerText = dict.s1.lblTotal;
+            document.getElementById('s1-lbl-divisor').innerText = dict.s1.lblDivisor;
+            document.getElementById('s1-lbl-icon').innerText = dict.s1.lblIcon;
+            document.getElementById('opt-kiwi').innerText = dict.s1.optKiwi;
+            document.getElementById('opt-apple').innerText = dict.s1.optApple;
+            document.getElementById('opt-sheep').innerText = dict.s1.optSheep;
+            document.getElementById('opt-star').innerText = dict.s1.optStar;
+            document.getElementById('s1-eq-title').innerText = dict.s1.eqTitle;
+            document.getElementById('s1-vis-title').innerText = dict.s1.visTitle;
+
+            // Stage 2
+            document.getElementById('s2-header').innerText = dict.s2.header;
+            document.getElementById('s2-desc').innerHTML = dict.s2.desc;
+            document.getElementById('s2-setting-title').innerText = dict.s2.settingTitle;
+            document.getElementById('s2-lbl-total').innerText = dict.s2.lblTotal;
+            document.getElementById('s2-lbl-size').innerText = dict.s2.lblSize;
+            document.getElementById('s2-eq-title').innerText = dict.s2.eqTitle;
+            document.getElementById('s2-vis-title').innerText = dict.s2.visTitle;
+
+            // Stage 3
+            document.getElementById('s3-header').innerText = dict.s3.header;
+            document.getElementById('s3-desc').innerHTML = dict.s3.desc;
+            document.getElementById('s3-setting-title').innerText = dict.s3.settingTitle;
+            document.getElementById('s3-lbl-rows').innerText = dict.s3.lblRows;
+            document.getElementById('s3-lbl-cols').innerText = dict.s3.lblCols;
+            document.getElementById('s3-eq-title').innerText = dict.s3.eqTitle;
+            document.getElementById('s3-vis-title').innerText = dict.s3.visTitle;
+
+            // Stage 4
+            document.getElementById('s4-header').innerText = dict.s4.header;
+            document.getElementById('s4-desc').innerHTML = dict.s4.desc;
+            document.getElementById('dmsb-dad').innerText = dict.s4.dad;
+            document.getElementById('dmsb-dad-sub').innerText = dict.s4.dadSub;
+            document.getElementById('dmsb-mom').innerText = dict.s4.mom;
+            document.getElementById('dmsb-mom-sub').innerText = dict.s4.momSub;
+            document.getElementById('dmsb-sis').innerText = dict.s4.sis;
+            document.getElementById('dmsb-sis-sub').innerText = dict.s4.sisSub;
+            document.getElementById('dmsb-bro').innerText = dict.s4.bro;
+            document.getElementById('dmsb-bro-sub').innerText = dict.s4.broSub;
+            document.getElementById('s4-setting-title').innerText = dict.s4.settingTitle;
+            document.getElementById('s4-lbl-dividend').innerText = dict.s4.lblDividend;
+            document.getElementById('s4-lbl-divisor').innerText = dict.s4.lblDivisor;
+            document.getElementById('s4-btn-gen').innerText = dict.s4.btnGen;
+            document.getElementById('s4-btn-prev').innerText = dict.s4.btnPrev;
+            document.getElementById('s4-btn-next').innerText = dict.s4.btnNext;
+
+            // Stage 5
+            document.getElementById('s5-header').innerText = dict.s5.header;
+            document.getElementById('s5-desc').innerText = dict.s5.desc;
+            document.getElementById('s5-score-label').innerText = dict.s5.scoreLabel;
+            document.getElementById('s5-btn-next-q').innerText = dict.s5.btnNextQ;
+
+            // Re-render visuals to update dynamically constructed strings
+            updateSharingVisual();
+            updateGroupingVisual();
+            updateArrayVisual();
+            initBusStop();
+        }
+
+        function toggleLanguage() {
+            const nextLang = currentLang === 'zh' ? 'en' : 'zh';
+            applyLanguage(nextLang);
+        }
+
+        function switchTab(tabId) {
+            const tabs = ['share', 'group', 'array', 'bus', 'quiz'];
+            tabs.forEach(t => {
+                const content = document.getElementById(`content-${t}`);
+                const btn = document.getElementById(`tab-btn-${t}`);
+                if (content && btn) {
+                    if (t === tabId) {
+                        content.classList.remove('hidden');
+                        btn.className = "tab-btn bg-emerald-500 text-white p-2.5 sm:p-3 rounded-xl font-bold text-center shadow flex flex-col items-center justify-center gap-1 transition bubbly-button";
+                    } else {
+                        content.classList.add('hidden');
+                        btn.className = "tab-btn bg-white text-slate-700 hover:bg-emerald-50 p-2.5 sm:p-3 rounded-xl font-bold text-center border border-slate-200 flex flex-col items-center justify-center gap-1 transition bubbly-button";
+                    }
+                }
+            });
+        }
+
+        function updateSharingVisual() {
+            const total = parseInt(document.getElementById('share-total').value);
+            const groups = parseInt(document.getElementById('share-groups').value);
+            const icon = document.getElementById('share-icon').value;
+            const dict = i18n[currentLang].s1;
+
+            document.getElementById('share-total-val').innerText = total;
+            document.getElementById('share-groups-val').innerText = groups;
+
+            const perGroup = Math.floor(total / groups);
+            const remainder = total % groups;
+
+            document.getElementById('share-equation').innerText = `${total} ÷ ${groups} = ${perGroup}${remainder > 0 ? ` r ${remainder}` : ''}`;
+
+            const bucketsContainer = document.getElementById('share-buckets');
+            bucketsContainer.innerHTML = '';
+
+            for (let g = 1; g <= groups; g++) {
+                const bucket = document.createElement('div');
+                bucket.className = "bg-slate-50 border-2 border-emerald-300 rounded-xl p-2.5 sm:p-3 flex flex-col items-center min-h-[90px] sm:min-h-[100px]";
+                
+                const title = document.createElement('div');
+                title.className = "text-xs font-bold text-emerald-800 mb-1.5 sm:mb-2";
+                title.innerText = `${dict.student} ${g}`;
+
+                const itemsBox = document.createElement('div');
+                itemsBox.className = "flex flex-wrap gap-1 justify-center";
+
+                for (let i = 0; i < perGroup; i++) {
+                    const item = document.createElement('span');
+                    item.className = "text-lg sm:text-xl item-pop";
+                    item.innerText = icon;
+                    itemsBox.appendChild(item);
+                }
+
+                bucket.appendChild(title);
+                bucket.appendChild(itemsBox);
+                bucketsContainer.appendChild(bucket);
+            }
+
+            const remBox = document.getElementById('share-remainder-box');
+            if (remainder > 0) {
+                remBox.classList.remove('hidden');
+                document.getElementById('share-remainder-text').innerHTML = dict.remainderText(total, groups, perGroup, remainder);
+            } else {
+                remBox.classList.add('hidden');
+            }
+        }
+
+        function updateGroupingVisual() {
+            const total = parseInt(document.getElementById('group-total').value);
+            const size = parseInt(document.getElementById('group-size').value);
+            const dict = i18n[currentLang].s2;
+
+            document.getElementById('group-total-val').innerText = total;
+            document.getElementById('group-size-val').innerText = size;
+
+            const groupsCount = Math.floor(total / size);
+            const remainder = total % size;
+
+            document.getElementById('group-equation').innerText = `${total} ÷ ${size} = ${groupsCount}${remainder > 0 ? ` r ${remainder}` : ''}`;
+            document.getElementById('group-explanation').innerText = dict.explanation(groupsCount, remainder);
+
+            const container = document.getElementById('group-container');
+            container.innerHTML = '';
+
+            for (let g = 0; g < groupsCount; g++) {
+                const groupBox = document.createElement('div');
+                groupBox.className = "bg-amber-100 border-2 border-amber-400 p-2.5 sm:p-3 rounded-xl flex flex-wrap gap-1 sm:gap-1.5 items-center justify-center max-w-[110px] sm:max-w-[130px] item-pop";
+                
+                for (let i = 0; i < size; i++) {
+                    const item = document.createElement('span');
+                    item.className = "text-lg sm:text-xl";
+                    item.innerText = '🍎';
+                    groupBox.appendChild(item);
+                }
+                container.appendChild(groupBox);
+            }
+
+            if (remainder > 0) {
+                const remBox = document.createElement('div');
+                remBox.className = "bg-slate-200 border-2 border-dashed border-slate-400 p-2.5 sm:p-3 rounded-xl flex flex-wrap gap-1 sm:gap-1.5 items-center justify-center max-w-[110px] sm:max-w-[130px] item-pop opacity-80";
+                
+                for (let i = 0; i < remainder; i++) {
+                    const item = document.createElement('span');
+                    item.className = "text-lg sm:text-xl";
+                    item.innerText = '🍎';
+                    remBox.appendChild(item);
+                }
+                const label = document.createElement('div');
+                label.className = "w-full text-[10px] text-center font-bold text-slate-600";
+                label.innerText = `${dict.remainderLbl}: ${remainder}`;
+                remBox.appendChild(label);
+
+                container.appendChild(remBox);
+            }
+        }
+
+        function updateArrayVisual() {
+            const rows = parseInt(document.getElementById('array-rows').value);
+            const cols = parseInt(document.getElementById('array-cols').value);
+            const total = rows * cols;
+
+            document.getElementById('array-rows-val').innerText = rows;
+            document.getElementById('array-cols-val').innerText = cols;
+
+            document.getElementById('array-equation-div').innerText = `${total} ÷ ${rows} = ${cols}`;
+            document.getElementById('array-equation-mul').innerText = `${rows} × ${cols} = ${total}`;
+
+            const grid = document.getElementById('array-grid-container');
+            grid.style.gridTemplateColumns = `repeat(${cols}, minmax(0, 1fr))`;
+            grid.innerHTML = '';
+
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    const dot = document.createElement('div');
+                    dot.className = "w-6 h-6 sm:w-7 sm:h-7 bg-blue-500 rounded-full flex items-center justify-center text-white text-[10px] sm:text-xs font-bold item-pop";
+                    grid.appendChild(dot);
+                }
+            }
+        }
+
+        let busState = {
+            divisor: 3,
+            dividendStr: "74",
+            digits: [],
+            currentStep: 0,
+            steps: []
+        };
+
+        function initBusStop() {
+            const divisor = parseInt(document.getElementById('bus-divisor-input').value) || 3;
+            const dividendInput = parseInt(document.getElementById('bus-dividend-input').value) || 74;
+            const dividendStr = Math.max(1, dividendInput).toString();
+            const digits = dividendStr.split('').map(Number);
+            const dict = i18n[currentLang].s4;
+
+            let steps = [];
+            let currentWorkingValue = 0;
+            let quotientDigits = new Array(digits.length).fill('');
+
+            for (let i = 0; i < digits.length; i++) {
+                let digit = digits[i];
+                currentWorkingValue = currentWorkingValue * 10 + digit;
+                const stepWorkingValue = currentWorkingValue;
+                let q = Math.floor(currentWorkingValue / divisor);
+                let prod = q * divisor;
+                let diff = currentWorkingValue - prod;
+
+                quotientDigits[i] = q.toString();
+
+                steps.push({
+                    type: 'D',
+                    digitIndex: i,
+                    workingValue: stepWorkingValue,
+                    qDigit: q,
+                    quotientDigits: [...quotientDigits],
+                    getDesc: (dict) => dict.dStep(stepWorkingValue, divisor, q)
+                });
+
+                steps.push({
+                    type: 'M',
+                    digitIndex: i,
+                    workingValue: stepWorkingValue,
+                    qDigit: q,
+                    prod: prod,
+                    quotientDigits: [...quotientDigits],
+                    getDesc: (dict) => dict.mStep(q, divisor, prod)
+                });
+
+                steps.push({
+                    type: 'S',
+                    digitIndex: i,
+                    workingValue: stepWorkingValue,
+                    prod: prod,
+                    diff: diff,
+                    quotientDigits: [...quotientDigits],
+                    getDesc: (dict) => dict.sStep(stepWorkingValue, prod, diff)
+                });
+
+                if (i < digits.length - 1) {
+                    let nextDigit = digits[i + 1];
+                    let newWorking = diff * 10 + nextDigit;
+                    steps.push({
+                        type: 'B',
+                        digitIndex: i,
+                        diff: diff,
+                        nextDigit: nextDigit,
+                        newWorking: newWorking,
+                        quotientDigits: [...quotientDigits],
+                        getDesc: (dict) => dict.bStep(nextDigit, diff, newWorking)
+                    });
+                } else {
+                    steps.push({
+                        type: 'DONE',
+                        digitIndex: i,
+                        remainder: diff,
+                        quotientDigits: [...quotientDigits],
+                        getDesc: (dict) => dict.doneStep(quotientDigits.join(''), diff)
+                    });
+                }
+
+                currentWorkingValue = diff;
+            }
+
+            busState = {
+                divisor: divisor,
+                dividendStr: dividendStr,
+                digits: digits,
+                currentStep: 0,
+                steps: steps
+            };
+
+            renderBusStopUI();
+        }
+
+        function nextBusStep() {
+            if (busState.currentStep < busState.steps.length) {
+                busState.currentStep++;
+                renderBusStopUI();
+            }
+        }
+
+        function prevBusStep() {
+            if (busState.currentStep > 0) {
+                busState.currentStep--;
+                renderBusStopUI();
+            }
+        }
+
+        function renderBusStopUI() {
+            const prevBtn = document.getElementById('bus-prev-btn');
+            const nextBtn = document.getElementById('bus-next-btn');
+            const expDiv = document.getElementById('bus-step-description');
+            const statusBadge = document.getElementById('bus-status-badge');
+            const dict = i18n[currentLang].s4;
+
+            const maxSteps = busState.steps.length;
+            prevBtn.disabled = busState.currentStep === 0;
+            nextBtn.disabled = busState.currentStep === maxSteps;
+
+            const activeIndex = busState.currentStep > 0 ? busState.currentStep - 1 : -1;
+            const currentStepObj = activeIndex >= 0 ? busState.steps[activeIndex] : null;
+
+            if (busState.currentStep === 0) {
+                expDiv.innerHTML = dict.startHint;
+                statusBadge.className = "mt-auto text-xs font-sans px-4 py-1 rounded-full bg-slate-700 text-slate-300";
+                statusBadge.innerHTML = dict.readyStatus;
+            } else {
+                expDiv.innerHTML = currentStepObj.getDesc(dict);
+                
+                let stepTag = currentStepObj.type;
+                let stepColor = stepTag === 'D' ? 'bg-indigo-500/40 text-indigo-200' :
+                                stepTag === 'M' ? 'bg-emerald-500/40 text-emerald-200' :
+                                stepTag === 'S' ? 'bg-rose-500/40 text-rose-200' :
+                                stepTag === 'B' ? 'bg-amber-500/40 text-amber-200' : 'bg-purple-500/40 text-purple-200';
+
+                statusBadge.className = `mt-auto text-xs font-sans px-4 py-1 rounded-full ${stepColor}`;
+                statusBadge.innerHTML = dict.progress(busState.currentStep, maxSteps, stepTag);
+            }
+
+            const display = document.getElementById('bus-interactive-display');
+            display.innerHTML = '';
+
+            const N = busState.digits.length;
+
+            const table = document.createElement('table');
+            table.className = 'border-collapse font-mono select-none my-2';
+
+            // 1. Quotient Row (Top)
+            const qRow = document.createElement('tr');
+            const qEmptyTd = document.createElement('td');
+            qEmptyTd.className = 'w-8 sm:w-10 md:w-12 h-8 sm:h-10 text-right pr-1 sm:pr-2';
+            qRow.appendChild(qEmptyTd);
+
+            for (let j = 0; j < N; j++) {
+                const td = document.createElement('td');
+                td.className = 'w-8 sm:w-10 md:w-12 h-8 sm:h-10 text-center font-bold text-emerald-400 text-lg sm:text-2xl md:text-3xl';
+                
+                let showQ = false;
+                if (activeIndex >= 0) {
+                    for (let s = 0; s <= activeIndex; s++) {
+                        const st = busState.steps[s];
+                        if (st.digitIndex === j && (st.type === 'D' || st.type === 'M' || st.type === 'S' || st.type === 'B' || st.type === 'DONE')) {
+                            showQ = true;
+                            break;
+                        }
+                    }
+                }
+                if (showQ) {
+                    td.innerText = currentStepObj.quotientDigits[j] !== undefined ? currentStepObj.quotientDigits[j] : '';
+                    if (currentStepObj && currentStepObj.digitIndex === j && currentStepObj.type === 'D') {
+                        td.className += ' text-yellow-300 scale-110 font-black';
+                    }
+                }
+                qRow.appendChild(td);
+            }
+            table.appendChild(qRow);
+
+            // 2. Dividend & Divisor Row (Standard Bus Bracket)
+            const dRow = document.createElement('tr');
+            const divisorTd = document.createElement('td');
+            divisorTd.className = 'w-8 sm:w-10 md:w-12 h-9 sm:h-12 text-right pr-2 sm:pr-3 font-bold text-indigo-400 text-lg sm:text-2xl md:text-3xl border-r-2 sm:border-r-4 border-indigo-400';
+            divisorTd.innerText = busState.divisor;
+            dRow.appendChild(divisorTd);
+
+            for (let j = 0; j < N; j++) {
+                const td = document.createElement('td');
+                let isCurrent = currentStepObj && currentStepObj.digitIndex === j;
+                td.className = `w-8 sm:w-10 md:w-12 h-9 sm:h-12 text-center font-extrabold text-lg sm:text-2xl md:text-3xl border-t-2 sm:border-t-4 border-indigo-400 ${isCurrent ? 'bg-yellow-400/20 text-yellow-300 ring-2 ring-yellow-400' : 'text-slate-100'}`;
+                td.innerText = busState.digits[j];
+                dRow.appendChild(td);
+            }
+            table.appendChild(dRow);
+
+            // 3. Render dynamic step rows
+            if (activeIndex >= 0) {
+                for (let i = 0; i < N; i++) {
+                    let mStep = null;
+                    let sStep = null;
+                    let bStep = null;
+                    let doneStep = null;
+
+                    for (let s = 0; s <= activeIndex; s++) {
+                        const st = busState.steps[s];
+                        if (st.digitIndex === i) {
+                            if (st.type === 'M') mStep = st;
+                            if (st.type === 'S') sStep = st;
+                            if (st.type === 'B') bStep = st;
+                            if (st.type === 'DONE') doneStep = st;
+                        }
+                    }
+
+                    // Render M Row if reached
+                    if (mStep) {
+                        const mRow = document.createElement('tr');
+                        const endCol = i + 1;
+                        const prodStr = mStep.prod.toString();
+                        const prodLen = prodStr.length;
+                        const startCol = endCol - prodLen + 1;
+
+                        const c0 = document.createElement('td');
+                        c0.className = 'w-8 sm:w-10 md:w-12 h-8 sm:h-10 text-right pr-1 sm:pr-2 text-rose-400 font-bold text-base sm:text-xl';
+                        if (startCol - 1 === 0) c0.innerText = '-';
+                        mRow.appendChild(c0);
+
+                        for (let j = 1; j <= N; j++) {
+                            const td = document.createElement('td');
+                            td.className = 'w-8 sm:w-10 md:w-12 h-8 sm:h-10 text-center font-bold text-base sm:text-xl md:text-2xl text-emerald-400 item-pop';
+                            if (j === startCol - 1 && startCol - 1 > 0) {
+                                td.innerText = '-';
+                                td.className += ' text-rose-400';
+                            } else if (j >= startCol && j <= endCol) {
+                                td.innerText = prodStr[j - startCol];
+                            }
+                            mRow.appendChild(td);
+                        }
+                        table.appendChild(mRow);
+                    }
+
+                    // Render S / B Row if reached
+                    if (sStep) {
+                        const sRow = document.createElement('tr');
+                        const endCol = i + 1;
+                        const diffStr = sStep.diff.toString();
+                        const diffLen = diffStr.length;
+                        const startCol = endCol - diffLen + 1;
+
+                        let hasBringDown = (bStep !== null);
+
+                        const c0 = document.createElement('td');
+                        c0.className = 'w-8 sm:w-10 md:w-12 h-8 sm:h-10';
+                        sRow.appendChild(c0);
+
+                        for (let j = 1; j <= N; j++) {
+                            const td = document.createElement('td');
+                            let baseClass = 'w-8 sm:w-10 md:w-12 h-8 sm:h-10 text-center font-bold text-base sm:text-xl md:text-2xl item-pop border-t-2 border-slate-500 ';
+
+                            if (j >= startCol && j <= endCol) {
+                                td.className = baseClass + (doneStep ? 'text-purple-400 font-black' : 'text-slate-200');
+                                td.innerText = diffStr[j - startCol];
+                            } else if (hasBringDown && j === i + 2) {
+                                td.className = baseClass + 'text-amber-300 font-extrabold animate-pulse';
+                                td.innerText = bStep.nextDigit;
+                            } else {
+                                td.className = 'w-8 sm:w-10 md:w-12 h-8 sm:h-10';
+                            }
+                            sRow.appendChild(td);
+                        }
+                        table.appendChild(sRow);
+                    }
+                }
+            }
+
+            display.appendChild(table);
+        }
+
+        let currentScore = 0;
+        let quizAnswer = 0;
+
+        function generateQuiz() {
+            const divisor = Math.floor(Math.random() * 4) + 2; // 2 to 5
+            const quotient = Math.floor(Math.random() * 5) + 2; // 2 to 6
+            const dividend = divisor * quotient;
+            quizAnswer = quotient;
+
+            document.getElementById('quiz-question').innerText = `${dividend} ÷ ${divisor} = ?`;
+
+            const hintBox = document.getElementById('quiz-hint-box');
+            hintBox.innerHTML = '';
+            for (let i = 0; i < dividend; i++) {
+                const item = document.createElement('span');
+                item.className = "text-base sm:text-lg";
+                item.innerText = '🥝';
+                hintBox.appendChild(item);
+            }
+
+            const optionsContainer = document.getElementById('quiz-options');
+            optionsContainer.innerHTML = '';
+
+            let choices = new Set();
+            choices.add(quotient);
+            while (choices.size < 4) {
+                let fake = Math.floor(Math.random() * 8) + 1;
+                if (fake !== quotient) choices.add(fake);
+            }
+
+            let sortedChoices = Array.from(choices).sort(() => Math.random() - 0.5);
+
+            sortedChoices.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "bg-white border-2 border-purple-200 hover:border-purple-500 font-bold py-2.5 sm:py-3 rounded-xl text-base sm:text-lg text-slate-700 shadow-sm transition bubbly-button";
+                btn.innerText = opt;
+                btn.onclick = () => checkQuizAnswer(opt);
+                optionsContainer.appendChild(btn);
+            });
+
+            const feedback = document.getElementById('quiz-feedback');
+            feedback.className = "hidden p-3 rounded-lg text-xs sm:text-sm font-bold";
+        }
+
+        function checkQuizAnswer(opt) {
+            const feedback = document.getElementById('quiz-feedback');
+            const dict = i18n[currentLang].s5;
+            feedback.classList.remove('hidden');
+
+            if (opt === quizAnswer) {
+                currentScore += 10;
+                document.getElementById('quiz-score').innerText = currentScore;
+                feedback.className = "p-3 rounded-lg text-xs sm:text-sm font-bold bg-emerald-100 text-emerald-800 border border-emerald-300";
+                feedback.innerHTML = dict.correct;
+            } else {
+                feedback.className = "p-3 rounded-lg text-xs sm:text-sm font-bold bg-rose-100 text-rose-800 border border-rose-300";
+                feedback.innerHTML = dict.incorrect(quizAnswer);
+            }
+        }
+
+        window.onload = function() {
+            applyLanguage('en');
+            generateQuiz();
+        };
+    </script>
+</body>
+</html>
