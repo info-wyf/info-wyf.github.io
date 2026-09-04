@@ -1,0 +1,1239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NCEA Level 1-3 Chinese (中文) Vocabulary Hub</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#fef2f2',
+                            100: '#ffe1e1',
+                            500: '#ef4444',
+                            600: '#dc2626',
+                            700: '#b91c1c',
+                            800: '#991b1b',
+                            gold: '#f59e0b'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        chinese: ['Noto Sans SC', 'sans-serif'],
+                        calligraphy: ['Ma Shan Zheng', 'cursive']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        html,
+        body {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+        /* Card Flip animation CSS */
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+        .transform-style-3d {
+            transform-style: preserve-3d;
+        }
+        .backface-hidden {
+            backface-visibility: hidden;
+        }
+        .rotate-y-180 {
+            transform: rotateY(180deg);
+        }
+        /* Custom scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col selection:bg-red-100 selection:text-red-700">
+
+    <!-- Top Header -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-wrap justify-between items-center gap-3 py-3 sm:flex-nowrap sm:min-h-16">
+                <!-- Logo & NCEA Badge -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-red-600 text-white rounded-xl flex items-center justify-center font-calligraphy text-2xl shadow-md shadow-red-200">
+                        华
+                    </div>
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <h1 class="font-bold text-lg leading-none text-slate-900">NCEA Chinese</h1>
+                            <span class="bg-red-100 text-red-800 text-xs font-semibold px-2 py-0.5 rounded-full border border-red-200">Levels 1-3</span>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-0.5">Vocabulary & Grammar Mastery Hub</p>
+                    </div>
+                </div>
+
+                <!-- Level Selector & Stats Summary Header -->
+                <div class="flex items-center justify-between gap-3 w-full sm:w-auto sm:justify-end">
+                    <label class="flex items-center gap-2 bg-slate-100 px-3 py-2 rounded-lg text-xs font-semibold text-slate-700">
+                        <span class="text-slate-500 uppercase tracking-wider">Level</span>
+                        <select id="levelSelect" class="bg-white border border-slate-200 rounded-md px-2 py-1 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-500">
+                            <!-- Level options populated dynamically -->
+                        </select>
+                    </label>
+                    <div class="hidden md:flex items-center space-x-6 text-sm">
+                    <div class="flex items-center space-x-2 bg-slate-100 px-3 py-1.5 rounded-lg">
+                        <i class="fa-solid fa-fire text-amber-500 text-lg"></i>
+                        <div>
+                            <span class="text-xs text-slate-500 block leading-tight">Streak</span>
+                            <span id="headerStreak" class="font-bold text-slate-800">1 Day</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2 bg-slate-100 px-3 py-1.5 rounded-lg">
+                        <i class="fa-solid fa-circle-check text-emerald-500 text-lg"></i>
+                        <div>
+                            <span class="text-xs text-slate-500 block leading-tight">Mastered</span>
+                            <span id="headerMastered" class="font-bold text-slate-800">0 / 0</span>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="bg-slate-900 text-white px-4 sm:px-6 lg:px-8">
+            <div class="max-w-7xl mx-auto flex space-x-1 overflow-x-auto no-scrollbar py-1" id="navTabs">
+                <button data-tab="flashcards" class="nav-tab active-tab text-xs sm:text-sm font-medium px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors whitespace-nowrap bg-red-600 text-white">
+                    <i class="fa-solid fa-clone"></i>
+                    <span>Flashcards</span>
+                </button>
+                <button data-tab="quiz" class="nav-tab text-xs sm:text-sm font-medium px-4 py-2 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white flex items-center space-x-2 transition-colors whitespace-nowrap">
+                    <i class="fa-solid fa-circle-question"></i>
+                    <span>Quiz Mode</span>
+                </button>
+                <button data-tab="matching" class="nav-tab text-xs sm:text-sm font-medium px-4 py-2 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white flex items-center space-x-2 transition-colors whitespace-nowrap">
+                    <i class="fa-solid fa-puzzle-piece"></i>
+                    <span>Match Game</span>
+                </button>
+                <button data-tab="listening" class="nav-tab text-xs sm:text-sm font-medium px-4 py-2 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white flex items-center space-x-2 transition-colors whitespace-nowrap">
+                    <i class="fa-solid fa-headphones"></i>
+                    <span>Listening Drill</span>
+                </button>
+                <button data-tab="dictionary" class="nav-tab text-xs sm:text-sm font-medium px-4 py-2 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white flex items-center space-x-2 transition-colors whitespace-nowrap">
+                    <i class="fa-solid fa-book-open"></i>
+                    <span>Word List</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- TOPIC SELECTOR BAR -->
+        <div class="mb-6 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="flex items-center space-x-2 overflow-x-auto pb-1 md:pb-0" id="topicBadgeContainer">
+                <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider whitespace-nowrap mr-1">Category:</span>
+                <!-- Dynamic category buttons injected here -->
+            </div>
+            
+            <div class="flex items-center space-x-3 text-sm">
+                <label class="inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="togglePinyinGlobal" checked class="sr-only peer">
+                    <div class="w-9 h-5 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-red-600 relative"></div>
+                    <span class="ml-2 text-xs font-medium text-slate-700">Show Pinyin</span>
+                </label>
+                <span class="text-slate-300">|</span>
+                <button id="resetMasteryBtn" class="text-xs text-slate-500 hover:text-red-600 flex items-center space-x-1 transition-colors">
+                    <i class="fa-solid fa-rotate-left"></i>
+                    <span>Reset Progress</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- SECTION 1: FLASHCARDS -->
+        <section id="tab-flashcards" class="tab-content space-y-6">
+            <!-- Progress Bar -->
+            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-xs font-semibold text-slate-600" id="cardProgressText">Card 1 of 10</span>
+                    <span class="text-xs font-semibold text-emerald-600" id="cardMasteryRate">0% Mastered</span>
+                </div>
+                <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                    <div id="cardProgressBar" class="bg-red-500 h-2.5 rounded-full transition-all duration-300" style="width: 10%"></div>
+                </div>
+            </div>
+
+            <!-- Flashcard Display Area -->
+            <div class="max-w-xl mx-auto">
+                <div id="flashcardElement" class="perspective-1000 w-full h-80 cursor-pointer group select-none">
+                    <div id="cardInner" class="relative w-full h-full duration-500 transform-style-3d shadow-xl rounded-3xl border border-slate-200 bg-white">
+                        
+                        <!-- FRONT OF CARD -->
+                        <div class="absolute inset-0 w-full h-full rounded-3xl backface-hidden flex flex-col items-center justify-between p-8 bg-gradient-to-b from-white to-slate-50">
+                            <div class="w-full flex justify-between items-center text-slate-400">
+                                <span class="text-xs font-medium bg-slate-100 px-3 py-1 rounded-full text-slate-600" id="cardTopicTag">Family</span>
+                                <button class="speak-btn hover:text-red-600 transition-colors p-2 text-xl" title="Listen Pronunciation" onclick="event.stopPropagation(); speakCurrentWord();">
+                                    <i class="fa-solid fa-volume-high"></i>
+                                </button>
+                            </div>
+
+                            <div class="text-center my-auto">
+                                <h2 id="cardHanzi" class="font-chinese text-6xl sm:text-7xl font-bold text-slate-900 mb-3 tracking-wide">爸爸</h2>
+                                <p id="cardPinyin" class="text-xl sm:text-2xl font-semibold text-red-600 tracking-wider">bà ba</p>
+                            </div>
+
+                            <div class="text-xs text-slate-400 flex items-center space-x-1">
+                                <i class="fa-solid fa-rotate"></i>
+                                <span>Click card to reveal meaning</span>
+                            </div>
+                        </div>
+
+                        <!-- BACK OF CARD -->
+                        <div class="absolute inset-0 w-full h-full rounded-3xl backface-hidden rotate-y-180 flex flex-col justify-between p-8 bg-slate-900 text-white">
+                            <div class="flex justify-between items-center text-slate-400">
+                                <span class="text-xs font-medium bg-slate-800 text-slate-300 px-3 py-1 rounded-full" id="cardBackCategory">Noun</span>
+                                <button class="speak-btn text-slate-300 hover:text-white transition-colors p-2 text-xl" title="Listen Pronunciation" onclick="event.stopPropagation(); speakCurrentWord();">
+                                    <i class="fa-solid fa-volume-high"></i>
+                                </button>
+                            </div>
+
+                            <div class="text-center my-auto px-2">
+                                <h3 id="cardEnglish" class="text-2xl sm:text-3xl font-bold text-amber-400 mb-3">Dad / Father</h3>
+                                    <div id="cardExampleBox" class="bg-slate-800/80 p-3 rounded-xl border border-slate-700 text-left max-w-md mx-auto">
+                                    <p class="text-xs text-slate-400 mb-1">Example Sentence:</p>
+                                    <p id="cardExampleCn" class="font-chinese text-base text-white">我爸爸是老师。</p>
+                                    <p id="cardExamplePy" class="text-xs text-red-300 mt-0.5">Wǒ bàba shì lǎoshī.</p>
+                                    <p id="cardExampleEn" class="text-xs text-slate-300 italic mt-1">My dad is a teacher.</p>
+                                </div>
+                            </div>
+
+                            <div class="text-xs text-slate-400 text-center">
+                                Click to flip back
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Navigation Controls -->
+                <div class="flex flex-wrap sm:flex-nowrap items-center justify-between mt-6 gap-3 sm:gap-4">
+                    <button id="prevCardBtn" class="bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 font-semibold px-4 py-3 rounded-xl shadow-sm transition-all flex items-center space-x-2">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        <span class="hidden sm:inline">Previous</span>
+                    </button>
+
+                    <div class="order-3 flex w-full items-center justify-center space-x-2 sm:order-none sm:w-auto">
+                        <button id="markLearningBtn" class="bg-amber-100 hover:bg-amber-200 text-amber-800 font-medium px-4 py-3 rounded-xl border border-amber-300 transition-colors text-sm flex items-center space-x-1">
+                            <i class="fa-solid fa-clock"></i>
+                            <span>Still Learning</span>
+                        </button>
+                        <button id="markMasteredBtn" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-4 py-3 rounded-xl shadow-sm transition-colors text-sm flex items-center space-x-1">
+                            <i class="fa-solid fa-check"></i>
+                            <span>Got It!</span>
+                        </button>
+                    </div>
+
+                    <button id="nextCardBtn" class="bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 font-semibold px-4 py-3 rounded-xl shadow-sm transition-all flex items-center space-x-2">
+                        <span class="hidden sm:inline">Next</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: QUIZ MODE -->
+        <section id="tab-quiz" class="tab-content hidden space-y-6">
+            <div class="max-w-2xl mx-auto bg-white rounded-3xl border border-slate-200 shadow-md p-6 sm:p-8">
+                
+                <!-- Quiz Header -->
+                <div class="flex justify-between items-center mb-6 pb-4 border-b border-slate-100">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900">Vocabulary Quiz</h2>
+                        <p class="text-xs text-slate-500">Test your NCEA Chinese knowledge</p>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <span id="quizScoreBadge" class="bg-red-50 text-red-700 text-xs font-bold px-3 py-1.5 rounded-full border border-red-200">Score: 0</span>
+                        <span id="quizCounter" class="text-xs text-slate-500 font-medium">Q 1/10</span>
+                    </div>
+                </div>
+
+                <!-- Quiz Card Box -->
+                <div id="quizQuestionBox" class="space-y-6">
+                    <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 text-center relative">
+                        <span class="text-xs font-medium text-slate-400 uppercase tracking-wide block mb-2" id="quizQuestionType">Identify Meaning</span>
+                        <h3 id="quizQuestionText" class="font-chinese text-4xl sm:text-5xl font-bold text-slate-900 mb-2">学校</h3>
+                        <p id="quizQuestionSub" class="text-slate-500 font-medium text-lg">xué xiào</p>
+                        
+                        <button id="quizAudioBtn" onclick="speakText(document.getElementById('quizQuestionText').textContent)" class="mt-2 text-red-600 hover:text-red-700 bg-white shadow-sm border border-slate-200 px-3 py-1.5 rounded-full text-xs font-semibold inline-flex items-center space-x-1">
+                            <i class="fa-solid fa-volume-high"></i>
+                            <span>Listen</span>
+                        </button>
+                    </div>
+
+                    <!-- Multiple Choice Options -->
+                    <div id="quizOptionsGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <!-- Dynamic options here -->
+                    </div>
+
+                    <!-- Feedback Alert -->
+                    <div id="quizFeedback" class="hidden p-4 rounded-xl text-center text-sm font-semibold transition-all"></div>
+
+                    <!-- Next Question Button -->
+                    <button id="quizNextBtn" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-semibold py-3.5 rounded-xl shadow transition-colors hidden">
+                        Next Question <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+
+                <!-- Quiz Completed Screen -->
+                <div id="quizResultBox" class="hidden text-center py-8 space-y-4">
+                    <div class="w-20 h-20 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto text-3xl shadow-inner">
+                        <i class="fa-solid fa-trophy"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-900">Quiz Completed!</h3>
+                    <p class="text-slate-600 text-sm" id="quizResultSummary">You scored 8 out of 10 questions correctly.</p>
+                    
+                    <div class="pt-4 flex justify-center space-x-4">
+                        <button id="restartQuizBtn" class="bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-3 rounded-xl shadow transition-colors">
+                            Try Again
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECTION 3: MATCHING GAME -->
+        <section id="tab-matching" class="tab-content hidden space-y-6">
+            <div class="max-w-4xl mx-auto bg-white rounded-3xl border border-slate-200 shadow-md p-6 sm:p-8">
+                
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 pb-4 border-b border-slate-100">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900">Word Match Challenge</h2>
+                        <p class="text-xs text-slate-500">Pair Chinese characters with their English translations</p>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="bg-slate-100 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-700">
+                            Time: <span id="matchTimer" class="font-bold text-slate-900">0s</span>
+                        </div>
+                        <div class="bg-slate-100 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-700">
+                            Moves: <span id="matchMoves" class="font-bold text-slate-900">0</span>
+                        </div>
+                        <button id="restartMatchBtn" class="bg-red-50 hover:bg-red-100 text-red-700 text-xs font-semibold px-3 py-1.5 rounded-xl border border-red-200 transition-colors">
+                            New Round
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Match Grid -->
+                <div id="matchGrid" class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 min-h-[300px]">
+                    <!-- Dynamic Tiles injected here -->
+                </div>
+
+                <!-- Victory overlay -->
+                <div id="matchWinModal" class="hidden text-center py-10 bg-emerald-50 rounded-2xl border border-emerald-200 mt-6">
+                    <i class="fa-solid fa-circle-check text-emerald-500 text-5xl mb-3"></i>
+                    <h3 class="text-2xl font-bold text-emerald-900">Awesome Job!</h3>
+                    <p class="text-emerald-700 text-sm mt-1" id="matchWinStats">You cleared all pairs in 24 seconds with 12 moves!</p>
+                    <button onclick="initMatchingGame()" class="mt-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-2.5 rounded-xl shadow transition-all">
+                        Play Again
+                    </button>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECTION 4: LISTENING DRILL -->
+        <section id="tab-listening" class="tab-content hidden space-y-6">
+            <div class="max-w-xl mx-auto bg-white rounded-3xl border border-slate-200 shadow-md p-6 sm:p-8 text-center space-y-6">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-900">Listening Comprehension Drill</h2>
+                    <p class="text-xs text-slate-500">Listen to the native voice audio and choose the correct Chinese word</p>
+                </div>
+
+                <div class="bg-slate-900 text-white rounded-2xl p-8 shadow-inner flex flex-col items-center justify-center space-y-4">
+                    <button id="playAudioDrillBtn" class="w-20 h-20 bg-red-600 hover:bg-red-500 rounded-full flex items-center justify-center text-3xl shadow-lg transition-transform hover:scale-105 active:scale-95">
+                        <i class="fa-solid fa-volume-high"></i>
+                    </button>
+                    <p class="text-xs text-slate-400">Click speaker button to replay audio</p>
+                </div>
+
+                <div id="listeningOptions" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <!-- Dynamic Listening choices -->
+                </div>
+
+                <div id="listeningFeedback" class="hidden p-3 rounded-xl text-sm font-semibold"></div>
+
+                <button id="nextListeningBtn" class="hidden w-full bg-slate-900 hover:bg-slate-800 text-white font-semibold py-3 rounded-xl shadow transition-colors">
+                    Next Audio Word <i class="fa-solid fa-arrow-right ml-2"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- SECTION 5: WORD LIST / DICTIONARY -->
+        <section id="tab-dictionary" class="tab-content hidden space-y-6">
+            <div class="bg-white rounded-3xl border border-slate-200 shadow-md p-4 sm:p-6">
+                
+                <!-- Search & Filter Controls -->
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                    <div class="relative w-full sm:w-80">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-sm"></i>
+                        <input type="text" id="dictSearchInput" placeholder="Search Hanzi, Pinyin, English or type..." class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white transition-all">
+                    </div>
+                    
+                    <div class="flex items-center space-x-2 w-full sm:w-auto overflow-x-auto">
+                        <span class="text-xs text-slate-500 font-medium whitespace-nowrap">Category:</span>
+                        <select id="dictTopicFilter" class="bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold px-3 py-2 text-slate-700 focus:outline-none focus:ring-2 focus:ring-red-500">
+                            <!-- Topic options populated dynamically -->
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Word Table -->
+                <div class="overflow-x-auto rounded-xl border border-slate-200">
+                    <table class="w-full min-w-[820px] text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                <th class="p-3 sm:p-4">Hanzi</th>
+                                <th class="p-3 sm:p-4">Pinyin</th>
+                                <th class="p-3 sm:p-4">English Meaning</th>
+                                <th class="p-3 sm:p-4">Category</th>
+                                <th class="p-3 sm:p-4">Level</th>
+                                <th class="p-3 sm:p-4">Type</th>
+                                <th class="p-3 sm:p-4 text-center">Audio</th>
+                                <th class="p-3 sm:p-4 text-center">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dictTableBody" class="divide-y divide-slate-100 text-sm">
+                            <!-- Dynamic word rows injected here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="dictEmptyState" class="hidden text-center py-12 text-slate-400">
+                    <i class="fa-solid fa-folder-open text-4xl mb-2"></i>
+                    <p class="text-sm">No vocabulary items match your search.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500 space-y-1">
+            <p>Designed for NZQA NCEA Levels 1-3 Chinese Curriculum revision.</p>
+            <p>© 2026 NCEA Chinese Revision Assistant • Native Speech Audio Synthesis Enabled</p>
+        </div>
+    </footer>
+
+    <script src="ncea_vocabulary_data.js?v=20260904-categories"></script>
+    <script>
+        /* NCEA Level 1 Vocabulary Data Deck */
+        const nceaVocabData = window.nceaVocabData || [
+            // Category: Personal & Family (个人与家庭)
+            { id: 1, topic: 'Personal & Family', hanzi: '爸爸', pinyin: 'bà ba', english: 'Dad / Father', exampleCn: '我爸爸是老师。', examplePy: 'Wǒ bàba shì lǎoshī.', exampleEn: 'My dad is a teacher.' },
+            { id: 2, topic: 'Personal & Family', hanzi: '妈妈', pinyin: 'mā ma', english: 'Mom / Mother', exampleCn: '妈妈喜欢喝茶。', examplePy: 'Māma xǐhuān hē chá.', exampleEn: 'Mom likes drinking tea.' },
+            { id: 3, topic: 'Personal & Family', hanzi: '哥哥', pinyin: 'gē ge', english: 'Older Brother', exampleCn: '我哥哥打篮球。', examplePy: 'Wǒ gēge dǎ lánqiú.', exampleEn: 'My older brother plays basketball.' },
+            { id: 4, topic: 'Personal & Family', hanzi: '妹妹', pinyin: 'mèi mei', english: 'Younger Sister', exampleCn: '妹妹今年八岁。', examplePy: 'Mèimei jīnnián bā suì.', exampleEn: 'My younger sister is eight years old this year.' },
+            { id: 5, topic: 'Personal & Family', hanzi: '朋友', pinyin: 'péng you', english: 'Friend', exampleCn: '他是我的好朋友。', examplePy: 'Tā shì wǒ de hǎo péngyǒu.', exampleEn: 'He is my good friend.' },
+            { id: 6, topic: 'Personal & Family', hanzi: '名字', pinyin: 'míng zi', english: 'Name', exampleCn: '你叫什么名字？', examplePy: 'Nǐ jiào shénme míngzi?', exampleEn: 'What is your name?' },
+            { id: 7, topic: 'Personal & Family', hanzi: '家', pinyin: 'jiā', english: 'Home / Family', exampleCn: '我家在奥克兰。', examplePy: 'Wǒ jiā zài Àokèlán.', exampleEn: 'My family lives in Auckland.' },
+
+            // Category: School & Education (学校与学习)
+            { id: 8, topic: 'School & Study', hanzi: '学校', pinyin: 'xué xiào', english: 'School', exampleCn: '我们的学校很大。', examplePy: 'Wǒmen de xuéxiào hěn dà.', exampleEn: 'Our school is very big.' },
+            { id: 9, topic: 'School & Study', hanzi: '老师', pinyin: 'lǎo shī', english: 'Teacher', exampleCn: '张老师教中文。', examplePy: 'Zhāng lǎoshī jiāo zhōngwén.', exampleEn: 'Teacher Zhang teaches Chinese.' },
+            { id: 10, topic: 'School & Study', hanzi: '学生', pinyin: 'xué shēng', english: 'Student', exampleCn: '我是中学生。', examplePy: 'Wǒ shì zhōngxuéshēng.', exampleEn: 'I am a high school student.' },
+            { id: 11, topic: 'School & Study', hanzi: '中文', pinyin: 'zhōng wén', english: 'Chinese Language', exampleCn: '我觉得中文很有意思。', examplePy: 'Wǒ juéde zhōngwén hěn yǒu yìsi.', exampleEn: 'I feel Chinese is very interesting.' },
+            { id: 12, topic: 'School & Study', hanzi: '数学', pinyin: 'shù xué', english: 'Mathematics', exampleCn: '今天有数学课。', examplePy: 'Jīntiān yǒu shùxué kè.', exampleEn: 'There is a math class today.' },
+            { id: 13, topic: 'School & Study', hanzi: '图书馆', pinyin: 'tú shū guǎn', english: 'Library', exampleCn: '我在图书馆看书。', examplePy: 'Wǒ zài túshūguǎn kànshū.', exampleEn: 'I read books in the library.' },
+            { id: 14, topic: 'School & Study', hanzi: '考试', pinyin: 'kǎo shì', english: 'Exam / Test', exampleCn: '明天有中文考试。', examplePy: 'Míngtiān yǒu zhōngwén kǎoshì.', exampleEn: 'There is a Chinese exam tomorrow.' },
+
+            // Category: Daily Life & Time (日常生活与时间)
+            { id: 15, topic: 'Daily Life', hanzi: '今天', pinyin: 'jīn tiān', english: 'Today', exampleCn: '今天天气很好。', examplePy: 'Jīntiān tiānqì hěn hǎo.', exampleEn: 'Today weather is very good.' },
+            { id: 16, topic: 'Daily Life', hanzi: '明天', pinyin: 'míng tiān', english: 'Tomorrow', exampleCn: '明天去星期日市场。', examplePy: 'Míngtiān qù xīngqīrì shìchǎng.', exampleEn: 'Tomorrow we go to the Sunday market.' },
+            { id: 17, topic: 'Daily Life', hanzi: '起床', pinyin: 'qǐ chuáng', english: 'Get up from bed', exampleCn: '我早上七点起床。', examplePy: 'Wǒ zǎoshang qī diǎn qǐchuáng.', exampleEn: 'I get up at seven in the morning.' },
+            { id: 18, topic: 'Daily Life', hanzi: '睡觉', pinyin: 'shuì jiào', english: 'Sleep / Go to bed', exampleCn: '晚上十点睡觉。', examplePy: 'Wǎnshang shí diǎn shuìjiào.', exampleEn: 'Go to sleep at ten at night.' },
+            { id: 19, topic: 'Daily Life', hanzi: '星期', pinyin: 'xīng qī', english: 'Week', exampleCn: '星期六我去打球。', examplePy: 'Xīngqīliù wǒ qù dǎqiú.', exampleEn: 'On Saturday I go play ball.' },
+            { id: 20, topic: 'Daily Life', hanzi: '下午', pinyin: 'xià wǔ', english: 'Afternoon', exampleCn: '下午三点放学。', examplePy: 'Xiàwǔ sān diǎn fàngxué.', exampleEn: 'School finishes at three in the afternoon.' },
+
+            // Category: Food & Drink (饮食)
+            { id: 21, topic: 'Food & Drink', hanzi: '米饭', pinyin: 'mǐ fàn', english: 'Cooked Rice', exampleCn: '我喜欢吃米饭。', examplePy: 'Wǒ xǐhuān chī mǐfàn.', exampleEn: 'I like eating rice.' },
+            { id: 22, topic: 'Food & Drink', hanzi: '水', pinyin: 'shuǐ', english: 'Water', exampleCn: '请给我一杯水。', examplePy: 'Qǐng gěi wǒ yì bēi shuǐ.', exampleEn: 'Please give me a glass of water.' },
+            { id: 23, topic: 'Food & Drink', hanzi: '苹果', pinyin: 'píng guǒ', english: 'Apple', exampleCn: '苹果甜甜的很好吃。', examplePy: 'Píngguǒ tiántián de hěn hǎochī.', exampleEn: 'Apples are sweet and delicious.' },
+            { id: 24, topic: 'Food & Drink', hanzi: '牛奶', pinyin: 'niú nǎi', english: 'Milk', exampleCn: '早上我喝牛奶。', examplePy: 'Zǎoshang wǒ hē niúnǎi.', exampleEn: 'In the morning I drink milk.' },
+            { id: 25, topic: 'Food & Drink', hanzi: '汉堡', pinyin: 'hàn bǎo', english: 'Hamburger', exampleCn: '弟弟想吃汉堡。', examplePy: 'Dìdi xiǎng chī hànbǎo.', exampleEn: 'Younger brother wants to eat a burger.' },
+            { id: 26, topic: 'Food & Drink', hanzi: '好吃', pinyin: 'hǎo chī', english: 'Delicious', exampleCn: '妈妈做的菜很好吃。', examplePy: 'Māma zuò de cài hěn hǎochī.', exampleEn: 'Food cooked by mom is delicious.' },
+
+            // Category: Weather & Travel (天气与交通)
+            { id: 27, topic: 'Weather & Travel', hanzi: '天气', pinyin: 'tiān qì', english: 'Weather', exampleCn: '今天天气怎么样？', examplePy: 'Jīntiān tiānqì zěnmeyàng?', exampleEn: 'How is the weather today?' },
+            { id: 28, topic: 'Weather & Travel', hanzi: '下雨', pinyin: 'xià yǔ', english: 'To Rain', exampleCn: '今天外面下雨了。', examplePy: 'Jīntiān wàimiàn xià yǔ le.', exampleEn: 'It is raining outside today.' },
+            { id: 29, topic: 'Weather & Travel', hanzi: '飞机', pinyin: 'fēi jī', english: 'Airplane', exampleCn: '我们坐飞机去中国。', examplePy: 'Wǒmen zuò fēijī qù zhōngguó.', exampleEn: 'We take an airplane to China.' },
+            { id: 30, topic: 'Weather & Travel', hanzi: '公共汽车', pinyin: 'gōng gòng qì chē', english: 'Public Bus', exampleCn: '我每天坐公共汽车上学。', examplePy: 'Wǒ měitiān zuò gōnggòngqìchē shàngxué.', exampleEn: 'I take the bus to school every day.' },
+            { id: 31, topic: 'Weather & Travel', hanzi: '自行车', pinyin: 'zì xíng chē', english: 'Bicycle', exampleCn: '骑自行车去公园。', examplePy: 'Qí zìxíngchē qù gōngyuán.', exampleEn: 'Ride a bicycle to the park.' },
+
+            // Category: Hobbies & Sports (爱好与运动)
+            { id: 32, topic: 'Hobbies & Sports', hanzi: '篮球', pinyin: 'lán qiú', english: 'Basketball', exampleCn: '放学后我们打篮球。', examplePy: 'Fàngxué hòu wǒmen dǎ lánqiú.', exampleEn: 'After school we play basketball.' },
+            { id: 33, topic: 'Hobbies & Sports', hanzi: '游泳', pinyin: 'yóu yǒng', english: 'Swimming', exampleCn: '夏天我喜欢游泳。', examplePy: 'Xiàtiān wǒ xǐhuān yóuyǒng.', exampleEn: 'In summer I like swimming.' },
+            { id: 34, topic: 'Hobbies & Sports', hanzi: '听音乐', pinyin: 'tīng yīn yuè', english: 'Listen to Music', exampleCn: '我边做作业边听音乐。', examplePy: 'Wǒ biān zuò zuòyè biān tīng yīnyuè.', exampleEn: 'I listen to music while doing homework.' },
+            { id: 35, topic: 'Hobbies & Sports', hanzi: '看电视', pinyin: 'kàn diàn shì', english: 'Watch TV', exampleCn: '晚上全家人一起看电视。', examplePy: 'Wǎnshang quánjiārén yìqǐ kàn diànshì.', exampleEn: 'At night the whole family watches TV together.' },
+
+            // Category: Core Verbs & Grammar (常用动词与语法)
+            { id: 36, topic: 'Verbs & Grammar', hanzi: '喜欢', pinyin: 'xǐ huan', english: 'To Like', exampleCn: '我非常喜欢猫。', examplePy: 'Wǒ fēicháng xǐhuān māo.', exampleEn: 'I like cats very much.' },
+            { id: 37, topic: 'Verbs & Grammar', hanzi: '因为...所以', pinyin: 'yīn wèi ... suǒ yǐ', english: 'Because ... therefore', exampleCn: '因为下雨，所以我没去。', examplePy: 'Yīnwèi xiàyǔ, suǒyǐ wǒ méi qù.', exampleEn: 'Because it rained, therefore I did not go.' },
+            { id: 38, topic: 'Verbs & Grammar', hanzi: '但是', pinyin: 'dàn shì', english: 'But / However', exampleCn: '中文难，但是很有趣。', examplePy: 'Zhōngwén nán, dànshì hěn yǒu qù.', exampleEn: 'Chinese is hard, but very interesting.' },
+            { id: 39, topic: 'Verbs & Grammar', hanzi: '想', pinyin: 'xiǎng', english: 'Would like to / Think', exampleCn: '我想去中国旅游。', examplePy: 'Wǒ xiǎng qù zhōngguó lǚyóu.', exampleEn: 'I would like to travel to China.' }
+        ];
+
+        nceaVocabData.forEach((item, index) => {
+            item.level = item.level || 1;
+            item.topic = item.topic || 'General Vocabulary';
+            item.category = item.category || 'Vocabulary';
+            item.id = String(item.id || `L${item.level}-${String(index + 1).padStart(3, '0')}`);
+        });
+
+        const STORAGE_KEYS = {
+            masteredIds: 'ncea_mastered_ids',
+            streakDays: 'ncea_streak_days',
+            selectedLevel: 'ncea_selected_level',
+            selectedTopic: 'ncea_selected_topic',
+            pinyinVisible: 'ncea_pinyin_visible',
+            flashcardPositions: 'ncea_flashcard_positions',
+            activeTab: 'ncea_active_tab'
+        };
+
+        function readStorageJson(key, fallback) {
+            try {
+                const value = localStorage.getItem(key);
+                return value ? JSON.parse(value) : fallback;
+            } catch (e) {
+                return fallback;
+            }
+        }
+
+        function readStorageString(key, fallback) {
+            return localStorage.getItem(key) || fallback;
+        }
+
+        function readStorageBoolean(key, fallback) {
+            const value = localStorage.getItem(key);
+            if (value === null) return fallback;
+            return value === 'true';
+        }
+
+        function migrateFlashcardPositions(positions) {
+            const migrated = { ...positions };
+            Object.entries(positions || {}).forEach(([key, value]) => {
+                const oldLevelMatch = key.match(/^Level\s+([1-3])$/);
+                if (oldLevelMatch) {
+                    migrated[`L${oldLevelMatch[1]}:All`] = value;
+                } else if (!key.includes(':')) {
+                    migrated[`L1:${key}`] = value;
+                }
+            });
+            return migrated;
+        }
+
+        const validVocabIds = new Set(nceaVocabData.map(item => item.id));
+        const validLevels = new Set(nceaVocabData.map(item => String(item.level || 1)));
+        const validTopics = new Set(['All', ...nceaVocabData.map(item => item.topic)]);
+        const validTabs = new Set(['flashcards', 'quiz', 'matching', 'listening', 'dictionary']);
+        const savedMasteredIds = readStorageJson(STORAGE_KEYS.masteredIds, [])
+            .map(id => String(id))
+            .filter(id => validVocabIds.has(id));
+        const savedLevelRaw = localStorage.getItem(STORAGE_KEYS.selectedLevel);
+        const savedLevel = savedLevelRaw || '1';
+        const savedTopic = readStorageString(STORAGE_KEYS.selectedTopic, 'All');
+        const savedTopicLevelMatch = savedTopic.match(/^Level\s+([1-3])$/);
+        const initialSelectedLevel = savedLevelRaw && validLevels.has(savedLevel) ? savedLevel : (savedTopicLevelMatch ? savedTopicLevelMatch[1] : '1');
+        const initialSelectedTopic = savedTopicLevelMatch ? 'All' : (validTopics.has(savedTopic) ? savedTopic : 'All');
+        const savedTab = readStorageString(STORAGE_KEYS.activeTab, 'flashcards');
+
+        /* Application State */
+        let state = {
+            activeTab: validTabs.has(savedTab) ? savedTab : 'flashcards',
+            selectedLevel: initialSelectedLevel,
+            selectedTopic: initialSelectedTopic,
+            pinyinVisible: readStorageBoolean(STORAGE_KEYS.pinyinVisible, true),
+            masteredIds: new Set(savedMasteredIds),
+            streakDays: parseInt(localStorage.getItem(STORAGE_KEYS.streakDays) || '1'),
+            flashcardPositions: migrateFlashcardPositions(readStorageJson(STORAGE_KEYS.flashcardPositions, {})),
+            
+            // Flashcard deck state
+            currentDeck: [],
+            cardIndex: 0,
+            isFlipped: false,
+
+            // Quiz state
+            quizList: [],
+            quizIndex: 0,
+            quizScore: 0,
+
+            // Match game state
+            matchTiles: [],
+            firstMatchTile: null,
+            secondMatchTile: null,
+            matchTimerSeconds: 0,
+            matchTimerInterval: null,
+            matchMoves: 0,
+
+            // Listening drill state
+            listeningCurrentWord: null,
+            listeningOptions: []
+        };
+
+        /* Web Speech API Pronunciation */
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); // Stop active audio
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'zh-CN';
+                utterance.rate = 0.85; // Slightly slower for clarity
+                window.speechSynthesis.speak(utterance);
+            } else {
+                console.log('Speech Synthesis not supported');
+            }
+        }
+
+        function speakCurrentWord() {
+            if (state.currentDeck[state.cardIndex]) {
+                speakText(state.currentDeck[state.cardIndex].hanzi);
+            }
+        }
+
+        /* Sound Effects Synthesizer (Web Audio API) */
+        function playTone(freq, type = 'sine', duration = 0.15) {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = type;
+                osc.frequency.value = freq;
+                gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + duration);
+            } catch (e) {}
+        }
+
+        function playCorrectSound() { playTone(587.33, 'triangle', 0.2); setTimeout(() => playTone(880, 'triangle', 0.25), 100); }
+        function playWrongSound() { playTone(220, 'sawtooth', 0.25); }
+
+        function getCardPositionKey() {
+            return `L${state.selectedLevel}:${state.selectedTopic || 'All'}`;
+        }
+
+        function saveCardPosition() {
+            state.flashcardPositions[getCardPositionKey()] = state.cardIndex;
+            localStorage.setItem(STORAGE_KEYS.flashcardPositions, JSON.stringify(state.flashcardPositions));
+        }
+
+        function saveStudyState() {
+            localStorage.setItem(STORAGE_KEYS.selectedLevel, state.selectedLevel);
+            localStorage.setItem(STORAGE_KEYS.selectedTopic, state.selectedTopic);
+            localStorage.setItem(STORAGE_KEYS.pinyinVisible, String(state.pinyinVisible));
+            localStorage.setItem(STORAGE_KEYS.activeTab, state.activeTab);
+            saveCardPosition();
+        }
+
+        /* Save State to LocalStorage */
+        function saveProgress() {
+            localStorage.setItem(STORAGE_KEYS.masteredIds, JSON.stringify(Array.from(state.masteredIds)));
+            saveStudyState();
+            updateHeaderStats();
+        }
+
+        function updateHeaderStats() {
+            const levelVocab = getCurrentLevelVocab();
+            const masteredInLevel = levelVocab.filter(w => state.masteredIds.has(w.id)).length;
+            document.getElementById('headerMastered').textContent = `${masteredInLevel} / ${levelVocab.length}`;
+            document.getElementById('headerStreak').textContent = `${state.streakDays} Day${state.streakDays > 1 ? 's' : ''}`;
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? '').replace(/[&<>"']/g, char => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            }[char]));
+        }
+
+        function jsString(value) {
+            return escapeHtml(JSON.stringify(String(value ?? '')));
+        }
+
+        function getCurrentLevelVocab() {
+            return nceaVocabData.filter(w => String(w.level || 1) === state.selectedLevel);
+        }
+
+        function getAvailableTopics() {
+            return ['All', ...new Set(getCurrentLevelVocab().map(w => w.topic || 'General Vocabulary'))];
+        }
+
+        function ensureSelectedTopicForLevel() {
+            const topics = getAvailableTopics();
+            if (!topics.includes(state.selectedTopic)) {
+                state.selectedTopic = 'All';
+            }
+            return topics;
+        }
+
+        function getTopicCount(topic) {
+            const levelVocab = getCurrentLevelVocab();
+            return topic === 'All' ? levelVocab.length : levelVocab.filter(w => w.topic === topic).length;
+        }
+
+        function initLevelSelect() {
+            const select = document.getElementById('levelSelect');
+            const levels = [...validLevels].sort((a, b) => Number(a) - Number(b));
+            select.innerHTML = levels.map(level => {
+                const count = nceaVocabData.filter(w => String(w.level || 1) === level).length;
+                return `<option value="${level}">Level ${level} (${count})</option>`;
+            }).join('');
+            select.value = state.selectedLevel;
+        }
+
+        /* Topic Filter Buttons Setup */
+        function initTopicBadges() {
+            const container = document.getElementById('topicBadgeContainer');
+            const topics = ensureSelectedTopicForLevel();
+
+            container.innerHTML = `<span class="text-xs font-semibold text-slate-400 uppercase tracking-wider whitespace-nowrap mr-1">Category:</span>`;
+            
+            topics.forEach(t => {
+                const btn = document.createElement('button');
+                btn.className = `px-3 py-1 rounded-full text-xs font-semibold transition-all whitespace-nowrap ${t === state.selectedTopic ? 'bg-red-600 text-white shadow-sm' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`;
+                btn.textContent = `${t} (${getTopicCount(t)})`;
+                btn.onclick = () => {
+                    saveCardPosition();
+                    state.selectedTopic = t;
+                    initTopicBadges();
+                    filterDeck();
+                    saveStudyState();
+                    updateHeaderStats();
+                    if (state.activeTab === 'quiz') initQuizMode();
+                    if (state.activeTab === 'matching') initMatchingGame();
+                    if (state.activeTab === 'dictionary') renderDictionaryTable();
+                };
+                container.appendChild(btn);
+            });
+
+            // Also populate dictionary filter select box
+            const select = document.getElementById('dictTopicFilter');
+            select.innerHTML = topics.map(t => `<option value="${t}">${t}</option>`).join('');
+            select.value = state.selectedTopic;
+        }
+
+        function getFilteredVocab() {
+            const levelVocab = getCurrentLevelVocab();
+            if (state.selectedTopic === 'All') {
+                return [...levelVocab];
+            }
+            return levelVocab.filter(w => w.topic === state.selectedTopic);
+        }
+
+        /* Filter current vocabulary deck */
+        function filterDeck() {
+            state.currentDeck = getFilteredVocab();
+            const savedIndex = state.flashcardPositions[getCardPositionKey()];
+            const firstLearningIndex = state.currentDeck.findIndex(w => !state.masteredIds.has(w.id));
+            const fallbackIndex = firstLearningIndex === -1 ? 0 : firstLearningIndex;
+            const restoredIndex = Number.isInteger(savedIndex) ? savedIndex : fallbackIndex;
+            state.cardIndex = Math.min(Math.max(restoredIndex, 0), Math.max(state.currentDeck.length - 1, 0));
+            state.isFlipped = false;
+            renderFlashcard();
+        }
+
+        /* Render Current Flashcard */
+        function renderFlashcard() {
+            if (state.currentDeck.length === 0) {
+                document.getElementById('cardProgressText').textContent = 'No cards available';
+                document.getElementById('cardProgressBar').style.width = '0%';
+                document.getElementById('cardMasteryRate').textContent = '0% Mastered';
+                return;
+            }
+            const word = state.currentDeck[state.cardIndex];
+            const cardInner = document.getElementById('cardInner');
+
+            // Reset flip state
+            if (state.isFlipped) {
+                cardInner.classList.remove('rotate-y-180');
+                state.isFlipped = false;
+            }
+
+            document.getElementById('cardTopicTag').textContent = `${word.topic}${word.wordClass ? ` - ${word.wordClass}` : ''}`;
+            document.getElementById('cardBackCategory').textContent = word.category || word.topic;
+            document.getElementById('cardHanzi').textContent = word.hanzi;
+            
+            const pinyinEl = document.getElementById('cardPinyin');
+            pinyinEl.textContent = word.pinyin;
+            pinyinEl.style.display = state.pinyinVisible ? 'block' : 'none';
+
+            document.getElementById('cardEnglish').textContent = word.english;
+            const exampleBox = document.getElementById('cardExampleBox');
+            if (word.exampleCn || word.examplePy || word.exampleEn) {
+                exampleBox.classList.remove('hidden');
+                document.getElementById('cardExampleCn').textContent = word.exampleCn || '';
+                document.getElementById('cardExamplePy').textContent = word.examplePy || '';
+                document.getElementById('cardExampleEn').textContent = word.exampleEn || '';
+            } else {
+                exampleBox.classList.add('hidden');
+            }
+
+            // Update Progress Bar
+            const total = state.currentDeck.length;
+            document.getElementById('cardProgressText').textContent = `Card ${state.cardIndex + 1} of ${total}`;
+            document.getElementById('cardProgressBar').style.width = `${((state.cardIndex + 1) / total) * 100}%`;
+
+            const masteredInDeck = state.currentDeck.filter(w => state.masteredIds.has(w.id)).length;
+            const rate = Math.round((masteredInDeck / total) * 100);
+            document.getElementById('cardMasteryRate').textContent = `${rate}% Mastered`;
+        }
+
+        /* Flashcard Interactions */
+        document.getElementById('flashcardElement').addEventListener('click', () => {
+            state.isFlipped = !state.isFlipped;
+            const cardInner = document.getElementById('cardInner');
+            if (state.isFlipped) {
+                cardInner.classList.add('rotate-y-180');
+            } else {
+                cardInner.classList.remove('rotate-y-180');
+            }
+        });
+
+        document.getElementById('nextCardBtn').onclick = () => {
+            if (state.currentDeck.length === 0) return;
+            state.cardIndex = (state.cardIndex + 1) % state.currentDeck.length;
+            saveStudyState();
+            renderFlashcard();
+        };
+
+        document.getElementById('prevCardBtn').onclick = () => {
+            if (state.currentDeck.length === 0) return;
+            state.cardIndex = (state.cardIndex - 1 + state.currentDeck.length) % state.currentDeck.length;
+            saveStudyState();
+            renderFlashcard();
+        };
+
+        document.getElementById('markMasteredBtn').onclick = () => {
+            const word = state.currentDeck[state.cardIndex];
+            state.masteredIds.add(word.id);
+            saveProgress();
+            playCorrectSound();
+            document.getElementById('nextCardBtn').click();
+        };
+
+        document.getElementById('markLearningBtn').onclick = () => {
+            const word = state.currentDeck[state.cardIndex];
+            state.masteredIds.delete(word.id);
+            saveProgress();
+            document.getElementById('nextCardBtn').click();
+        };
+
+        /* QUIZ MODE LOGIC */
+        function initQuizMode() {
+            state.quizList = getFilteredVocab();
+            // Shuffle
+            state.quizList.sort(() => Math.random() - 0.5);
+            state.quizList = state.quizList.slice(0, 10); // 10 questions max
+            state.quizIndex = 0;
+            state.quizScore = 0;
+
+            document.getElementById('quizQuestionBox').classList.remove('hidden');
+            document.getElementById('quizResultBox').classList.add('hidden');
+            renderQuizQuestion();
+        }
+
+        function renderQuizQuestion() {
+            if (state.quizIndex >= state.quizList.length) {
+                // Quiz completed
+                document.getElementById('quizQuestionBox').classList.add('hidden');
+                document.getElementById('quizResultBox').classList.remove('hidden');
+                document.getElementById('quizResultSummary').textContent = `You scored ${state.quizScore} out of ${state.quizList.length} questions correctly!`;
+                return;
+            }
+
+            const current = state.quizList[state.quizIndex];
+            document.getElementById('quizCounter').textContent = `Q ${state.quizIndex + 1}/${state.quizList.length}`;
+            document.getElementById('quizScoreBadge').textContent = `Score: ${state.quizScore}`;
+
+            document.getElementById('quizQuestionText').textContent = current.hanzi;
+            document.getElementById('quizQuestionSub').textContent = state.pinyinVisible ? current.pinyin : '';
+            document.getElementById('quizFeedback').className = 'hidden p-4 rounded-xl text-center text-sm font-semibold transition-all';
+            document.getElementById('quizNextBtn').classList.add('hidden');
+
+            // Generate options (1 correct, 3 distractors)
+            let distractors = getCurrentLevelVocab().filter(w => w.id !== current.id).sort(() => Math.random() - 0.5).slice(0, 3);
+            let options = [current, ...distractors].sort(() => Math.random() - 0.5);
+
+            const grid = document.getElementById('quizOptionsGrid');
+            grid.innerHTML = '';
+
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'quiz-opt-btn w-full text-left p-4 rounded-xl border border-slate-200 bg-white hover:border-slate-400 hover:bg-slate-50 transition-all text-sm font-semibold text-slate-800 shadow-sm flex items-center justify-between';
+                btn.textContent = opt.english;
+                btn.onclick = () => checkQuizAnswer(opt.id, current.id, btn);
+                grid.appendChild(btn);
+            });
+        }
+
+        function checkQuizAnswer(selectedId, correctId, btnElement) {
+            const allBtns = document.querySelectorAll('.quiz-opt-btn');
+            allBtns.forEach(b => b.disabled = true);
+
+            const feedback = document.getElementById('quizFeedback');
+            feedback.classList.remove('hidden');
+
+            if (selectedId === correctId) {
+                state.quizScore++;
+                state.masteredIds.add(correctId);
+                saveProgress();
+                playCorrectSound();
+                btnElement.className = 'quiz-opt-btn w-full text-left p-4 rounded-xl border border-emerald-500 bg-emerald-50 text-emerald-900 font-semibold text-sm shadow-sm';
+                feedback.className = 'p-4 rounded-xl text-center text-sm font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300';
+                feedback.innerHTML = '<i class="fa-solid fa-circle-check mr-2"></i> Correct! Excellent work.';
+            } else {
+                playWrongSound();
+                btnElement.className = 'quiz-opt-btn w-full text-left p-4 rounded-xl border border-red-500 bg-red-50 text-red-900 font-semibold text-sm shadow-sm';
+                feedback.className = 'p-4 rounded-xl text-center text-sm font-semibold bg-red-100 text-red-800 border border-red-300';
+                feedback.innerHTML = '<i class="fa-solid fa-circle-xmark mr-2"></i> Oops! That is incorrect.';
+            }
+
+            document.getElementById('quizNextBtn').classList.remove('hidden');
+        }
+
+        document.getElementById('quizNextBtn').onclick = () => {
+            state.quizIndex++;
+            renderQuizQuestion();
+        };
+
+        document.getElementById('restartQuizBtn').onclick = () => {
+            initQuizMode();
+        };
+
+        /* MATCHING GAME LOGIC */
+        function initMatchingGame() {
+            clearInterval(state.matchTimerInterval);
+            state.matchTimerSeconds = 0;
+            state.matchMoves = 0;
+            state.firstMatchTile = null;
+            state.secondMatchTile = null;
+
+            document.getElementById('matchTimer').textContent = '0s';
+            document.getElementById('matchMoves').textContent = '0';
+            document.getElementById('matchWinModal').classList.add('hidden');
+
+            // Select 6 random items
+            let items = getFilteredVocab();
+            items = items.sort(() => Math.random() - 0.5).slice(0, 6);
+
+            let tiles = [];
+            items.forEach(item => {
+                tiles.push({ id: item.id, content: item.hanzi, type: 'hanzi', pairId: item.id });
+                tiles.push({ id: item.id, content: item.english, type: 'english', pairId: item.id });
+            });
+
+            state.matchTiles = tiles.sort(() => Math.random() - 0.5);
+
+            const grid = document.getElementById('matchGrid');
+            grid.innerHTML = '';
+
+            state.matchTiles.forEach((t, idx) => {
+                const btn = document.createElement('button');
+                btn.className = `match-tile p-4 rounded-2xl border-2 border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-800 font-bold transition-all flex items-center justify-center text-center shadow-sm h-24 select-none ${t.type === 'hanzi' ? 'font-chinese text-2xl' : 'text-sm font-sans'}`;
+                btn.textContent = t.content;
+                btn.dataset.index = idx;
+                btn.onclick = () => handleMatchTileClick(btn, t, idx);
+                grid.appendChild(btn);
+            });
+
+            // Start timer
+            state.matchTimerInterval = setInterval(() => {
+                state.matchTimerSeconds++;
+                document.getElementById('matchTimer').textContent = `${state.matchTimerSeconds}s`;
+            }, 1000);
+        }
+
+        function handleMatchTileClick(tileEl, tileData, index) {
+            if (tileEl.classList.contains('matched') || tileEl.classList.contains('selected')) return;
+
+            if (!state.firstMatchTile) {
+                state.firstMatchTile = { tileEl, tileData, index };
+                tileEl.classList.add('selected', 'border-red-500', 'bg-red-50', 'text-red-700');
+            } else if (!state.secondMatchTile && state.firstMatchTile.index !== index) {
+                state.secondMatchTile = { tileEl, tileData, index };
+                tileEl.classList.add('selected', 'border-red-500', 'bg-red-50', 'text-red-700');
+                
+                state.matchMoves++;
+                document.getElementById('matchMoves').textContent = state.matchMoves;
+
+                // Check match
+                if (state.firstMatchTile.tileData.pairId === state.secondMatchTile.tileData.pairId) {
+                    // Match found
+                    playCorrectSound();
+                    setTimeout(() => {
+                        state.firstMatchTile.tileEl.classList.add('matched', 'opacity-30', 'pointer-events-none', 'border-emerald-400', 'bg-emerald-50');
+                        state.secondMatchTile.tileEl.classList.add('matched', 'opacity-30', 'pointer-events-none', 'border-emerald-400', 'bg-emerald-50');
+                        state.firstMatchTile = null;
+                        state.secondMatchTile = null;
+                        checkMatchWin();
+                    }, 300);
+                } else {
+                    // Mismatch
+                    playWrongSound();
+                    setTimeout(() => {
+                        state.firstMatchTile.tileEl.classList.remove('selected', 'border-red-500', 'bg-red-50', 'text-red-700');
+                        state.secondMatchTile.tileEl.classList.remove('selected', 'border-red-500', 'bg-red-50', 'text-red-700');
+                        state.firstMatchTile = null;
+                        state.secondMatchTile = null;
+                    }, 700);
+                }
+            }
+        }
+
+        function checkMatchWin() {
+            const matchedCount = document.querySelectorAll('.match-tile.matched').length;
+            if (matchedCount === state.matchTiles.length) {
+                clearInterval(state.matchTimerInterval);
+                document.getElementById('matchWinStats').textContent = `You cleared all pairs in ${state.matchTimerSeconds} seconds with ${state.matchMoves} moves!`;
+                document.getElementById('matchWinModal').classList.remove('hidden');
+            }
+        }
+
+        document.getElementById('restartMatchBtn').onclick = () => initMatchingGame();
+
+        /* LISTENING DRILL LOGIC */
+        function initListeningDrill() {
+            let pool = getFilteredVocab();
+            pool = pool.sort(() => Math.random() - 0.5);
+            
+            state.listeningCurrentWord = pool[0];
+            let distractors = getCurrentLevelVocab().filter(w => w.id !== state.listeningCurrentWord.id).sort(() => Math.random() - 0.5).slice(0, 3);
+            state.listeningOptions = [state.listeningCurrentWord, ...distractors].sort(() => Math.random() - 0.5);
+
+            document.getElementById('listeningFeedback').className = 'hidden p-3 rounded-xl text-sm font-semibold';
+            document.getElementById('nextListeningBtn').classList.add('hidden');
+
+            const container = document.getElementById('listeningOptions');
+            container.innerHTML = '';
+
+            state.listeningOptions.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'listening-opt-btn p-4 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 font-chinese text-2xl font-bold text-slate-800 shadow-sm transition-all';
+                btn.textContent = opt.hanzi;
+                btn.onclick = () => checkListeningAnswer(opt.id, btn);
+                container.appendChild(btn);
+            });
+
+            // Automatically play sound
+            setTimeout(() => {
+                speakText(state.listeningCurrentWord.hanzi);
+            }, 300);
+        }
+
+        document.getElementById('playAudioDrillBtn').onclick = () => {
+            if (state.listeningCurrentWord) speakText(state.listeningCurrentWord.hanzi);
+        };
+
+        function checkListeningAnswer(selectedId, btnEl) {
+            const allBtns = document.querySelectorAll('.listening-opt-btn');
+            allBtns.forEach(b => b.disabled = true);
+
+            const fb = document.getElementById('listeningFeedback');
+            fb.classList.remove('hidden');
+
+            if (selectedId === state.listeningCurrentWord.id) {
+                playCorrectSound();
+                btnEl.className = 'listening-opt-btn p-4 rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-900 font-chinese text-2xl font-bold shadow-sm';
+                fb.className = 'p-3 rounded-xl text-sm font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200';
+                fb.textContent = `Correct! (${state.listeningCurrentWord.pinyin} - ${state.listeningCurrentWord.english})`;
+            } else {
+                playWrongSound();
+                btnEl.className = 'listening-opt-btn p-4 rounded-xl border-2 border-red-500 bg-red-50 text-red-900 font-chinese text-2xl font-bold shadow-sm';
+                fb.className = 'p-3 rounded-xl text-sm font-semibold bg-red-100 text-red-800 border border-red-200';
+                fb.textContent = `Incorrect! The answer was ${state.listeningCurrentWord.hanzi} (${state.listeningCurrentWord.english})`;
+            }
+
+            document.getElementById('nextListeningBtn').classList.remove('hidden');
+        }
+
+        document.getElementById('nextListeningBtn').onclick = () => initListeningDrill();
+
+        /* WORD LIST / DICTIONARY RENDER */
+        function renderDictionaryTable() {
+            const query = document.getElementById('dictSearchInput').value.toLowerCase().trim();
+            const topicFilter = document.getElementById('dictTopicFilter').value;
+
+            let filtered = getCurrentLevelVocab().filter(item => {
+                const matchesTopic = topicFilter === 'All' || item.topic === topicFilter;
+                const matchesSearch = item.hanzi.includes(query) ||
+                                      item.pinyin.toLowerCase().includes(query) ||
+                                      item.english.toLowerCase().includes(query) ||
+                                      (item.topic || '').toLowerCase().includes(query) ||
+                                      String(item.level || '').includes(query) ||
+                                      (item.wordClass || '').toLowerCase().includes(query);
+                return matchesTopic && matchesSearch;
+            });
+
+            const tbody = document.getElementById('dictTableBody');
+            const emptyState = document.getElementById('dictEmptyState');
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            tbody.innerHTML = filtered.map(item => {
+                const isMastered = state.masteredIds.has(item.id);
+                const hanzi = escapeHtml(item.hanzi);
+                const pinyin = escapeHtml(item.pinyin);
+                const english = escapeHtml(item.english);
+                const topic = escapeHtml(item.topic);
+                const type = escapeHtml(item.wordClass || item.category || '-');
+                const level = escapeHtml(`Level ${item.level || state.selectedLevel}`);
+                return `
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="p-3 sm:p-4 font-chinese text-2xl font-bold text-slate-900">${hanzi}</td>
+                        <td class="p-3 sm:p-4 text-slate-600 font-semibold">${pinyin}</td>
+                        <td class="p-3 sm:p-4 text-slate-800">${english}</td>
+                        <td class="p-3 sm:p-4">
+                            <span class="text-xs bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full font-medium whitespace-nowrap">${topic}</span>
+                        </td>
+                        <td class="p-3 sm:p-4 text-slate-600 font-semibold whitespace-nowrap">${level}</td>
+                        <td class="p-3 sm:p-4 text-slate-600">${type}</td>
+                        <td class="p-3 sm:p-4 text-center">
+                            <button onclick="speakText(${jsString(item.hanzi)})" class="text-slate-400 hover:text-red-600 p-2 rounded-full hover:bg-red-50 transition-colors" title="Listen pronunciation">
+                                <i class="fa-solid fa-volume-high"></i>
+                            </button>
+                        </td>
+                        <td class="p-3 sm:p-4 text-center">
+                            <span class="inline-block w-3 h-3 rounded-full ${isMastered ? 'bg-emerald-500' : 'bg-slate-300'}" title="${isMastered ? 'Mastered' : 'Learning'}"></span>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        document.getElementById('dictSearchInput').addEventListener('input', renderDictionaryTable);
+        document.getElementById('dictTopicFilter').addEventListener('change', (e) => {
+            saveCardPosition();
+            state.selectedTopic = e.target.value;
+            initTopicBadges();
+            filterDeck();
+            saveStudyState();
+            updateHeaderStats();
+            renderDictionaryTable();
+        });
+
+        document.getElementById('levelSelect').addEventListener('change', (e) => {
+            saveCardPosition();
+            state.selectedLevel = e.target.value;
+            ensureSelectedTopicForLevel();
+            initTopicBadges();
+            filterDeck();
+            saveStudyState();
+            updateHeaderStats();
+            if (state.activeTab === 'quiz') initQuizMode();
+            if (state.activeTab === 'matching') initMatchingGame();
+            if (state.activeTab === 'dictionary') renderDictionaryTable();
+            if (state.activeTab === 'listening') initListeningDrill();
+        });
+
+        /* GLOBAL PINYIN TOGGLE */
+        document.getElementById('togglePinyinGlobal').addEventListener('change', (e) => {
+            state.pinyinVisible = e.target.checked;
+            saveStudyState();
+            renderFlashcard();
+            if (state.activeTab === 'quiz') renderQuizQuestion();
+        });
+
+        /* RESET PROGRESS BUTTON */
+        document.getElementById('resetMasteryBtn').onclick = () => {
+            if (confirm('Are you sure you want to reset all your mastered vocabulary progress?')) {
+                state.masteredIds.clear();
+                state.flashcardPositions = {};
+                state.cardIndex = 0;
+                saveProgress();
+                filterDeck();
+                renderDictionaryTable();
+            }
+        };
+
+        /* TAB NAVIGATION HANDLER */
+        function switchTab(targetTab) {
+            targetTab = validTabs.has(targetTab) ? targetTab : 'flashcards';
+            saveCardPosition();
+            state.activeTab = targetTab;
+            saveStudyState();
+
+            // Update tab styles
+            document.querySelectorAll('.nav-tab').forEach(b => {
+                b.className = 'nav-tab text-xs sm:text-sm font-medium px-4 py-2 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white flex items-center space-x-2 transition-colors whitespace-nowrap';
+            });
+            const tabBtn = document.querySelector(`.nav-tab[data-tab="${targetTab}"]`) || document.querySelector('.nav-tab[data-tab="flashcards"]');
+            tabBtn.className = 'nav-tab active-tab text-xs sm:text-sm font-medium px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors whitespace-nowrap bg-red-600 text-white';
+
+            // Hide all tab sections
+            document.querySelectorAll('.tab-content').forEach(sec => sec.classList.add('hidden'));
+
+            // Show selected section
+            const targetSec = document.getElementById(`tab-${targetTab}`) || document.getElementById('tab-flashcards');
+            targetSec.classList.remove('hidden');
+
+            // Initialize mode data
+            if (targetTab === 'flashcards') renderFlashcard();
+            if (targetTab === 'quiz') initQuizMode();
+            if (targetTab === 'matching') initMatchingGame();
+            if (targetTab === 'listening') initListeningDrill();
+            if (targetTab === 'dictionary') renderDictionaryTable();
+        }
+
+        document.querySelectorAll('.nav-tab').forEach(tabBtn => {
+            tabBtn.addEventListener('click', () => {
+                switchTab(tabBtn.dataset.tab);
+            });
+        });
+
+        /* INITIALIZATION ON WINDOW LOAD */
+        window.onload = function() {
+            document.getElementById('togglePinyinGlobal').checked = state.pinyinVisible;
+            initLevelSelect();
+            updateHeaderStats();
+            initTopicBadges();
+            filterDeck();
+            switchTab(state.activeTab);
+        };
+    </script>
+</body>
+</html>
