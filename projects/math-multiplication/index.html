@@ -1,0 +1,1608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kiwi Pāngarau - Multiplication Adventure!</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        kiwi: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            400: '#4ade80',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                        },
+                        fern: '#0d5c3a',
+                        pohutukawa: '#d92323',
+                        kowhai: '#facc15',
+                        ocean: '#0284c7'
+                    },
+                    fontFamily: {
+                        fredoka: ['Fredoka', 'sans-serif'],
+                        nunito: ['Nunito', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Fredoka', 'Nunito', sans-serif;
+            background-color: #f4fbf7;
+        }
+        .kiwi-card {
+            box-shadow: 0 10px 25px -5px rgba(22, 163, 74, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            border: 3px solid #e2f5ea;
+        }
+        .btn-bounce {
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .btn-bounce:hover {
+            transform: translateY(-3px) scale(1.02);
+        }
+        .btn-bounce:active {
+            transform: translateY(1px) scale(0.98);
+        }
+        .item-pop {
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .kiwi-hop {
+            animation: hop 0.5s ease infinite alternate;
+        }
+        @keyframes hop {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-12px); }
+        }
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #e2f5ea;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #16a34a;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="text-slate-800 min-h-screen flex flex-col justify-between">
+
+    <header class="bg-gradient-to-r from-kiwi-700 via-kiwi-600 to-fern text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-3 sm:px-6 flex flex-wrap justify-between items-center gap-3">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('explore')">
+                <div class="bg-yellow-400 p-2.5 rounded-full text-kiwi-900 shadow-md text-2xl flex items-center justify-center w-12 h-12">
+                    🥝
+                </div>
+                <div>
+                    <h1 class="text-2xl sm:text-3xl font-bold tracking-wide leading-none font-fredoka">
+                        Kiwi <span class="text-yellow-300">Pāngarau</span>
+                    </h1>
+                    <p class="text-xs text-kiwi-100 font-semibold tracking-wider uppercase">NZ Primary Multiplication Hub</p>
+                </div>
+            </div>
+
+            <nav class="flex items-center space-x-1 sm:space-x-2 text-sm sm:text-base font-bold overflow-x-auto py-1">
+                <button onclick="switchTab('explore')" id="nav-explore" class="nav-btn bg-white/20 hover:bg-white/30 text-white px-3 sm:px-4 py-2 rounded-xl transition flex items-center gap-1.5 active-tab">
+                    <i class="fa-solid fa-shapes">font</i> Arrays & Groups
+                </button>
+                <button onclick="switchTab('skip')" id="nav-skip" class="nav-btn bg-white/10 hover:bg-white/30 text-white px-3 sm:px-4 py-2 rounded-xl transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-route"></i> Skip Hopping
+                </button>
+                <button onclick="switchTab('strategies')" id="nav-strategies" class="nav-btn bg-white/10 hover:bg-white/30 text-white px-3 sm:px-4 py-2 rounded-xl transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-lightbulb"></i> Strategies
+                </button>
+                <button onclick="switchTab('grid')" id="nav-grid" class="nav-btn bg-white/10 hover:bg-white/30 text-white px-3 sm:px-4 py-2 rounded-xl transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-table-cells"></i> Times Table
+                </button>
+                <button onclick="switchTab('quiz')" id="nav-quiz" class="nav-btn bg-yellow-400 hover:bg-yellow-300 text-kiwi-900 px-4 py-2 rounded-xl shadow transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-trophy"></i> Mahi Quiz!
+                </button>
+            </nav>
+
+            <button id="sound-toggle-btn" onclick="toggleSound()" class="bg-white/20 hover:bg-white/30 text-white p-2.5 rounded-full transition w-10 h-10 flex items-center justify-center" title="Toggle Sound">
+                <i class="fa-solid fa-volume-high text-lg" id="sound-icon"></i>
+            </button>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 flex-grow w-full">
+        
+        <div class="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-3xl p-6 sm:p-8 text-white mb-8 shadow-xl relative overflow-hidden">
+            <div class="absolute -right-8 -bottom-10 opacity-20 text-9xl pointer-events-none select-none">
+                🇳🇿 🥝 🐑
+            </div>
+            <div class="relative z-10 max-w-2xl">
+                <span class="bg-yellow-400 text-kiwi-900 font-extrabold text-xs uppercase px-3 py-1 rounded-full tracking-wider">Kia Ora, Tama & Hine!</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold mt-2 font-fredoka">What is Multiplication?</h2>
+                <p class="text-emerald-100 text-base sm:text-lg mt-2 leading-relaxed">
+                    Multiplication is just a fast way of doing <strong>repeated addition</strong>! It helps us count equal groups of things quickly—like counting sheep in a paddock or kiwi fruit in a box!
+                </p>
+            </div>
+        </div>
+
+        <section id="tab-explore" class="tab-content block">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- Controls Panel -->
+                <div class="lg:col-span-4 bg-white p-6 rounded-3xl kiwi-card">
+                    <h3 class="text-2xl font-bold text-kiwi-800 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-sliders text-kiwi-600"></i> Array Builder
+                    </h3>
+                    <p class="text-sm text-slate-600 mb-6">Adjust the sliders to build rows and columns of items!</p>
+
+                    <!-- Factor A Slider -->
+                    <div class="mb-6">
+                        <div class="flex justify-between items-center mb-2">
+                            <label class="font-bold text-slate-700">Rows (Groups):</label>
+                            <span id="val-a" class="bg-kiwi-100 text-kiwi-800 text-xl font-bold px-3 py-1 rounded-xl">3</span>
+                        </div>
+                        <input type="range" id="slider-a" min="1" max="10" value="3" class="w-full h-3 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-kiwi-600" oninput="updateArray()">
+                    </div>
+
+                    <!-- Factor B Slider -->
+                    <div class="mb-6">
+                        <div class="flex justify-between items-center mb-2">
+                            <label class="font-bold text-slate-700">Columns (In each group):</label>
+                            <span id="val-b" class="bg-kiwi-100 text-kiwi-800 text-xl font-bold px-3 py-1 rounded-xl">4</span>
+                        </div>
+                        <input type="range" id="slider-b" min="1" max="10" value="4" class="w-full h-3 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-kiwi-600" oninput="updateArray()">
+                    </div>
+
+                    <!-- Theme Chooser -->
+                    <div class="mb-6">
+                        <label class="font-bold text-slate-700 block mb-2">Choose Visual Icon:</label>
+                        <div class="grid grid-cols-5 gap-2" id="icon-selector">
+                            <button onclick="setIcon('🥝')" class="icon-opt bg-kiwi-50 border-2 border-kiwi-500 rounded-2xl p-2 text-2xl text-center btn-bounce">🥝</button>
+                            <button onclick="setIcon('🐑')" class="icon-opt bg-slate-100 border-2 border-transparent rounded-2xl p-2 text-2xl text-center btn-bounce">🐑</button>
+                            <button onclick="setIcon('🏉')" class="icon-opt bg-slate-100 border-2 border-transparent rounded-2xl p-2 text-2xl text-center btn-bounce">🏉</button>
+                            <button onclick="setIcon('🌿')" class="icon-opt bg-slate-100 border-2 border-transparent rounded-2xl p-2 text-2xl text-center btn-bounce">🌿</button>
+                            <button onclick="setIcon('⭐')" class="icon-opt bg-slate-100 border-2 border-transparent rounded-2xl p-2 text-2xl text-center btn-bounce">⭐</button>
+                        </div>
+                    </div>
+
+                    <!-- View Mode Toggle -->
+                    <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200">
+                        <span class="font-bold text-xs uppercase text-slate-500 block mb-2">Display Style:</span>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button id="mode-array" onclick="setArrayMode('array')" class="bg-kiwi-600 text-white text-sm font-bold py-2 px-3 rounded-xl shadow transition">
+                                <i class="fa-solid fa-grip"></i> Grid Array
+                            </button>
+                            <button id="mode-groups" onclick="setArrayMode('groups')" class="bg-white text-slate-700 border text-sm font-bold py-2 px-3 rounded-xl hover:bg-slate-100 transition">
+                                <i class="fa-solid fa-circle-nodes"></i> Equal Groups
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Visualization Output -->
+                <div class="lg:col-span-8 bg-white p-6 sm:p-8 rounded-3xl kiwi-card flex flex-col justify-between">
+                    <div>
+                        <!-- Mathematical Sentence Display -->
+                        <div class="bg-gradient-to-r from-kiwi-50 to-emerald-100 p-5 rounded-2xl mb-6 border border-kiwi-200 text-center">
+                            <div class="text-3xl sm:text-5xl font-black text-kiwi-900 tracking-wide font-fredoka" id="math-equation">
+                                3 × 4 = <span class="text-pohutukawa">12</span>
+                            </div>
+                            <div class="mt-3 text-slate-700 font-bold text-sm sm:text-base flex flex-wrap justify-center items-center gap-2">
+                                <span class="bg-white px-3 py-1 rounded-full shadow-sm text-kiwi-800" id="math-groups-desc">3 groups of 4</span>
+                                <span>=</span>
+                                <span class="bg-white px-3 py-1 rounded-full shadow-sm text-kiwi-800" id="math-repeated-addition">4 + 4 + 4 = 12</span>
+                            </div>
+                        </div>
+
+                        <!-- Canvas/Grid Container -->
+                        <div id="array-visual-container" class="min-h-[300px] flex items-center justify-center p-4 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 overflow-x-auto">
+                            <!-- Injected dynamically by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Audio Helper Button -->
+                    <div class="mt-6 flex justify-between items-center bg-yellow-50 p-4 rounded-2xl border border-yellow-200">
+                        <div class="flex items-center space-x-3">
+                            <span class="text-3xl">🔊</span>
+                            <span id="audio-explanation" class="text-sm font-semibold text-yellow-900">
+                                Click "Read Sentence" to hear how we say this calculation!
+                            </span>
+                        </div>
+                        <button onclick="speakEquation()" class="bg-yellow-400 hover:bg-yellow-500 text-yellow-950 font-bold px-4 py-2 rounded-xl text-sm btn-bounce shrink-0 shadow">
+                            Read Sentence 🗣️
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="tab-skip" class="tab-content hidden">
+            <div class="bg-white p-6 sm:p-8 rounded-3xl kiwi-card">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                    <div>
+                        <h3 class="text-2xl font-bold text-kiwi-800 flex items-center gap-2">
+                            <i class="fa-solid fa-frog text-kiwi-600"></i> Skip Counting Number Line
+                        </h3>
+                        <p class="text-slate-600 text-sm">Watch Kiki the Kiwi hop along the number line to multiply!</p>
+                    </div>
+
+                    <!-- Skip Controls -->
+                    <div class="flex flex-wrap items-center gap-3">
+                        <label class="font-bold text-sm text-slate-700">Multiply:</label>
+                        <select id="skip-step" onchange="resetSkipAnimation()" class="bg-kiwi-50 border-2 border-kiwi-400 font-bold rounded-xl px-3 py-2 text-kiwi-900">
+                            <option value="2">Hops of 2</option>
+                            <option value="3" selected>Hops of 3</option>
+                            <option value="4">Hops of 4</option>
+                            <option value="5">Hops of 5</option>
+                            <option value="10">Hops of 10</option>
+                        </select>
+
+                        <label class="font-bold text-sm text-slate-700">Number of Hops:</label>
+                        <select id="skip-count" onchange="resetSkipAnimation()" class="bg-kiwi-50 border-2 border-kiwi-400 font-bold rounded-xl px-3 py-2 text-kiwi-900">
+                            <option value="2">2 Hops</option>
+                            <option value="3">3 Hops</option>
+                            <option value="4" selected>4 Hops</option>
+                            <option value="5">5 Hops</option>
+                            <option value="6">6 Hops</option>
+                        </select>
+
+                        <button onclick="startSkipAnimation()" class="bg-kiwi-600 hover:bg-kiwi-700 text-white font-bold px-5 py-2 rounded-xl btn-bounce shadow flex items-center gap-2">
+                            <i class="fa-solid fa-play"></i> Hop Kiki!
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mathematical Context -->
+                <div class="text-center my-4 bg-emerald-50 p-4 rounded-2xl border border-emerald-200">
+                    <span class="text-2xl sm:text-3xl font-extrabold text-kiwi-900" id="skip-math-display">
+                        4 hops of 3 = 12 (4 × 3 = 12)
+                    </span>
+                </div>
+
+                <!-- Number Line Visual Canvas Area -->
+                <div class="relative overflow-x-auto py-8 px-4 bg-slate-50 rounded-2xl border border-slate-200 min-h-[220px] flex items-center">
+                    <div id="number-line-wrapper" class="w-full min-w-[700px] relative">
+                        <!-- Line -->
+                        <div class="h-2 bg-slate-300 rounded-full w-full absolute top-24 left-0"></div>
+                        <!-- Ticks & Hop Arcs rendered dynamically -->
+                        <div id="number-line-ticks" class="relative z-10"></div>
+                    </div>
+                </div>
+
+                <!-- Skip Counting Table Grid -->
+                <div class="mt-8">
+                    <h4 class="font-bold text-slate-700 mb-3">Skip Counting Sequence:</h4>
+                    <div id="skip-sequence-badges" class="flex flex-wrap gap-2">
+                        <!-- Injected JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="tab-strategies" class="tab-content hidden">
+            <div class="bg-white p-6 sm:p-8 rounded-3xl kiwi-card mb-8">
+                <h3 class="text-2xl font-bold text-kiwi-800 mb-2">NZ Curriculum Multiplication Strategies</h3>
+                <p class="text-slate-600 text-sm mb-6">Learn different clever ways to solve multiplication problems!</p>
+
+                <!-- Tabs for Strategies -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 mb-6">
+                    <button onclick="showStrategy(1)" id="strat-btn-1" class="strat-tab p-4 rounded-2xl border-2 border-kiwi-500 bg-kiwi-50 text-left btn-bounce">
+                        <div class="text-kiwi-700 font-extrabold text-lg mb-1">1. Repeated Addition</div>
+                        <div class="text-xs text-slate-600">Great for Year 2 & 3</div>
+                    </button>
+
+                    <button onclick="showStrategy(2)" id="strat-btn-2" class="strat-tab p-4 rounded-2xl border-2 border-transparent bg-slate-50 text-left hover:bg-slate-100 btn-bounce">
+                        <div class="text-kiwi-700 font-extrabold text-lg mb-1">2. Arrays & Grids</div>
+                        <div class="text-xs text-slate-600">Great for Year 3 & 4</div>
+                    </button>
+
+                    <button onclick="showStrategy(3)" id="strat-btn-3" class="strat-tab p-4 rounded-2xl border-2 border-transparent bg-slate-50 text-left hover:bg-slate-100 btn-bounce">
+                        <div class="text-kiwi-700 font-extrabold text-lg mb-1">3. Doubling & Halving</div>
+                        <div class="text-xs text-slate-600">Great for Year 4 & 5</div>
+                    </button>
+
+                    <button onclick="showStrategy(4)" id="strat-btn-4" class="strat-tab p-4 rounded-2xl border-2 border-transparent bg-slate-50 text-left hover:bg-slate-100 btn-bounce">
+                        <div class="text-kiwi-700 font-extrabold text-lg mb-1">4. Split / Area Model</div>
+                        <div class="text-xs text-slate-600">Great for Year 5 & 6</div>
+                    </button>
+
+                    <button onclick="showStrategy(5)" id="strat-btn-5" class="strat-tab p-4 rounded-2xl border-2 border-transparent bg-slate-50 text-left hover:bg-slate-100 btn-bounce">
+                        <div class="text-kiwi-700 font-extrabold text-lg mb-1">5. Vertical Method (列竖式)</div>
+                        <div class="text-xs text-slate-600">Great for Year 5 & 6+</div>
+                    </button>
+                </div>
+
+                <!-- Strategy Content Panel -->
+                <div id="strategy-display-box" class="bg-gradient-to-br from-slate-50 to-kiwi-50 p-6 rounded-2xl border border-kiwi-200">
+                    <!-- Injected via JS -->
+                </div>
+            </div>
+        </section>
+
+        <section id="tab-grid" class="tab-content hidden">
+            <div class="bg-white p-6 sm:p-8 rounded-3xl kiwi-card">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                    <div>
+                        <h3 class="text-2xl font-bold text-kiwi-800">12 × 12 Interactive Times Table Matrix</h3>
+                        <p class="text-slate-600 text-sm">Hover or click any cell to highlight the factors and hear the equation!</p>
+                    </div>
+
+                    <div class="flex items-center space-x-2 bg-kiwi-50 px-4 py-2 rounded-xl border border-kiwi-200">
+                        <span class="text-xs font-bold text-kiwi-800 uppercase">Selected:</span>
+                        <span id="grid-hover-info" class="text-lg font-black text-kiwi-900">Hover over a number</span>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <div id="times-table-grid" class="inline-grid gap-1 p-2 bg-slate-100 rounded-2xl border border-slate-200 min-w-[600px] w-full">
+                        <!-- JS injected 13x13 grid -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="tab-quiz" class="tab-content hidden">
+            <div class="max-w-3xl mx-auto bg-white p-6 sm:p-8 rounded-3xl kiwi-card">
+                
+                <!-- Quiz Header Info -->
+                <div class="flex justify-between items-center mb-6 border-b border-slate-100 pb-4">
+                    <div>
+                        <h3 class="text-2xl font-bold text-kiwi-800">Mahi Multiplication Challenge 🏆</h3>
+                        <p class="text-xs text-slate-500">Test your skills, earn points and unlock Kiwi badges!</p>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="text-right">
+                            <span class="block text-xs uppercase font-bold text-slate-400">Streak</span>
+                            <span id="quiz-streak" class="text-xl font-black text-yellow-500">🔥 0</span>
+                        </div>
+                        <div class="text-right">
+                            <span class="block text-xs uppercase font-bold text-slate-400">Score</span>
+                            <span id="quiz-score" class="text-2xl font-black text-kiwi-600">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Level Selector -->
+                <div class="mb-6 flex flex-wrap gap-2 justify-center">
+                    <button onclick="setQuizLevel('easy')" id="lvl-easy" class="lvl-btn bg-kiwi-600 text-white font-bold text-xs uppercase px-4 py-2 rounded-full shadow">
+                        Level 1 (2, 5, 10s)
+                    </button>
+                    <button onclick="setQuizLevel('medium')" id="lvl-medium" class="lvl-btn bg-slate-100 text-slate-700 font-bold text-xs uppercase px-4 py-2 rounded-full hover:bg-slate-200">
+                        Level 2 (3, 4, 6, 7, 8, 9s)
+                    </button>
+                    <button onclick="setQuizLevel('hard')" id="lvl-hard" class="lvl-btn bg-slate-100 text-slate-700 font-bold text-xs uppercase px-4 py-2 rounded-full hover:bg-slate-200">
+                        Level 3 (Up to 12s)
+                    </button>
+                </div>
+
+                <!-- Quiz Card Frame -->
+                <div id="quiz-box" class="bg-gradient-to-b from-slate-50 to-kiwi-50 p-6 sm:p-8 rounded-3xl border-2 border-kiwi-200 text-center relative overflow-hidden">
+                    <div class="text-sm font-bold text-kiwi-700 uppercase tracking-widest mb-2" id="question-number-tag">
+                        Question 1 of 10
+                    </div>
+
+                    <!-- Question Text -->
+                    <div class="text-4xl sm:text-6xl font-black text-slate-800 my-4 font-fredoka tracking-wider" id="quiz-question">
+                        4 × 5 = ?
+                    </div>
+
+                    <!-- Visual Helper Hint Toggle -->
+                    <div class="mb-6">
+                        <button onclick="toggleQuizHint()" class="text-xs text-kiwi-700 font-bold underline hover:text-kiwi-900">
+                            💡 Need a hint? Show visual array
+                        </button>
+                        <div id="quiz-hint-box" class="hidden my-4 p-3 bg-white rounded-2xl border border-kiwi-200 flex justify-center flex-wrap gap-1">
+                            <!-- Array hint dots injected here -->
+                        </div>
+                    </div>
+
+                    <!-- Options Grid -->
+                    <div class="grid grid-cols-2 gap-4 max-w-md mx-auto" id="quiz-options-container">
+                        <!-- 4 choices injected via JS -->
+                    </div>
+
+                    <!-- Feedback Banner -->
+                    <div id="quiz-feedback" class="mt-6 text-lg font-extrabold hidden py-2 px-4 rounded-xl">
+                        <!-- Ka pai! or try again -->
+                    </div>
+                </div>
+
+                <!-- Badges Collection Bar -->
+                <div class="mt-8 border-t border-slate-100 pt-6">
+                    <h4 class="font-bold text-slate-700 text-sm uppercase mb-3 flex items-center justify-between">
+                        <span>Your Badge Collection:</span>
+                        <button onclick="showCertificateModal()" id="cert-btn" class="hidden text-xs bg-yellow-400 hover:bg-yellow-300 text-kiwi-950 px-3 py-1.5 rounded-lg font-bold btn-bounce shadow">
+                            📜 View Certificate
+                        </button>
+                    </h4>
+                    <div class="grid grid-cols-4 gap-3 text-center" id="badges-container">
+                        <div id="badge-1" class="opacity-40 grayscale bg-slate-100 p-3 rounded-2xl border border-slate-200">
+                            <div class="text-3xl">🥝</div>
+                            <div class="text-[10px] font-bold text-slate-600 mt-1">Kiwi Counter</div>
+                        </div>
+                        <div id="badge-2" class="opacity-40 grayscale bg-slate-100 p-3 rounded-2xl border border-slate-200">
+                            <div class="text-3xl">🐑</div>
+                            <div class="text-[10px] font-bold text-slate-600 mt-1">Array Master</div>
+                        </div>
+                        <div id="badge-3" class="opacity-40 grayscale bg-slate-100 p-3 rounded-2xl border border-slate-200">
+                            <div class="text-3xl">🌿</div>
+                            <div class="text-[10px] font-bold text-slate-600 mt-1">Maths Wizard</div>
+                        </div>
+                        <div id="badge-4" class="opacity-40 grayscale bg-slate-100 p-3 rounded-2xl border border-slate-200">
+                            <div class="text-3xl">🏆</div>
+                            <div class="text-[10px] font-bold text-slate-600 mt-1">Ka Pai Champion</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <div id="cert-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-2xl w-full p-8 kiwi-card relative text-center">
+            <button onclick="closeCertificateModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-xl font-bold">
+                ✖
+            </button>
+            <div class="border-8 border-double border-kiwi-600 p-6 rounded-2xl bg-gradient-to-b from-yellow-50 to-white">
+                <div class="text-4xl mb-2">🇳🇿 🏆 🌿</div>
+                <h2 class="text-3xl font-black text-kiwi-900 font-fredoka uppercase">Certificate of Achievement</h2>
+                <p class="text-slate-600 font-bold text-sm mt-1">Kiwi Pāngarau Multiplication Champion</p>
+                <p class="text-sm text-slate-500 mt-4">This certificate is awarded to:</p>
+                <input type="text" id="student-name-input" placeholder="Enter Your Name Here" class="text-2xl font-bold text-center border-b-2 border-kiwi-500 my-2 focus:outline-none focus:border-kiwi-700 bg-transparent w-3/4">
+                <p class="text-slate-700 font-semibold text-base mt-4 max-w-md mx-auto">
+                    For demonstrating fantastic mahi (hard work) and mastering multiplication tables in the Kiwi Pāngarau Adventure!
+                </p>
+                <div class="mt-6 flex justify-around items-center text-xs text-slate-500 font-bold border-t border-slate-200 pt-4">
+                    <div>
+                        <span class="block text-kiwi-800 text-sm font-extrabold">Ka Pai!</span>
+                        Official NZ Maths Award
+                    </div>
+                    <div>
+                        <span class="block text-kiwi-800 text-sm font-extrabold" id="cert-date">Date</span>
+                        Kiwi Pāngarau
+                    </div>
+                </div>
+            </div>
+            <div class="mt-6 flex justify-center gap-4">
+                <button onclick="window.print()" class="bg-kiwi-600 hover:bg-kiwi-700 text-white font-bold px-6 py-2.5 rounded-xl shadow btn-bounce flex items-center gap-2">
+                    <i class="fa-solid fa-print"></i> Print Certificate
+                </button>
+                <button onclick="closeCertificateModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-6 py-2.5 rounded-xl btn-bounce">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-slate-900 text-slate-400 py-6 mt-12 text-center text-sm border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4">
+            <p class="font-bold text-slate-300">Kiwi Pāngarau - Interactive NZ Primary Mathematics Resource 🇳🇿</p>
+            <p class="text-xs text-slate-500 mt-1">Aligned with the New Zealand Curriculum (Level 2 & 3 Number and Algebra Strand)</p>
+        </div>
+    </footer>
+
+    <script>
+        /* --- GLOBAL STATE --- */
+        let state = {
+            factorA: 3,
+            factorB: 4,
+            icon: '🥝',
+            mode: 'array', // 'array' or 'groups'
+            soundEnabled: true,
+            quizLevel: 'easy',
+            quizScore: 0,
+            quizStreak: 0,
+            quizCurrentQ: 1,
+            quizTotalQ: 10,
+            quizAnswer: null,
+            badges: [false, false, false, false]
+        };
+
+        /* --- WEB AUDIO SYNTHESIZER --- */
+        let audioCtx = null;
+
+        function getAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            return audioCtx;
+        }
+
+        function playSound(type) {
+            if (!state.soundEnabled) return;
+            try {
+                const ctx = getAudioContext();
+                if (ctx.state === 'suspended') ctx.resume();
+
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                const now = ctx.currentTime;
+
+                if (type === 'click') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(400, now);
+                    osc.frequency.exponentialRampToValueAtTime(800, now + 0.05);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.05);
+                    osc.start(now);
+                    osc.stop(now + 0.05);
+                } else if (type === 'correct') {
+                    // Happy chord arpeggio
+                    [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+                        const o = ctx.createOscillator();
+                        const g = ctx.createGain();
+                        o.type = 'triangle';
+                        o.frequency.setValueAtTime(freq, now + idx * 0.08);
+                        g.connect(ctx.destination);
+                        o.connect(g);
+                        g.gain.setValueAtTime(0.2, now + idx * 0.08);
+                        g.gain.linearRampToValueAtTime(0.01, now + idx * 0.08 + 0.2);
+                        o.start(now + idx * 0.08);
+                        o.stop(now + idx * 0.08 + 0.2);
+                    });
+                } else if (type === 'wrong') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(220, now);
+                    osc.frequency.linearRampToValueAtTime(140, now + 0.2);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
+                    osc.start(now);
+                    osc.stop(now + 0.2);
+                } else if (type === 'hop') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(300, now);
+                    osc.frequency.exponentialRampToValueAtTime(600, now + 0.12);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.12);
+                    osc.start(now);
+                    osc.stop(now + 0.12);
+                }
+            } catch (e) {
+                console.log('Audio playback prevented');
+            }
+        }
+
+        function toggleSound() {
+            state.soundEnabled = !state.soundEnabled;
+            const icon = document.getElementById('sound-icon');
+            if (state.soundEnabled) {
+                icon.className = 'fa-solid fa-volume-high text-lg';
+            } else {
+                icon.className = 'fa-solid fa-volume-xmark text-lg';
+            }
+        }
+
+        /* --- NAVIGATION SWITCHING --- */
+        function switchTab(tabId) {
+            playSound('click');
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-white/30', 'bg-yellow-400', 'text-kiwi-900');
+                btn.classList.add('bg-white/10', 'text-white');
+            });
+
+            const activeBtn = document.getElementById(`nav-${tabId}`);
+            if (tabId === 'quiz') {
+                activeBtn.classList.remove('bg-white/10');
+                activeBtn.classList.add('bg-yellow-400', 'text-kiwi-900');
+            } else {
+                activeBtn.classList.remove('bg-white/10');
+                activeBtn.classList.add('bg-white/30');
+            }
+
+            if (tabId === 'skip') {
+                resetSkipAnimation();
+            } else if (tabId === 'grid') {
+                renderTimesTableGrid();
+            } else if (tabId === 'quiz' && !state.quizAnswer) {
+                generateQuizQuestion();
+            }
+        }
+
+        /* --- STREAMING_CHUNK:Writing array rendering logic and dynamic updates... --- */
+        function updateArray() {
+            state.factorA = parseInt(document.getElementById('slider-a').value);
+            state.factorB = parseInt(document.getElementById('slider-b').value);
+
+            document.getElementById('val-a').innerText = state.factorA;
+            document.getElementById('val-b').innerText = state.factorB;
+
+            const product = state.factorA * state.factorB;
+            document.getElementById('math-equation').innerHTML = `${state.factorA} × ${state.factorB} = <span class="text-pohutukawa">${product}</span>`;
+            document.getElementById('math-groups-desc').innerText = `${state.factorA} group${state.factorA > 1 ? 's' : ''} of ${state.factorB}`;
+
+            // Build repeated addition string
+            let additionParts = Array(state.factorA).fill(state.factorB).join(' + ');
+            document.getElementById('math-repeated-addition').innerText = `${additionParts} = ${product}`;
+
+            renderVisualContainer();
+        }
+
+        function setIcon(selectedIcon) {
+            playSound('click');
+            state.icon = selectedIcon;
+            document.querySelectorAll('.icon-opt').forEach(btn => {
+                btn.classList.remove('bg-kiwi-50', 'border-kiwi-500');
+                btn.classList.add('bg-slate-100', 'border-transparent');
+                if (btn.innerText === selectedIcon) {
+                    btn.classList.add('bg-kiwi-50', 'border-kiwi-500');
+                    btn.classList.remove('bg-slate-100', 'border-transparent');
+                }
+            });
+            renderVisualContainer();
+        }
+
+        function setArrayMode(mode) {
+            playSound('click');
+            state.mode = mode;
+            const btnArray = document.getElementById('mode-array');
+            const btnGroups = document.getElementById('mode-groups');
+
+            if (mode === 'array') {
+                btnArray.className = 'bg-kiwi-600 text-white text-sm font-bold py-2 px-3 rounded-xl shadow transition';
+                btnGroups.className = 'bg-white text-slate-700 border text-sm font-bold py-2 px-3 rounded-xl hover:bg-slate-100 transition';
+            } else {
+                btnGroups.className = 'bg-kiwi-600 text-white text-sm font-bold py-2 px-3 rounded-xl shadow transition';
+                btnArray.className = 'bg-white text-slate-700 border text-sm font-bold py-2 px-3 rounded-xl hover:bg-slate-100 transition';
+            }
+            renderVisualContainer();
+        }
+
+        function renderVisualContainer() {
+            const container = document.getElementById('array-visual-container');
+            container.innerHTML = '';
+
+            if (state.mode === 'array') {
+                // Grid layout
+                const gridDiv = document.createElement('div');
+                gridDiv.className = 'grid gap-3 justify-center items-center';
+                gridDiv.style.gridTemplateColumns = `repeat(${state.factorB}, minmax(0, 1fr))`;
+
+                for (let r = 0; r < state.factorA; r++) {
+                    for (let c = 0; c < state.factorB; c++) {
+                        const item = document.createElement('div');
+                        item.className = 'w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-2xl border-2 border-kiwi-200 flex items-center justify-center text-2xl sm:text-3xl shadow-sm item-pop hover:scale-110 transition cursor-pointer';
+                        item.innerText = state.icon;
+                        item.title = `Row ${r + 1}, Column ${c + 1}`;
+                        item.onclick = () => playSound('click');
+                        gridDiv.appendChild(item);
+                    }
+                }
+                container.appendChild(gridDiv);
+            } else {
+                // Groups layout
+                const flexDiv = document.createElement('div');
+                flexDiv.className = 'flex flex-wrap gap-4 justify-center items-center';
+
+                for (let g = 0; g < state.factorA; g++) {
+                    const groupCard = document.createElement('div');
+                    groupCard.className = 'bg-white p-3 rounded-2xl border-2 border-kiwi-400 shadow-md text-center item-pop';
+
+                    const groupTitle = document.createElement('div');
+                    groupTitle.className = 'text-xs font-bold text-kiwi-800 uppercase mb-2';
+                    groupTitle.innerText = `Group ${g + 1}`;
+                    groupCard.appendChild(groupTitle);
+
+                    const itemsGrid = document.createElement('div');
+                    itemsGrid.className = 'flex flex-wrap gap-1 max-w-[140px] justify-center';
+
+                    for (let i = 0; i < state.factorB; i++) {
+                        const item = document.createElement('span');
+                        item.className = 'text-2xl sm:text-3xl hover:scale-125 transition cursor-pointer';
+                        item.innerText = state.icon;
+                        item.onclick = () => playSound('click');
+                        itemsGrid.appendChild(item);
+                    }
+                    groupCard.appendChild(itemsGrid);
+                    flexDiv.appendChild(groupCard);
+                }
+                container.appendChild(flexDiv);
+            }
+        }
+
+        function speakEquation() {
+            playSound('click');
+            if ('speechSynthesis' in window) {
+                const text = `${state.factorA} times ${state.factorB} equals ${state.factorA * state.factorB}. That is ${state.factorA} groups of ${state.factorB}.`;
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.rate = 0.9;
+                utterance.pitch = 1.1;
+                window.speechSynthesis.speak(utterance);
+            } else {
+                alert(`How we read it: ${state.factorA} × ${state.factorB} = ${state.factorA * state.factorB}`);
+            }
+        }
+
+        /* --- STREAMING_CHUNK:Writing number line animation script... --- */
+        let animationInterval = null;
+
+        function resetSkipAnimation() {
+            clearInterval(animationInterval);
+            const step = parseInt(document.getElementById('skip-step').value);
+            const count = parseInt(document.getElementById('skip-count').value);
+            const total = step * count;
+
+            document.getElementById('skip-math-display').innerText = `${count} hops of ${step} = ${total} (${count} × ${step} = ${total})`;
+
+            const container = document.getElementById('number-line-ticks');
+            container.innerHTML = '';
+
+            const maxTick = Math.max(total + 2, 12);
+            
+            // Build Tick marks
+            const tickWrapper = document.createElement('div');
+            tickWrapper.className = 'flex justify-between items-center w-full relative pt-12';
+
+            for (let i = 0; i <= maxTick; i++) {
+                const tick = document.createElement('div');
+                tick.className = 'flex flex-col items-center relative';
+                tick.style.width = `${100 / (maxTick + 1)}%`;
+
+                const isTarget = i > 0 && i % step === 0 && i <= total;
+
+                tick.innerHTML = `
+                    <div class="h-4 w-0.5 ${isTarget ? 'bg-kiwi-600 h-6' : 'bg-slate-400'}"></div>
+                    <span class="text-xs sm:text-sm font-bold mt-1 ${isTarget ? 'text-kiwi-700 font-extrabold text-base' : 'text-slate-500'}">${i}</span>
+                `;
+                tickWrapper.appendChild(tick);
+            }
+            container.appendChild(tickWrapper);
+
+            // Add Kiwi Bird Mascot
+            const kiwi = document.createElement('div');
+            kiwi.id = 'kiwi-mascot';
+            kiwi.className = 'absolute top-0 text-3xl transition-all duration-300 transform -translate-x-1/2';
+            kiwi.style.left = `0%`;
+            kiwi.innerText = '🥝';
+            container.appendChild(kiwi);
+
+            // Sequence Badges
+            const seqContainer = document.getElementById('skip-sequence-badges');
+            seqContainer.innerHTML = '';
+            for (let h = 1; h <= count; h++) {
+                const val = h * step;
+                const badge = document.createElement('span');
+                badge.className = 'bg-kiwi-100 text-kiwi-800 font-extrabold px-3 py-1.5 rounded-xl text-sm border border-kiwi-300';
+                badge.innerText = `${h} × ${step} = ${val}`;
+                seqContainer.appendChild(badge);
+            }
+        }
+
+        function startSkipAnimation() {
+            resetSkipAnimation();
+            const step = parseInt(document.getElementById('skip-step').value);
+            const count = parseInt(document.getElementById('skip-count').value);
+            const total = step * count;
+            const maxTick = Math.max(total + 2, 12);
+
+            let currentHop = 0;
+            const kiwi = document.getElementById('kiwi-mascot');
+
+            animationInterval = setInterval(() => {
+                currentHop++;
+                const currentVal = currentHop * step;
+                const percent = (currentVal / (maxTick + 1)) * 100;
+
+                playSound('hop');
+                kiwi.style.left = `${percent}%`;
+
+                if (currentHop >= count) {
+                    clearInterval(animationInterval);
+                    setTimeout(() => {
+                        playSound('correct');
+                        confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
+                    }, 400);
+                }
+            }, 600);
+        }
+
+        /* --- STREAMING_CHUNK:Constructing NZ strategy display scripts... --- */
+        const strategyData = {
+            1: {
+                title: '1. Repeated Addition',
+                desc: 'When you multiply, you are adding the same number over and over again!',
+                example: '3 × 5 means adding 5 three times:',
+                steps: ['5 + 5 = 10', '10 + 5 = 15', 'So, 3 × 5 = 15!'],
+                tip: '💡 Tip: Skip count in your head: 5, 10, 15!'
+            },
+            2: {
+                title: '2. Arrays and Grids',
+                desc: 'An array arranges items into neat rows and columns so they are easy to count.',
+                example: '4 rows of 3 stars:',
+                steps: ['Row 1: ⭐ ⭐ ⭐ (3)', 'Row 2: ⭐ ⭐ ⭐ (3)', 'Row 3: ⭐ ⭐ ⭐ (3)', 'Row 4: ⭐ ⭐ ⭐ (3)', 'Total = 12 stars!'],
+                tip: '💡 Tip: You can turn arrays sideways! 4 × 3 is the same as 3 × 4.'
+            },
+            3: {
+                title: '3. Doubling and Halving Strategy',
+                desc: 'If a calculation looks tricky, double one number and halve the other!',
+                example: 'To solve 4 × 6:',
+                steps: ['Halve 4 to get 2', 'Double 6 to get 12', 'Now solve 2 × 12 = 24!'],
+                tip: '💡 Tip: Great for multiplying by 4 or 8!'
+            },
+            4: {
+                title: '4. Split / Area Model (Grid Strategy)',
+                desc: 'Break bigger numbers into tens and ones (place value) then multiply the parts!',
+                example: 'To solve 14 × 3:',
+                steps: ['Split 14 into (10 + 4)', 'Multiply 10 × 3 = 30', 'Multiply 4 × 3 = 12', 'Add them together: 30 + 12 = 42!'],
+                tip: '💡 Tip: Essential strategy for Year 5 & 6 multi-digit multiplication!'
+            },
+            5: {
+                title: '5. Standard Vertical Algorithm (列竖式计算)',
+                desc: 'The classic column method! Align numbers by place value (Ones, Tens, Hundreds, Thousands). Multiply digit by digit from right to left, keep track of carries, and sum the partial products.',
+                example: 'Detailed Number-by-Number Breakdown for 9999 × 9999:',
+                steps: [
+                    'Step 1: Align digits vertically into place value columns (Ones, Tens, Hundreds, Thousands).',
+                    'Step 2: Multiply multiplicand digit by digit by the multiplier’s ones digit (9 × 9999).',
+                    'Step 3: Multiply multiplicand digit by digit by the tens digit (90 × 9999), shifting 1 position left.',
+                    'Step 4: Repeat for hundreds (900 × 9999) and thousands (9000 × 9999) digits.',
+                    'Step 5: Add all partial rows column by column with carry addition to get 99,980,001!'
+                ],
+                tip: '💡 Tip: Use the Interactive Column Calculator below to watch every single multiplication and carry step in real time!'
+            }
+        };
+
+        let currentVertStepIndex = 0;
+        let generatedVertSteps = [];
+        let vertAutoPlayInterval = null;
+
+        function generateVertSteps(n1, n2) {
+            const str1 = n1.toString();
+            const str2 = n2.toString();
+            const len1 = str1.length;
+            const len2 = str2.length;
+            const steps = [];
+
+            // Step 0: Initial Setup
+            steps.push({
+                type: 'setup',
+                title: 'Step 1: Place Value Alignment',
+                desc: `Align ${n1.toLocaleString()} and ${n2.toLocaleString()} by their place values (Ones, Tens, Hundreds, Thousands).`,
+                activeMultiplicandIdx: -1,
+                activeMultiplierIdx: -1,
+                activeCarries: {},
+                partialRows: Array(len2).fill(''),
+                phase: 'mult',
+                sumCarries: {},
+                sumDigits: ''
+            });
+
+            const partialRowStrings = Array(len2).fill('');
+
+            // Multiplier digits loop (right to left)
+            for (let j = 0; j < len2; j++) {
+                const multDigit = parseInt(str2[len2 - 1 - j]);
+                let carry = 0;
+                let currentCarries = {};
+                let currentPartialStr = '';
+
+                for (let i = 0; i < len1; i++) {
+                    delete currentCarries[i];
+                    const topDigit = parseInt(str1[len1 - 1 - i]);
+                    const rawProd = topDigit * multDigit;
+                    const prod = rawProd + carry;
+                    const writeDigit = prod % 10;
+                    const newCarry = Math.floor(prod / 10);
+
+                    const places = ['Ones', 'Tens', 'Hundreds', 'Thousands', 'Ten-Thousands', 'Hundred-Thousands', 'Millions'];
+                    const topPlace = places[i] || `10^${i}`;
+                    const multPlace = places[j] || `10^${j}`;
+                    const targetPos = i + j;
+                    const targetPlace = places[targetPos] || `10^${targetPos}`;
+
+                    let desc = `Multiply ${topDigit} (${topPlace}) × ${multDigit} (${multPlace}) = ${rawProd}`;
+                    if (carry > 0) {
+                        desc += ` + previous carry (${carry}) = ${prod}`;
+                    }
+                    desc += `. Write ${writeDigit} in the ${targetPlace} column`;
+                    if (newCarry > 0) {
+                        desc += `, carry ${newCarry} to next column!`;
+                        currentCarries[i + 1] = newCarry;
+                    } else {
+                        delete currentCarries[i + 1];
+                    }
+
+                    currentPartialStr = writeDigit.toString() + currentPartialStr;
+
+                    const rowsCopy = [...partialRowStrings];
+                    rowsCopy[j] = currentPartialStr + '0'.repeat(j);
+
+                    steps.push({
+                        type: 'mult_digit',
+                        title: `Row ${j + 1} (${multPlace} digit '${multDigit}'): ${topDigit} × ${multDigit}`,
+                        desc: desc,
+                        activeMultiplicandIdx: len1 - 1 - i,
+                        activeMultiplierIdx: len2 - 1 - j,
+                        activeCarries: { ...currentCarries },
+                        activeCol: targetPos,
+                        partialRows: rowsCopy,
+                        phase: 'mult',
+                        sumCarries: {},
+                        sumDigits: ''
+                    });
+
+                    carry = newCarry;
+                }
+
+                if (carry > 0) {
+                    const places = ['Ones', 'Tens', 'Hundreds', 'Thousands', 'Ten-Thousands', 'Hundred-Thousands', 'Millions'];
+                    const targetPos = len1 + j;
+                    const targetPlace = places[targetPos] || `10^${targetPos}`;
+                    currentPartialStr = carry.toString() + currentPartialStr;
+
+                    const rowsCopy = [...partialRowStrings];
+                    rowsCopy[j] = currentPartialStr + '0'.repeat(j);
+
+                    steps.push({
+                        type: 'mult_row_carry',
+                        title: `Row ${j + 1}: Final Row Carry (${carry})`,
+                        desc: `Write remaining carry ${carry} into the ${targetPlace} column.`,
+                        activeMultiplicandIdx: -1,
+                        activeMultiplierIdx: len2 - 1 - j,
+                        activeCarries: {},
+                        activeCol: targetPos,
+                        partialRows: rowsCopy,
+                        phase: 'mult',
+                        sumCarries: {},
+                        sumDigits: ''
+                    });
+                }
+
+                partialRowStrings[j] = currentPartialStr + '0'.repeat(j);
+
+                if (len2 > 1) {
+                    steps.push({
+                        type: 'mult_row_complete',
+                        title: `Row ${j + 1} Complete`,
+                        desc: `Row ${j + 1} partial product: ${parseInt(partialRowStrings[j]).toLocaleString()}.`,
+                        activeMultiplicandIdx: -1,
+                        activeMultiplierIdx: len2 - 1 - j,
+                        activeCarries: {},
+                        partialRows: [...partialRowStrings],
+                        phase: 'mult',
+                        sumCarries: {},
+                        sumDigits: ''
+                    });
+                }
+            }
+
+            // Column Addition Phase (if len2 > 1)
+            if (len2 > 1) {
+                steps.push({
+                    type: 'add_start',
+                    title: 'Addition Phase: Add All Partial Rows',
+                    desc: 'Now add all partial product rows together column by column from right to left.',
+                    activeMultiplicandIdx: -1,
+                    activeMultiplierIdx: -1,
+                    activeCarries: {},
+                    partialRows: [...partialRowStrings],
+                    phase: 'add',
+                    sumCarries: {},
+                    sumDigits: ''
+                });
+
+                const totalProduct = n1 * n2;
+                const totalStr = totalProduct.toString();
+                const maxCols = totalStr.length;
+
+                let addCarry = 0;
+                let builtSumDigits = '';
+                let currentSumCarries = {};
+
+                for (let col = 0; col < maxCols; col++) {
+                    let colDigits = [];
+                    let colSum = addCarry;
+
+                    partialRowStrings.forEach((rStr) => {
+                        if (rStr.length > col) {
+                            const digit = parseInt(rStr[rStr.length - 1 - col]);
+                            colDigits.push(digit);
+                            colSum += digit;
+                        }
+                    });
+
+                    const writeSumDigit = colSum % 10;
+                    const newAddCarry = Math.floor(colSum / 10);
+
+                    builtSumDigits = writeSumDigit.toString() + builtSumDigits;
+
+                    const places = ['Ones', 'Tens', 'Hundreds', 'Thousands', 'Ten-Thousands', 'Hundred-Thousands', 'Millions', 'Ten-Millions'];
+                    const colPlace = places[col] || `10^${col}`;
+
+                    let addDesc = `Add ${colPlace} column: ${colDigits.join(' + ')}`;
+                    if (addCarry > 0) addDesc += ` + carry (${addCarry})`;
+                    addDesc += ` = ${colSum}. Write ${writeSumDigit} in ${colPlace}`;
+                    if (newAddCarry > 0) {
+                        addDesc += `, carry ${newAddCarry} to next column!`;
+                        currentSumCarries[col + 1] = newAddCarry;
+                    } else {
+                        delete currentSumCarries[col + 1];
+                    }
+
+                    steps.push({
+                        type: 'add_col',
+                        title: `Adding ${colPlace} Column`,
+                        desc: addDesc,
+                        activeMultiplicandIdx: -1,
+                        activeMultiplierIdx: -1,
+                        activeCarries: {},
+                        activeCol: col,
+                        partialRows: [...partialRowStrings],
+                        phase: 'add',
+                        sumCarries: { ...currentSumCarries },
+                        sumDigits: builtSumDigits
+                    });
+
+                    addCarry = newAddCarry;
+                }
+            }
+
+            steps.push({
+                type: 'complete',
+                title: '🎉 Calculation Complete!',
+                desc: `Final Result: ${n1.toLocaleString()} × ${n2.toLocaleString()} = ${(n1 * n2).toLocaleString()}! Excellent mahi!`,
+                activeMultiplicandIdx: -1,
+                activeMultiplierIdx: -1,
+                activeCarries: {},
+                partialRows: [...partialRowStrings],
+                phase: 'complete',
+                sumCarries: {},
+                sumDigits: (n1 * n2).toString()
+            });
+
+            return steps;
+        }
+
+        function showStrategy(id) {
+            playSound('click');
+            document.querySelectorAll('.strat-tab').forEach((tab, index) => {
+                if (index + 1 === id) {
+                    tab.classList.add('border-kiwi-500', 'bg-kiwi-50');
+                    tab.classList.remove('border-transparent', 'bg-slate-50');
+                } else {
+                    tab.classList.remove('border-kiwi-500', 'bg-kiwi-50');
+                    tab.classList.add('border-transparent', 'bg-slate-50');
+                }
+            });
+
+            const data = strategyData[id];
+            const box = document.getElementById('strategy-display-box');
+            box.innerHTML = `
+                <h4 class="text-xl font-bold text-kiwi-900 mb-2">${data.title}</h4>
+                <p class="text-slate-700 text-sm mb-4">${data.desc}</p>
+                <div class="bg-white p-4 rounded-xl border border-kiwi-200 mb-4 shadow-sm">
+                    <span class="text-xs uppercase font-extrabold text-kiwi-700 block mb-1">Example Walkthrough:</span>
+                    <p class="font-bold text-slate-800 text-base mb-2">${data.example}</p>
+                    <ul class="list-disc list-inside text-sm text-slate-600 space-y-1">
+                        ${data.steps.map(s => `<li class="font-semibold">${s}</li>`).join('')}
+                    </ul>
+                </div>
+                ${id === 5 ? `
+                <div class="mt-6 p-5 bg-slate-900 text-white rounded-3xl border-2 border-emerald-500/50 shadow-2xl">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4 border-b border-slate-800 pb-3">
+                        <h5 class="font-extrabold text-emerald-400 text-lg flex items-center gap-2">
+                            <i class="fa-solid fa-calculator text-yellow-400"></i> Detailed Vertical Column Calculator (列竖式逐位计算)
+                        </h5>
+                        <span class="text-xs bg-emerald-950 text-emerald-300 font-bold px-3 py-1 rounded-full border border-emerald-700">Up to 9999 × 9999</span>
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-3 mb-6 bg-slate-800/80 p-3 rounded-2xl border border-slate-700">
+                        <label class="text-xs font-bold text-slate-300">Multiplicand:</label>
+                        <input type="number" id="vert-num1" min="1" max="9999" value="9999" onchange="resetVertSim()" class="w-24 p-2 text-center font-extrabold text-slate-900 text-lg rounded-xl border-2 border-emerald-400 bg-white">
+                        <span class="font-black text-xl text-yellow-400">×</span>
+                        <label class="text-xs font-bold text-slate-300">Multiplier:</label>
+                        <input type="number" id="vert-num2" min="1" max="9999" value="9999" onchange="resetVertSim()" class="w-24 p-2 text-center font-extrabold text-slate-900 text-lg rounded-xl border-2 border-emerald-400 bg-white">
+                        
+                        <button onclick="resetVertSim()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2 rounded-xl btn-bounce shadow text-xs">
+                            <i class="fa-solid fa-rotate-left"></i> Reset
+                        </button>
+                    </div>
+
+                    <div id="vertical-sim-output" class="bg-slate-950 p-4 sm:p-6 rounded-2xl border border-slate-800 shadow-inner">
+                        <!-- Dynamic Aligned Column Matrix Injected -->
+                    </div>
+                </div>
+                ` : ''}
+                <div class="text-xs font-bold text-kiwi-800 bg-yellow-100 p-3 rounded-xl border border-yellow-300 mt-4">
+                    ${data.tip}
+                </div>
+            `;
+
+            if (id === 5) {
+                resetVertSim();
+            }
+        }
+
+        function stopVertAutoPlay() {
+            if (vertAutoPlayInterval) {
+                clearInterval(vertAutoPlayInterval);
+                vertAutoPlayInterval = null;
+            }
+        }
+
+        function resetVertSim() {
+            playSound('click');
+            stopVertAutoPlay();
+
+            const num1Input = document.getElementById('vert-num1');
+            const num2Input = document.getElementById('vert-num2');
+            if (!num1Input || !num2Input) return;
+
+            const n1 = Math.min(9999, Math.max(1, parseInt(num1Input.value) || 9999));
+            const n2 = Math.min(9999, Math.max(1, parseInt(num2Input.value) || 9999));
+
+            num1Input.value = n1;
+            num2Input.value = n2;
+
+            generatedVertSteps = generateVertSteps(n1, n2);
+            currentVertStepIndex = 0;
+            renderVertStep();
+        }
+
+        function renderVertStep() {
+            const num1Input = document.getElementById('vert-num1');
+            const num2Input = document.getElementById('vert-num2');
+            if (!num1Input || !num2Input) return;
+
+            const n1 = parseInt(num1Input.value);
+            const n2 = parseInt(num2Input.value);
+            const str1 = n1.toString();
+            const str2 = n2.toString();
+            const len1 = str1.length;
+            const len2 = str2.length;
+
+            const step = generatedVertSteps[currentVertStepIndex] || generatedVertSteps[0];
+            const output = document.getElementById('vertical-sim-output');
+
+            // 9 Place Value Columns: Op, 10M, 1M, 100k, 10k, 1k, 100, 10, 1
+            const colHeaders = ['Op', '10M', '1M', '100k', '10k', '1k', '100', '10', '1'];
+
+            // Function to render a single row in aligned columns
+            function makeAlignedRow(operator, strVal, highlightIdx = -1, isMultiplicand = false, isMultiplier = false, isSumRow = false) {
+                const totalCols = 9;
+                const paddedStr = strVal ? strVal.padStart(8, ' ') : '        ';
+                let cellsHtml = `<div class="w-6 sm:w-8 font-black text-yellow-400 text-center">${operator || '&nbsp;'}</div>`;
+
+                for (let c = 0; c < 8; c++) {
+                    const char = paddedStr[c];
+                    const digitPosFromRight = 7 - c; // 0 = ones, 1 = tens...
+
+                    let cellBg = 'text-white';
+                    let isHighlighted = false;
+
+                    if (isMultiplicand && highlightIdx !== -1) {
+                        const digitPosInStr1 = len1 - 1 - digitPosFromRight;
+                        if (digitPosInStr1 === highlightIdx) {
+                            cellBg = 'bg-yellow-400 text-slate-900 font-black scale-110 shadow-lg ring-2 ring-yellow-300';
+                            isHighlighted = true;
+                        }
+                    } else if (isMultiplier && highlightIdx !== -1) {
+                        const digitPosInStr2 = len2 - 1 - digitPosFromRight;
+                        if (digitPosInStr2 === highlightIdx) {
+                            cellBg = 'bg-yellow-400 text-slate-900 font-black scale-110 shadow-lg ring-2 ring-yellow-300';
+                            isHighlighted = true;
+                        }
+                    }
+
+                    if (isSumRow && step.phase === 'add' && step.activeCol === digitPosFromRight) {
+                        cellBg = 'bg-emerald-400 text-slate-950 font-black ring-2 ring-emerald-300';
+                    }
+
+                    cellsHtml += `
+                        <div class="w-6 sm:w-8 h-8 sm:h-9 flex items-center justify-center rounded-lg text-sm sm:text-lg font-mono transition-all ${cellBg} ${char === ' ' ? 'opacity-20' : 'font-bold'}">
+                            ${char === ' ' ? '·' : char}
+                        </div>
+                    `;
+                }
+                return `<div class="flex items-center justify-center gap-1">${cellsHtml}</div>`;
+            }
+
+            // Carry row builder
+            function makeCarryRow(carriesMap) {
+                let cellsHtml = `<div class="w-6 sm:w-8 text-center text-xs font-bold text-slate-600">C</div>`;
+                for (let c = 0; c < 8; c++) {
+                    const posFromRight = 7 - c;
+                    const val = carriesMap[posFromRight];
+                    if (val !== undefined && val > 0) {
+                        cellsHtml += `
+                            <div class="w-6 sm:w-8 h-6 flex items-center justify-center rounded bg-amber-500/30 text-amber-300 font-black text-xs sm:text-sm border border-amber-400/50">
+                                ${val}
+                            </div>
+                        `;
+                    } else {
+                        cellsHtml += `<div class="w-6 sm:w-8 h-6 flex items-center justify-center text-slate-700 text-xs">·</div>`;
+                    }
+                }
+                return `<div class="flex items-center justify-center gap-1 h-6">${cellsHtml}</div>`;
+            }
+
+            let html = `
+                <!-- Place Value Column Headers -->
+                <div class="flex items-center justify-center gap-1 mb-1 pb-1 border-b border-slate-800 text-[10px] sm:text-xs font-bold text-emerald-400/70">
+                    <div class="w-6 sm:w-8 text-center">Pos</div>
+                    ${colHeaders.slice(1).map(h => `<div class="w-6 sm:w-8 text-center">${h}</div>`).join('')}
+                </div>
+
+                <!-- Carry Row (Multiplication or Addition Carries) -->
+                ${makeCarryRow(step.phase === 'add' ? step.sumCarries : step.activeCarries)}
+
+                <!-- Multiplicand (Top) Row -->
+                ${makeAlignedRow('', str1, step.activeMultiplicandIdx, true, false)}
+
+                <!-- Multiplier (Bottom) Row -->
+                ${makeAlignedRow('×', str2, step.activeMultiplierIdx, false, true)}
+
+                <!-- Separator Line -->
+                <div class="my-2 border-b-2 border-emerald-500/60 w-full max-w-[340px] mx-auto"></div>
+
+                <!-- Partial Product Rows -->
+                <div class="space-y-1">
+            `;
+
+            for (let r = 0; r < len2; r++) {
+                const rStr = step.partialRows[r] || '';
+                const isCurrentRowActive = (step.activeMultiplierIdx === len2 - 1 - r);
+                html += makeAlignedRow(
+                    len2 > 1 ? `r${r + 1}` : '',
+                    rStr,
+                    -1,
+                    false,
+                    false
+                );
+            }
+
+            // Addition line & sum row
+            if (len2 > 1) {
+                html += `
+                    <div class="my-2 border-b-2 border-emerald-400 w-full max-w-[340px] mx-auto"></div>
+                    ${makeAlignedRow('+', step.sumDigits, -1, false, false, true)}
+                `;
+            }
+
+            html += `
+                </div>
+
+                <!-- Explanation Box & Controls -->
+                <div class="mt-6 pt-4 border-t border-slate-800 text-center">
+                    <div class="inline-flex items-center gap-2 bg-emerald-950/80 text-emerald-300 border border-emerald-700/60 font-extrabold text-xs px-3 py-1 rounded-full mb-2">
+                        <span>Step ${currentVertStepIndex + 1} of ${generatedVertSteps.length}</span>
+                        <span>•</span>
+                        <span>${step.title}</span>
+                    </div>
+
+                    <p class="text-sm sm:text-base font-bold text-white max-w-md mx-auto leading-relaxed my-2 min-h-[48px] flex items-center justify-center">
+                        ${step.desc}
+                    </p>
+
+                    <!-- Control Panel -->
+                    <div class="mt-4 flex flex-wrap justify-center items-center gap-2">
+                        <button onclick="prevVertStep()" ${currentVertStepIndex === 0 ? 'disabled' : ''} class="bg-slate-800 hover:bg-slate-700 disabled:opacity-30 text-white font-bold px-3 py-2 rounded-xl text-xs transition btn-bounce border border-slate-700">
+                            ⬅️ Prev
+                        </button>
+                        
+                        <button onclick="toggleVertAutoPlay()" class="bg-yellow-400 hover:bg-yellow-300 text-slate-950 font-extrabold px-4 py-2 rounded-xl text-xs transition btn-bounce shadow flex items-center gap-1.5">
+                            ${vertAutoPlayInterval ? '<i class="fa-solid fa-pause"></i> Pause' : '<i class="fa-solid fa-play"></i> Auto-Play'}
+                        </button>
+
+                        <button onclick="nextVertStep()" ${currentVertStepIndex >= generatedVertSteps.length - 1 ? 'disabled' : ''} class="bg-emerald-600 hover:bg-emerald-500 disabled:opacity-30 text-white font-bold px-4 py-2 rounded-xl text-xs transition btn-bounce shadow">
+                            Next ➡️
+                        </button>
+
+                        <button onclick="showAllVertSteps()" class="bg-slate-800 hover:bg-slate-700 text-emerald-400 font-bold px-3 py-2 rounded-xl text-xs transition btn-bounce border border-slate-700">
+                            🏁 Full Result
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            output.innerHTML = html;
+        }
+
+        function prevVertStep() {
+            playSound('click');
+            stopVertAutoPlay();
+            if (currentVertStepIndex > 0) {
+                currentVertStepIndex--;
+                renderVertStep();
+            }
+        }
+
+        function nextVertStep() {
+            playSound('click');
+            if (currentVertStepIndex < generatedVertSteps.length - 1) {
+                currentVertStepIndex++;
+                renderVertStep();
+                if (currentVertStepIndex === generatedVertSteps.length - 1) {
+                    stopVertAutoPlay();
+                    playSound('correct');
+                    confetti({ particleCount: 50, spread: 70, origin: { y: 0.7 } });
+                }
+            } else {
+                stopVertAutoPlay();
+            }
+        }
+
+        function toggleVertAutoPlay() {
+            playSound('click');
+            if (vertAutoPlayInterval) {
+                stopVertAutoPlay();
+                renderVertStep();
+            } else {
+                if (currentVertStepIndex >= generatedVertSteps.length - 1) {
+                    currentVertStepIndex = 0;
+                }
+                vertAutoPlayInterval = setInterval(() => {
+                    if (currentVertStepIndex < generatedVertSteps.length - 1) {
+                        currentVertStepIndex++;
+                        renderVertStep();
+                        playSound('hop');
+                    } else {
+                        stopVertAutoPlay();
+                        playSound('correct');
+                        confetti({ particleCount: 60, spread: 80, origin: { y: 0.7 } });
+                    }
+                }, 1300);
+                renderVertStep();
+            }
+        }
+
+        function showAllVertSteps() {
+            playSound('correct');
+            stopVertAutoPlay();
+            currentVertStepIndex = generatedVertSteps.length - 1;
+            renderVertStep();
+            confetti({ particleCount: 60, spread: 80, origin: { y: 0.7 } });
+        }
+
+        /* --- STREAMING_CHUNK:Implementing Interactive Times Table Matrix Generator... --- */
+        function renderTimesTableGrid() {
+            const grid = document.getElementById('times-table-grid');
+            grid.innerHTML = '';
+            grid.style.gridTemplateColumns = `repeat(13, minmax(0, 1fr))`;
+
+            // Top-left header empty
+            const headerCorner = document.createElement('div');
+            headerCorner.className = 'p-2 font-bold text-center bg-kiwi-600 text-white rounded-lg text-xs';
+            headerCorner.innerText = '×';
+            grid.appendChild(headerCorner);
+
+            // Column Headers 1-12
+            for (let c = 1; c <= 12; c++) {
+                const colHead = document.createElement('div');
+                colHead.className = 'p-2 font-bold text-center bg-kiwi-100 text-kiwi-900 rounded-lg text-xs col-head-' + c;
+                colHead.innerText = c;
+                grid.appendChild(colHead);
+            }
+
+            // Grid Rows
+            for (let r = 1; r <= 12; r++) {
+                // Row Header
+                const rowHead = document.createElement('div');
+                rowHead.className = 'p-2 font-bold text-center bg-kiwi-100 text-kiwi-900 rounded-lg text-xs row-head-' + r;
+                rowHead.innerText = r;
+                grid.appendChild(rowHead);
+
+                // Cells
+                for (let c = 1; c <= 12; c++) {
+                    const prod = r * c;
+                    const cell = document.createElement('button');
+                    cell.className = `p-2 font-bold text-center rounded-lg text-xs transition border border-transparent hover:border-kiwi-500 hover:scale-110 ${r === c ? 'bg-yellow-100 text-yellow-900' : 'bg-white text-slate-700'}`;
+                    cell.innerText = prod;
+
+                    cell.onmouseenter = () => {
+                        document.getElementById('grid-hover-info').innerText = `${r} × ${c} = ${prod}`;
+                    };
+
+                    cell.onclick = () => {
+                        playSound('click');
+                        document.getElementById('grid-hover-info').innerText = `${r} × ${c} = ${prod}`;
+                        if ('speechSynthesis' in window) {
+                            const speech = new SpeechSynthesisUtterance(`${r} times ${c} is ${prod}`);
+                            window.speechSynthesis.speak(speech);
+                        }
+                    };
+
+                    grid.appendChild(cell);
+                }
+            }
+        }
+
+        /* --- STREAMING_CHUNK:Implementing quiz game logic and achievement system... --- */
+        function setQuizLevel(level) {
+            playSound('click');
+            state.quizLevel = level;
+            document.querySelectorAll('.lvl-btn').forEach(btn => {
+                btn.className = 'lvl-btn bg-slate-100 text-slate-700 font-bold text-xs uppercase px-4 py-2 rounded-full hover:bg-slate-200';
+            });
+            const activeBtn = document.getElementById(`lvl-${level}`);
+            activeBtn.className = 'lvl-btn bg-kiwi-600 text-white font-bold text-xs uppercase px-4 py-2 rounded-full shadow';
+
+            state.quizCurrentQ = 1;
+            state.quizScore = 0;
+            state.quizStreak = 0;
+            updateQuizHeader();
+            generateQuizQuestion();
+        }
+
+        function updateQuizHeader() {
+            document.getElementById('quiz-score').innerText = state.quizScore;
+            document.getElementById('quiz-streak').innerText = `🔥 ${state.quizStreak}`;
+            document.getElementById('question-number-tag').innerText = `Question ${state.quizCurrentQ} of ${state.quizTotalQ}`;
+        }
+
+        function generateQuizQuestion() {
+            let factorPool = [];
+            if (state.quizLevel === 'easy') {
+                factorPool = [1, 2, 5, 10];
+            } else if (state.quizLevel === 'medium') {
+                factorPool = [3, 4, 6, 7, 8, 9];
+            } else {
+                factorPool = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+            }
+
+            const a = factorPool[Math.floor(Math.random() * factorPool.length)];
+            const b = Math.floor(Math.random() * 10) + 1;
+            const correctAns = a * b;
+
+            state.quizAnswer = { a, b, correctAns };
+
+            document.getElementById('quiz-question').innerText = `${a} × ${b} = ?`;
+            document.getElementById('quiz-feedback').classList.add('hidden');
+            document.getElementById('quiz-hint-box').classList.add('hidden');
+
+            // Generate 4 options
+            const options = new Set([correctAns]);
+            while (options.size < 4) {
+                const offset = (Math.floor(Math.random() * 5) + 1) * (Math.random() > 0.5 ? 1 : -1);
+                const wrong = Math.max(1, correctAns + offset);
+                options.add(wrong);
+            }
+
+            const optsArray = Array.from(options).sort(() => Math.random() - 0.5);
+            const optionsContainer = document.getElementById('quiz-options-container');
+            optionsContainer.innerHTML = '';
+
+            optsArray.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'bg-white hover:bg-kiwi-50 border-2 border-slate-200 hover:border-kiwi-400 font-bold text-xl sm:text-2xl text-slate-800 py-3 rounded-2xl shadow-sm transition btn-bounce';
+                btn.innerText = opt;
+                btn.onclick = () => checkQuizAnswer(opt, btn);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function toggleQuizHint() {
+            playSound('click');
+            const hintBox = document.getElementById('quiz-hint-box');
+            if (hintBox.classList.contains('hidden')) {
+                hintBox.classList.remove('hidden');
+                hintBox.innerHTML = '';
+                const total = state.quizAnswer.a * state.quizAnswer.b;
+                for (let i = 0; i < total; i++) {
+                    const dot = document.createElement('span');
+                    dot.className = 'text-lg';
+                    dot.innerText = '🥝';
+                    hintBox.appendChild(dot);
+                }
+            } else {
+                hintBox.classList.add('hidden');
+            }
+        }
+
+        function checkQuizAnswer(selected, btnElement) {
+            const feedback = document.getElementById('quiz-feedback');
+            feedback.classList.remove('hidden');
+
+            if (selected === state.quizAnswer.correctAns) {
+                playSound('correct');
+                state.quizScore += 10 + state.quizStreak * 2;
+                state.quizStreak += 1;
+                feedback.className = 'mt-6 text-lg font-extrabold py-2 px-4 rounded-xl bg-kiwi-100 text-kiwi-800 border border-kiwi-300';
+                feedback.innerText = '🎉 Ka Pai! (Great Work!) That is Correct!';
+
+                confetti({ particleCount: 30, spread: 50, origin: { y: 0.8 } });
+
+                // Check Badges
+                checkBadgeUnlocks();
+
+                setTimeout(() => {
+                    if (state.quizCurrentQ < state.quizTotalQ) {
+                        state.quizCurrentQ++;
+                        updateQuizHeader();
+                        generateQuizQuestion();
+                    } else {
+                        finishQuizRound();
+                    }
+                }, 1200);
+
+            } else {
+                playSound('wrong');
+                state.quizStreak = 0;
+                feedback.className = 'mt-6 text-lg font-extrabold py-2 px-4 rounded-xl bg-red-100 text-red-800 border border-red-300';
+                feedback.innerText = `Kia Kaha! Try again. ${state.quizAnswer.a} × ${state.quizAnswer.b} = ${state.quizAnswer.correctAns}`;
+                updateQuizHeader();
+            }
+        }
+
+        function checkBadgeUnlocks() {
+            if (state.quizScore >= 10 && !state.badges[0]) unlockBadge(1);
+            if (state.quizScore >= 30 && !state.badges[1]) unlockBadge(2);
+            if (state.quizScore >= 60 && !state.badges[2]) unlockBadge(3);
+            if (state.quizScore >= 100 && !state.badges[3]) unlockBadge(4);
+        }
+
+        function unlockBadge(id) {
+            state.badges[id - 1] = true;
+            const badgeEl = document.getElementById(`badge-${id}`);
+            badgeEl.classList.remove('opacity-40', 'grayscale');
+            badgeEl.classList.add('bg-yellow-100', 'border-yellow-400', 'shadow-md', 'item-pop');
+
+            document.getElementById('cert-btn').classList.remove('hidden');
+        }
+
+        function finishQuizRound() {
+            confetti({ particleCount: 100, spread: 80, origin: { y: 0.6 } });
+            const box = document.getElementById('quiz-box');
+            box.innerHTML = `
+                <div class="py-6">
+                    <div class="text-6xl mb-3">🏆</div>
+                    <h3 class="text-3xl font-black text-kiwi-900 font-fredoka">Mahi Complete!</h3>
+                    <p class="text-slate-600 font-bold mt-2">Awesome effort! You scored ${state.quizScore} points!</p>
+                    <div class="mt-6 flex justify-center gap-4">
+                        <button onclick="resetQuizGame()" class="bg-kiwi-600 hover:bg-kiwi-700 text-white font-bold px-6 py-3 rounded-2xl shadow btn-bounce">
+                            Play Again 🔄
+                        </button>
+                        <button onclick="showCertificateModal()" class="bg-yellow-400 hover:bg-yellow-300 text-kiwi-950 font-bold px-6 py-3 rounded-2xl shadow btn-bounce">
+                            Claim Certificate 📜
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function resetQuizGame() {
+            location.reload();
+        }
+
+        function showCertificateModal() {
+            playSound('click');
+            const today = new Date().toLocaleDateString('en-NZ', { year: 'numeric', month: 'long', day: 'numeric' });
+            document.getElementById('cert-date').innerText = today;
+            document.getElementById('cert-modal').classList.remove('hidden');
+        }
+
+        function closeCertificateModal() {
+            playSound('click');
+            document.getElementById('cert-modal').classList.add('hidden');
+        }
+
+        /* --- INITIALIZATION ON LOAD --- */
+        window.onload = function () {
+            updateArray();
+            showStrategy(1);
+        };
+    </script>
+</body>
+</html>
