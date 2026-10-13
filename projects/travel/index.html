@@ -2,529 +2,136 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<title>Brisbane 9.28–10.5 旅行手册</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f5f7fb">
+<title>Perth · 12.12 – 12.16 旅行手册</title>
 <style>
-  :root{
-    --deep-teal:#0d3b3e;
-    --reef-teal:#155e63;
-    --sand:#f5efe1;
-    --coral:#ef6f4f;
-    --sun:#f2b134;
-    --ink:#1c2b2c;
-    --paper:#fffdf8;
-    --line:#d8cfb8;
-  }
-  *{box-sizing:border-box;}
-  body{
-    margin:0;
-    background:var(--sand);
-    color:var(--ink);
-    font-family:"Noto Sans SC","Helvetica Neue",Arial,sans-serif;
-    line-height:1.6;
-  }
-  h1,h2,h3{
-    font-family:"Noto Serif SC",Georgia,serif;
-    margin:0;
-  }
-  .hero{
-    background:linear-gradient(160deg,var(--deep-teal) 0%, var(--reef-teal) 55%, #1d7a72 100%);
-    color:var(--sand);
-    padding:70px 24px 90px;
-    position:relative;
-    overflow:hidden;
-  }
-  .hero::after{
-    content:"";
-    position:absolute;
-    right:-60px;bottom:-80px;
-    width:340px;height:340px;
-    border-radius:50%;
-    background:radial-gradient(circle at 30% 30%, var(--sun) 0%, transparent 70%);
-    opacity:.35;
-  }
-  .hero-inner{max-width:920px;margin:0 auto;position:relative;z-index:1;}
-  .eyebrow{
-    letter-spacing:.28em;
-    text-transform:uppercase;
-    font-size:12px;
-    color:var(--sun);
-    font-weight:600;
-  }
-  .hero h1{
-    font-size:44px;
-    margin:14px 0 6px;
-    color:#fffdf8;
-  }
-  .hero p.sub{
-    font-size:16px;
-    max-width:560px;
-    color:#dce9e6;
-    margin-top:8px;
-  }
-  .hero-stats{
-    display:flex;
-    gap:28px;
-    margin-top:36px;
-    flex-wrap:wrap;
-  }
-  .hero-stats div{border-left:2px solid var(--sun);padding-left:12px;}
-  .hero-stats .num{font-size:22px;font-weight:700;color:#fffdf8;font-family:"Noto Serif SC",serif;}
-  .hero-stats .lab{font-size:12px;color:#c7d9d5;}
-
-  nav.daynav{
-    max-width:920px;
-    margin:-40px auto 0;
-    background:var(--paper);
-    border:1px solid var(--line);
-    border-radius:14px;
-    padding:14px 18px;
-    display:flex;
-    gap:8px;
-    flex-wrap:wrap;
-    position:relative;
-    z-index:2;
-    box-shadow:0 12px 28px rgba(13,59,62,.18);
-  }
-  nav.daynav a{
-    text-decoration:none;
-    color:var(--reef-teal);
-    background:#eef2ea;
-    padding:6px 12px;
-    border-radius:20px;
-    font-size:13px;
-    font-weight:600;
-    border:1px solid transparent;
-    transition:.15s;
-  }
-  nav.daynav a:hover{border-color:var(--coral);color:var(--coral);}
-
-  main{max-width:920px;margin:0 auto;padding:50px 24px 100px;}
-
-  .confirmed{
-    background:var(--paper);
-    border:1px solid var(--line);
-    border-radius:16px;
-    padding:26px 28px;
-    margin-bottom:46px;
-  }
-  .confirmed h2{font-size:22px;color:var(--deep-teal);margin-bottom:16px;}
-  table{width:100%;border-collapse:collapse;font-size:14px;}
-  table.simple td, table.simple th{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left;}
-  table.simple th{color:var(--reef-teal);font-size:12px;text-transform:uppercase;letter-spacing:.05em;}
-
-  details.day{
-    margin-bottom:20px;
-    scroll-margin-top:20px;
-    background:transparent;
-  }
-  details.day summary{
-    list-style:none;
-    cursor:pointer;
-  }
-  details.day summary::-webkit-details-marker{display:none;}
-  details.day[open] summary{margin-bottom:6px;}
-  .day-head{
-    display:flex;
-    align-items:baseline;
-    gap:16px;
-    border-bottom:3px solid var(--coral);
-    padding-bottom:10px;
-    margin-bottom:6px;
-  }
-  .chevron{
-    align-self:center;
-    margin-left:10px;
-    font-size:18px;
-    color:var(--reef-teal);
-    transition:transform .2s;
-  }
-  details.day[open] .chevron{transform:rotate(180deg);}
-  .day-body{padding-top:4px;}
-  .day-num{
-    font-family:"Noto Serif SC",serif;
-    font-size:34px;
-    color:var(--deep-teal);
-    font-weight:700;
-    min-width:52px;
-  }
-  .day-title h2{font-size:20px;color:var(--ink);}
-  .day-title .date{font-size:13px;color:var(--reef-teal);font-weight:600;}
-  .intensity{
-    margin-left:auto;
-    font-size:13px;
-    color:var(--coral);
-    white-space:nowrap;
-    align-self:center;
-  }
-
-  .schedule{width:100%;border-collapse:collapse;margin-top:14px;font-size:13.5px;}
-  .schedule th{
-    background:var(--deep-teal);
-    color:var(--sand);
-    padding:10px 10px;
-    text-align:left;
-    font-weight:600;
-    font-size:12px;
-    text-transform:uppercase;
-    letter-spacing:.04em;
-  }
-  .schedule th:first-child{border-radius:8px 0 0 0;}
-  .schedule th:last-child{border-radius:0 8px 0 0;}
-  .schedule td{
-    padding:10px;
-    border-bottom:1px solid var(--line);
-    vertical-align:top;
-    background:var(--paper);
-  }
-  .schedule tr:nth-child(even) td{background:#faf6ec;}
-  .time{font-weight:700;color:var(--coral);white-space:nowrap;}
-  .route{font-size:12.5px;color:var(--reef-teal);}
-  .note{font-size:12.5px;color:#6b6b5f;}
-
-  .meta-row{
-    display:flex;
-    gap:14px;
-    flex-wrap:wrap;
-    margin-top:14px;
-  }
-  .meta-card{
-    flex:1 1 260px;
-    background:#eef2ea;
-    border-left:4px solid var(--sun);
-    border-radius:8px;
-    padding:12px 14px;
-    font-size:13px;
-  }
-  .meta-card h4{
-    margin:0 0 6px;
-    font-size:12px;
-    text-transform:uppercase;
-    letter-spacing:.05em;
-    color:var(--deep-teal);
-  }
-  .meta-card.warn{border-left-color:var(--coral);}
-
-  .budget{
-    background:var(--deep-teal);
-    color:var(--sand);
-    border-radius:16px;
-    padding:30px 28px;
-    margin-top:10px;
-  }
-  .budget h2{color:#fffdf8;font-size:20px;margin-bottom:14px;}
-  .budget table{color:var(--sand);}
-  .budget td, .budget th{border-bottom:1px solid rgba(255,255,255,.15);}
-  .budget th{color:var(--sun);}
-  .total-line{
-    margin-top:14px;
-    font-size:16px;
-    font-weight:700;
-    color:var(--sun);
-  }
-
-  .checklist{
-    background:var(--paper);
-    border:1px solid var(--line);
-    border-radius:16px;
-    padding:26px 28px;
-    margin-top:46px;
-  }
-  .checklist h2{color:var(--deep-teal);font-size:20px;margin-bottom:16px;}
-  .cl-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-    gap:20px;
-  }
-  .cl-grid h4{margin:0 0 8px;color:var(--reef-teal);font-size:13px;text-transform:uppercase;}
-  .cl-grid ul{margin:0;padding-left:18px;font-size:13.5px;}
-  .cl-grid li{margin-bottom:4px;}
-
-  footer{
-    text-align:center;
-    font-size:12px;
-    color:#8a8674;
-    padding:30px 0 60px;
-  }
-
-  @media(max-width:600px){
-    .hero h1{font-size:32px;}
-    .schedule{font-size:12px;}
-    .day-num{font-size:26px;}
-  }
+:root{--ink:#202737;--muted:#697386;--blue:#4f7fc6;--line:#e3e8f0;--paper:#fff;--bg:#f4f6fa;--soft:#edf3fc;--green:#217a59;--orange:#ad6b22}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:88px}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif}
+a{color:#376eb5;text-decoration:none}a:hover{text-decoration:underline}.wrap{max-width:1100px;margin:auto;padding:28px 20px 70px}
+.hero{background:linear-gradient(125deg,#e8eef9,#f8faff 58%,#e9f3f2);border:1px solid #e0e7f1;border-radius:24px;padding:30px 30px 26px;position:relative;overflow:hidden}
+.eyebrow{font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:#5675a4;font-weight:800}.hero h1{font-size:clamp(30px,5vw,48px);line-height:1.12;margin:10px 0 12px;letter-spacing:-.04em}.hero p{max-width:700px;color:#5f6c80;margin:0}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:24px}.stat{background:#ffffffc9;border:1px solid #e1e8f2;border-radius:14px;padding:13px 15px}.stat strong{display:block;font-size:22px;line-height:1.25}.stat span{font-size:12px;color:var(--muted)}
+.nav{position:sticky;top:0;z-index:10;margin:16px 0 24px;padding:10px 0;background:#f4f6faeF;backdrop-filter:blur(12px);display:flex;gap:8px;overflow:auto}.nav a{white-space:nowrap;background:white;border:1px solid var(--line);border-radius:999px;padding:7px 12px;font-size:13px;color:#4b5a70}
+.section{background:var(--paper);border:1px solid var(--line);border-radius:18px;margin:16px 0;padding:22px 24px;box-shadow:0 4px 18px #253a5708}.dayhead{display:flex;align-items:flex-start;gap:14px}.num{flex:0 0 42px;height:42px;border-radius:13px;background:var(--soft);color:#3e70b6;font-size:18px;font-weight:800;display:grid;place-items:center}.dayhead h2{font-size:22px;line-height:1.25;margin:0}.date{font-size:13px;color:var(--muted);margin-top:4px}.pill{display:inline-block;background:#f0f4f8;border-radius:999px;padding:3px 9px;font-size:12px;color:#59677a;margin:7px 5px 0 0}.pill.confirmed{background:#e6f5ee;color:var(--green)}.pill.warn{background:#fff3e3;color:var(--orange)}
+table{border-collapse:collapse;width:100%;margin-top:18px;font-size:14px}th{text-align:left;color:#5d6879;background:#f5f7fa;font-weight:700}th,td{padding:10px 11px;border-bottom:1px solid #edf0f4;vertical-align:top}td:first-child{white-space:nowrap;width:125px;font-weight:700;color:#40516a}tr:last-child td{border-bottom:0}
+.notes{background:#f8fafc;border-left:3px solid #93afd8;border-radius:0 10px 10px 0;padding:11px 14px;margin-top:14px;color:#566274;font-size:13px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.mini{background:#f8fafc;border:1px solid #e9edf3;border-radius:13px;padding:15px}.mini h3{margin:0 0 7px;font-size:15px}.mini p,.mini ul{margin:0;color:#586477;font-size:13px}.mini ul{padding-left:18px}.subhead{font-size:18px;margin:0 0 12px}.booking{display:grid;grid-template-columns:1fr auto;gap:12px;padding:13px 0;border-bottom:1px solid #edf0f4}.booking:last-child{border-bottom:0}.amount{font-weight:800;white-space:nowrap}.muted{color:var(--muted)}.checklist{display:grid;grid-template-columns:1fr 1fr;gap:8px 18px}.checklist label{display:flex;align-items:flex-start;gap:9px;padding:7px 0}.checklist input{margin-top:6px;accent-color:#4f7fc6}.footer{text-align:center;color:#8992a0;font-size:12px;padding:25px 0 0}.small{font-size:12px;color:var(--muted)}button{border:1px solid var(--line);background:white;border-radius:10px;padding:8px 12px;color:#40516a;cursor:pointer}
+@media(max-width:650px){.wrap{padding:14px 12px 45px}.hero{padding:22px 18px;border-radius:18px}.stats{gap:7px}.stat{padding:10px}.stat strong{font-size:18px}.section{padding:17px 14px}.dayhead h2{font-size:19px}table{font-size:13px}th,td{padding:8px 6px}td:first-child{width:91px;white-space:normal}.grid,.checklist{grid-template-columns:1fr}.booking{grid-template-columns:1fr}.amount{white-space:normal}}
+@media print{body{background:white}.wrap{max-width:none;padding:0}.nav,button{display:none}.section,.hero{box-shadow:none;break-inside:avoid}.hero{border-radius:0}.section{border:1px solid #ddd}}
 </style>
 </head>
 <body>
-
-<div class="hero">
-  <div class="hero-inner">
-    <div class="eyebrow">Brisbane · 9.28 – 10.5</div>
-    <h1>八天七晚 昆士兰行程手册</h1>
-    <p class="sub">从抵达机场到登机回程,每天精确到时间段的行动清单 —— 去哪、怎么去、带什么、要注意什么。</p>
-    <div class="hero-stats">
-      <div><div class="num">8天</div><div class="lab">9/28 – 10/5</div></div>
-      <div><div class="num">6项</div><div class="lab">已确认预订</div></div>
-      <div><div class="num">NZ$1,580–1,620</div><div class="lab">预估总花费(不含机票)</div></div>
-    </div>
+<div class="wrap">
+<header class="hero">
+  <div class="eyebrow">Western Australia · Solo trip</div>
+  <h1>Perth 旅行手册</h1>
+  <p>五天四夜的轻松独行计划：城市河景、Fremantle 海港小镇、海边日落与本地生活。按已订航班和住宿整理，最后一晚在机场 T1 睡眠舱休息。</p>
+  <div class="stats">
+    <div class="stat"><strong>5天 / 4晚</strong><span>2026.12.12 – 12.16</span></div>
+    <div class="stat"><strong>3天</strong><span>完整游玩日：12.13–12.15</span></div>
+    <div class="stat"><strong>AUD 246</strong><span>Hostel G · 3晚已订</span></div>
   </div>
-</div>
-
-<nav class="daynav">
-  <a href="#d1">Day1 抵达</a>
-  <a href="#d2">Day2 River+Koala</a>
-  <a href="#d3">Day3 摩顿岛</a>
-  <a href="#d4">Day4 慢游</a>
-  <a href="#d5">Day5 Springbrook</a>
-  <a href="#d6">Day6 动物园</a>
-  <a href="#d7">Day7 自由日</a>
-  <a href="#d8">Day8 返程</a>
-  <a href="#checklist">清单</a>
-  <a href="#confirmed">已订项目</a>
+</header>
+<nav class="nav">
+  <a href="#day1">Day 1 抵达</a><a href="#day2">Day 2 Fremantle</a><a href="#day3">Day 3 城市慢游</a><a href="#day4">Day 4 DFO + 睡眠舱</a><a href="#return">返程航班</a><a href="#bookings">已订项目</a><a href="#checklist">出发清单</a>
 </nav>
 
-<main>
+<section class="section" id="day1">
+ <div class="dayhead"><div class="num">01</div><div><h2>抵达 Perth · 去 Hostel G 入住</h2><div class="date">12月12日 · 周六 · 强度 ⭐</div><span class="pill confirmed">航班已确认</span><span class="pill confirmed">住宿已订</span></div></div>
+ <table><thead><tr><th>时间</th><th>安排</th><th>路线 / 说明</th></tr></thead><tbody>
+ <tr><td>20:55</td><td>JQ184 基督城起飞</td><td>CHC → PER；当地时间 23:10 抵达，T1。</td></tr>
+ <tr><td>23:10–约00:00</td><td>下飞机、取行李、前往网约车上车点</td><td>预留入境/取行李时间；跟随机场 Rideshare 指示。</td></tr>
+ <tr><td>约00:00–00:30</td><td>Uber / 出租车前往 Hostel G</td><td>目的地：80 Stirling Street, Perth CBD。车费按 App 当时显示为准。</td></tr>
+ <tr><td>到达后</td><td>办理入住、洗漱休息</td><td>已提前联系住宿确认深夜入住；如尚未确认，务必提前发消息。</td></tr>
+ </tbody></table>
+ <div class="notes">深夜到达，不安排任何景点。预订日期仍是 12 月 12 日入住，即使实际抵达酒店已过午夜，也要提前告知住宿。</div>
+</section>
 
-  <!-- DAY 1 -->
-  <details class="day" id="d1" open>
-    <summary><div class="day-head">
-      <div class="day-num">01</div>
-      <div class="day-title"><h2>抵达 Brisbane + 熟悉城市</h2><div class="date">9月28日 周一</div></div>
-      <div class="intensity">强度 ⭐</div>
-      <div class="chevron">▾</div>
-    </div></summary>
-    <div class="day-body">
-    <table class="schedule">
-      <tr><th>时间</th><th>做什么</th><th>路线 / 时长</th><th>注意事项</th></tr>
-      <tr><td class="time">07:55</td><td>抵达 Brisbane Airport,入境+取行李+买Go Card</td><td class="route">机场内,约45分钟</td><td class="note">不要急着安排活动</td></tr>
-      <tr><td class="time">08:45–09:30</td><td>Airtrain 前往住宿</td><td class="route">机场→Roma Street站(约30分钟)+步行10分钟到YHA</td><td class="note">-</td></tr>
-      <tr><td class="time">09:30–11:00</td><td>YHA寄存行李,办理check-in,问前台建议</td><td class="route">-</td><td class="note">房间大概率下午才能入住</td></tr>
-      <tr><td class="time">11:00–13:00</td><td>Roma Street Parkland 逛花园</td><td class="route">步行约5分钟</td><td class="note">适合调整时差,慢慢逛</td></tr>
-      <tr><td class="time">13:00–14:00</td><td>午饭</td><td class="route">住宿附近</td><td class="note">预算 $15–25 AUD</td></tr>
-      <tr><td class="time">14:00–16:00</td><td>回YHA休息,建议睡1小时</td><td class="route">-</td><td class="note">早起+机场流程很累</td></tr>
-      <tr><td class="time">16:00–18:30</td><td>South Bank 第一次探索,看Brisbane Wheel和河边夕阳</td><td class="route">YHA→Kurilpa Bridge→South Bank Parklands</td><td class="note">-</td></tr>
-      <tr><td class="time">18:30–20:00</td><td>晚餐</td><td class="route">South Bank附近</td><td class="note">第一天不要吃太贵</td></tr>
-      <tr><td class="time">20:30</td><td>回YHA早点睡</td><td class="route">-</td><td class="note">如飞机晚点,直接取消下午Roma Park,晚上South Bank即可</td></tr>
-    </table>
-    <div class="meta-row">
-      <div class="meta-card"><h4>带什么</h4>护照、机票、酒店订单、防晒、充电宝</div>
-      <div class="meta-card warn"><h4>提醒</h4>行程较松,重点是倒时差,别硬赶景点</div>
-    </div>
-    </div>
-  </details>
+<section class="section" id="day2">
+ <div class="dayhead"><div class="num">02</div><div><h2>Fremantle 海港小镇 + Cottesloe 海滩</h2><div class="date">12月13日 · 周日 · 强度 ⭐⭐⭐</div><span class="pill">主打：海港、老街、咖啡、海边</span></div></div>
+ <table><thead><tr><th>时间</th><th>安排</th><th>路线 / 注意事项</th></tr></thead><tbody>
+ <tr><td>08:30–09:30</td><td>起床、早餐</td><td>在住宿附近找咖啡馆或简便早餐。</td></tr>
+ <tr><td>09:30–10:15</td><td>去 Perth Station</td><td>从 CBD 前往 Perth Station；乘 Fremantle Line，坐到终点 Fremantle Station。</td></tr>
+ <tr><td>10:15–12:30</td><td>逛 Fremantle 老街、港口、市场</td><td>市场通常周五至周日开放，但请临近出发时再核实当日营业时间。</td></tr>
+ <tr><td>12:30–13:30</td><td>午餐：炸鱼薯条或海鲜</td><td>可选港口附近店铺；预算约 AUD 20–35。</td></tr>
+ <tr><td>13:30–15:00</td><td>继续慢逛 Fremantle</td><td>逛小店、看历史建筑、买咖啡，不必赶景点。</td></tr>
+ <tr><td>15:00–16:00</td><td>搭火车 / 公交前往 Cottesloe Beach</td><td>按当天 Transperth 路线规划查询具体接驳。</td></tr>
+ <tr><td>16:00–日落</td><td>海边散步、看日落</td><td>夏季紫外线强；带水、防晒和帽子。游泳前留意海况及救生旗。</td></tr>
+ <tr><td>日落后</td><td>回市中心、晚餐</td><td>搭公共交通返回 Perth CBD。</td></tr>
+ </tbody></table>
+ <div class="notes"><b>交通提醒：</b>周日公共交通优惠政策可能变化，出发前以 Transperth 官网为准；无论是否免费，都按规定刷卡/验证行程。路线可用 Transperth JourneyPlanner 查询。</div>
+</section>
 
-  <!-- DAY 2 -->
-  <details class="day" id="d2">
-    <summary><div class="day-head">
-      <div class="day-num">02</div>
-      <div class="day-title"><h2>River Cruise + Lone Pine Koala Sanctuary</h2><div class="date">9月29日 周二</div></div>
-      <div class="intensity">强度 ⭐⭐</div>
-      <div class="chevron">▾</div>
-    </div></summary>
-    <div class="day-body">
-    <table class="schedule">
-      <tr><th>时间</th><th>做什么</th><th>路线 / 时长</th><th>注意事项</th></tr>
-      <tr><td class="time">07:00–07:40</td><td>起床洗漱</td><td class="route">-</td><td class="note">-</td></tr>
-      <tr><td class="time">07:40</td><td>早餐(咖啡+香蕉+三明治)</td><td class="route">附近买</td><td class="note">预算 $10–15 AUD,不建议买YHA早餐</td></tr>
-      <tr><td class="time">07:45–08:30</td><td>前往集合点</td><td class="route">YHA→Cultural Centre Pontoon,步行约20分钟</td><td class="note">提前15分钟到,不用太早</td></tr>
-      <tr><td class="time">09:00–10:15</td><td>Brisbane River Cruise</td><td class="route">船上约75分钟</td><td class="note">看CBD天际线、Story Bridge、Kangaroo Point</td></tr>
-      <tr><td class="time">10:15–13:30</td><td>Lone Pine Koala Sanctuary(先看动物→喂袋鼠→午餐)</td><td class="route">园区内</td><td class="note">午餐预算 $20–30 AUD</td></tr>
-      <tr><td class="time">14:30</td><td>返回市区</td><td class="route">-</td><td class="note">-</td></tr>
-      <tr><td class="time">14:45–15:30</td><td>回YHA洗澡休息</td><td class="route">-</td><td class="note">-</td></tr>
-      <tr><td class="time">16:00–18:30</td><td>South Bank 黄昏路线,16:30–17:30拍照最佳</td><td class="route">YHA→South Bank Parklands→Wheel of Brisbane</td><td class="note">-</td></tr>
-      <tr><td class="time">18:30–20:00</td><td>晚餐</td><td class="route">South Bank解决,不要安排太远</td><td class="note">-</td></tr>
-      <tr><td class="time">20:30</td><td>回YHA早点睡</td><td class="route">-</td><td class="note">明天摩顿岛要早起</td></tr>
-    </table>
-    <div class="meta-row">
-      <div class="meta-card"><h4>带什么</h4>Go Card、水、防晒、相机</div>
-    </div>
-    </div>
-  </details>
+<section class="section" id="day3">
+ <div class="dayhead"><div class="num">03</div><div><h2>Kings Park + CBD + Swan River</h2><div class="date">12月14日 · 周一 · 强度 ⭐⭐</div><span class="pill">主打：城市景观与当地日常</span></div></div>
+ <table><thead><tr><th>时间</th><th>安排</th><th>路线 / 注意事项</th></tr></thead><tbody>
+ <tr><td>08:30–09:30</td><td>早餐、慢慢开始一天</td><td>咖啡 + 三明治，避免高温时段走太多。</td></tr>
+ <tr><td>09:30–12:00</td><td>Kings Park & Botanic Garden</td><td>看 Perth CBD、Swan River 景观；可从市区搭公交或叫车上山。</td></tr>
+ <tr><td>12:00–13:00</td><td>午餐</td><td>回 CBD 解决，预算约 AUD 15–25。</td></tr>
+ <tr><td>13:00–15:30</td><td>市中心慢逛</td><td>Hay Street、Murray Street、商店与超市；观察当地物价和生活节奏。</td></tr>
+ <tr><td>15:30–17:30</td><td>回住宿休息 / 充电</td><td>避开下午高温，顺便整理照片、补水。</td></tr>
+ <tr><td>17:30–日落后</td><td>Elizabeth Quay + Swan River</td><td>沿河散步、看城市灯光；天气舒服的话慢慢走。</td></tr>
+ <tr><td>晚上</td><td>Northbridge 晚餐</td><td>找一家自己喜欢的餐厅；早点回住宿休息。</td></tr>
+ </tbody></table>
+ <div class="notes">夏季白天可能炎热，Kings Park 尽量安排上午。户外行程可根据当天高温预警调整，必要时把博物馆或商场作为替代。</div>
+</section>
 
-  <!-- DAY 3 -->
-  <details class="day" id="d3">
-    <summary><div class="day-head">
-      <div class="day-num">03</div>
-      <div class="day-title"><h2>Moreton Island 摩顿岛一日游</h2><div class="date">9月30日 周三</div></div>
-      <div class="intensity">强度 ⭐⭐⭐⭐⭐</div>
-      <div class="chevron">▾</div>
-    </div></summary>
-    <div class="day-body">
-    <table class="schedule">
-      <tr><th>时间</th><th>做什么</th><th>路线 / 时长</th><th>注意事项</th></tr>
-      <tr><td class="time">04:45–05:00</td><td>起床,准备好装备</td><td class="route">-</td><td class="note">前一晚手机充满电,设两个闹钟</td></tr>
-      <tr><td class="time">05:30–06:30</td><td>YHA集合出发</td><td class="route">-</td><td class="note">票面写5:30AM,含接送/集合时间</td></tr>
-      <tr><td class="time">07:00–09:00</td><td>前往码头坐船</td><td class="route">Brisbane→Rivergate Marina/Port of Brisbane→Moreton Island</td><td class="note">-</td></tr>
-      <tr><td class="time">09:30</td><td>抵达摩顿岛</td><td class="route">-</td><td class="note">-</td></tr>
-      <tr><td class="time">10:00–12:00</td><td>Tangalooma Wrecks 浮潜</td><td class="route">-</td><td class="note">不会游泳可浅水体验或沙滩休息</td></tr>
-      <tr><td class="time">12:00–13:00</td><td>午餐(buffet/picnic,视团而定)</td><td class="route">-</td><td class="note">-</td></tr>
-      <tr><td class="time">13:00–15:30</td><td>沙滩时间,拍照看海</td><td class="route">-</td><td class="note">不要一直玩项目,留时间放松</td></tr>
-      <tr><td class="time">15:30–17:00</td><td>返回Brisbane</td><td class="route">-</td><td class="note">-</td></tr>
-      <tr><td class="time">17:30–18:30</td><td>回YHA</td><td class="route">-</td><td class="note">会比较累,不安排远的晚餐/夜景/酒吧</td></tr>
-      <tr><td class="time">18:30–20:00</td><td>简单晚餐(牛肉汉堡/亚洲餐/面)</td><td class="route">附近解决</td><td class="note">-</td></tr>
-      <tr><td class="time">20:30</td><td>睡觉</td><td class="route">-</td><td class="note">-</td></tr>
-    </table>
-    <div class="meta-row">
-      <div class="meta-card"><h4>必带装备</h4>防晒、帽子、墨镜、泳衣(提前穿好)、毛巾、换洗衣服、水、手机防水袋</div>
-      <div class="meta-card warn"><h4>穿什么</h4>早晨偏凉:短袖+薄外套;白天短袖;海边风大注意防晒</div>
-      <div class="meta-card"><h4>不要带</h4>笔记本电脑、大相机包 — 一个小背包即可</div>
-    </div>
-    </div>
-  </details>
+<section class="section" id="day4">
+ <div class="dayhead"><div class="num">04</div><div><h2>市区早餐 + DFO Perth + T1 睡眠舱</h2><div class="date">12月15日 · 周二 · 强度 ⭐⭐</div><span class="pill confirmed">睡眠舱已预订</span><span class="pill warn">航站楼转乘需确认</span></div></div>
+ <table><thead><tr><th>时间</th><th>安排</th><th>路线 / 注意事项</th></tr></thead><tbody>
+ <tr><td>08:00–09:00</td><td>起床、早餐、整理行李</td><td>确认 Hostel G 退房时间（订单写 10:00 前）。</td></tr>
+ <tr><td>09:00–10:00</td><td>退房、寄存行李</td><td>提前询问 Hostel G 是否能寄存到下午；不能的话使用可靠的行李寄存服务。</td></tr>
+ <tr><td>10:00–12:00</td><td>CBD 最后慢逛</td><td>咖啡、超市、补买旅行用品；不要带着行李购物。</td></tr>
+ <tr><td>12:00–13:00</td><td>午餐</td><td>吃饱、补水，之后去机场方向。</td></tr>
+ <tr><td>13:00–14:00</td><td>取行李、前往 DFO Perth</td><td>先查当天交通，留出转乘和步行缓冲。</td></tr>
+ <tr><td>14:00–17:30</td><td>DFO 折扣购物</td><td>主要看衣服、鞋子、户外用品。营业时间以 DFO 官网当天公告为准。</td></tr>
+ <tr><td>17:30–18:15</td><td>晚餐 / 买水和早餐</td><td>尽量在商店关门前吃完；买一份简单早餐，凌晨可能没有餐饮营业。</td></tr>
+ <tr><td>18:15–18:45</td><td>前往 Perth Airport T1</td><td>预留时间找到 Sleeping Pods 区域、洗漱和办理入住。</td></tr>
+ <tr><td>19:00</td><td>Perth Airport T1 Standard Pod 入住</td><td><b>已订：1 Pod / 8 Hours</b>。保留订单截图及入住说明。</td></tr>
+ </tbody></table>
+ <div class="notes"><b>重点：</b>确认睡眠舱的准确位置、8 小时预订的退舱流程、行李规定，以及凌晨从 T1 去 QF768 实际出发航站楼的接驳方式。不要假定免费接驳车的站点就在睡眠舱门口。</div>
+</section>
 
-  <!-- DAY 4 -->
-  <details class="day" id="d4">
-    <summary><div class="day-head">
-      <div class="day-num">04</div>
-      <div class="day-title"><h2>Mt Coot-tha + Brisbane City 慢游</h2><div class="date">10月1日 周四</div></div>
-      <div class="intensity">强度 ⭐⭐</div>
-      <div class="chevron">▾</div>
-    </div></summary>
-    <div class="day-body">
-    <table class="schedule">
-      <tr><th>时间</th><th>做什么</th><th>路线 / 时长</th><th>注意事项</th></tr>
-      <tr><td class="time">09:00</td><td>起床,吃早餐</td><td class="route">-</td><td class="note">睡晚一点,不报团</td></tr>
-      <tr><td class="time">10:00–12:00</td><td>Mt Coot-tha Lookout,看Brisbane全景/CBD/Moreton Bay方向</td><td class="route">建议Uber过去(公交耗时)</td><td class="note">-</td></tr>
-      <tr><td class="time">12:00–13:30</td><td>Mt Coot-tha Botanic Gardens 慢慢走</td><td class="route">-</td><td class="note">春天很舒服</td></tr>
-      <tr><td class="time">14:00</td><td>回CBD</td><td class="route">-</td><td class="note">-</td></tr>
-      <tr><td class="time">14:30–17:30</td><td>Queen Street Mall → City Hall → Treasury Building</td><td class="route">-</td><td class="note">-</td></tr>
-      <tr><td class="time">17:30–19:00</td><td>Howard Smith Wharves,看Story Bridge,喝咖啡拍照</td><td class="route">-</td><td class="note">-</td></tr>
-      <tr><td class="time">晚上</td><td>回YHA</td><td class="route">-</td><td class="note">-</td></tr>
-    </table>
-    </div>
-  </details>
+<section class="section" id="return">
+ <div class="dayhead"><div class="num">↗</div><div><h2>返程航班 · 12月16日</h2><div class="date">周三 · 早班机，预留缓冲</div><span class="pill confirmed">机票已出票 / 订单信息已提供</span></div></div>
+ <table><thead><tr><th>当地时间</th><th>航班 / 安排</th><th>注意事项</th></tr></thead><tbody>
+ <tr><td>03:00</td><td>睡眠舱退舱</td><td>收好护照、手机、钱包、充电设备及所有行李。</td></tr>
+ <tr><td>03:00–约03:45</td><td>乘机场接驳车前往 QF768 出发航站楼</td><td>机票行程单写 QF768 从 PER T4 出发；请在出发前通过 Qantas 再次确认。T1/T2 与 T3/T4 之间需要转乘。</td></tr>
+ <tr><td>约04:00–04:30</td><td>到达出发航站楼、办理值机与安检</td><td>确认柜台开放时间、行李直挂情况及航空公司要求。</td></tr>
+ <tr><td>07:15</td><td>QF768：PER → MEL</td><td>预计 13:45 抵达墨尔本 T1。</td></tr>
+ <tr><td>18:50</td><td>QF169：MEL → CHC</td><td>行程单显示墨尔本 T2 起飞，基督城次日 00:10 到达。确认中间长转机的候机安排。</td></tr>
+ </tbody></table>
+ <div class="notes">你提供的行程单显示 QF768 07:15 从 T4 出发，而睡眠舱在 T1。务必提前核实接驳车夜间时刻表和准确站点，并给错过一班车留出备用时间。时间表若有变化，以航空公司 App 为准。</div>
+</section>
 
-  <!-- DAY 5 -->
-  <details class="day" id="d5">
-    <summary><div class="day-head">
-      <div class="day-num">05</div>
-      <div class="day-title"><h2>Springbrook + Tamborine Rainforest</h2><div class="date">10月2日 周五</div></div>
-      <div class="intensity">强度 ⭐⭐⭐⭐</div>
-      <div class="chevron">▾</div>
-    </div></summary>
-    <div class="day-body">
-    <table class="schedule">
-      <tr><th>时间</th><th>做什么</th><th>路线 / 时长</th><th>注意事项</th></tr>
-      <tr><td class="time">06:15</td><td>起床洗漱,检查天气,涂防晒</td><td class="route">-</td><td class="note">-</td></tr>
-      <tr><td class="time">06:40</td><td>早餐(三明治+香蕉+咖啡)</td><td class="route">-</td><td class="note">不用吃太饱</td></tr>
-      <tr><td class="time">06:55</td><td>离开YHA前往集合点</td><td class="route">YHA→222 Margaret Street,步行约18–20分钟</td><td class="note">预留30分钟,06:55出门最保险</td></tr>
-      <tr><td class="time">07:25</td><td>到达集合点</td><td class="route">-</td><td class="note">早到可上厕所整理背包</td></tr>
-      <tr><td class="time">07:35</td><td>Check-in</td><td class="route">-</td><td class="note">-</td></tr>
-      <tr><td class="time">07:45</td><td>发车</td><td class="route">-</td><td class="note">-</td></tr>
-      <tr><td class="time">全天</td><td>Hinze Dam → Springbrook National Park(Natural Bridge)→ 雨林步道 → Gallery Walk(午餐自理,预算20–30 AUD)→ Cedar Creek Glow Worm Cave → Curtis Falls</td><td class="route">-</td><td class="note">洞穴内禁止拍照/闪光灯;连续步行2–3小时,中等体能要求</td></tr>
-      <tr><td class="time">17:30–18:00</td><td>返回Brisbane,回到222 Margaret Street</td><td class="route">步行约20分钟回YHA</td><td class="note">-</td></tr>
-      <tr><td class="time">晚上</td><td>早点休息</td><td class="route">-</td><td class="note">第二天动物园又要早起</td></tr>
-    </table>
-    <div class="meta-row">
-      <div class="meta-card"><h4>穿什么</h4>运动鞋(不要拖鞋)、运动裤或短裤、短袖+薄外套(山区比市区凉)</div>
-      <div class="meta-card"><h4>带什么</h4>小背包、水、帽子、墨镜、防晒、充电宝、雨衣、少量零食</div>
-    </div>
-    </div>
-  </details>
+<section class="section" id="bookings">
+ <h2 class="subhead">已确认预订 / 费用记录</h2>
+ <div class="booking"><div><b>✈️ 航班：CHC → PER</b><div class="small">12 Dec 2026 · JQ184 · 20:55–23:10 · Economy · T1 到达</div></div><div class="amount">包含在机票内</div></div>
+ <div class="booking"><div><b>✈️ 航班：PER → MEL → CHC</b><div class="small">16 Dec 2026 · QF768 07:15–13:45；QF169 18:50–00:10（次日）</div></div><div class="amount">包含在机票内</div></div>
+ <div class="booking"><div><b>🏨 Hostel G Perth</b><div class="small">12–15 Dec · 3晚 · 1成人 · 4床宿舍间（独立卫浴）<br>80 Stirling Street, Perth CBD · 退房 15 Dec 10:00 前</div></div><div class="amount">AUD 246</div></div>
+ <div class="booking"><div><b>🛌 Perth Airport T1 Standard Pod</b><div class="small">15 Dec 2026 19:00 · 1 Pod / 8 Hours · 计划约 03:00 退舱</div></div><div class="amount">AUD 95</div></div>
+ <div class="booking"><div><b>💳 机票订单总价（按所提供行程单）</b><div class="small">机票 CNY 3,613 + 税费 CNY 1,176</div></div><div class="amount">CNY 4,789</div></div>
+ <div class="notes">Hostel G 取消政策：按你提供的订单，2026年12月9日 23:59（当地时间）前免费取消；12月10日 00:00 起取消费为 AUD 246。睡眠舱费用AUD 95。</div>
+</section>
 
-  <!-- DAY 6 -->
-  <details class="day" id="d6">
-    <summary><div class="day-head">
-      <div class="day-num">06</div>
-      <div class="day-title"><h2>Australia Zoo</h2><div class="date">10月3日 周六</div></div>
-      <div class="intensity">强度 ⭐⭐⭐⭐</div>
-      <div class="chevron">▾</div>
-    </div></summary>
-    <div class="day-body">
-    <table class="schedule">
-      <tr><th>时间</th><th>做什么</th><th>路线 / 时长</th><th>注意事项</th></tr>
-      <tr><td class="time">06:15</td><td>起床</td><td class="route">-</td><td class="note">-</td></tr>
-      <tr><td class="time">06:15–06:45</td><td>洗漱、整理背包</td><td class="route">-</td><td class="note">带手机、充电宝、帽子、墨镜、防晒、水壶、零食、雨衣</td></tr>
-      <tr><td class="time">06:45–07:05</td><td>早餐</td><td class="route">-</td><td class="note">不用吃太多但一定要吃</td></tr>
-      <tr><td class="time">07:10</td><td>离开YHA</td><td class="route">-</td><td class="note">-</td></tr>
-      <tr><td class="time">07:25–07:30</td><td>到达 Pullman Brisbane King George Square</td><td class="route">-</td><td class="note">-</td></tr>
-      <tr><td class="time">07:40</td><td>上车出发</td><td class="route">-</td><td class="note">-</td></tr>
-      <tr><td class="time">全天</td><td>推荐顺序:①Crocoseum鳄鱼秀 ②Koala区 ③Kangaroo区 ④非洲动物区 ⑤老虎等大型动物 ⑥纪念品店</td><td class="route">-</td><td class="note">鳄鱼秀一定要看,提前安排好时间</td></tr>
-      <tr><td class="time">傍晚</td><td>返回同一上车点</td><td class="route">回市区后步行约12–15分钟回YHA</td><td class="note">-</td></tr>
-    </table>
-    </div>
-  </details>
-
-  <!-- DAY 7 -->
-  <details class="day" id="d7">
-    <summary><div class="day-head">
-      <div class="day-num">07</div>
-      <div class="day-title"><h2>自由机动日</h2><div class="date">10月4日 周日</div></div>
-      <div class="intensity">强度 ⭐</div>
-      <div class="chevron">▾</div>
-    </div></summary>
-    <div class="day-body">
-    <table class="schedule">
-      <tr><th>方案</th><th>内容</th><th>路线 / 时长</th><th>适合情况</th></tr>
-      <tr><td class="time">方案① 推荐</td><td>Gold Coast:Surfers Paradise / Broadbeach / Pacific Fair</td><td class="route">Brisbane→Surfers Paradise 火车约1.5小时</td><td class="note">天气好、想看海和购物</td></tr>
-      <tr><td class="time">方案②</td><td>North Stradbroke Island</td><td class="route">需提前查船班</td><td class="note">天气好,想再体验一个海岛</td></tr>
-      <tr><td class="time">方案③ 轻松</td><td>West End → New Farm Park → Howard Smith Wharves</td><td class="route">市区内</td><td class="note">想休息,适合拍照</td></tr>
-    </table>
-    <div class="meta-row">
-      <div class="meta-card warn"><h4>提醒</h4>不要提前塞满,当天根据天气再决定</div>
-    </div>
-    </div>
-  </details>
-
-  <!-- DAY 8 -->
-  <details class="day" id="d8">
-    <summary><div class="day-head">
-      <div class="day-num">08</div>
-      <div class="day-title"><h2>退房 + 返程</h2><div class="date">10月5日 周一</div></div>
-      <div class="intensity">强度 ⭐</div>
-      <div class="chevron">▾</div>
-    </div></summary>
-    <div class="day-body">
-    <table class="schedule">
-      <tr><th>时间</th><th>做什么</th><th>路线 / 时长</th><th>注意事项</th></tr>
-      <tr><td class="time">上午</td><td>退房(YHA可寄存行李)</td><td class="route">-</td><td class="note">-</td></tr>
-      <tr><td class="time">09:30–12:00</td><td>最后购物:巧克力、保健品、纪念品</td><td class="route">Queen Street Mall</td><td class="note">-</td></tr>
-      <tr><td class="time">12:00</td><td>午饭</td><td class="route">-</td><td class="note">-</td></tr>
-      <tr><td class="time">13:30</td><td>回YHA取行李</td><td class="route">-</td><td class="note">-</td></tr>
-      <tr><td class="time">14:00–15:00</td><td>前往机场</td><td class="route">-</td><td class="note">不要16点才走</td></tr>
-      <tr><td class="time">15:30</td><td>到机场</td><td class="route">-</td><td class="note">国际航班建议提前2.5–3小时</td></tr>
-      <tr><td class="time">18:55</td><td>QF135 Brisbane → Christchurch</td><td class="route">-</td><td class="note">-</td></tr>
-    </table>
-    </div>
-  </details>
-
-  <section class="checklist" id="checklist">
-    <h2>出发前检查清单</h2>
-    <div class="cl-grid">
-      <div><h4>证件</h4><ul>
-        <li>护照</li><li>澳大利亚 ETA</li><li>机票</li><li>酒店订单</li><li>所有Tour订单</li>
-      </ul></div>
-      <div><h4>电子设备</h4><ul>
-        <li>手机</li><li>充电器</li><li>充电宝</li><li>Type I 插头(备用)</li>
-      </ul></div>
-      <div><h4>衣物</h4><ul>
-        <li>运动鞋</li><li>拖鞋</li><li>泳衣</li><li>帽子</li><li>墨镜</li><li>轻薄外套</li><li>雨衣</li>
-      </ul></div>
-      <div><h4>其他</h4><ul>
-        <li>防晒霜 SPF50+</li><li>水壶</li><li>小锁(YHA储物柜)</li><li>耳塞</li><li>眼罩</li><li>防水手机袋</li>
-      </ul></div>
-    </div>
-  </section>
-
-  <section class="confirmed" id="confirmed">
-    <h2>已确认预订</h2>
-    <table class="simple">
-      <tr><th>项目</th><th>日期</th><th>金额</th></tr>
-      <tr><td>✈️ 往返机票 CHC ⇄ BNE</td><td>9/28–10/5</td><td>¥4,324 RMB</td></tr>
-      <tr><td>🏨 YHA Brisbane City（4人间，7晚）</td><td>9/28–10/5</td><td>NZ$786</td></tr>
-      <tr><td>🚢 River Cruise + Lone Pine Koala</td><td>9/29</td><td>AUD124.20</td></tr>
-      <tr><td>🏝 Moreton Island 一日游</td><td>9/30</td><td>NZ$239.02</td></tr>
-      <tr><td>🌳 Springbrook & Tamborine 一日游</td><td>10/2</td><td>NZ$207.32</td></tr>
-      <tr><td>🦘 Australia Zoo 接送+门票</td><td>10/3</td><td>NZ$227.00</td></tr>
-    </table>
-    <div class="total-line" style="color:var(--coral);margin-top:16px;">
-      已确认预订总花费:约 <strong>NZ$2,700</strong> ≈ <strong>¥10,700 RMB</strong>
-    </div>
-    <div class="note" style="margin-top:4px;">按当前汇率粗略折算(1 AUD≈1.20 NZD,1 CNY≈0.25 NZD),仅供参考,不含餐饮和市内交通</div>
-  </section>
-
-</main>
-
-<footer>Brisbane 行程手册 · 9.28 – 10.5</footer>
-
+<section class="section" id="checklist">
+ <h2 class="subhead">出发前检查清单</h2>
+ <p class="small">可以在手机上逐项勾选；勾选状态只保留在当前页面打开期间。</p>
+ <div class="checklist">
+  <label><input type="checkbox">护照、澳洲入境许可 / 签证信息</label>
+  <label><input type="checkbox">机票、Hostel G 订单、Pod 订单截图</label>
+  <label><input type="checkbox">确认 Hostel G 午夜后入住</label>
+  <label><input type="checkbox">确认睡眠舱位置、退舱和行李规则</label>
+  <label><input type="checkbox">确认 T1 → QF768 出发航站楼夜间接驳</label>
+  <label><input type="checkbox">手机、充电器、充电宝、澳洲插头</label>
+  <label><input type="checkbox">防晒霜、帽子、墨镜、水瓶</label>
+  <label><input type="checkbox">舒适步行鞋、轻便衣物、薄外套</label>
+  <label><input type="checkbox">耳塞、眼罩、洗漱用品</label>
+  <label><input type="checkbox">支付卡 / Apple Pay 可用</label>
+ </div>
+ <div class="notes">预算提示：市内交通、餐饮、Uber 和 DFO 购物尚未纳入已订费用。建议每天预留餐饮 AUD 35–60，另留交通和临时支出。实际金额以现场价格为准。</div>
+</section>
+<div class="footer">Perth · 12–16 December 2026 · 个人旅行手册<br>行程为规划参考；营业时间、交通和航班安排请出发前再次核实。</div>
+</div>
 </body>
 </html>
